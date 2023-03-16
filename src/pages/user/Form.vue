@@ -1,0 +1,297 @@
+<script setup lang="ts">
+import { storeToRefs } from 'pinia'
+import { addFile } from '@/types/filepond'
+import { email, required } from '@vuelidate/validators'
+import CommonFile from '@/components/CommonFile.vue'
+//import { useUser } from '@/stores/user'
+import { useVuelidate } from '@vuelidate/core'
+import Swal, { SweetAlertIcon } from "sweetalert2"
+
+//const user_store = useUser();
+const form = reactive({
+    address: '',
+    document_number: '',
+    document_type: '',
+    email: '',
+    gender: '',
+    lastname: '',
+    municipalities: '',
+    name: '',
+    period: '',
+    phone: '',
+    roles: '',
+    zones: '',
+    password: '',
+})
+
+const form_rules = computed(() => ({
+    name:{required},
+    address: { required },
+    document_number: { required },
+    document_type: { required },
+    email: { required, email },
+    gender: { required },
+    lastname: { required },
+    municipalities: { required },
+    period: {},
+    phone: { required },
+    roles: { required },
+    zones: { required },
+    password: {},
+}))
+
+const users = ref([]);
+
+const types = [
+    {
+        label: 'Cédula de ciudadanía',
+        value: 'Cédula de ciudadanía'
+    },
+    {
+        label: 'Cédula de extranjeria',
+        value: 'Cédula de extranjeria'
+    },
+    {
+        label: 'Pasaporte',
+        value: 'Pasaporte'
+    },
+    {
+        label: 'NIT',
+        value: 'NIT'
+    },
+]
+
+// const roles = [
+
+//     {
+//         label: 'ASISTENTE Y AUXILIAR ADMINISTRATIVO',
+//         value: 'ASISTENTE Y AUXILIAR ADMINISTRATIVO'
+//     },
+
+//     {
+//         label: 'COORDINADOR DE ENLACE',
+//         value: 'COORDINADOR DE ENLACE'
+//     },
+
+//     {
+//         label: 'COORDINADOR DE PROGRAMAS ESPECIALES',
+//         value: 'COORDINADOR DE PROGRAMAS ESPECIALES'
+//     },
+
+//     {
+//         label: 'COORDINADOR DE PSICOSOCIAL',
+//         value: 'COORDINADOR DE PSICOSOCIAL'
+//     },
+
+//     {
+//         label: 'COORDINADOR REGIONAL',
+//         value: 'COORDINADOR REGIONAL'
+//     },
+
+//     {
+//         label: 'COORDINADOR TECNICO',
+//         value: 'COORDINADOR TECNICO'
+//     },
+
+//     {
+//         label: 'METODOLOGO',
+//         value: 'METODOLOGO'
+//     },
+
+//     {
+//         label: 'MONITOR',
+//         value: 'MONITOR'
+//     },
+
+//     {
+//         label: 'PSICOSOCIAL',
+//         value: 'PSICOSOCIAL'
+//     },
+
+//     {
+//         label: 'SUBDIRECTOR',
+//         value: 'SUBDIRECTOR'
+//     },
+// ]
+
+const genders = [
+
+    {
+        label: 'Masculino',
+        value: 'Masculino'
+    },
+    {
+        label: 'Femenino',
+        value: 'Femenino'
+    },
+]
+
+const towns = [
+    {
+        label: 'Tulua',
+        value: 'Tulua'
+    },
+    {
+        label: 'Cali',
+        value: 'Cali'
+    },
+    {
+        label: 'Palmira',
+        value: 'Palmira'
+    },
+    {
+        label: 'Dagua',
+        value: 'Dagua'
+    },
+    {
+        label: 'El Cerrito',
+        value: 'El Cerrito'
+    },
+    {
+        label: 'Florida',
+        value: 'Florida'
+    },
+    {
+        label: 'Jamundí',
+        value: 'Jamundí'
+    },
+    {
+        label: 'Vijes ',
+        value: 'Vijes '
+    },
+    {
+        label: 'Yumbo',
+        value: 'Yumbo'
+    }
+]
+
+
+
+const roles = asyncComputed(async () => {
+    const roles_data = await getSelect(['roles'])
+    return roles_data.filter(({ value }) => value != '1')
+}, null)
+
+const municipalities = asyncComputed(async () => {
+    return await getSelect(['municipalities'])
+}, null)
+
+const v$ = useVuelidate(form_rules, form)
+
+const router = useRouter()
+const route = useRoute()
+
+const routeName = computed(() => {
+    return String(route.name).split('.')[0]
+})
+
+
+const zones = asyncComputed(async () => {
+    return await getSelect(['zones'])
+}, null)
+
+const zone_id = computed(() => form.zones)
+
+const cities = asyncComputed(async () => {
+    return zone_id.value ? await getCitiesByDepartment(zone_id.value) : []
+}, null)
+
+const getAllNoPaginate = async () => {
+    await userServices.getAll();
+}
+
+const fetchtTypeUsers = async () => {
+    //Get all user, to add
+    //await getAllNoPaginate()
+    const users_data = await userServices.get("3");
+    console.log(users_data);
+    if(users_data?.data.success == true){
+        Swal.fire('', users_data?.data.message, 'info').finally(() => {
+        })
+        //Object.assign(form, users_data.data.items)}
+        form.name = users_data.data.items.name;
+        form.email = users_data.data.items.email;
+        form.gender = users_data.data.items.gender;
+        form.document_type = users_data.data.items.document_type;
+        form.document_number = users_data.data.items.document_number;
+        //form.roles = users_data.data.items.roles[0];
+    }
+   
+}
+onUnmounted(() => {
+    v$.value.$reset();
+});
+onMounted(async () => {
+    //v$.value.$reset()
+    //roles.value = options.value.roles; //data.map((item) => ({ label: item.name, value: item.slug }));
+    //await fetchtTypeUsers();
+    //console.log(form);
+});
+
+const onSubmit = async () => {
+    const valid = await v$.value.$validate()
+    console.log(form);
+    if (valid) {
+        await userServices.create(formdataParser(form)).then((response) => {
+            if (response) {
+                if (response.status >= 200 && response.status <= 300) {
+                    alerts.create()
+                    setLoading(true)
+                    router.push('').finally(() => {
+                        setLoading(false)
+                    })
+                }
+            }
+        })
+    }
+    else {
+        alerts.validation()
+    }
+}
+
+</script>
+
+<template>
+    <div class="flex items-center mt-8 intro-y">
+        <div class="flex items-center space-x-4">
+            <CommonBackButton :to="'users.index'" title="Listado" />
+            <h2 class="mr-auto text-lg font-medium">Crear Usuario</h2>
+        </div>
+    </div>
+
+    <div class="p-5 mt-5 intro-y box">
+        <div class="grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
+            <CommonSelect class="col-span-1 md:col-span-2" label="Seleccione el Rol *" name="roles" v-model="form.roles"
+                :validator="v$" :options="roles" />
+            <CommonInput placeholder="Ingrese" type="text" label="Nombres *" name="name" v-model="form.name"
+                :validator="v$" />
+            <CommonInput placeholder="Ingrese" type="text" label="Apellidos *" name="lastname" v-model="form.lastname"
+                :validator="v$" />
+            <CommonInput placeholder="Ingrese" type="text" label="Dirección *" name="address" v-model="form.address"
+                :validator="v$" />
+            <CommonInput placeholder="Ingrese" type="number" label="Número de teléfono *" name="phone"
+                v-model="form.phone" :validator="v$" />
+            <CommonSelect label="Seleccione tipo documento *" name="document_type" v-model="form.document_type"
+                :validator="v$" :options="types" />
+            <CommonInput placeholder="Ingrese" type="number" label="Número de documento *" name="document_number"
+                v-model="form.document_number" :validator="v$" />
+            <CommonSelect label="Seleccione el genero *" name="gender" v-model="form.gender" :validator="v$"
+                :options="genders" />
+            <CommonInput type="email" label="Correo *" placeholder="Ingrese el correo" name="email" v-model="form.email"
+                :validator="v$" />
+            <CommonSelect label="Selecciona regiones *" name="zones" v-model="form.zones" :validator="v$" :options="zones" />
+            <CommonSelect label="Seleccione la ciudad *" name="municipalities" v-model="form.municipalities" :validator="v$"
+                :options="cities" />
+            <br>
+            <CommonInput type="hidden" name="password" :value="form.document_number" v-model="form.password" :validator="v$" />
+        </div>
+
+        <!-- <CommonInput type="date" label="Fecha nacimiento *" name="date_birth" v-model="form.date_birth" :validator="v$" /> -->
+        <div class="flex justify-end col-span-1 md:col-span-2">
+            <Button variant="primary" class="btn btn-primary" @click="onSubmit">
+                Ingresar
+            </Button>
+        </div>
+        <!-- </div> -->
+    </div>
+</template>
