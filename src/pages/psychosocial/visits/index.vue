@@ -222,13 +222,4 @@ const headerTransversalActivities: Header[] = [
             </TabPanel>
         </TabPanels>
     </TabGroup>
-
-    <div class="p-10">
-        <Button type="button" variant="dark" @click="() => {
-            router.push({ name: 'psychosocial.custom-update', params: { status: 'REC' } })
-        }">Aprobado</Button>
-        <Button type="button" variant="danger" @click="() => {
-            router.push({ name: 'psychosocial.custom-update', params: { status: 'APR' } })
-        }">Rechazado</Button>
-    </div>
 </template>

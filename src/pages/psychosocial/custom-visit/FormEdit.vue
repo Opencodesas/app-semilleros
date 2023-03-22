@@ -216,7 +216,7 @@ const onSubmit = async () => {
                         <div class="grid justify-center col-span-3 gap-10 p-5">
                             <h1 class="text-center">Evidencia</h1>
                             <!-- <img :src="form.file[0]" alt=""> -->
-                            <img src="/semilleros.png" alt="">
+                            <img src="/semilleros.png" width="200" alt="">
                         </div>
 
                         <div class="grid col-span-3">
