@@ -408,6 +408,45 @@ const routes = [
 						// component: () => import('@/pages/contractors/Form.vue')
 					},
 				]
+			},	
+			{
+				path: "psychosocial",
+				name: "psychosocial",
+				meta: { provider: 'psychosocial' },
+				children: [
+					{
+						path: "visit",
+						name: "psychosocial.visit",
+						component: () => import('@/pages/psychosocial/visit/Form.vue'),
+					},
+					{
+						path: "custom-visit",
+						name: "psychosocial.custom-visit",
+						component: () => import('@/pages/psychosocial/custom-visit/Form.vue'),
+					},
+					{
+						path: "custom-update/:status",
+						name: "psychosocial.custom-update",
+						component: () => import('@/pages/psychosocial/custom-visit/FormEdit.vue'),
+					},
+					{
+						path: "visits",
+						name: "psychosocial.visits",
+						component: () => import('@/pages/psychosocial/visits/index.vue'),
+					},
+				],
+			},
+			{
+				path: "coordinador-psicosocial",
+				name: "coordinador-psicosocial",
+				meta: { provider: 'coordinador-psicosocial' },
+				children: [
+					{
+						path: "visit",
+						name: "coordinador-psicosocial.reviews",
+						component: () => import('@/pages/psychosocial_coordinator/reviews/Index.vue'),
+					},
+				],
 			},
 			{
 				path: "users_of_zones",

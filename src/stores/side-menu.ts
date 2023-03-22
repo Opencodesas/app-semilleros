@@ -152,6 +152,38 @@ export const useSideMenuStore = defineStore("sideMenu", {
       //     },
       //   ]
       // },
+      {
+        icon: "User",
+        title: "Psicosocial",
+        subMenu: [
+          {
+            icon: "Activity",
+            pageName: "psychosocial.visit",
+            title: "Crear visita",
+          },
+          {
+            icon: "Activity",
+            pageName: "psychosocial.custom-visit",
+            title: "Crear visita personalizada",
+          },
+          {
+            icon: "Activity",
+            pageName: "psychosocial.visits",
+            title: "Formatos",
+          },
+        ]
+      },
+      {
+        icon: "User",
+        title: "Coordinador Psicosocial",
+        subMenu: [
+          {
+            icon: "Activity",
+            pageName: "coordinador-psicosocial.reviews",
+            title: "Revisiones",
+          },
+        ]
+      },
     ],
   }),
   getters: {
