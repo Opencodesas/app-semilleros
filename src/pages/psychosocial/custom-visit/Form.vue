@@ -106,8 +106,7 @@ const onSubmit = async () => {
         <form @submit.prevent="onSubmit" class="space-y-8 divide-y divide-slate-200">
             <div class="space-y-8 divide-y divide-slate-200">
                 <div>
-
-                    <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-3">
+                    <div class="mt-0 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-3 ">
                         <CommonSelect label="Mes *" name="month" v-model="form.month" :validator="v$"
                             :options="months" />
                         <CommonSelect label="Municipio *" name="municipality" v-model="form.municipality"
@@ -155,7 +154,7 @@ const onSubmit = async () => {
                                 v-model="form.agreements" :validator="v$" />
                         </div>
 
-                        <div class="grid justify-center col-span-3  box">
+                        <div class="grid justify-center col-span-3">
                             <CommonInput type="range"
                                 label="Concepto del padre o acudiente que atendió la visita en una escala de 1 a 5 donde 1 es deficiente y 5 excelente"
                                 name="concept" min="1" max="5" class="focus:outline-none" v-model="form.concept" />
@@ -163,7 +162,7 @@ const onSubmit = async () => {
                         </div>
 
 
-                        <div class="grid col-span-3 box">
+                        <div class="grid col-span-3">
                             <CommonDropzone name="file" label="Suba su archivo aqui *" :accept-multiple="false"
                                 v-model="form.file"
                                 @addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
