@@ -370,7 +370,7 @@ const routes = [
 				name: "methodologist_visits",
 				children: [
 					{
-						path: "index",
+						path: "",
 						name: "methodologist_visits.index",
 						component: () => import('@/pages/views/Index.vue')
 					},
@@ -400,13 +400,52 @@ const routes = [
 					{
 						path: "create",
 						name: "subdirector_visit.create",
-						component: () => import('@/pages/visit/Form.vue')
+						component: () => import('@/pages/subdirector/visit/Form.vue')
 					},
 					{
 						path: "edit",
 						name: "subdirector_visit.update",
 						// component: () => import('@/pages/contractors/Form.vue')
 					},
+				]
+			},
+			{
+				path: "subdirector",
+				name: "subdirector",
+				meta: { provider: 'subdirector' },
+				children: [
+					{
+						path: "",
+						name: "subdirector_visit.index",
+						component: () => import('@/pages/subdirector/visit/Index.vue')
+					},
+					{
+						path: "visit",
+						name: "subdirector_visit.create",
+						component: () => import('@/pages/subdirector/visit/Form.vue')
+					},
+					{
+						path: "edit/:id",
+						name: "subdirector_visit.edit",
+						component: () => import('@/pages/subdirector/visit/Edit.vue')
+					},
+					{
+						path: "methodologist",
+						name: "subdirector_methodologist",
+						meta: { provider: 'subdirector_methodologist' },
+						children: [
+							{
+								path: "",
+								name: "subdirector_methodologist.list",
+								component: () => import('@/pages/subdirector/methodologist/Index.vue'),
+							},
+							{
+								path: "edit/:id",
+								name: "subdirector_methodologist.reviewControl",
+								component: () => import('@/pages/subdirector/methodologist/Form.vue'),
+							},
+						]
+					}
 				]
 			},
 			{
@@ -446,6 +485,29 @@ const routes = [
 					},
 				]
 			},
+			{
+				path: "psychosocial",
+				name: "psychosocial",
+				meta: { provider: 'psychosocial' },
+				children: [
+					{
+						path: "visit",
+						children: [
+							{
+								path: "",
+								name: "psychosocial.visit",
+								component: () => import('@/pages/psychosocial_visit/Form.vue'),
+							},
+							{
+								path: "viewer",
+								name: "manager.contractsViewer",
+								component: () => import('@/pages/contracts/PDFViewer.vue'),
+							},
+						]
+					},
+				],
+			},
+			
 		],
 	},
 	{

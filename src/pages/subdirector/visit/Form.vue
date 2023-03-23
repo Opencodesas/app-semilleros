@@ -1,0 +1,232 @@
+<script setup lang="ts">
+import CommonFile from '@/components/CommonFile.vue';
+import { filePondValue } from '@/composables/useFilepondEvents';
+import { onboardingStore } from '@/stores/onboardingStore';
+import useVuelidate from '@vuelidate/core';
+import { required } from '@vuelidate/validators';
+import Swal from 'sweetalert2';
+
+const { multiple } = useFilepondEvents();
+const store = onboardingStore();
+const router = useRouter();
+const route = useRoute();
+const { id } = route.params;
+
+const form = reactive({
+	observations: '',
+	monitor: '',
+	municipalities: '',
+	event_support: '',
+	hour_visit: '',
+	disciplines: '',
+	sidewalk: '',
+	sports_scene: '',
+	beneficiary_coverage: '',
+	technical: '',
+	date_visit: '',
+	description: '',
+	file: [],
+	status: '3',
+
+});
+
+const form_rules = computed(() => ({
+	observations: { required },
+	monitor: { required },
+	municipalities: { required },
+	event_support: { required },
+	hour_visit: { required },
+	disciplines: { required },
+	sidewalk: { required },
+	sports_scene: { required },
+	beneficiary_coverage: { required },
+	technical: { required },
+	date_visit: { required },
+	description: { required },
+	file: { required },
+	status: { required },
+}));
+
+const municipalities = ref([]);
+const disciplinesList = ref([]);
+const monitorList = [
+	{ label: 'Joselito', value: 1 },
+	{ label: 'Miguelito', value: 2 },
+];
+const event_supportList = [
+	{ label: 'Si', value: 1 },
+	{ label: 'No', value: 2 },
+];
+const evaluationList = [
+	{ label: 'Aceptada', value: 1 },
+	{ label: 'Rechazada', value: 2 },
+];
+const v$ = useVuelidate(form_rules, form);
+
+
+const fetch = async () => {
+	await store.getListSelect().then((response) => {
+		console.log(`data fetch: ${response?.data}`);
+		if (response?.status == 200 || response?.status == 201) {
+			municipalities.value = JSON.parse(
+				JSON.stringify(response.data['municipalities'])
+			);
+			disciplinesList.value = JSON.parse(
+				JSON.stringify(response.data['disciplines'])
+			);
+		} else {
+			Swal.fire('', 'No se pudieron obtener los datos', 'error');
+		}
+	});
+};
+onMounted(() => {
+	fetch();
+});
+const onSubmit = async () => {
+	const valid = await v$.value.$validate();
+
+	if (valid) {
+		await subdirectorVisitServices.create(formdataParser(form)).then(
+			(response) => {
+				if (response?.status == 200 || response?.status == 201) {
+					Swal.fire('', 'Creación exitosa!', 'success');
+					setLoading(true);
+					router.push('index').finally(() => {
+						setLoading(false);
+					});
+				} else {
+					Swal.fire('', 'No se pudo crear', 'error');
+				}
+			}
+		);
+		Swal.fire('', 'Creación exitosa!', 'success');
+		setLoading(true);
+		router.push('index').finally(() => {
+			setLoading(false);
+		});
+	} else {
+		alerts.validation();
+	}
+};
+</script>
+
+<template>
+	<div class="flex items-center mt-8 intro-y">
+		<div class="flex items-center space-x-4">
+			<CommonBackButton
+				:to="'subdirector_visit.index'"
+				title="Listado" />
+			<h2 class="mr-auto text-lg font-medium">Registrar visita</h2>
+		</div>
+	</div>
+
+	<div class="p-5 mt-5 intro-y box">
+		<div class="grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
+			<CommonInput
+				type="date"
+				label="Fecha  *"
+				name="date_visit"
+				v-model="form.date_visit"
+				:validator="v$" />
+			<CommonInput
+				type="time"
+				label="Hora  *"
+				name="hour_visit"
+				v-model="form.hour_visit"
+				:validator="v$" />
+			<CommonSelect
+				label="Municipio *"
+				name="municipalities"
+				class="cursor-pointer"
+				v-model="form.municipalities"
+				:validator="v$"
+				:options="municipalities" />
+
+			<CommonInput
+				type="text"
+				placeholder="Ingrese"
+				label="Corregimiento / Vereda *"
+				name="sidewalk"
+				v-model="form.sidewalk"
+				:validator="v$" />
+			<CommonSelect
+				label="Monitor *"
+				name="monitor"
+				class="cursor-pointer"
+				v-model="form.monitor"
+				:validator="v$"
+				:options="monitorList" />
+			<CommonSelect
+				label="Disciplinas *"
+				name="disciplines"
+				class="cursor-pointer"
+				v-model="form.disciplines"
+				:validator="v$"
+				:options="disciplinesList" />
+			<CommonInput
+				type="text"
+				placeholder="Ingrese"
+				label="Escenario deportivo *"
+				name="sports_scene"
+				v-model="form.sports_scene"
+				:validator="v$" />
+			<CommonInput
+				type="text"
+				placeholder="Ingrese"
+				label="Cobertura de benificiario *"
+				name="beneficiary_coverage"
+				v-model="form.beneficiary_coverage"
+				:validator="v$" />
+			<CommonSelect
+				label="Cumple con el desarrollo tecnico del mes *"
+				name="technical"
+				class="cursor-pointer"
+				v-model="form.technical"
+				:validator="v$"
+				:options="evaluationList" />
+			<CommonSelect
+				label="Apoyo a eventos *"
+				name="event_support"
+				class="cursor-pointer"
+				v-model="form.event_support"
+				:validator="v$"
+				:options="event_supportList" />
+		</div>
+		<div class="mt-6 intro-y">
+			<CommonTextarea
+				label="Descripcion *"
+				rows="5"
+				placeholder="Ingrese las Descripcion"
+				name="description"
+				v-model="form.description"
+				:validator="v$" />
+		</div>
+		<div class="mt-6 intro-y">
+			<CommonTextarea
+				label="Observaciones *"
+				rows="5"
+				placeholder="Ingrese las observaciones"
+				name="observations"
+				v-model="form.observations"
+				:validator="v$" />
+		</div>
+		<div class="p-5 mt-6 intro-y">
+			<CommonFile
+				:validator="v$"
+				v-model="form.file"
+				name="file"
+				class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
+				@addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
+				@removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }" />
+		</div>
+	</div>
+
+	<div class="mt-6 flex justify-end col-span-1 md:col-span-2">
+		<Button
+			variant="primary"
+			class="btn btn-primary"
+			@click="onSubmit">
+			Registrar
+		</Button>
+	</div>
+</template>
