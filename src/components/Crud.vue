@@ -52,6 +52,8 @@ const props = withDefaults(defineProps<{
     onDeleteFnc: () => (false),
     show_exports: false
 })
+
+
 // Spliting route.name >>> example >>> pecs.index = pecs
 const routeName = computed(() => {
     return String(route.name).split('.')[0]
@@ -456,7 +458,7 @@ const _getStatus = (status: any) => getStatus(status)
                 </div>
             </template>
             <template #item-full_name="item">
-                <p>{{ `${item.name} ${item.lastname ? item.lastname : ''}` }}</p>
+                <p>{{ `${item.full_name}` }}</p>
             </template>
             <template #item-contractor_fullname="item">
                 <p>{{ `${item.contractor.name} ${item.contractor.lastname ? item.contractor.lastname : ''}` }}</p>
