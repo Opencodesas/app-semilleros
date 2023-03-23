@@ -1,4 +1,4 @@
-import { defineStore, acceptHMRUpdate } from "pinia";
+import { acceptHMRUpdate, defineStore } from "pinia";
 import { Icon } from "../base-components/Lucide/Lucide.vue";
 
 export interface Menu {
@@ -152,6 +152,27 @@ export const useSideMenuStore = defineStore("sideMenu", {
       //     },
       //   ]
       // },
+      {
+        icon: "User",
+        title: "Subdirector",
+        subMenu: [
+          {
+            icon: "Activity",
+            pageName: "subdirector_visit.create",
+            title: "Crear visita",
+          },
+          {
+            icon: "Activity",
+            pageName: "subdirector_visit.index",
+            title: "Visitas subdirector",
+          },
+          {
+            icon: "Activity",
+            pageName: "subdirector_methodologist.list",
+            title: "Revision visitas metodólogo",
+          },
+        ]
+      },
     ],
   }),
   getters: {
