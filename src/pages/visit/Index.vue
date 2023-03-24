@@ -16,6 +16,10 @@ const create = () => {
     })
 }
 
+async function deleteModule(id: string | number) {
+  await methodologistVisitServices.delete(id as string);
+  //fetchData();
+}
 onBeforeMount(async () => {
     await contractorServices.getAll().then((response) => {
         // items.value = response?.data.items
@@ -45,7 +49,7 @@ const items = ref<Item[]>([])
     </div>
     <!-- BEGIN: Page Layout -->
     <div class="p-5 mt-5 intro-y box">
-        <Crud :headers="headers" :items="items" />
+        <Crud :headers="headers" label="Visitas" :items="items" :on-delete-fnc="deleteModule" />
     </div>
     <!-- END: Page Layout -->
 </template>

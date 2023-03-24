@@ -380,9 +380,14 @@ const routes = [
 						component: () => import('@/pages/views/Form.vue')
 					},
 					{
-						path: "edit",
-						name: "methodologist_visits.update",
-						// component: () => import('@/pages/contractors/Form.vue')
+						path: ":id",
+						name: "methodologist_visits.edit",
+						component: () => import('@/pages/views/FormEdit.vue')
+					},
+					{
+						path: ":id",
+						name: "methodologist_visits.see",
+						component: () => import('@/pages/views/FormSee.vue')
 					},
 				]
 			},

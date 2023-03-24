@@ -4,6 +4,11 @@
 import dayjs from 'dayjs'
 import Lucide from '@/base-components/Lucide';
 import type { FilterOption, Header, Item } from "vue3-easy-data-table"
+import BaseCrudDelete from "./BaseCrudDelete.vue"
+import BaseCrudSee from "./BaseCrudSee.vue"
+import BaseInput from '@/components/base/Input.vue'
+import BaseSelect from '@/components/base/Select.vue'
+import ToggleStatus from '@/components/users/ToggleStatus.vue'
 import ContractorDocumentsType from '@/types/contractorDocumentsTypes';
 import CommonButtonLink from './CommonButtonLink.vue';
 import ContractCancellation from './ContractCancellation.vue';
@@ -43,7 +48,9 @@ const props = withDefaults(defineProps<{
     management_permissions?: boolean
     onDeleteFnc: Function
     show_exports?: boolean,
+    hiddenButton?: boolean,
 }>(), {
+    hiddenButton: false,
     edit_gestor: false,
     item_see_fnc: () => (false),
     item_see_fullview: false,
@@ -176,6 +183,15 @@ const editAction = (id: string | number) => {
      }
      else {
          router.push({ name: `${routeName.value}.edit`, params: { id: id } })
+    }
+    
+}
+const seeAction = (id: string | number) => {
+     if (props.edit_gestor) {
+         router.push({ name: `${routeName.value}.see`, params: { id: id } })
+     }
+     else {
+         router.push({ name: `${routeName.value}.see`, params: { id: id } })
     }
     
 }
@@ -504,12 +520,19 @@ const _getStatus = (status: any) => getStatus(status)
                         </template>
                     </template>
                     <template v-else>
+                        <Button variant="outline-secondary" @click="seeAction(item.id)">
+                            <Lucide icon="Circle" class="mr-2" />
+                            <span class="text-sm">
+                                Ver
+                            </span>
+                        </Button>
                         <Button variant="outline-secondary" @click="editAction(item.id)">
                             <Lucide icon="FileEdit" class="mr-2" />
                             <span class="text-sm">
                                 Editar
                             </span>
                         </Button>
+                        <!--<BaseCrudDelete :item="item" :label="label" :on-delete="onDeleteFnc" v-if="!hiddenButton"/>-->
                         <template v-if="item.status == 'PRO'">
                             <!-- @click="editAction(item.id)" -->
                             <Button variant="outline-pending" @click="signatureAction(item.consecutive)">
@@ -669,6 +692,7 @@ const _getStatus = (status: any) => getStatus(status)
                             </template>
                             <template v-else>
                             </template> -->
+                    
                 </div>
             </template>
             <!-- 
