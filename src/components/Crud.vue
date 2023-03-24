@@ -515,6 +515,18 @@ const _getStatus = (status: any) => getStatus(status)
                                 </CommonButtonLink>
                             </template>
                     </template>
+                    <template v-else-if="isProvider('subdirector_coordinator')">
+                            <template v-if="item.status.slug !== 'APR' && item.status.slug !== 'REC'">
+                                <CommonButtonLink
+                                    :to="{ name: 'subdirector_coordinator.reviewControl', params: { id: item.id } }"
+                                    variant="outline-secondary">
+                                    <Lucide icon="FileEdit" class="mr-2" />
+                                    <span class="text-sm">
+                                        Revisar
+                                    </span>
+                                </CommonButtonLink>
+                            </template>
+                    </template>
                     <template v-else-if="isProvider('subdirector')">
                         <template v-if="item.status.slug === 'REC'">
                             <Button variant="outline-secondary" @click="editAction(item.id)">

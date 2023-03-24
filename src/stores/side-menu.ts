@@ -164,12 +164,17 @@ export const useSideMenuStore = defineStore("sideMenu", {
           {
             icon: "Activity",
             pageName: "subdirector_visit.index",
-            title: "Visitas subdirector",
+            title: "Visitas",
           },
           {
             icon: "Activity",
             pageName: "subdirector_methodologist.list",
-            title: "Revision visitas metodólogo",
+            title: "Revision metodólogo",
+          },
+          {
+            icon: "Activity",
+            pageName: "subdirector_coordinator.list",
+            title: "Revision coordinador",
           },
         ]
       },
@@ -192,6 +197,11 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: "psychosocial.visits",
             title: "Formatos",
           },
+          {
+            icon: "Activity",
+            pageName: "psychosocial.transversal-activity",
+            title: "Crea actividad transversal",
+          }
         ]
       },
       {

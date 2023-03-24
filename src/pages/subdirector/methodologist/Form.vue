@@ -8,38 +8,40 @@ const route = useRoute();
 const { id } = route.params;
 
 const form = reactive({
-	status: '',
+	id: '',
+	status_id: '',
 	reason: '',
-	name_methodologist: 'Camilo Martinez',
+	methodologist_id: 'Camilo Martinez',
 	date_visit: '2023-03-15',
 	hour_visit: '10:00',
-	municipality: '5',
 	sidewalk: 'El Aguila',
-	monitor: '1',
+	monitor_id: '1',
+	discipline_id: '7',
 	sports_scene: 'Cancha Principal Punta Brava',
-	observations: 'Mejorar dominio de grupo',
-	disciplines: '7',
+	municipality: '5',
+	beneficiary_coverage: '9',
 	evaluation: '1',
-	beneficiary: '9',
-
+	event_support_id: '1',
+	
 	file: [],
-
-	swich_plans_r: true,
-	swich_plans_sc_1: true,
-	swich_plans_sc_2: false,
-	swich_plans_sc_3: false,
-	swich_plans_sc_4: true,
-	swich_plans_gm_1: false,
-	swich_plans_gm_2: false,
-	swich_plans_gm_3: true,
-	swich_plans_gm_4: false,
-	swich_plans_gm_5: true,
-	swich_plans_gm_6: true,
-	swich_plans_mp_1: false,
-	swich_plans_mp_2: false,
-	swich_plans_mp_3: false,
-	swich_plans_mp_4: false,
-	swich_plans_mp_5: true,
+	
+	lesson_plan: true,
+	congruent_activity: true,
+	develop_technical_sports_component_month: false,
+	functional_component_month: false,
+	management_development_activities: true,
+	puntuality: false,
+	personal_presentation: false,
+	patient: true,
+	discipline: false,
+	parent_child_communication: true,
+	verbalization: true,
+	traditional: false,
+	behavioral: false,
+	romantic: false,
+	constructivist: false,
+	globalizer: true,
+	observations: 'Mejorar dominio de grupo',
 });
 const formStatus = reactive({
 	status: '',
@@ -75,7 +77,6 @@ const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
 }, null);
 
-
 const onSubmit = async () => {
 	formStatus.status == '1' && (formStatus.reason = '');
 	const valid = await v$.value.$validate();
@@ -90,13 +91,21 @@ const onSubmit = async () => {
 						setLoading(true);
 
 						if (isProvider('assistants')) {
-							router.push('').finally(() => {
-								setLoading(false);
-							});
+							router
+								.push({
+									name: 'assistants_methodologist.list',
+								})
+								.finally(() => {
+									setLoading(false);
+								});
 						} else {
-							router.push('').finally(() => {
-								setLoading(false);
-							});
+							router
+								.push({
+									name: 'subdirector_methodologist.list',
+								})
+								.finally(() => {
+									setLoading(false);
+								});
 						}
 					}
 				}
@@ -113,7 +122,7 @@ const onSubmit = async () => {
 			<CommonBackButton
 				:to="'subdirector_methodologist.list'"
 				title="Listado" />
-		<h2 class="mr-auto text-lg font-medium">Revisar Visita</h2>
+			<h2 class="mr-auto text-lg font-medium">Revisar Visita</h2>
 		</div>
 	</div>
 
@@ -170,6 +179,7 @@ const onSubmit = async () => {
 			<CommonInput
 				type="text"
 				placeholder="Corregimiento / Vereda"
+				class="disabled:bg-red-700"
 				label="Corregimiento / Vereda *"
 				name="village"
 				v-model="form.sidewalk"
@@ -177,13 +187,13 @@ const onSubmit = async () => {
 			<CommonSelect
 				label="Monitor Deportivo *"
 				name="monitor"
-				v-model="form.monitor"
+				v-model="form.monitor_id"
 				:options="monitorList"
 				disabled />
 			<CommonSelect
 				label="Disciplinas *"
 				name="disciplines"
-				v-model="form.disciplines"
+				v-model="form.discipline_id"
 				:options="disciplines"
 				disabled />
 			<CommonInput
@@ -198,7 +208,7 @@ const onSubmit = async () => {
 				placeholder="Cobertura de beneficiario"
 				label="Cobertura de beneficiario *"
 				name="beneficiary"
-				v-model="form.beneficiary"
+				v-model="form.beneficiary_coverage"
 				disabled />
 			<CommonSelect
 				label="Evaluacion *"
@@ -209,7 +219,7 @@ const onSubmit = async () => {
 			<CommonSelect
 				label="Apoyo a evento *"
 				name="evaluation"
-				v-model="form.evaluation"
+				v-model="form.event_support_id"
 				:options="apoyoList"
 				disabled />
 		</div>
@@ -224,7 +234,7 @@ const onSubmit = async () => {
 				name="swich_plans"
 				id="swich_plans"
 				type="checkbox"
-				v-model="form.swich_plans_r"
+				v-model="form.lesson_plan"
 				disabled />
 			<FormSwitch.Label htmlFor="swich_plans">
 				Plan de clases
@@ -240,7 +250,7 @@ const onSubmit = async () => {
 						name="swich_plans_sc_1"
 						id="swich_plans_sc_1"
 						type="checkbox"
-						v-model="form.swich_plans_sc_1"
+						v-model="form.congruent_activity"
 						disabled />
 					<FormSwitch.Label htmlFor="swich_plans_sc_1">
 						Plantea actividades congruentes para el cumplimiento de los
@@ -253,7 +263,7 @@ const onSubmit = async () => {
 						name="swich_plans_sc_2"
 						id="swich_plans_sc_2"
 						type="checkbox"
-						v-model="form.swich_plans_sc_2"
+						v-model="form.develop_technical_sports_component_month"
 						disabled />
 					<FormSwitch.Label htmlFor="swich_plans_sc_2">
 						Desarrolla el componente técnico deportivo del mes
@@ -261,11 +271,11 @@ const onSubmit = async () => {
 				</FormSwitch>
 				<FormSwitch>
 					<FormSwitch.Input
-					name="swich_plans_sc_3"
-					id="swich_plans_sc_3"
-					type="checkbox"
-					v-model="form.swich_plans_sc_3"
-					disabled />
+						name="swich_plans_sc_3"
+						id="swich_plans_sc_3"
+						type="checkbox"
+						v-model="form.functional_component_month"
+						disabled />
 					<FormSwitch.Label htmlFor="swich_plans_sc_3">
 						Desarrolla el componente funcional del mes
 					</FormSwitch.Label>
@@ -275,7 +285,7 @@ const onSubmit = async () => {
 						name="swich_plans_sc_4"
 						id="swich_plans_sc_4"
 						type="checkbox"
-						v-model="form.swich_plans_sc_4"
+						v-model="form.management_development_activities"
 						disabled />
 					<FormSwitch.Label htmlFor="swich_plans_sc_4">
 						Tiene buen manejo de grupo en el desarrollo de las actividades
@@ -295,7 +305,7 @@ const onSubmit = async () => {
 						name="swich_plans_gm_1"
 						id="swich_plans_gm_1"
 						type="checkbox"
-						v-model="form.swich_plans_gm_1"
+						v-model="form.puntuality"
 						disabled />
 					<FormSwitch.Label htmlFor="swich_plans_gm_1">
 						Puntualidad
@@ -307,7 +317,7 @@ const onSubmit = async () => {
 						name="swich_plans_gm_2"
 						id="swich_plans_gm_2"
 						type="checkbox"
-						v-model="form.swich_plans_gm_2"
+						v-model="form.personal_presentation"
 						disabled />
 					<FormSwitch.Label htmlFor="swich_plans_gm_2">
 						Presentacion personal - uniforme del Proyecto
@@ -319,7 +329,7 @@ const onSubmit = async () => {
 						name="swich_plans_gm_3"
 						id="swich_plans_gm_3"
 						type="checkbox"
-						v-model="form.swich_plans_gm_3"
+						v-model="form.patient"
 						disabled />
 					<FormSwitch.Label htmlFor="swich_plans_gm_3">
 						Paciente
@@ -331,7 +341,7 @@ const onSubmit = async () => {
 						name="swich_plans_gm_4"
 						id="swich_plans_gm_4"
 						type="checkbox"
-						v-model="form.swich_plans_gm_4"
+						v-model="form.discipline"
 						disabled />
 					<FormSwitch.Label htmlFor="swich_plans_gm_4">
 						Disciplina
@@ -342,7 +352,7 @@ const onSubmit = async () => {
 						name="swich_plans_gm_5"
 						id="swich_plans_gm_5"
 						type="checkbox"
-						v-model="form.swich_plans_gm_5"
+						v-model="form.parent_child_communication"
 						disabled />
 					<FormSwitch.Label htmlFor="swich_plans_gm_5">
 						Comunicación alumnos y padres
@@ -353,7 +363,7 @@ const onSubmit = async () => {
 						name="swich_plans_gm_6"
 						id="swich_plans_gm_6"
 						type="checkbox"
-						v-model="form.swich_plans_gm_6"
+						v-model="form.verbalization"
 						disabled />
 					<FormSwitch.Label htmlFor="swich_plans_gm_6">
 						Verbalización clara y simple
@@ -373,7 +383,7 @@ const onSubmit = async () => {
 						name="swich_plans_mp_1"
 						id="swich_plans_mp_1"
 						type="checkbox"
-						v-model="form.swich_plans_mp_1"
+						v-model="form.traditional"
 						disabled />
 					<FormSwitch.Label htmlFor="swich_plans_mp_1">
 						Modelo pedagógico del monitor
@@ -385,7 +395,7 @@ const onSubmit = async () => {
 						name="swich_plans_mp_2"
 						id="swich_plans_mp_2"
 						type="checkbox"
-						v-model="form.swich_plans_mp_2"
+						v-model="form.behavioral"
 						disabled />
 					<FormSwitch.Label htmlFor="swich_plans_mp_2">
 						Conductual
@@ -397,7 +407,7 @@ const onSubmit = async () => {
 						name="swich_plans_mp_3"
 						id="swich_plans_mp_3"
 						type="checkbox"
-						v-model="form.swich_plans_mp_3"
+						v-model="form.romantic"
 						disabled />
 					<FormSwitch.Label htmlFor="swich_plans_mp_3">
 						Romantico
@@ -409,7 +419,7 @@ const onSubmit = async () => {
 						name="swich_plans_mp_4"
 						id="swich_plans_mp_4"
 						type="checkbox"
-						v-model="form.swich_plans_mp_4"
+						v-model="form.constructivist"
 						disabled />
 					<FormSwitch.Label htmlFor="swich_plans_mp_4">
 						Constructivista
@@ -421,7 +431,7 @@ const onSubmit = async () => {
 						name="swich_plans_mp_5"
 						id="swich_plans_mp_5"
 						type="checkbox"
-						v-model="form.swich_plans_mp_5"
+						v-model="form.globalizer"
 						disabled />
 					<FormSwitch.Label htmlFor="swich_plans_mp_5">
 						Integrador – globalizador
@@ -444,7 +454,8 @@ const onSubmit = async () => {
 				class="flex flex-col w-full sm:flex-row">
 				Evidencia *
 			</FormLabel>
-			<img :alt="`Evidencia del metodologo ${form.name_methodologist}`"
+			<img
+				:alt="`Evidencia del metodologo ${form.methodologist_id}`"
 				class="m-auto border rounded-lg"
 				src="/semilleros.png"
 				width="400" />

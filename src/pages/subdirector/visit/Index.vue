@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { searchData } from '@/composables/search';
 import { Header, Item } from 'vue3-easy-data-table';
 
 const router = useRouter();
@@ -23,23 +24,23 @@ const create = () => {
 
 const headers: Header[] = [
 	{ text: 'No', value: 'id' },
-	{ text: 'Fecha', value: 'date' },
+	{ text: 'Fecha', value: 'date_visit' },
 	{ text: 'Municipio', value: 'municipality' },
 	{ text: 'Monitor', value: 'monitor_name' },
-	{ text: 'Escenario Deportivo', value: 'sport_facility' },
+	{ text: 'Escenario Deportivo', value: 'sport_scene' },
 	{ text: 'Estado', value: 'status' },
 	{ text: 'Acciones', value: 'actions' },
 ];
 
 // const items = ref<Item[]>([]);
-
+const search = ref('');
 const items = ref<Item[]>([
 	{
 		id: '1',
-		date: '2023-02-15',
+		date_visit: '2023-02-15',
 		municipality: 'Jamundi',
 		monitor_name: 'Oscar Martinez',
-		sport_facility: 'Cancha Marcella',
+		sport_scene: 'Cancha Marcella',
 		status: {
 			id: 2,
 			name: 'En Revisión',
@@ -48,10 +49,10 @@ const items = ref<Item[]>([
 	},
 	{
 		id: '2',
-		date: '2023-02-20',
+		date_visit: '2023-02-20',
 		municipality: 'Jamundi',
 		monitor_name: 'Oscar Martinez',
-		sport_facility: 'Cancha Marcella',
+		sport_scene: 'Cancha Marcella',
 		status: {
 			id: 2,
 			name: 'En Revisión',
@@ -60,10 +61,10 @@ const items = ref<Item[]>([
 	},
 	{
 		id: '3',
-		date: '2023-02-27',
+		date_visit: '2023-02-27',
 		municipality: 'Jamundi',
 		monitor_name: 'Oscar Martinez',
-		sport_facility: 'Cancha Marcella',
+		sport_scene: 'Cancha Marcella',
 		status: {
 			id: 2,
 			name: 'Rechazado',
@@ -71,6 +72,23 @@ const items = ref<Item[]>([
 		},
 	},
 ]);
+
+const data = computed(() => searchData(items.value, search.value));
+
+// const dataSearch = computed<Item[]>(() => {
+// 	if (items.value) {
+// 		const searchValue = search.value.toLowerCase();
+// 		return items.value.filter(
+// 			(item) =>
+// 				item.date.includes(searchValue) ||
+// 				item.municipality.toLowerCase().includes(searchValue) ||
+// 				item.monitor_name.toLowerCase().includes(searchValue) ||
+// 				item.sport_scene.toLowerCase().includes(searchValue) ||
+// 				item.status.name.toLowerCase().includes(searchValue)
+// 		);
+// 	}
+// 	return items.value;
+// });
 </script>
 
 <template>
@@ -88,13 +106,19 @@ const items = ref<Item[]>([
 
 	<!-- BEGIN: Page Layout -->
 	<div class="p-5 mt-5 intro-y box">
-		<FormInput
+		<!-- <FormInput
+			v-model="search"
 			placeholder="Buscar"
 			class="input w-full h-9 border rounded-none border-b-2 border-x-0 border-t-0 shadow-none pl-1 outline-none focus:outline-none focus:shadow-none focus:border-transparent focus:border-primary-500 mb-2"
-			icon="search" />
+			icon="search" /> -->
+		<CommonInput
+			type="search"
+			name="search"
+			v-model="search"
+			placeholder="Buscar" />
 		<Crud
 			:headers="headers"
-			:items="items" />
+			:items="data" />
 		<!-- <DataTable
 			:headers="headers"
 			:items="items"

@@ -1,7 +1,7 @@
 import { accessStore } from "@/stores/accessStore";
-import { onboardingStore } from "@/stores/onboardingStore"
-import { storeToRefs } from "pinia"
-import { NavigationGuardNext, RouteLocationNormalized, RouteMeta, RouteRecordRaw, createRouter, createWebHistory } from "vue-router";
+import { onboardingStore } from "@/stores/onboardingStore";
+import { storeToRefs } from "pinia";
+import { createRouter, createWebHistory, NavigationGuardNext, RouteLocationNormalized, RouteMeta, RouteRecordRaw } from "vue-router";
 // import SimpleMenu from "../layouts/SimpleMenu/SimpleMenu.vue";
 // import TopMenu from "../layouts/TopMenu/TopMenu.vue";
 
@@ -484,7 +484,24 @@ const routes = [
 								component: () => import('@/pages/subdirector/methodologist/Form.vue'),
 							},
 						]
-					}
+					},
+					{
+						path: "coordinator",
+						name: "subdirector_coordinator",
+						meta: { provider: 'subdirector_coordinator' },
+						children: [
+							{
+								path: "",
+								name: "subdirector_coordinator.list",
+								component: () => import('@/pages/subdirector/coordinator/Index.vue'),
+							},
+							{
+								path: "edit/:id",
+								name: "subdirector_coordinator.reviewControl",
+								component: () => import('@/pages/subdirector/coordinator/Form.vue'),
+							},
+						]
+					},
 				]
 			},
 			{
@@ -544,6 +561,11 @@ const routes = [
 							},
 						]
 					},
+					{
+						path: "transversal-activity",
+						name: "psychosocial.transversal-activity",
+						component: () => import('@/pages/psychosocial/transversal-activity/Form.vue'),
+					}
 				],
 			},
 			
