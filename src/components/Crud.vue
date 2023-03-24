@@ -503,10 +503,10 @@ const _getStatus = (status: any) => getStatus(status)
                             </template>
                         </template>
                     </template>
-                    <template v-else-if="isProvider('psychosocial')">
+                    <template v-else-if="isProvider('psychosocial') || isProvider('psychosocial-coordinator')">
                         <template v-if="item.status.slug == 'REC'">
                             <Button variant="outline-secondary"
-                                @click="() => { router.push({ name: 'psychosocial.custom-update', params: { status: 'REC' } }) }">
+                                @click="editAction('REC')">
                                 <Lucide icon="FileEdit" class="mr-2" />
                                 <span class="text-sm">
                                     Editar
@@ -517,13 +517,13 @@ const _getStatus = (status: any) => getStatus(status)
                             <Button variant="outline-secondary"
                                 @click="() => { 
                                     if (item.status.slug == 'APR'){
-                                        router.push({ name: 'psychosocial.custom-update', params: { status: 'APR' } }) 
+                                        editAction('APR')
                                     }else{
-                                        router.push({ name: 'psychosocial.custom-update', params: { status: 'ENR' } }) 
+                                        editAction('ENR')
                                     }
                             
                             }">
-                                <Lucide icon="FileArchive" class="mr-2" />
+                                <Lucide icon="Eye" class="mr-2" />
                                 <span class="text-sm">
                                     Visualizar
                                 </span>

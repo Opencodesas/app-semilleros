@@ -3,8 +3,6 @@ import useVuelidate from '@vuelidate/core'
 import { required } from '@/utils/validators'
 import { Header, Item } from 'vue3-easy-data-table';
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
-import FormSwitch from "@/base-components/Form/FormSwitch";
-import { filePondValue } from '@/composables/useFilepondEvents';
 import { customVisitServices } from '@/services/psychosocial/customVisitServices';
 
 
@@ -18,14 +16,26 @@ const routeName = computed(() => {
     return String(route.name).split('.')[0]
 })
 
-const prueba = () => {
-    console.log('prueba')
-}
-
-// const items = ref<Item[]>([])
+// const itemsVisit = ref<Item[]>([])
 
 // onBeforeMount(async () => {
-//     await userServices.getAll().then((response) => {
+//     await psychosocialVisitServices.getAll().then((response) => {
+//         items.value = response?.data.items
+//     })
+// })
+
+// const itemsCustomVisit = ref<Item[]>([])
+
+// onBeforeMount(async () => {
+//     await psychosocialCustomVisitServices.getAll().then((response) => {
+//         items.value = response?.data.items
+//     })
+// })
+
+// const itemsTransversalActivity = ref<Item[]>([])
+
+// onBeforeMount(async () => {
+//     await psychosocialTransversalActivityServices.getAll().then((response) => {
 //         items.value = response?.data.items
 //     })
 // })
@@ -165,6 +175,7 @@ const headerVisits: Header[] = [
     { text: 'Municipio', value: 'municipality', sortable: true },
     { text: 'Escenario Deportivo', value: 'sport_arena' },
     { text: 'Estado', value: 'status' },
+    { text: 'Acciones', value: 'actions'},
 ]
 
 const headerCustomVisits: Header[] = [
@@ -184,11 +195,18 @@ const headerTransversalActivities: Header[] = [
     { text: 'Estado', value: 'email' },
 ]
 
+const selectedTab = ref(0);
+const prueba = () => {
+    console.log(pr.value)
+}
+const pr = ref(0);
+
+
 </script>
 
 <template>
-   
-    <TabGroup>
+   <Button @click="prueba" variant="primary">prueba</Button>
+    <TabGroup ref="pr">
         <TabList class="py-5">
             <!-- Use the `selected` state to conditionally style the selected tab. -->
             <Tab as="template" v-slot="{ selected }">
@@ -212,13 +230,13 @@ const headerTransversalActivities: Header[] = [
         </TabList>
         <TabPanels>
             <TabPanel>
-                 <Crud :headers="headerVisits" :items="items2" :item_see_fnc="prueba"/>
+                 <Crud :headers="headerVisits" :items="items2"  />
             </TabPanel>
             <TabPanel>
-                <Crud :headers="headerCustomVisits" :items="items" :item_see_fnc="prueba"/>
+                <Crud :headers="headerCustomVisits" :items="items"/>
             </TabPanel>
             <TabPanel>
-                <Crud :headers="headerTransversalActivities" :items="items" :item_see_fnc="prueba"/>
+                <Crud :headers="headerTransversalActivities" :items="items"/>
             </TabPanel>
         </TabPanels>
     </TabGroup>

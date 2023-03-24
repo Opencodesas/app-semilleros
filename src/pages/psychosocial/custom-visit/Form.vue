@@ -4,8 +4,6 @@ import { required } from '@/utils/validators'
 import FormSwitch from "@/base-components/Form/FormSwitch";
 import { filePondValue } from '@/composables/useFilepondEvents';
 import { customVisitServices } from '@/services/psychosocial/customVisitServices';
-import { Tooltip } from 'chart.js';
-
 
 const { multiple } = useFilepondEvents();
 
@@ -16,7 +14,7 @@ const form = reactive({
     theme: '',
     agreements: '',
     concept: '1',
-    swich_guardian_knows: false,
+    guardian_knows_semilleros: false,
     file: [],
     status: 'ENR',
 
@@ -30,7 +28,7 @@ const form_rules = computed(() => ({
     theme: { required },
     agreements: { required },
     concept: {},
-    swich_guardian_knows: { required },
+    guardian_knows_semilleros: { required },
     file: [{ required }],
 }))
 
@@ -47,7 +45,7 @@ const months = asyncComputed(async () => {
     return await getSelect(['months'])
 }, null)
 
-const cities = asyncComputed(async () => {
+const municipalities = asyncComputed(async () => {
     return await getSelect(['municipalities'])
 }, null)
 
@@ -95,6 +93,11 @@ const onSubmit = async () => {
     }
 }
 
+const positionRange = computed(() => {
+    const positionTooltip = (parseInt(form.concept) - 1) / (4);
+    return `calc(${positionTooltip * 100}% - ${(2*(parseInt(form.concept) - 1)**2)/5 + 2*(parseInt(form.concept) -1)}px)`;
+});
+
 </script>
 
 <template>
@@ -107,12 +110,11 @@ const onSubmit = async () => {
             <div class="space-y-8 divide-y divide-slate-200">
                 <div>
                     <div class="mt-0 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-3 ">
-                        <CommonSelect label="Mes *" name="month" v-model="form.month" :validator="v$"
-                            :options="months" />
-                        <CommonSelect label="Municipio *" name="municipality" v-model="form.municipality"
-                            :validator="v$" :options="cities" />
-                        <CommonSelect label="Beneficiario *" name="beneficiary" v-model="form.beneficiary"
-                            :validator="v$" :options="cities" />
+                        <CommonSelect label="Mes *" name="month" v-model="form.month" :validator="v$" :options="months" />
+                        <CommonSelect label="Municipio *" name="municipality" v-model="form.municipality" :validator="v$"
+                            :options="municipalities" />
+                        <CommonSelect label="Beneficiario *" name="beneficiary" v-model="form.beneficiary" :validator="v$"
+                            :options="municipalities" />
                     </div>
                     <!-- cambiar condicion por "beneficiary_data" cuando haya función para traer los datos -->
                     <div v-if="form.beneficiary">
@@ -138,29 +140,37 @@ const onSubmit = async () => {
                             <div class="">
 
                                 <FormSwitch.Input name="swich_plans" id="swich_plans" type="checkbox"
-                                    v-model="form.swich_guardian_knows" :validator="v$" />
+                                    v-model="form.guardian_knows_semilleros" :validator="v$" />
                                 <FormSwitch.Label htmlFor="swich_plans"> ¿El padre o acudiente conoce el proyecto de
                                     Semilleros Deportivos?. </FormSwitch.Label>
                             </div>
                         </div>
                         <div class="col-span-3 sm:grid-cols-3">
                             <CommonTextarea
-                                label="Temáticas durante la visita: físico, emocional, familiar, escolar, social, espiritual *" placeholder="Escriba..."
-                                name="theme" rows="5" v-model="form.theme" :validator="v$" />
+                                label="Temáticas durante la visita: físico, emocional, familiar, escolar, social, espiritual *"
+                                placeholder="Escriba..." name="theme" rows="5" v-model="form.theme" :validator="v$" />
 
                         </div>
                         <div class="col-span-3 sm:grid-cols-3">
-                            <CommonTextarea label="Acuerdos y recomendaciones *" placeholder="Escriba..." name="agreements" rows="5"
-                                v-model="form.agreements" :validator="v$" />
+                            <CommonTextarea label="Acuerdos y recomendaciones *" placeholder="Escriba..." name="agreements"
+                                rows="5" v-model="form.agreements" :validator="v$" />
                         </div>
 
-                        <div class="grid justify-center col-span-3">
-                            <CommonInput type="range"
-                                label="Concepto del padre o acudiente que atendió la visita en una escala de 1 a 5 donde 1 es deficiente y 5 excelente"
-                                name="concept" min="1" max="5" class="focus:outline-none" v-model="form.concept" />
 
+
+                        <div class="grid col-span-3 justify-center">
+                            <label for="range" class="text-xs">Concepto del padre o acudiente que atendió la visita en una
+                                escala de 1 a 5 donde 1 es deficiente y 5 excelente:
+                            </label>
+                            <div id="range" class="relative mb-5">
+                                <input class="w-full accent-primary" type="range" min="1" max="5"
+                                    v-model="form.concept" />
+                                <div :style="{ left: positionRange }"
+                                    class="absolute -translate-x-1/4 border-zinc-500 border-2 p-2 rounded-full bg-primary text-white select-none">
+                                    {{ form.concept }}
+                                </div>
+                            </div>
                         </div>
-
 
                         <div class="grid col-span-3">
                             <CommonDropzone name="file" label="Suba su archivo aqui *" :accept-multiple="false"
@@ -169,9 +179,7 @@ const onSubmit = async () => {
                                 @removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }"
                                 :validator="v$" />
                         </div>
-                        <!-- <div>
-                                                        <CommonFile label="Documento 1" name="file"/>
-                                                    </div> -->
+
                     </div>
                 </div>
             </div>
@@ -185,3 +193,20 @@ const onSubmit = async () => {
         </form>
     </div>
 </template>
+
+<style>
+.range-slider {
+    position: relative;
+}
+
+.tooltip {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 5px;
+}
+</style>

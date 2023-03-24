@@ -1,81 +1,182 @@
 <script setup lang="ts">
 import useVuelidate from '@vuelidate/core'
 import { required } from '@/utils/validators'
-import FormSwitch from "@/base-components/Form/FormSwitch";
-import { filePondValue } from '@/composables/useFilepondEvents';
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
-import CustomVisit from './visits_type/Custom-visit.vue'
+import { Header, Item } from 'vue3-easy-data-table';
 import { customVisitServices } from '@/services/psychosocial/customVisitServices';
+import {
+    TransitionRoot,
+    TransitionChild,
+    Dialog,
+    DialogPanel,
+    DialogTitle,
+} from '@headlessui/vue'
 
 
-const { multiple } = useFilepondEvents();
+const route = useRoute()
 
-const form = reactive({
-    month: '',
-    municipality: '',
-    beneficiary: '',
-    objetive: '',
-    theme: '',
-    agreements: '',
-    concept: '0',
-    swich_guardian_knows: false,
-    file: [],
+const items = ref<Item[]>([
+    {
+        id: '1',
+        month: 'Enero',
+        municipality: 'Cartago',
+        beneficiary: 'Juan',
+        status: {
+            id: 2,
+            name: 'En Revisión',
+            slug: 'ENR'
+        },
+    },
+    {
+        id: '2',
+        month: 'Enero',
+        municipality: 'Cartago',
+        beneficiary: 'Pedro',
+        status: {
+            id: 4,
+            name: 'Rechazado',
+            slug: 'REC'
+        },
+    },
+    {
+        id: '3',
+        month: 'Enero',
+        municipality: 'Cartago',
+        beneficiary: 'Juan',
+        status: {
+            id: 1,
+            name: 'Aprobado',
+            slug: 'APR'
+        },
+    },
+    {
+        id: '4',
+        month: 'Enero',
+        municipality: 'Cartago',
+        beneficiary: 'Maria',
+        status: {
+            id: 4,
+            name: 'Rechazado',
+            slug: 'REC'
+        },
+    },
+    {
+        id: '5',
+        month: 'Enero',
+        municipality: 'Cartago',
+        beneficiary: 'Jose',
+        status:
+        {
+            id: 1,
+            name: 'Aprobado',
+            slug: 'APR'
+        },
+    },
+    {
+        id: '6',
+        month: 'Enero',
+        municipality: 'Cartago',
+        beneficiary: 'Luis',
+        status: {
+            id: 4,
+            name: 'Rechazado',
+            slug: 'REC'
+        },
+    },
+    {
+        id: '7',
+        month: 'Enero',
+        municipality: 'Cartago',
+        beneficiary: 'Maria',
+        status: {
+            id: 4,
+            name: 'Rechazado',
+            slug: 'REC'
+        },
+    },
+    {
+        id: '8',
+        month: 'Enero',
+        municipality: 'Cartago',
+        beneficiary: 'Pedro',
+        status: {
+            id: 4,
+            name: 'Rechazado',
+            slug: 'REC'
+        },
+    },
+    {
+        id: '9',
+        month: 'Enero',
+        municipality: 'Cartago',
+        beneficiary: 'Juan',
+        status: {
+            id: 1,
+            name: 'Aprobado',
+            slug: 'APR'
+        },
+    },
+    {
+        id: '10',
+        month: 'Enero',
+        municipality: 'Cartago',
+        beneficiary: 'Luis',
+        status: {
+            id: 1,
+            name: 'Aprobado',
+            slug: 'APR'
+        },
+    },
 
-})
+])
 
+const items2 = ref<Item[]>([
+    { id: '1', date: '2023-02-11', monitor: 'Juan', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 1, name: 'Aprobado', slug: 'APR' } },
+    { id: '2', date: '2023-02-11', monitor: 'Pedro', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 2, name: 'En Revisión', slug: 'ENR' } },
+    { id: '3', date: '2023-02-11', monitor: 'Juan', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 1, name: 'Aprobado', slug: 'APR' } },
+    { id: '4', date: '2023-02-11', monitor: 'Maria', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 4, name: 'Rechazado', slug: 'REC' } },
+    { id: '5', date: '2023-02-11', monitor: 'Jose', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 1, name: 'Aprobado', slug: 'APR' } },
+])
 
-// const form_rules = computed(() => ({
-//     month: { required },
-//     municipality: { required },
-//     beneficiary: { required },
-//     objetive: { required },
-//     theme: { required },
-//     agreements: { required },
-//     concept: {},
-//     swich_guardian_knows: { required },
-//     file: [],
-// }))
+const headerVisits: Header[] = [
+    { text: 'No.', value: 'id', sortable: true },
+    { text: 'Fecha', value: 'date', sortable: true },
+    { text: 'Usuario', value: 'monitor' },
+    { text: 'Municipio', value: 'municipality', sortable: true },
+    { text: 'Escenario Deportivo', value: 'sport_arena' },
+    { text: 'Estado', value: 'status' },
+    { text: 'Acciones', value: 'actions' },
+]
 
-const months = asyncComputed(async () => {
-    return await getSelect(['months'])
-}, null)
-
-const cities = asyncComputed(async () => {
-    return await getSelect(['municipalities'])
-}, null)
-
-const municipality_id = computed(() => form.municipality)
-
-// const beneficiaries = asyncComputed(async () => {
-//     return municipality_id.value ? await getBeneficiariesByMunicipaly(municipality_id.value) : []
-//  }, null)
-
-// const beneficiary_data = asyncComputed(async () => {
-//     return form.beneficiary ? await getBeneficiaryData(form.beneficiary) : null
-// }, null)
-//      |
-//    grade: '',
-//     health_entity: '',
-//     guardian_name: '',
-//     guardian_lastname: '',
-//     guardian_identification: '',
-//     
+const headerCustomVisits: Header[] = [
+    { text: 'No', value: 'id', sortable: true },
+    { text: 'Mes', value: 'month', sortable: true },
+    { text: 'Usuario', value: 'monitor', sortable: true },
+    { text: 'Municipio', value: 'municipality', sortable: true },
+    { text: 'Beneficiario', value: 'beneficiary' },
+    { text: 'Estado', value: 'status' },
+    { text: 'Acciones', value: 'actions' },
+]
 
 //const v$ = useVuelidate(form_rules, form)
 
 const { isProvider } = useProvider()
 const router = useRouter()
 
+const isOpen = ref(false)
+
+function closeModal() {
+    isOpen.value = false
+}
+function openModal() {
+    isOpen.value = true
+}
 
 </script>
 
 <template>
-    <div class="flex items-center justify-between mt-8 intro-y">
-        <h2 class="mr-auto text-lg font-medium">Registrar visita personalizada</h2>
-    </div>
-
     <TabGroup>
-        <TabList>
+        <TabList class="py-5">
             <!-- Use the `selected` state to conditionally style the selected tab. -->
             <Tab as="template" v-slot="{ selected }">
                 <button
@@ -91,10 +192,61 @@ const router = useRouter()
             </Tab>
         </TabList>
         <TabPanels>
-            <TabPanel>Content 1</TabPanel>
             <TabPanel>
-                <CustomVisit />
+                <Crud :headers="headerVisits" :items="items2" />
+            </TabPanel>
+            <TabPanel>
+                <Crud :headers="headerCustomVisits" :items="items" />
             </TabPanel>
         </TabPanels>
     </TabGroup>
+
+    <div>
+        <!-- BEGIN: Modal Toggle -->
+        <div class="text-center">
+            <div class="flex">
+                <Button type="button" variant="outline-warning" @click="openModal">
+                    <Lucide icon="FileX" class="mr-2" />
+                    <span class="text-sm">
+                        Anular
+                    </span>
+                </Button>
+            </div>
+            <TransitionRoot appear :show="isOpen" as="template">
+                <Dialog as="div" class="relative z-[100]">
+                    <TransitionChild as="template" enter="duration-300 ease-out" enter-from="opacity-0"
+                        enter-to="opacity-100" leave="duration-200 ease-in" leave-from="opacity-100" leave-to="opacity-0">
+                        <div class="fixed inset-0 bg-black bg-opacity-25" />
+                    </TransitionChild>
+
+                    <div class="fixed inset-0 overflow-y-auto">
+                        <div class="flex min-h-full items-center justify-center p-4 text-center">
+                            <TransitionChild as="template" enter="duration-300 ease-out" enter-from="opacity-0 scale-95"
+                                enter-to="opacity-100 scale-100" leave="duration-200 ease-in"
+                                leave-from="opacity-100 scale-100" leave-to="opacity-0 scale-95">
+                                <DialogPanel
+                                    class="w-full max-w-md transform overflow-hidden rounded-md bg-white p-6 text-left align-middle shadow-xl transition-all divide-y divide-slate-200 space-y-2">
+                                    <DialogTitle as="h3" class="text-lg font-medium leading-6 text-gray-900">
+                                        Anulación de Contrato para 
+                                        
+                                    </DialogTitle>
+                                    
+                                    <FormEdit />
+                                        <div class="flex justify-end mt-4 space-x-4">
+                                            <Button type="button" variant="soft-secondary" @click="closeModal">
+                                                Cancelar
+                                            </Button>
+                                            <Button type="submit" variant="soft-warning">
+                                                Enviar
+                                            </Button>
+                                        </div>
+                                    <!-- </form> -->
+                                </DialogPanel>
+                            </TransitionChild>
+                        </div>
+                    </div>
+                </Dialog>
+            </TransitionRoot>
+        </div>
+    </div>
 </template>

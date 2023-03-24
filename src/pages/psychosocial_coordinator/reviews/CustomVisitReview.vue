@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import FormSwitch from "@/base-components/Form/FormSwitch";
 import useVuelidate from '@vuelidate/core'
 import { required } from '@/utils/validators'
-import FormSwitch from "@/base-components/Form/FormSwitch";
 import { filePondValue } from '@/composables/useFilepondEvents';
 import { customVisitServices } from '@/services/psychosocial/customVisitServices';
 import { selectOption } from '@/components/CommonSelect.vue';
@@ -15,7 +15,10 @@ const route = useRoute();
 //Usar para verificar
 const { isProvider } = useProvider()
 
-// router.push({ name: 'psychosocial.custom-visit.edit', params: { id: 1 } })
+const props = defineProps<{
+    id: string | number
+}>()
+
 //Quitar datos de prueba
 const form = reactive({
     reason: 'Fue rechazado por...',
@@ -32,14 +35,9 @@ const form = reactive({
 
 
 const form_rules = computed(() => ({
-    month: { required },
-    municipality: { required },
-    beneficiary: { required },
-    theme: { required },
-    agreements: { required },
-    concept: {},
-    guardian_knows_semilleros: { required },
-    file: [],
+    reason: { required },
+    status: { required },
+
 }))
 
 const beneficiary_data = reactive({
@@ -82,7 +80,7 @@ const dataLoaded = ref(false)
 //Verificar si se puede hacer con asycComputed
 const getData = async () => {
 
-    await customVisitServices.get(route.params.id as string).then((response) => {
+    await customVisitServices.get(props.id as string).then((response) => {
         console.log(response?.data.items);
         if (response?.status == 200 || response?.status == 201) {
             form.reason = response.data.items.reason;
@@ -109,7 +107,6 @@ onMounted(async () => {
     console.log(route);
     await getData();
     dataLoaded.value = true;
-    form.status = `${route.params.id}`
 });
 
 
@@ -141,15 +138,6 @@ const onSubmit = async () => {
         alerts.validation()
     }
 }
-
-const download = () => {
-
-}
-
-const diableElements = computed(() => {
-    return form.status == 'REC' ? false : true;
-})
-
 const positionRange = computed(() => {
     const positionTooltip = (parseInt(form.concept) - 1) / (4);
     return `calc(${positionTooltip * 100}% - ${(2 * (parseInt(form.concept) - 1) ** 2) / 5 + 2 * (parseInt(form.concept) - 1)}px)`;
@@ -172,11 +160,11 @@ const positionRange = computed(() => {
                 <div>
 
                     <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-3">
-                        <CommonSelect :disabled="diableElements" label="Mes *" name="month" v-model="form.month"
+                        <CommonSelect disabled label="Mes *" name="month" v-model="form.month"
                             :validator="v$" :options="months" />
-                        <CommonSelect :disabled="diableElements" label="Municipio *" name="municipality"
+                        <CommonSelect disabled label="Municipio *" name="municipality"
                             v-model="form.municipality" :validator="v$" :options="cities" />
-                        <CommonSelect :disabled="diableElements" label="Beneficiario *" name="beneficiary"
+                        <CommonSelect disabled label="Beneficiario *" name="beneficiary"
                             v-model="form.beneficiary" :validator="v$" :options="beneficiaries" />
                     </div>
                     <!-- cambiar condicion por "beneficiary_data" cuando haya función para traer los datos -->
@@ -202,20 +190,20 @@ const positionRange = computed(() => {
                         <div class="p-5 intro-y box col-span-3 sm:grid-cols-3 bg-gray-200 flex flex-col gap-3">
                             <div class="">
 
-                                <FormSwitch.Input :disabled="diableElements" name="swich_plans" id="swich_plans"
+                                <FormSwitch.Input disabled name="swich_plans" id="swich_plans"
                                     type="checkbox" v-model="form.guardian_knows_semilleros" :validator="v$" />
                                 <FormSwitch.Label htmlFor="swich_plans"> ¿El padre o acudiente conoce el proyecto de
                                     Semilleros Deportivos?. </FormSwitch.Label>
                             </div>
                         </div>
                         <div class="col-span-3 sm:grid-cols-3">
-                            <CommonTextarea :disabled="diableElements"
+                            <CommonTextarea disabled
                                 label="Temáticas durante la visita: físico, emocional, familiar, escolar, social, espiritual *"
                                 placeholder="Escriba..." name="theme" rows="5" v-model="form.theme" :validator="v$" />
 
                         </div>
                         <div class="col-span-3 sm:grid-cols-3">
-                            <CommonTextarea :disabled="diableElements" label="Acuerdos y recomendaciones *"
+                            <CommonTextarea disabled label="Acuerdos y recomendaciones *"
                                 placeholder="Escriba..." name="agreements" rows="5" v-model="form.agreements"
                                 :validator="v$" />
                         </div>
@@ -225,7 +213,8 @@ const positionRange = computed(() => {
                                 escala de 1 a 5 donde 1 es deficiente y 5 excelente:
                             </label>
                             <div id="range" class="relative mb-5">
-                                <input :disabled="diableElements" class="w-full accent-primary" type="range" min="1" max="5" v-model="form.concept" />
+                                <input disabled class="w-full accent-primary" type="range" min="1"
+                                    max="5" v-model="form.concept" />
                                 <div :style="{ left: positionRange }"
                                     class="absolute -translate-x-1/4 border-zinc-500 border-2 p-2  rounded-full bg-primary text-white select-none">
                                     {{ form.concept }}
@@ -248,8 +237,8 @@ const positionRange = computed(() => {
                                 :validator="v$" />
                         </div>
                         <!-- <div>
-                                                    <CommonFile label="Documento 1" name="file"/>
-                                                </div> -->
+                                                        <CommonFile label="Documento 1" name="file"/>
+                                                    </div> -->
                     </div>
                 </div>
             </div>
@@ -260,13 +249,8 @@ const positionRange = computed(() => {
                     </Button>
                 </div>
                 <div v-else-if="form.status == 'APR'" class="flex justify-center gap-x-4">
-                    <Button type="button" variant="dark" @click="download">
-                        Descargar visita
-                    </Button>
-                </div>
-                <div v-else class="flex justify-center gap-x-4">
                     <Button type="button" variant="dark" @click="() => { router.push({ name: 'psychosocial.visits' }) }">
-                        Atrás
+                        Descargar visita
                     </Button>
                 </div>
             </div>

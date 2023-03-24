@@ -425,8 +425,8 @@ const routes = [
 						component: () => import('@/pages/psychosocial/custom-visit/Form.vue'),
 					},
 					{
-						path: "custom-update/:status",
-						name: "psychosocial.custom-update",
+						path: "custom-update/:id",
+						name: "psychosocial.edit",
 						component: () => import('@/pages/psychosocial/custom-visit/FormEdit.vue'),
 					},
 					{
@@ -437,14 +437,48 @@ const routes = [
 				],
 			},
 			{
-				path: "coordinador-psicosocial",
-				name: "coordinador-psicosocial",
-				meta: { provider: 'coordinador-psicosocial' },
+				path: "psychosocial-coordinator",
+				name: "psychosocial-coordinator",
+				meta: { provider: 'psychosocial-coordinator' },
 				children: [
 					{
 						path: "visit",
-						name: "coordinador-psicosocial.reviews",
+						name: "psychosocial-coordinator.reviews",
 						component: () => import('@/pages/psychosocial_coordinator/reviews/Index.vue'),
+					},
+					{
+						path: "prueba",
+						name: "psychosocial-coordinator.prueba",
+						component: () => import('@/pages/psychosocial_coordinator/reviews/PruebaModal.vue'),
+					},
+				],
+			},
+			{
+				path: "technical_subdirector",
+				name: "technical_subdirector",
+				meta: { provider: 'technical_subdirector' },
+				children: [
+					{
+						path: "visit",
+						name: "technical_subdirector.visit",
+						component: () => import('@/pages/technical_subdirector/visit/Form.vue'),
+					},
+					{
+						path: "visits",
+						name: "technical_subdirector.visits",
+						component: () => import('@/pages/technical_subdirector/visits/Index.vue'),
+					},
+				],
+			},
+			{
+				path: "technical_director",
+				name: "technical_director",
+				meta: { provider: 'technical_director' },
+				children: [
+					{
+						path: "visit",
+						name: "technical_director.reviews",
+						component: () => import('@/pages/technical_director/reviews/Index.vue'),
 					},
 				],
 			},
