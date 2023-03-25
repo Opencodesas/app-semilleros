@@ -18,6 +18,7 @@ interface Props {
     | 'color'
     | 'hidden'
     | 'file'
+    required? : boolean,
     modelValue?: string | number | Object | boolean
     label?: string
     placeholder?: string
@@ -35,7 +36,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    type: 'text'
+    type: 'text',
 })
 
 // [TypeScript] => Defining Emits
@@ -81,10 +82,14 @@ export default {
             'border-danger': validator && validator[name].$error
                 || collection_validator && collection_validator.v$[collection_validator.name].$error
         }, { 'block px-4 py-3 intro-x login__input min-w-full xl:min-w-[350px]': $route.name == 'login' }]"
-            :placeholder="placeholder" :onfocus="
+            :max="max"
+            :placeholder="placeholder"
+            :onfocus="
                 (type == 'time' || type == 'date')
-                    ? 'this.showPicker()' : ''
-            " v-model="value" v-bind="props" />
+                    ? 'this.showPicker()' : '' "
+            v-model="value"
+            v-bind="props"
+        />
         <!-- Validator -->
         <div class="flex flex-row justify-between">
             <template v-if="tooltip">
