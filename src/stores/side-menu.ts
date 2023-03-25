@@ -1,4 +1,4 @@
-import { defineStore, acceptHMRUpdate } from "pinia";
+import { acceptHMRUpdate, defineStore } from "pinia";
 import { Icon } from "../base-components/Lucide/Lucide.vue";
 
 export interface Menu {
@@ -154,6 +154,32 @@ export const useSideMenuStore = defineStore("sideMenu", {
       // // },
       {
         icon: "User",
+        title: "Subdirector",
+        subMenu: [
+          {
+            icon: "Activity",
+            pageName: "subdirector_visit.create",
+            title: "Crear visita",
+          },
+          {
+            icon: "Activity",
+            pageName: "subdirector_visit.index",
+            title: "Visitas",
+          },
+          {
+            icon: "Activity",
+            pageName: "subdirector_methodologist.list",
+            title: "Revision metodólogo",
+          },
+          {
+            icon: "Activity",
+            pageName: "subdirector_coordinator.list",
+            title: "Revision coordinador",
+          },
+        ]
+      },
+      {
+        icon: "User",
         title: "Psicosocial",
         subMenu: [
           {
@@ -165,6 +191,11 @@ export const useSideMenuStore = defineStore("sideMenu", {
             icon: "Activity",
             pageName: "psychosocial.custom-visit",
             title: "Crear visita personalizada",
+          },
+          {
+            icon: "Activity",
+            pageName: "psychosocial.transversal-activity.index",
+            title: "Actividades transversales",
           },
           {
             icon: "Activity",

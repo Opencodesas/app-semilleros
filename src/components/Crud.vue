@@ -506,6 +506,40 @@ const selectedTab = inject('selectedTab', ref(0))
                             </template>
                         </template>
                     </template>
+                    <template v-else-if="isProvider('subdirector_methodologist')">
+                            <template v-if="item.status.slug !== 'APR' && item.status.slug !== 'REC'">
+                                <CommonButtonLink
+                                    :to="{ name: 'subdirector_methodologist.reviewControl', params: { id: item.id } }"
+                                    variant="outline-secondary">
+                                    <Lucide icon="FileEdit" class="mr-2" />
+                                    <span class="text-sm">
+                                        Revisar
+                                    </span>
+                                </CommonButtonLink>
+                            </template>
+                    </template>
+                    <template v-else-if="isProvider('subdirector_coordinator')">
+                            <template v-if="item.status.slug !== 'APR' && item.status.slug !== 'REC'">
+                                <CommonButtonLink
+                                    :to="{ name: 'subdirector_coordinator.reviewControl', params: { id: item.id } }"
+                                    variant="outline-secondary">
+                                    <Lucide icon="FileEdit" class="mr-2" />
+                                    <span class="text-sm">
+                                        Revisar
+                                    </span>
+                                </CommonButtonLink>
+                            </template>
+                    </template>
+                    <template v-else-if="isProvider('subdirector')">
+                        <template v-if="item.status.slug === 'REC'">
+                            <Button variant="outline-secondary" @click="editAction(item.id)">
+                                <Lucide icon="FileEdit" class="mr-2" />
+                                <span class="text-sm">
+                                    Editar
+                                </span>
+                            </Button>
+                        </template>
+                    </template>
                     <template v-else-if="isProvider('psychosocial')">
                         <template v-if="true">
                             <Button variant="outline-secondary" @click="() => {
@@ -688,7 +722,7 @@ const selectedTab = inject('selectedTab', ref(0))
                                 </span>
                             </CommonButtonLink>
                         </template>
-                    </template>
+                    </template>     
                     <!-- <template v-if="isProvider('legal')">
                                                 <template v-if="item.status.slug == 'ENR'">
                                                     <template v-if="item.contract.cap_date == null">
