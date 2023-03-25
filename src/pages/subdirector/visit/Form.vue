@@ -132,6 +132,7 @@ const onSubmit = async () => {
 				:validator="v$" />
 			<CommonSelect
 				label="Municipio *"
+				placeholder="Seleccione"
 				name="municipality_id"
 				class="cursor-pointer"
 				v-model="form.municipality_id"
@@ -140,7 +141,7 @@ const onSubmit = async () => {
 
 			<CommonInput
 				type="text"
-				placeholder="Ingrese"
+				placeholder="Ingrese el corregimiento o vereda"
 				label="Corregimiento / Vereda *"
 				name="sidewalk"
 				v-model="form.sidewalk"
@@ -148,12 +149,14 @@ const onSubmit = async () => {
 			<CommonSelect
 				label="Monitor *"
 				name="monitor_id"
+				placeholder="Seleccione"
 				class="cursor-pointer"
 				v-model="form.monitor_id"
 				:validator="v$"
 				:options="monitorList" />
 			<CommonSelect
 				label="Disciplinas *"
+				placeholder="Seleccione"
 				name="discipline_id"
 				class="cursor-pointer"
 				v-model="form.discipline_id"
@@ -161,14 +164,15 @@ const onSubmit = async () => {
 				:options="disciplines" />
 			<CommonInput
 				type="text"
-				placeholder="Ingrese"
+				placeholder="Ingrese el escenario deportivo"
 				label="Escenario deportivo *"
 				name="sports_scene"
 				v-model="form.sports_scene"
 				:validator="v$" />
 			<CommonInput
-				type="text"
-				placeholder="Ingrese"
+				type="number"
+				min="0"
+				placeholder="Ingrese un numero de beneficiarios"
 				label="Cobertura de benificiario *"
 				name="beneficiary_coverage"
 				v-model="form.beneficiary_coverage"
@@ -176,6 +180,7 @@ const onSubmit = async () => {
 			<CommonSelect
 				label="Cumple con el desarrollo tecnico del mes *"
 				name="technical"
+				placeholder="Seleccione"
 				class="cursor-pointer"
 				v-model="form.technical"
 				:validator="v$"
@@ -183,6 +188,7 @@ const onSubmit = async () => {
 			<CommonSelect
 				label="Apoyo a eventos *"
 				name="event_support"
+				placeholder="Seleccione"
 				class="cursor-pointer"
 				v-model="form.event_support"
 				:validator="v$"

@@ -22,9 +22,9 @@ const form = reactive({
 	beneficiary_coverage: '9',
 	evaluation: '1',
 	event_support_id: '1',
-	
+
 	file: [],
-	
+
 	lesson_plan: true,
 	congruent_activity: true,
 	develop_technical_sports_component_month: false,
@@ -78,7 +78,6 @@ const municipalities = asyncComputed(async () => {
 }, null);
 
 const onSubmit = async () => {
-	formStatus.status == '1' && (formStatus.reason = '');
 	const valid = await v$.value.$validate();
 
 	if (valid) {
@@ -87,26 +86,16 @@ const onSubmit = async () => {
 			.then((response) => {
 				if (response) {
 					if (response.status >= 200 && response.status <= 300) {
-						alerts.create();
+						alerts.update();
 						setLoading(true);
 
-						if (isProvider('assistants')) {
-							router
-								.push({
-									name: 'assistants_methodologist.list',
-								})
-								.finally(() => {
-									setLoading(false);
-								});
-						} else {
-							router
-								.push({
-									name: 'subdirector_methodologist.list',
-								})
-								.finally(() => {
-									setLoading(false);
-								});
-						}
+						router
+							.push({
+								name: 'subdirector_methodologist.list',
+							})
+							.finally(() => {
+								setLoading(false);
+							});
 					}
 				}
 			});

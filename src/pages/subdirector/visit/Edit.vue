@@ -212,8 +212,9 @@ throw new Error('Function not implemented.');
 				v-model="form.sports_scene"
 				:validator="v$" />
 			<CommonInput
-				type="text"
-				placeholder="Ingrese"
+				type="number"
+				min="0"
+				placeholder="Ingresar el numero de beneficiarios"
 				label="Cobertura de benificiario *"
 				name="beneficiary_coverage"
 				v-model="form.beneficiary_coverage"

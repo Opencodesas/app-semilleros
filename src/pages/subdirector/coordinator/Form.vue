@@ -61,35 +61,24 @@ const municipalities = asyncComputed(async () => {
 }, null);
 
 const onSubmit = async () => {
-	formStatus.status == '1' && (formStatus.reason = '');
 	const valid = await v$.value.$validate();
 
 	if (valid) {
-		await methodologistVisitServices
+		await coordinatorServices
 			.update(id.toString(), formdataParser(formStatus))
 			.then((response) => {
 				if (response) {
 					if (response.status >= 200 && response.status <= 300) {
-						alerts.create();
+						alerts.update();
 						setLoading(true);
 
-						if (isProvider('assistants')) {
-							router
-								.push({
-									name: 'assistants_methodologist.list',
-								})
-								.finally(() => {
-									setLoading(false);
-								});
-						} else {
-							router
-								.push({
-									name: 'subdirector_methodologist.list',
-								})
-								.finally(() => {
-									setLoading(false);
-								});
-						}
+						router
+							.push({
+								name: 'subdirector_coordinator.list',
+							})
+							.finally(() => {
+								setLoading(false);
+							});
 					}
 				}
 			});
@@ -210,7 +199,7 @@ const onSubmit = async () => {
 				name="observations"
 				v-model="form.observations"
 				rows="5"
-				:disabled="true"  />
+				:disabled="true" />
 		</div>
 		<div class="p-5 intro-y box">
 			<div
