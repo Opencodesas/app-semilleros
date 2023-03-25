@@ -559,13 +559,25 @@ const routes = [
 								name: "manager.contractsViewer",
 								component: () => import('@/pages/contracts/PDFViewer.vue'),
 							},
+							{
+								path: 'transversal-activity',
+								name: 'psychosocial.transversal-activity',
+								children: [
+									{
+										path: '',
+										name: 'psychosocial.transversal-activity.index',
+										component: () => import('@/pages/psychosocial/transversal-activity/Index.vue'),
+									},
+									{
+										path: "transversal-activity",
+										name: "psychosocial.transversal-activity.create",
+										component: () => import('@/pages/psychosocial/transversal-activity/Form.vue'),
+									},
+								]
+							}
 						]
 					},
-					{
-						path: "transversal-activity",
-						name: "psychosocial.transversal-activity",
-						component: () => import('@/pages/psychosocial/transversal-activity/Form.vue'),
-					}
+					
 				],
 			},
 			
