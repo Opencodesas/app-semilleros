@@ -10,14 +10,12 @@ import {
     RadioGroupOption,
     RadioGroupLabel,
 } from '@headlessui/vue'
-import CommonEditor from '@/components/CommonEditor.vue';
 import { required } from '@/utils/validators'
 import { useVuelidate } from '@vuelidate/core'
 import Button from '@/base-components/Button';
 import CommonInput from '@/components/CommonInput.vue';
 
 //Imports de prueba
-import FormEdit from '@/pages/psychosocial/custom-visit/FormEdit.vue';
 
 const isOpen = ref(false)
 

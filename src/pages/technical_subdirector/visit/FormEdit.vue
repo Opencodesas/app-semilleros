@@ -73,9 +73,9 @@ const monitorList = [ //No olvidar llamar las funciones cuando se selecciones co
 //Sacar disciplinas por monitor
 const disciplinesList = ref([]);
 //[ //No olvidar llamar las funciones cuando se selecciones con @select en el componente
-    //asyncComputed(async () => {
-    //     return municipality_id.value ? await getDisciplinesByMonitor(form.moniror) : []
-    //  }, null)
+//asyncComputed(async () => {
+//     return municipality_id.value ? await getDisciplinesByMonitor(form.moniror) : []
+//  }, null)
 //]
 
 
@@ -131,6 +131,15 @@ const onSubmit = async () => {
         alerts.validation()
     }
 }
+
+const diableElements = computed(() => {
+    return form.status == '4' ? false : true; //id: 4 => Rechazado => REC
+})
+
+//Para cuando haya api para descargar el archivo
+const download = () => {
+
+}
 </script>
 
 <template>
@@ -142,37 +151,46 @@ const onSubmit = async () => {
 
     <div class="p-5 mt-5 intro-y box">
         <div class="grid grid-cols-2 md:grid md:grid-cols-2 gap-6 justify-evenly">
-            <CommonInput type="date" label="Fecha  *" name="date_visit" v-model="form.date_visit" :validator="v$" />
-            <CommonInput type="time" label="Hora  *" name="hour_visit" v-model="form.hour_visit" :validator="v$" />
-            <CommonSelect label="Municipio *" name="municipality" v-model="form.municipality" :validator="v$"
-                :options="municipalities" />
+            <CommonInput :disabled="diableElements" type="date" label="Fecha  *" name="date_visit" v-model="form.date_visit"
+                :validator="v$" />
+            <CommonInput :disabled="diableElements" type="time" label="Hora  *" name="hour_visit" v-model="form.hour_visit"
+                :validator="v$" />
+            <CommonSelect :disabled="diableElements" label="Municipio *" name="municipality" v-model="form.municipality"
+                :validator="v$" :options="municipalities" />
 
-            <CommonInput type="text" placeholder="Ingrese" label="Corregimiento / Vereda *" name="sidewalk"
-                v-model="form.sidewalk" :validator="v$" />
-            <CommonSelect label="Monitor *" name="monitor" v-model="form.monitor" :validator="v$" :options="monitorList" />
-            <CommonSelect label="Diciplinas *" name="discipline" v-model="form.discipline" :validator="v$"
-                :options="disciplinesList" />
-            <CommonInput type="text" placeholder="Ingrese" label="Escenario deportivo *" name="sports_scene"
-                v-model="form.sports_scene" :validator="v$" />
-            <CommonInput type="number" placeholder="Ingrese" label="Cobertura de benificiario *" name="beneficiary_coverage"
-                v-model="form.beneficiary_coverage" :validator="v$" />
-            <CommonSelect label="Cumple con el desarrollo del componente técnico del mes *"
+            <CommonInput :disabled="diableElements" type="text" placeholder="Ingrese" label="Corregimiento / Vereda *"
+                name="sidewalk" v-model="form.sidewalk" :validator="v$" />
+            <CommonSelect :disabled="diableElements" label="Monitor *" name="monitor" v-model="form.monitor" :validator="v$"
+                :options="monitorList" />
+            <CommonSelect :disabled="diableElements" label="Diciplinas *" name="discipline" v-model="form.discipline"
+                :validator="v$" :options="disciplinesList" />
+            <CommonInput :disabled="diableElements" type="text" placeholder="Ingrese" label="Escenario deportivo *"
+                name="sports_scene" v-model="form.sports_scene" :validator="v$" />
+            <CommonInput :disabled="diableElements" type="number" placeholder="Ingrese" label="Cobertura de benificiario *"
+                name="beneficiary_coverage" v-model="form.beneficiary_coverage" :validator="v$" />
+            <CommonSelect :disabled="diableElements" label="Cumple con el desarrollo del componente técnico del mes *"
                 name="meets_monthly_technical_development" v-model="form.meets_monthly_technical_development"
                 :validator="v$" :options="yes_no_List" />
-            <CommonSelect label="Apoyo a eventos *" name="event_support" v-model="form.event_support" :validator="v$"
-                :options="yes_no_List" />
+            <CommonSelect :disabled="diableElements" label="Apoyo a eventos *" name="event_support"
+                v-model="form.event_support" :validator="v$" :options="yes_no_List" />
 
             <!--  -->
         </div>
         <div class="col-span-3 sm:grid-cols-3 my-3">
-            <CommonTextarea name="description" label="Descripción *" rows="5" placeholder="Escriba..."
-                v-model="form.description" :validator="v$" />
+            <CommonTextarea :disabled="diableElements" name="description" label="Descripción *" rows="5"
+                placeholder="Escriba..." v-model="form.description" :validator="v$" />
         </div>
         <div class="col-span-3 sm:grid-cols-3">
-            <CommonTextarea name="observations" label="Observarciones *" rows="5" placeholder="Escriba..."
-                v-model="form.observations" :validator="v$" />
+            <CommonTextarea :disabled="diableElements" name="observations" label="Observarciones *" rows="5"
+                placeholder="Escriba..." v-model="form.observations" :validator="v$" />
         </div>
-        <div class="grid col-span-3 pt-3">
+        <div class="grid justify-center col-span-3 gap-10 p-5">
+            <h1 class="text-center font-bold">Evidencia</h1>
+            <!-- <img :src="form.file[0]" alt=""> -->
+            <img src="/semilleros.png" width="200" alt="">
+        </div>
+
+        <div v-if="form.status == '4'" class="grid col-span-3 pt-3">
             <CommonDropzone name="file" label="Suba su archivo aqui *" :accept-multiple="false" v-model="file"
                 @addfile="(error: any, value: filePondValue) => { file = multiple.addfile({ error, value }, file) as never[] }"
                 @removefile="(error: any, value: filePondValue) => { file = multiple.removefile({ error, value }, file) as never[] }"
@@ -181,8 +199,15 @@ const onSubmit = async () => {
 
         <div class="pt-5">
             <div class="flex justify-center gap-x-4">
-                <Button type="submit" variant="dark">
-                    Registrar
+                <Button v-if="form.status == '4'" type="submit" variant="primary">
+                    Editar visita
+                </Button>
+
+                <Button v-else-if="form.status == '1'" type="button" variant="dark" @click="download">
+                    Descargar visita
+                </Button>
+                <Button v-else type="button" variant="dark" @click="() => { router.push({ name: 'technical_subdirector.visits' }) }">
+                    Atrás
                 </Button>
             </div>
         </div>

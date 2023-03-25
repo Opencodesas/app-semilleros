@@ -425,15 +425,25 @@ const routes = [
 						component: () => import('@/pages/psychosocial/custom-visit/Form.vue'),
 					},
 					{
-						path: "custom-update/:id",
-						name: "psychosocial.edit",
-						component: () => import('@/pages/psychosocial/custom-visit/FormEdit.vue'),
-					},
-					{
 						path: "visits",
 						name: "psychosocial.visits",
 						component: () => import('@/pages/psychosocial/visits/index.vue'),
 					},
+					{
+						path: "update/:id",
+						name: "psychosocial.update",
+						component: () => import('@/pages/psychosocial_coordinator/reviews/PruebaModal.vue'),
+					},
+					{
+						path: "custom-update/:id",
+						name: "psychosocial.custom-update",
+						component: () => import('@/pages/psychosocial/custom-visit/FormEdit.vue'),
+					},
+					// {
+					// 	path: "transversal-update/:id",
+					// 	name: "psychosocial.transversal-update",
+					// 	component: () => import('@/pages/psychosocial/c...'),
+					// },
 				],
 			},
 			{

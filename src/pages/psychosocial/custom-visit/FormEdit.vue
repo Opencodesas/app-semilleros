@@ -10,16 +10,12 @@ const { multiple } = useFilepondEvents();
 
 const route = useRoute();
 
-//const router = useRouter(); ya existe
-
-//Usar para verificar
 const { isProvider } = useProvider()
 
-// router.push({ name: 'psychosocial.custom-visit.edit', params: { id: 1 } })
-//Quitar datos de prueba
+//QUITAR DATOS DE PRUEBA
 const form = reactive({
     reason: 'Fue rechazado por...',
-    month: '1', //Se guarda como posicion
+    month: '1',
     municipality: '2',
     beneficiary: '2',
     theme: 'Físico',
@@ -27,7 +23,7 @@ const form = reactive({
     concept: '4',
     guardian_knows_semilleros: true,
     file: [],
-    status: '',
+    status: '4', //id:4 => Rechazado => REC cambiamos si queremos ver otra vista
 })
 
 
@@ -65,18 +61,12 @@ const beneficiaries = ref<selectOption[]>([
     { label: 'Jose', value: '4' },
     { label: 'Luis', value: '5' },
 ])
-// Lo de arriba sale de esta funcion
-// const beneficiary_data = asyncComputed(async () => {
-//     return form.beneficiary ? await getBeneficiaryData(form.beneficiary) : null
-// }, null) 
-
-//Probar si se cambia el beneficiario cuando se llaman los datos
-//ya que se tiene que esperar a que traigan el municipio del form
-const municipality_id = computed(() => form.municipality)
-
+// Lo de arriba sale de esta funcion cuando haya conexion
 // const beneficiaries = asyncComputed(async () => {
 //     return municipality_id.value ? await getBeneficiariesByMunicipaly(municipality_id.value) : []
 //  }, null)
+
+const municipality_id = computed(() => form.municipality)
 
 const dataLoaded = ref(false)
 //Verificar si se puede hacer con asycComputed
@@ -95,13 +85,12 @@ const getData = async () => {
             form.guardian_knows_semilleros = response.data.items.guardian_knows_semilleros;
             form.file = response.data.items.file;
             form.status = response.data.items.status;
-            alerts.custom('', response?.data.message, 'info');
 
         } else {
             alerts.custom("", "No se pudieron obtener los datos", "error");
         }
         console.log(form);
-    });
+    })
 };
 
 
@@ -109,8 +98,27 @@ onMounted(async () => {
     console.log(route);
     await getData();
     dataLoaded.value = true;
-    form.status = `${route.params.id}`
+    //form.status = `${route.params.id}`
+    console.log(form.status)
 });
+
+const getBeneficiaryData = async () => {
+    //Verificar que traiga los datos necesarios
+    await beneficiaryServices.get(form.beneficiary as string).then((response) => {
+        console.log(response?.data.items);
+        if (response?.status == 200 || response?.status == 201) {
+            beneficiary_data.grade = response.data.items.grade;
+            beneficiary_data.health_entity = response.data.items.health_entity;
+            beneficiary_data.guardian_name = response.data.items.guardian_name;
+            beneficiary_data.guardian_lastname = response.data.items.guardian_lastname;
+            beneficiary_data.guardian_identification = response.data.items.guardian_identification;
+            alerts.custom("", "Datos obtenidos correctamente", "success");
+        } else {
+            alerts.custom("", "No se pudieron obtener los datos", "error");
+        }
+        console.log(form);
+    })
+}
 
 
 //Mirar si hago servicio
@@ -141,13 +149,13 @@ const onSubmit = async () => {
         alerts.validation()
     }
 }
-
+//Para cuando haya api para descargar el archivo
 const download = () => {
 
 }
 
 const diableElements = computed(() => {
-    return form.status == 'REC' ? false : true;
+    return form.status == '4' ? false : true; //id: 4 => Rechazado => REC
 })
 
 const positionRange = computed(() => {
@@ -176,7 +184,7 @@ const positionRange = computed(() => {
                             :validator="v$" :options="months" />
                         <CommonSelect :disabled="diableElements" label="Municipio *" name="municipality"
                             v-model="form.municipality" :validator="v$" :options="cities" />
-                        <CommonSelect :disabled="diableElements" label="Beneficiario *" name="beneficiary"
+                        <CommonSelect @select="getBeneficiaryData" :disabled="diableElements" label="Beneficiario *" name="beneficiary"
                             v-model="form.beneficiary" :validator="v$" :options="beneficiaries" />
                     </div>
                     <!-- cambiar condicion por "beneficiary_data" cuando haya función para traer los datos -->
@@ -225,7 +233,8 @@ const positionRange = computed(() => {
                                 escala de 1 a 5 donde 1 es deficiente y 5 excelente:
                             </label>
                             <div id="range" class="relative mb-5">
-                                <input :disabled="diableElements" class="w-full accent-primary" type="range" min="1" max="5" v-model="form.concept" />
+                                <input :disabled="diableElements" class="w-full accent-primary" type="range" min="1" max="5"
+                                    v-model="form.concept" />
                                 <div :style="{ left: positionRange }"
                                     class="absolute -translate-x-1/4 border-zinc-500 border-2 p-2  rounded-full bg-primary text-white select-none">
                                     {{ form.concept }}
@@ -239,8 +248,8 @@ const positionRange = computed(() => {
                             <img src="/semilleros.png" width="200" alt="">
                         </div>
 
-                        <div class="grid col-span-3">
-                            <CommonDropzone v-if="form.status == 'REC'" name="file"
+                        <div v-if="form.status == '4'" class="grid col-span-3">
+                            <CommonDropzone name="file"
                                 label="Suba su archivo aqui para cambiar evidencia *" :accept-multiple="false"
                                 v-model="form.file"
                                 @addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
@@ -248,24 +257,21 @@ const positionRange = computed(() => {
                                 :validator="v$" />
                         </div>
                         <!-- <div>
-                                                    <CommonFile label="Documento 1" name="file"/>
-                                                </div> -->
+                                                            <CommonFile label="Documento 1" name="file"/>
+                                                        </div> -->
                     </div>
                 </div>
             </div>
             <div class="pt-5">
-                <div v-if="form.status == 'REC'" class="flex justify-center gap-x-4">
-                    <Button type="submit" variant="primary">
+                <div class="flex justify-center gap-x-4">
+                    <Button v-if="form.status == '4'" type="submit" variant="primary">
                         Editar visita
                     </Button>
-                </div>
-                <div v-else-if="form.status == 'APR'" class="flex justify-center gap-x-4">
-                    <Button type="button" variant="dark" @click="download">
+
+                    <Button v-else-if="form.status == '1'" type="button" variant="dark" @click="download">
                         Descargar visita
                     </Button>
-                </div>
-                <div v-else class="flex justify-center gap-x-4">
-                    <Button type="button" variant="dark" @click="() => { router.push({ name: 'psychosocial.visits' }) }">
+                    <Button v-else type="button" variant="dark" @click="() => { router.push({ name: 'psychosocial.visits' }) }">
                         Atrás
                     </Button>
                 </div>

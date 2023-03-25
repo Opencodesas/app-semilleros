@@ -3,9 +3,11 @@ import useVuelidate from '@vuelidate/core'
 import { required } from '@/utils/validators'
 import FormSwitch from "@/base-components/Form/FormSwitch";
 import { filePondValue } from '@/composables/useFilepondEvents';
-import { customVisitServices } from '@/services/psychosocial/customVisitServices';
+import { onboardingStore } from "@/stores/onboardingStore";
 
 const { multiple } = useFilepondEvents();
+
+const store = onboardingStore();
 
 const form = reactive({
     month: '',
@@ -16,7 +18,9 @@ const form = reactive({
     concept: '1',
     guardian_knows_semilleros: false,
     file: [],
-    status: 'ENR',
+    status: '2', //id:2 => En revisión => ENR
+    //createdBy: store.get_user, Preguntar si es necesario
+
 
 })
 
@@ -51,20 +55,28 @@ const municipalities = asyncComputed(async () => {
 
 const municipality_id = computed(() => form.municipality)
 
+//Usar para traer beneficiarios cuando haya funcion
 // const beneficiaries = asyncComputed(async () => {
 //     return municipality_id.value ? await getBeneficiariesByMunicipaly(municipality_id.value) : []
 //  }, null)
 
-// const beneficiary_data = asyncComputed(async () => {
-//     return form.beneficiary ? await getBeneficiaryData(form.beneficiary) : null
-// }, null)
-//      |
-//    grade: '',
-//     health_entity: '',
-//     guardian_name: '',
-//     guardian_lastname: '',
-//     guardian_identification: '',
-//     
+const getBeneficiaryData = async () => {
+    //Verificar que traiga los datos necesarios
+    await beneficiaryServices.get(form.beneficiary as string).then((response) => {
+        console.log(response?.data.items);
+        if (response?.status == 200 || response?.status == 201) {
+            beneficiary_data.grade = response.data.items.grade;
+            beneficiary_data.health_entity = response.data.items.health_entity;
+            beneficiary_data.guardian_name = response.data.items.guardian_name;
+            beneficiary_data.guardian_lastname = response.data.items.guardian_lastname;
+            beneficiary_data.guardian_identification = response.data.items.guardian_identification;
+            alerts.custom("", "Datos obtenidos", "success");
+        } else {
+            alerts.custom("", "No se pudieron obtener los datos", "error");
+        }
+        console.log(form);
+    })
+}
 
 const v$ = useVuelidate(form_rules, form)
 
@@ -113,8 +125,8 @@ const positionRange = computed(() => {
                         <CommonSelect label="Mes *" name="month" v-model="form.month" :validator="v$" :options="months" />
                         <CommonSelect label="Municipio *" name="municipality" v-model="form.municipality" :validator="v$"
                             :options="municipalities" />
-                        <CommonSelect label="Beneficiario *" name="beneficiary" v-model="form.beneficiary" :validator="v$"
-                            :options="municipalities" />
+                        <CommonSelect @select="getBeneficiaryData" label="Beneficiario *" name="beneficiary" v-model="form.beneficiary" :validator="v$"
+                            :options="beneficiaries" />
                     </div>
                     <!-- cambiar condicion por "beneficiary_data" cuando haya función para traer los datos -->
                     <div v-if="form.beneficiary">
@@ -193,20 +205,3 @@ const positionRange = computed(() => {
         </form>
     </div>
 </template>
-
-<style>
-.range-slider {
-    position: relative;
-}
-
-.tooltip {
-    position: absolute;
-    top: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #fff;
-    border: 1px solid #ccc;
-    padding: 5px;
-    border-radius: 5px;
-}
-</style>

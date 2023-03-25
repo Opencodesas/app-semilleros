@@ -24,123 +24,12 @@ const routeName = computed(() => {
 // })
 
 const items = ref<Item[]>([
-    {
-        id: '1',
-        month: 'Enero',
-        municipality: 'Cartago',
-        beneficiary: 'Juan',
-        status: {
-            id: 2,
-            name: 'En Revisión',
-            slug: 'ENR'
-        },
-    },
-    {
-        id: '2',
-        month: 'Enero',
-        municipality: 'Cartago',
-        beneficiary: 'Pedro',
-        status: {
-            id: 4,
-            name: 'Rechazado',
-            slug: 'REC'
-        },
-    },
-    {
-        id: '3',
-        month: 'Enero',
-        municipality: 'Cartago',
-        beneficiary: 'Juan',
-        status: {
-            id: 1,
-            name: 'Aprobado',
-            slug: 'APR'
-        },
-    },
-    {
-        id: '4',
-        month: 'Enero',
-        municipality: 'Cartago',
-        beneficiary: 'Maria',
-        status: {
-            id: 4,
-            name: 'Rechazado',
-            slug: 'REC'
-        },
-    },
-    {
-        id: '5',
-        month: 'Enero',
-        municipality: 'Cartago',
-        beneficiary: 'Jose',
-        status:
-        {
-            id: 1,
-            name: 'Aprobado',
-            slug: 'APR'
-        },
-    },
-    {
-        id: '6',
-        month: 'Enero',
-        municipality: 'Cartago',
-        beneficiary: 'Luis',
-        status: {
-            id: 4,
-            name: 'Rechazado',
-            slug: 'REC'
-        },
-    },
-    {
-        id: '7',
-        month: 'Enero',
-        municipality: 'Cartago',
-        beneficiary: 'Maria',
-        status: {
-            id: 4,
-            name: 'Rechazado',
-            slug: 'REC'
-        },
-    },
-    {
-        id: '8',
-        month: 'Enero',
-        municipality: 'Cartago',
-        beneficiary: 'Pedro',
-        status: {
-            id: 4,
-            name: 'Rechazado',
-            slug: 'REC'
-        },
-    },
-    {
-        id: '9',
-        month: 'Enero',
-        municipality: 'Cartago',
-        beneficiary: 'Juan',
-        status: {
-            id: 1,
-            name: 'Aprobado',
-            slug: 'APR'
-        },
-    },
-    {
-        id: '10',
-        month: 'Enero',
-        municipality: 'Cartago',
-        beneficiary: 'Luis',
-        status: {
-            id: 1,
-            name: 'Aprobado',
-            slug: 'APR'
-        },
-    },
-
+    {id: '1', date: '2023-02-11', monitor: 'Juan', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: {id: 1, name: 'Aprobado', slug: 'APR'}},
+    {id: '2', date: '2023-02-11', monitor: 'Pedro', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: {id: 2, name: 'En Revisión', slug: 'ENR'}},
+    {id: '3', date: '2023-02-11', monitor: 'Juan', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: {id: 1, name: 'Aprobado', slug: 'APR'}},
+    {id: '4', date: '2023-02-11', monitor: 'Maria', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: {id: 4, name: 'Rechazado', slug: 'REC'}},
+    {id: '5', date: '2023-02-11', monitor: 'Jose', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: {id: 1, name: 'Aprobado', slug: 'APR'}},
 ])
-
-onMounted(() => {
-    console.log(console.log(items))
-})
 
 
 const header: Header[] = [
@@ -153,7 +42,9 @@ const header: Header[] = [
     { text: 'Acciones', value: 'actions' },
 ]
 
-
+onMounted(() => {
+    console.log(console.log(items))
+})
 </script>
 
 <template>

@@ -363,83 +363,86 @@ const _getStatus = (status: any) => getStatus(status)
 |    }
 |
 */
+
+//Selected tab
+const selectedTab = inject('selectedTab', ref(0))
 </script>
 
 <template>
     <div class="intro-y flex flex-col gap-2">
         <section class="flex flex-col gap-3 lg:grid lg:grid-cols-4 lg:items-center">
             <!-- <div class="grid grid-cols-2 gap-3">
-                                    <div class="w-full">
-                                        <BaseSelect label="BUSCAR EN" tooltip="Seleccione en que campo quiere buscar"
-                                            placeholder="Seleccione" name="search_field" v-model="filters.search_field"
-                                            :options="searchOptions" :validator="v$" />
-                                    </div>
-                                    <div class="w-full">
-                                        <BaseInput type="text" label="VALOR" tooltip="Ingrese el valor a buscar" placeholder="Valor"
-                                            name="search_value" v-model="filters.search_value" :validator="v$" />
-                                    </div>
-                                </div> -->
+                                        <div class="w-full">
+                                            <BaseSelect label="BUSCAR EN" tooltip="Seleccione en que campo quiere buscar"
+                                                placeholder="Seleccione" name="search_field" v-model="filters.search_field"
+                                                :options="searchOptions" :validator="v$" />
+                                        </div>
+                                        <div class="w-full">
+                                            <BaseInput type="text" label="VALOR" tooltip="Ingrese el valor a buscar" placeholder="Valor"
+                                                name="search_value" v-model="filters.search_value" :validator="v$" />
+                                        </div>
+                                    </div> -->
             <!-- <div v-if="show_date" class="flex flex-col justify-start h-full">
-                                    <label for="regular-form-2" class="form-label font-bold min-w-max mr-2">FECHA RANGO</label>
-                                    <div class="grid grid-cols-2 gap-1.5 w-full intro-x">
-                                        <BaseInput class="" type="date" tooltip="Desde" name="date_criteria_start"
-                                            v-model="filters.date_criteria_start" :validator="v$" />
-                                        <BaseInput class="" type="date" tooltip="Hasta" name="date_criteria_end"
-                                            v-model="filters.date_criteria_end" :validator="v$" />
+                                        <label for="regular-form-2" class="form-label font-bold min-w-max mr-2">FECHA RANGO</label>
+                                        <div class="grid grid-cols-2 gap-1.5 w-full intro-x">
+                                            <BaseInput class="" type="date" tooltip="Desde" name="date_criteria_start"
+                                                v-model="filters.date_criteria_start" :validator="v$" />
+                                            <BaseInput class="" type="date" tooltip="Hasta" name="date_criteria_end"
+                                                v-model="filters.date_criteria_end" :validator="v$" />
+                                        </div>
                                     </div>
-                                </div>
-                                <div v-if="show_status" class="flex items-start gap-6 h-full">
-                                    <div class="w-full intro-x">
-                                        <BaseSelect label="ESTADO" tooltip="" placeholder="Seleccione" name="status_criteria"
-                                            v-model="filters.status_criteria" :options="status_options" :validator="v$"
-                                            :allowEmpty="true" />
+                                    <div v-if="show_status" class="flex items-start gap-6 h-full">
+                                        <div class="w-full intro-x">
+                                            <BaseSelect label="ESTADO" tooltip="" placeholder="Seleccione" name="status_criteria"
+                                                v-model="filters.status_criteria" :options="status_options" :validator="v$"
+                                                :allowEmpty="true" />
+                                        </div>
                                     </div>
-                                </div>
-                                <div v-if="show_user_status" class="flex items-start gap-6 h-full">
-                                    <div class="w-full intro-x">
-                                        <BaseSelect label="ESTADO" tooltip="" placeholder="Seleccione" name="user_status_criteria"
-                                            v-model="filters.user_status_criteria" :options="[
-                                                { label: 'ACTIVO', value: '1' },
-                                                { label: 'INACTIVO', value: '0' }
-                                            ]" :validator="v$" :allowEmpty="false" />
-                                    </div>
-                                </div> -->
+                                    <div v-if="show_user_status" class="flex items-start gap-6 h-full">
+                                        <div class="w-full intro-x">
+                                            <BaseSelect label="ESTADO" tooltip="" placeholder="Seleccione" name="user_status_criteria"
+                                                v-model="filters.user_status_criteria" :options="[
+                                                    { label: 'ACTIVO', value: '1' },
+                                                    { label: 'INACTIVO', value: '0' }
+                                                ]" :validator="v$" :allowEmpty="false" />
+                                        </div>
+                                    </div> -->
         </section>
         <!-- :sort-by="sorts.by"
-                            :filter-options="filter_options"
-                            :search-field="filters.search_field"
-                            :search-value="filters.search_value"
-                            :sort-type="sorts.type" -->
+                                :filter-options="filter_options"
+                                :search-field="filters.search_field"
+                                :search-value="filters.search_value"
+                                :sort-type="sorts.type" -->
         <DataTable :headers="headers" :items="items" buttons-pagination :sort-by="sort.by" :sort-type="sort.type"
             table-class-name="customize-table">
             <!-- <template #header-status="{ text }">
-                                    <div class="flex gap-1 relative">
-                                        <p>{{ text }}</p>
-                                        <button @click="show_status = !show_status" :class="(show_status) ? 'opacity-100' : 'opacity-50'"
-                                            class="hover:opacity-100 text-primary transition">
-                                            <FilterIcon size="20" />
-                                        </button>
-                                    </div>
-                                </template>
-                                <template #header-user_status="{ text }">
-                                    <div class="flex gap-1 relative">
-                                        <p>{{ text }}</p>
-                                        <button @click="show_user_status = !show_user_status"
-                                            :class="(show_user_status) ? 'opacity-100' : 'opacity-50'"
-                                            class="hover:opacity-100 text-primary transition">
-                                            <FilterIcon size="20" />
-                                        </button>
-                                    </div>
-                                </template>
-                                <template #header-created_at="{ text }">
-                                    <div class="flex gap-1 relative">
-                                        <p>{{ text }}</p>
-                                        <button @click="show_date = !show_date" :class="(show_date) ? 'opacity-100' : 'opacity-50'"
-                                            class="hover:opacity-100 text-primary transition">
-                                            <FilterIcon size="20" />
-                                        </button>
-                                    </div>
-                                </template> -->
+                                        <div class="flex gap-1 relative">
+                                            <p>{{ text }}</p>
+                                            <button @click="show_status = !show_status" :class="(show_status) ? 'opacity-100' : 'opacity-50'"
+                                                class="hover:opacity-100 text-primary transition">
+                                                <FilterIcon size="20" />
+                                            </button>
+                                        </div>
+                                    </template>
+                                    <template #header-user_status="{ text }">
+                                        <div class="flex gap-1 relative">
+                                            <p>{{ text }}</p>
+                                            <button @click="show_user_status = !show_user_status"
+                                                :class="(show_user_status) ? 'opacity-100' : 'opacity-50'"
+                                                class="hover:opacity-100 text-primary transition">
+                                                <FilterIcon size="20" />
+                                            </button>
+                                        </div>
+                                    </template>
+                                    <template #header-created_at="{ text }">
+                                        <div class="flex gap-1 relative">
+                                            <p>{{ text }}</p>
+                                            <button @click="show_date = !show_date" :class="(show_date) ? 'opacity-100' : 'opacity-50'"
+                                                class="hover:opacity-100 text-primary transition">
+                                                <FilterIcon size="20" />
+                                            </button>
+                                        </div>
+                                    </template> -->
             <template #header-actions="{ text }">
                 <div class="flex justify-end">
                     {{ text }}
@@ -504,27 +507,28 @@ const _getStatus = (status: any) => getStatus(status)
                         </template>
                     </template>
                     <template v-else-if="isProvider('psychosocial') || isProvider('psychosocial-coordinator')">
-                        <template v-if="item.status.slug == 'REC'">
-                            <Button variant="outline-secondary"
-                                @click="editAction('REC')">
-                                <Lucide icon="FileEdit" class="mr-2" />
-                                <span class="text-sm">
+                        <template v-if="true">
+                            <Button variant="outline-secondary" @click="() => {
+                                switch (selectedTab) {
+                                    // case 1:
+                                    //     router.push({ name: 'psychosocial.update', params: { id: item.id } })
+                                    //     break;
+                                    case 2:
+                                        router.push({ name: 'psychosocial.custom-update', params: { id: item.id } })
+                                        break;
+                                    // case 3:
+                                    //     router.push({ name: 'psychosocial.transversal-update', query: { id: item.id } })
+                                    // default:
+                                    //    pruebas
+                                    //     break;
+                                }
+                            }">
+                                <Lucide v-if="item.status.slug == 'REC'" icon="FileEdit" class="mr-2" />
+                                <Lucide v-else icon="Eye" class="mr-2" />
+                                <span v-if="item.status.slug == 'REC'" class="text-sm">
                                     Editar
                                 </span>
-                            </Button>
-                        </template>
-                        <template v-else>
-                            <Button variant="outline-secondary"
-                                @click="() => { 
-                                    if (item.status.slug == 'APR'){
-                                        editAction('APR')
-                                    }else{
-                                        editAction('ENR')
-                                    }
-                            
-                            }">
-                                <Lucide icon="Eye" class="mr-2" />
-                                <span class="text-sm">
+                                <span v-else class="text-sm">
                                     Visualizar
                                 </span>
                             </Button>
@@ -671,51 +675,51 @@ const _getStatus = (status: any) => getStatus(status)
                         </template>
                     </template>
                     <!-- <template v-if="isProvider('legal')">
-                                            <template v-if="item.status.slug == 'ENR'">
-                                                <template v-if="item.contract.cap_date == null">
-                                                    <CommonButtonLink :to="contractorHandler('legal.documentsManagement', item.id)"
+                                                <template v-if="item.status.slug == 'ENR'">
+                                                    <template v-if="item.contract.cap_date == null">
+                                                        <CommonButtonLink :to="contractorHandler('legal.documentsManagement', item.id)"
+                                                            variant="outline-secondary">
+                                                            <Lucide icon="FileDiff" class="mr-2" />
+                                                            <span class="text-sm">
+                                                                Revision
+                                                            </span>
+                                                        </CommonButtonLink>
+                                                    </template>
+                                                    <template v-else>
+                                                    </template>
+                                                </template>
+                                                <template v-if="item.status.slug == 'COM'">
+                                                    <CommonButtonLink :to="contractorHandler('legal.contractsClauses', item.id)"
                                                         variant="outline-secondary">
-                                                        <Lucide icon="FileDiff" class="mr-2" />
+                                                        <Lucide icon="FileSpreadsheet" class="mr-2" />
                                                         <span class="text-sm">
-                                                            Revision
+                                                            Clausulas - CAP
                                                         </span>
                                                     </CommonButtonLink>
                                                 </template>
-                                                <template v-else>
-                                                </template>
                                             </template>
-                                            <template v-if="item.status.slug == 'COM'">
-                                                <CommonButtonLink :to="contractorHandler('legal.contractsClauses', item.id)"
-                                                    variant="outline-secondary">
-                                                    <Lucide icon="FileSpreadsheet" class="mr-2" />
-                                                    <span class="text-sm">
-                                                        Clausulas - CAP
-                                                    </span>
-                                                </CommonButtonLink>
-                                            </template>
-                                        </template>
-                                        <template v-else>
-                                        </template> -->
+                                            <template v-else>
+                                            </template> -->
                 </div>
             </template>
             <!-- 
-                                <template #item-user_status="item">
-                                    <div class="flex items-center">
-                                        <ToggleStatus @toggle="emit('change_status')" :id="item.id" :actual_status="item.status" />
-                                    </div>
-                                </template>
-                                <template #item-change_password="item">
-                                    <div class="flex gap-2 justify-end">
-                                        <button @click="changePasswordAction(item.id)"
-                                            class="btn btn-success text-white flex flex-nowrap gap-1 items-center"
-                                            v-if="conditions_role_admin">
-                                            <ExternalLinkIcon icon="Password" class="w-5 h-5" />
-                                            <span class="text-sm whitespace-nowrap">
-                                                Cambiar contraseña
-                                            </span>
-                                        </button>
-                                    </div>
-                                </template> -->
+                                    <template #item-user_status="item">
+                                        <div class="flex items-center">
+                                            <ToggleStatus @toggle="emit('change_status')" :id="item.id" :actual_status="item.status" />
+                                        </div>
+                                    </template>
+                                    <template #item-change_password="item">
+                                        <div class="flex gap-2 justify-end">
+                                            <button @click="changePasswordAction(item.id)"
+                                                class="btn btn-success text-white flex flex-nowrap gap-1 items-center"
+                                                v-if="conditions_role_admin">
+                                                <ExternalLinkIcon icon="Password" class="w-5 h-5" />
+                                                <span class="text-sm whitespace-nowrap">
+                                                    Cambiar contraseña
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </template> -->
         </DataTable>
     </div>
 </template>
