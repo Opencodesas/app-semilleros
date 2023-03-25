@@ -5,12 +5,15 @@ import FormSwitch from "@/base-components/Form/FormSwitch";
 import { filePondValue } from '@/composables/useFilepondEvents';
 import { customVisitServices } from '@/services/psychosocial/customVisitServices';
 import { selectOption } from '@/components/CommonSelect.vue';
+import { onboardingStore } from "@/stores/onboardingStore";
 
 const { multiple } = useFilepondEvents();
 
 const route = useRoute();
 
 const { isProvider } = useProvider()
+
+const store = onboardingStore();
 
 //QUITAR DATOS DE PRUEBA
 const form = reactive({
@@ -85,7 +88,6 @@ const getData = async () => {
             form.guardian_knows_semilleros = response.data.items.guardian_knows_semilleros;
             form.file = response.data.items.file;
             form.status = response.data.items.status;
-
         } else {
             alerts.custom("", "No se pudieron obtener los datos", "error");
         }
@@ -166,12 +168,12 @@ const positionRange = computed(() => {
 
 <template>
     <div class="flex items-center justify-between mt-8 intro-y">
-        <h2 v-if="form.status == 'REC'" class="mr-auto text-lg font-medium">Editar visita personalizada</h2>
+        <h2 v-if="form.status == '4'" class="mr-auto text-lg font-medium">Editar visita personalizada</h2>
         <h2 v-else class="mr-auto text-lg font-medium">Vista visita personalizada</h2>
     </div>
 
     <div v-if="dataLoaded" class="p-5 pt-1 mt-5 intro-y box">
-        <div v-if="form.status == 'REC'">
+        <div v-if="form.status == '4'">
             <h2 class="text-red-600 font-bold py-2">Razón de rechazo</h2>
             <p class="text-left">{{ form.reason }}</p>
         </div>
@@ -244,7 +246,7 @@ const positionRange = computed(() => {
                         <!-- Comprobar qué es lo que se está enviando -->
                         <div class="grid justify-center col-span-3 gap-10 p-5">
                             <h1 class="text-center font-bold">Evidencia</h1>
-                            <!-- <img :src="form.file[0]" alt=""> -->
+                            <!-- <img v-if="form.file" :src="form.file[0]" alt=""> -->
                             <img src="/semilleros.png" width="200" alt="">
                         </div>
 

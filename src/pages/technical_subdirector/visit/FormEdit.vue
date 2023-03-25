@@ -8,10 +8,13 @@ import { formToJSON } from "axios";
 import { json } from "stream/consumers";
 import { forEach } from "lodash";
 import { filePondValue } from '@/composables/useFilepondEvents';
+import { subdirectorVisitServices } from '@/services/technical_subdirector/subdirectorVisitServices';
 
 
 const { multiple } = useFilepondEvents();
 
+const router = useRouter();
+const route = useRoute();
 const store = onboardingStore();
 
 const form = reactive({
@@ -27,9 +30,8 @@ const form = reactive({
     event_support: "",
     description: "",
     observations: "",
-    status: "2", //id:2 => En revisión => ENR
-    //createdBy: store.get_user, Preguntar si es necesario
-
+    status: "4", //id:2 => En revisión => ENR
+    reason: 'Rechazado ya que...',
 });
 
 const form_rules = computed(() => ({
@@ -80,32 +82,62 @@ const disciplinesList = ref([]);
 
 
 //Esta es la que está usando para traer disciplinas pero las trae todas
-const fetch = async () => {
-    await store.getListSelect().then((response) => {
-        console.log(`data fetch: ${response?.data}`);
-        if (response?.status == 200 || response?.status == 201) {
-            disciplinesList.value = JSON.parse(JSON.stringify(response.data["diciplines"]));
-        } else {
-            Swal.fire("", "No se pudieron obtener los datos", "error");
-        }
-    });
-};
+// const fetch = async () => {
+//     await store.getListSelect().then((response) => {
+//         console.log(`data fetch: ${response?.data}`);
+//         if (response?.status == 200 || response?.status == 201) {
+//             disciplinesList.value = JSON.parse(JSON.stringify(response.data["diciplines"]));
+//         } else {
+//             Swal.fire("", "No se pudieron obtener los datos", "error");
+//         }
+//     });
+// };
 
 const yes_no_List = [
     { label: "Si", value: 1 },
     { label: "No", value: 2 },
 ];
 
-const router = useRouter();
-const route = useRoute();
 
-const routeName = computed(() => {
-    return String(route.name).split(".")[0];
-});
+// const routeName = computed(() => {
+//     return String(route.name).split(".")[0];
+// });
+
+const dataLoaded = ref(false)
+//Verificar si se puede hacer con asycComputed
+const getData = async () => {
+
+    await subdirectorVisitServices.get(route.params.id as string).then((response) => {
+        console.log(response?.data.items);
+        if (response?.status == 200 || response?.status == 201) {
+            form.date_visit = response.data.items.date_visit;
+            form.hour_visit = response.data.items.hour_visit;
+            form.municipality = response.data.items.municipality;
+            form.sidewalk = response.data.items.sidewalk;
+            form.monitor = response.data.items.monitor;
+            form.discipline = response.data.items.discipline;
+            form.sports_scene = response.data.items.sports_scene;
+            form.beneficiary_coverage = response.data.items.beneficiary_coverage;
+            form.meets_monthly_technical_development = response.data.items.meets_monthly_technical_development;
+            form.event_support = response.data.items.event_support;
+            form.description = response.data.items.description;
+            form.observations = response.data.items.observations;
+            form.status = response.data.items.status;
+            form.reason = response.data.items.reason;
+        } else {
+            alerts.custom("", "No se pudieron obtener los datos", "error");
+        }
+        console.log(form);
+    })
+};
 
 
-onMounted(() => {
-    fetch();
+onMounted(async () => {
+    console.log(route);
+    await getData();
+    dataLoaded.value = true;
+    //form.status = `${route.params.id}`
+    console.log(form.status)
 });
 
 
@@ -143,14 +175,17 @@ const download = () => {
 </script>
 
 <template>
-    <div class="flex items-center mt-8 intro-y">
-        <div class="flex items-center space-x-4">
-            <h2 class="mr-auto text-lg font-medium">Registrar visita</h2>
-        </div>
+    <div class="flex items-center justify-between mt-8 intro-y">
+        <h2 v-if="form.status == '4'" class="mr-auto text-lg font-medium">Editar visita</h2>
+        <h2 v-else class="mr-auto text-lg font-medium">Vista visita</h2>
     </div>
 
-    <div class="p-5 mt-5 intro-y box">
-        <div class="grid grid-cols-2 md:grid md:grid-cols-2 gap-6 justify-evenly">
+    <div v-if="dataLoaded" class="p-5 pt-1 mt-5 intro-y box">
+        <div v-if="form.status == '4'" class="">
+            <h2 class="text-red-600 font-bold py-2">Razón de rechazo</h2>
+            <p class="text-left">{{ form.reason }}</p>
+        </div>
+        <div class="grid grid-cols-2 md:grid md:grid-cols-2 gap-6 justify-evenly mt-4">
             <CommonInput :disabled="diableElements" type="date" label="Fecha  *" name="date_visit" v-model="form.date_visit"
                 :validator="v$" />
             <CommonInput :disabled="diableElements" type="time" label="Hora  *" name="hour_visit" v-model="form.hour_visit"
@@ -186,7 +221,7 @@ const download = () => {
         </div>
         <div class="grid justify-center col-span-3 gap-10 p-5">
             <h1 class="text-center font-bold">Evidencia</h1>
-            <!-- <img :src="form.file[0]" alt=""> -->
+            <!-- <img v-if="form.file" :src="form.file[0]" alt=""> -->
             <img src="/semilleros.png" width="200" alt="">
         </div>
 
@@ -199,14 +234,15 @@ const download = () => {
 
         <div class="pt-5">
             <div class="flex justify-center gap-x-4">
-                <Button v-if="form.status == '4'" type="submit" variant="primary">
+                <Button v-if="form.status == '4'" @click="onSubmit" variant="primary">
                     Editar visita
                 </Button>
 
                 <Button v-else-if="form.status == '1'" type="button" variant="dark" @click="download">
                     Descargar visita
                 </Button>
-                <Button v-else type="button" variant="dark" @click="() => { router.push({ name: 'technical_subdirector.visits' }) }">
+                <Button v-else type="button" variant="dark"
+                    @click="() => { router.push({ name: 'technical_subdirector.visits' }) }">
                     Atrás
                 </Button>
             </div>

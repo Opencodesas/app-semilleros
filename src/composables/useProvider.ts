@@ -1,4 +1,4 @@
-type Providers = 'legal' | 'legalMaster' | 'assistants' | 'manager' | 'director' | 'psychosocial' | 'psychosocial-coordinator';
+type Providers = 'legal' | 'legalMaster' | 'assistants' | 'manager' | 'director' | 'psychosocial' | 'psychosocial-coordinator' | 'technical_subdirector';
 
 export function useProvider() {
     const route = useRoute()

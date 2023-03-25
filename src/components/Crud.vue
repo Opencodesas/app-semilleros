@@ -506,7 +506,7 @@ const selectedTab = inject('selectedTab', ref(0))
                             </template>
                         </template>
                     </template>
-                    <template v-else-if="isProvider('psychosocial') || isProvider('psychosocial-coordinator')">
+                    <template v-else-if="isProvider('psychosocial')">
                         <template v-if="true">
                             <Button variant="outline-secondary" @click="() => {
                                 switch (selectedTab) {
@@ -534,6 +534,21 @@ const selectedTab = inject('selectedTab', ref(0))
                             </Button>
                         </template>
                     </template>
+                    <template v-else-if="isProvider('technical_subdirector')">
+                        <template v-if="true">
+                            <Button variant="outline-secondary" @click="() => { router.push({ name: 'technical_subdirector.update', params: { id: item.id } }) }">
+                                <Lucide v-if="item.status.slug == 'REC'" icon="FileEdit" class="mr-2" />
+                                <Lucide v-else icon="Eye" class="mr-2" />
+                                <span v-if="item.status.slug == 'REC'" class="text-sm">
+                                    Editar
+                                </span>
+                                <span v-else class="text-sm">
+                                    Visualizar
+                                </span>
+                            </Button>
+                        </template>
+                    </template>
+
                     <template v-else>
                         <Button variant="outline-secondary" @click="editAction(item.id)">
                             <Lucide icon="FileEdit" class="mr-2" />

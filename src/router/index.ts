@@ -474,6 +474,11 @@ const routes = [
 						component: () => import('@/pages/technical_subdirector/visit/Form.vue'),
 					},
 					{
+						path: "update/:id",
+						name: "technical_subdirector.update",
+						component: () => import('@/pages/technical_subdirector/visit/FormEdit.vue'),
+					},
+					{
 						path: "visits",
 						name: "technical_subdirector.visits",
 						component: () => import('@/pages/technical_subdirector/visits/Index.vue'),

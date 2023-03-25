@@ -3,12 +3,13 @@ import useVuelidate from '@vuelidate/core'
 import { required } from '@/utils/validators'
 import { Header, Item } from 'vue3-easy-data-table';
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
+import { onboardingStore } from "@/stores/onboardingStore";
 
 const { multiple } = useFilepondEvents();
 
 const router = useRouter()
 const route = useRoute()
-
+const store = onboardingStore();
 
 const routeName = computed(() => {
     return String(route.name).split('.')[0]
