@@ -247,6 +247,17 @@ export const useSideMenuStore = defineStore("sideMenu", {
           },
         ]
       },
+      {
+        icon: "User",
+        title: "Director de Programas Transversales",
+        subMenu: [
+          {
+            icon: "Activity",
+            pageName: "transversal_programs_director.reviews",
+            title: "Revisiones",
+          },
+        ]
+      },
     ],
   }),
   getters: {

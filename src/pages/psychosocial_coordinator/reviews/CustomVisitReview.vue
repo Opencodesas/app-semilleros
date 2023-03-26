@@ -37,7 +37,6 @@ const form = reactive({
 
 
 const form_rules = computed(() => ({
-    file: [{}],
     reason: { required },
     status: { required },
 
@@ -245,15 +244,6 @@ const defineReason = () =>{
                             <h1 class="text-center font-bold">Evidencia</h1>
                             <!-- <img :src="form.file[0]" alt=""> -->
                             <img src="/semilleros.png" width="200" alt="">
-                        </div>
-
-                        <div class="grid col-span-3">
-                            <CommonDropzone v-if="form.status == 'REC'" name="file"
-                                label="Suba su archivo aqui para cambiar evidencia *" :accept-multiple="false"
-                                v-model="form.file"
-                                @addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
-                                @removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }"
-                                :validator="v$" />
                         </div>
                     </div>
                 </div>

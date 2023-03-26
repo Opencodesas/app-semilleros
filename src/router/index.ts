@@ -508,9 +508,31 @@ const routes = [
 				meta: { provider: 'technical_director' },
 				children: [
 					{
-						path: "visit",
+						path: "reviews",
 						name: "technical_director.reviews",
 						component: () => import('@/pages/technical_director/reviews/Index.vue'),
+					},
+					{
+						path: "visit-review/:id",
+						name: "technical_director.visit-review",
+						component: () => import('@/pages/technical_director/reviews/subdirectorVisitReview.vue'),
+					},
+				],
+			},
+			{
+				path: "transversal_programs_director",
+				name: "transversal_programs_director",
+				meta: { provider: 'transversal_programs_director' },
+				children: [
+					{
+						path: "reviews",
+						name: "transversal_programs_director.reviews",
+						component: () => import('@/pages/transversal_programs_director/reviews/Index.vue'),
+					},
+					{
+						path: "transversal-activity-review/:id",
+						name: "transversal_programs_director.transversal-activity-review",
+						component: () => import('@/pages/transversal_programs_director/reviews/transversalActivityReview.vue'),
 					},
 				],
 			},

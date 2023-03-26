@@ -4,7 +4,7 @@ import { required } from "@vuelidate/validators";
 import { filePondValue } from '@/composables/useFilepondEvents';
 import Swal, { SweetAlertIcon } from "sweetalert2";
 import { onboardingStore } from "@/stores/onboardingStore";
-import { subdirectorVisitServices } from '@/services/technical_subdirector/subdirectorVisitServices';
+import { technicalSubdirectorVisitServices } from '@/services/technical_subdirector/technicalSubdirectorVisitServices';
 // import { formToJSON } from "axios";
 // import { json } from "stream/consumers";
 // import { forEach } from "lodash";
@@ -111,7 +111,7 @@ const onSubmit = async () => {
     const valid = await v$.value.$validate()
 
     if (valid) {
-        await subdirectorVisitServices.create(formdataParser(form)).then((response) => {
+        await technicalSubdirectorVisitServices.create(formdataParser(form)).then((response) => {
             if (response) {
                 if (response.status >= 200 && response.status <= 300) {
                     alerts.create()

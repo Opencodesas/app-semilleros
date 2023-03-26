@@ -15,7 +15,7 @@ import {
 
 const route = useRoute()
 
-
+//Traer visitas en revisión
 const items = ref<Item[]>([
     { id: '1', date: '2023-02-11', monitor: 'Juan', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 1, name: 'Aprobado', slug: 'APR' } },
     { id: '2', date: '2023-02-11', monitor: 'Pedro', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 2, name: 'En Revisión', slug: 'ENR' } },
@@ -166,14 +166,15 @@ const headerCustomVisits: Header[] = [
 const { isProvider } = useProvider()
 const router = useRouter()
 
-const isOpen = ref(false)
+//Funciones para modal aun en desrrollo
+// const isOpen = ref(false)
 
-function closeModal() {
-    isOpen.value = false
-}
-function openModal() {
-    isOpen.value = true
-}
+// function closeModal() {
+//     isOpen.value = false
+// }
+// function openModal() {
+//     isOpen.value = true
+// }
 
 const selectedTab = ref(1);
 provide('selectedTab', selectedTab)
