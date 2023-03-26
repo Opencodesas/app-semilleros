@@ -429,11 +429,11 @@ const routes = [
 						name: "psychosocial.visits",
 						component: () => import('@/pages/psychosocial/visits/index.vue'),
 					},
-					{
-						path: "update/:id",
-						name: "psychosocial.update",
-						component: () => import('@/pages/psychosocial_coordinator/reviews/PruebaModal.vue'),
-					},
+					// {
+					// 	path: "update/:id",
+					// 	name: "psychosocial.update",
+					// 	component: () => import('@/pages/...'),
+					// },
 					{
 						path: "custom-update/:id",
 						name: "psychosocial.custom-update",
@@ -463,9 +463,15 @@ const routes = [
 				meta: { provider: 'psychosocial-coordinator' },
 				children: [
 					{
-						path: "visit",
+						path: "reviews",
 						name: "psychosocial-coordinator.reviews",
 						component: () => import('@/pages/psychosocial_coordinator/reviews/Index.vue'),
+					},
+					{
+						//Pagina para aprobar o rechazar las visitas personalizadas.
+						path: "custom-review/:id",
+						name: "psychosocial-coordinator.custom-review",
+						component: () => import('@/pages/psychosocial_coordinator/reviews/CustomVisitReview.vue'),
 					},
 					{
 						path: "prueba",

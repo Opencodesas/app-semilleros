@@ -62,7 +62,7 @@ const municipality_id = computed(() => form.municipality)
 //  }, null)
 
 const getBeneficiaryData = async () => {
-    //Verificar que traiga los datos necesarios
+    //Verificar que traiga los datos necesarios y ver cómo le mando el id para que busque
     await beneficiaryServices.get(form.beneficiary as string).then((response) => {
         console.log(response?.data.items);
         if (response?.status == 200 || response?.status == 201) {

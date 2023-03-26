@@ -67,17 +67,17 @@ const municipality_id = computed(() => form.municipality)
 const monitorList = [ //No olvidar llamar las funciones cuando se selecciones con @select en el componente
     { label: "Joselito", value: 1 },
     { label: "Miguelito", value: 2 },
-    //asyncComputed(async () => {
+    //async () => {
     //     return municipality_id.value ? await getMonitorsByMunicipaly(municipality_id.value) : []
-    //  }, null)
+    //  }
 ];
 
 //Sacar disciplinas por monitor
 const disciplinesList = ref([]);
 //[ //No olvidar llamar las funciones cuando se selecciones con @select en el componente
-//asyncComputed(async () => {
+//async () => {
 //     return municipality_id.value ? await getDisciplinesByMonitor(form.moniror) : []
-//  }, null)
+//  }
 //]
 
 

@@ -186,8 +186,8 @@ const positionRange = computed(() => {
                             :validator="v$" :options="months" />
                         <CommonSelect :disabled="diableElements" label="Municipio *" name="municipality"
                             v-model="form.municipality" :validator="v$" :options="cities" />
-                        <CommonSelect @select="getBeneficiaryData" :disabled="diableElements" label="Beneficiario *" name="beneficiary"
-                            v-model="form.beneficiary" :validator="v$" :options="beneficiaries" />
+                        <CommonSelect @select="getBeneficiaryData" :disabled="diableElements" label="Beneficiario *"
+                            name="beneficiary" v-model="form.beneficiary" :validator="v$" :options="beneficiaries" />
                     </div>
                     <!-- cambiar condicion por "beneficiary_data" cuando haya función para traer los datos -->
                     <div v-if="form.beneficiary">
@@ -218,28 +218,27 @@ const positionRange = computed(() => {
                                     Semilleros Deportivos?. </FormSwitch.Label>
                             </div>
                         </div>
-                        <div class="col-span-3 sm:grid-cols-3">
+                        <div class="col-span-3 sm:grid-cols-3 space-y-6 pt-5">
                             <CommonTextarea :disabled="diableElements"
                                 label="Temáticas durante la visita: físico, emocional, familiar, escolar, social, espiritual *"
                                 placeholder="Escriba..." name="theme" rows="5" v-model="form.theme" :validator="v$" />
 
-                        </div>
-                        <div class="col-span-3 sm:grid-cols-3">
                             <CommonTextarea :disabled="diableElements" label="Acuerdos y recomendaciones *"
                                 placeholder="Escriba..." name="agreements" rows="5" v-model="form.agreements"
                                 :validator="v$" />
-                        </div>
 
-                        <div class="grid col-span-3 justify-center">
-                            <label for="range" class="text-xs">Concepto del padre o acudiente que atendió la visita en una
-                                escala de 1 a 5 donde 1 es deficiente y 5 excelente:
-                            </label>
-                            <div id="range" class="relative mb-5">
-                                <input :disabled="diableElements" class="w-full accent-primary" type="range" min="1" max="5"
-                                    v-model="form.concept" />
-                                <div :style="{ left: positionRange }"
-                                    class="absolute -translate-x-1/4 border-zinc-500 border-2 p-2  rounded-full bg-primary text-white select-none">
-                                    {{ form.concept }}
+                            <div class="grid col-span-3 justify-center">
+                                <label for="range" class="text-xs">Concepto del padre o acudiente que atendió la visita en
+                                    una
+                                    escala de 1 a 5 donde 1 es deficiente y 5 excelente:
+                                </label>
+                                <div id="range" class="relative mb-5">
+                                    <input :disabled="diableElements" class="w-full accent-primary" type="range" min="1"
+                                        max="5" v-model="form.concept" />
+                                    <div :style="{ left: positionRange }"
+                                        class="absolute -translate-x-1/4 border-zinc-500 border-2 p-2  rounded-full bg-primary text-white select-none">
+                                        {{ form.concept }}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -251,16 +250,15 @@ const positionRange = computed(() => {
                         </div>
 
                         <div v-if="form.status == '4'" class="grid col-span-3">
-                            <CommonDropzone name="file"
+                            <CommonDropzone :validator="v$" name="file"
                                 label="Suba su archivo aqui para cambiar evidencia *" :accept-multiple="false"
                                 v-model="form.file"
                                 @addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
-                                @removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }"
-                                :validator="v$" />
+                                @removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }" />
                         </div>
                         <!-- <div>
-                                                            <CommonFile label="Documento 1" name="file"/>
-                                                        </div> -->
+                                                                <CommonFile label="Documento 1" name="file"/>
+                                                            </div> -->
                     </div>
                 </div>
             </div>
@@ -273,7 +271,8 @@ const positionRange = computed(() => {
                     <Button v-else-if="form.status == '1'" type="button" variant="dark" @click="download">
                         Descargar visita
                     </Button>
-                    <Button v-else type="button" variant="dark" @click="() => { router.push({ name: 'psychosocial.visits' }) }">
+                    <Button v-else type="button" variant="dark"
+                        @click="() => { router.push({ name: 'psychosocial.visits' }) }">
                         Atrás
                     </Button>
                 </div>
