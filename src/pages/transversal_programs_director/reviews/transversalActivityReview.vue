@@ -19,7 +19,7 @@ const route = useRoute();
 const store = onboardingStore();
 
 const form = reactive({
-    municipality: {},
+    municipality: {id: '', name: ''},
     date: '',
     attenders: '',
     transversal_activity: '',
