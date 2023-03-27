@@ -554,7 +554,7 @@ const _getStatus = (status: any) => getStatus(status);
 								item.status.slug === 'REC' ||
 								(item.status.slug === 'APR' && route.name !== 'review.index')
 							">
-							<Button
+							<Button v-if="item.status.slug === 'REC'"
 								variant="outline-secondary"
 								@click="editAction(item.id)">
 								<Lucide
@@ -562,14 +562,14 @@ const _getStatus = (status: any) => getStatus(status);
 									class="mr-2" />
 								<span class="text-sm"> Editar </span>
 							</Button>
-							<Button
+							<!-- <Button
 								variant="outline-danger"
 								@click="onDeleteFnc(item.id)">
 								<Lucide
 									icon="Delete"
 									class="mr-2" />
-								<span class="text-sm"> Eliminar </span>
-							</Button>
+								<span class="text-sm"> Eliminar </span> 
+							</Button> -->
 						</template>
 						<template
 							v-else-if="
@@ -581,6 +581,84 @@ const _getStatus = (status: any) => getStatus(status);
 									:id_review="item.id" />
 							</template>
 						</template>
+					</template>
+					<template v-else-if="isProvider('psychosocial')">
+						<!-- <template v-if="item.status.slug == 'REC'">
+							<Button
+								variant="outline-secondary"
+								@click="
+									() => {
+										router.push({
+											name: 'psychosocial.custom-update',
+											params: { status: 'REC' },
+										});
+									}
+								">
+								<Lucide
+									icon="FileEdit"
+									class="mr-2" />
+								<span class="text-sm"> Editar </span>
+							</Button>
+						</template> -->
+						<template
+							v-if="
+								item.status.slug === 'REC' ||
+								(item.status.slug === 'APR' && route.name !== 'review.index')
+							">
+							<CommonButtonLink v-if="item.status.slug === 'REC'"
+									:to="{
+										name: 'psychosocial.transversal-activity.edit',
+										params: { id: item.id },
+									}"
+									variant="outline-secondary">
+									<Lucide
+										icon="FileEdit"
+										class="mr-2" />
+									<span class="text-sm"> Editar </span>
+								</CommonButtonLink>
+							<!-- <Button
+								variant="outline-danger"
+								@click="onDeleteFnc(item.id)">
+								<Lucide
+									icon="Delete"
+									class="mr-2" />
+								<span class="text-sm"> Eliminar </span>
+							</Button> -->
+						</template>
+						<template
+							v-else-if="
+								item.status.slug === 'ENR' && route.name === 'review.index'
+							">
+							<template v-if="props.Form!">
+								<Modal
+									:Form="props.Form"
+									:id_review="item.id" />
+							</template>
+						</template>
+						<!-- <template v-else>
+							<Button
+								variant="outline-secondary"
+								@click="
+									() => {
+										if (item.status.slug == 'APR') {
+											router.push({
+												name: 'psychosocial.custom-update',
+												params: { status: 'APR' },
+											});
+										} else {
+											router.push({
+												name: 'psychosocial.custom-update',
+												params: { status: 'ENR' },
+											});
+										}
+									}
+								">
+								<Lucide
+									icon="FileArchive"
+									class="mr-2" />
+								<span class="text-sm"> Visualizar </span>
+							</Button>
+						</template> -->
 					</template>
 					<template v-else>
 						<Button
