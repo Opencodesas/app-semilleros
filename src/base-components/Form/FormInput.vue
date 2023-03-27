@@ -62,6 +62,7 @@ watch(localValue, () => {
   <input
     :class="computedClass"
     :type="props.type"
+    :required="props.required"
     v-bind="_.omit(attrs, 'class')"
     v-model="localValue"
   />
