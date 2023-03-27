@@ -23,7 +23,7 @@ const form = reactive({
 	hour_visit: '10:00',
 	sidewalk: 'El Aguila',
 	monitor_id: 'Miguel Torres',
-	disciplines_id: '7',
+	discipline_id: '7',
 	sports_scene: 'Cancha Principal Punta Brava',
 	municipality_id: '5',
 	beneficiary_coverage: '9',
@@ -182,7 +182,7 @@ const onSubmit = async () => {
 			<CommonSelect
 				label="Disciplinas *"
 				name="disciplines"
-				v-model="form.disciplines_id"
+				v-model="form.discipline_id"
 				:options="disciplines"
 				disabled />
 			<CommonInput

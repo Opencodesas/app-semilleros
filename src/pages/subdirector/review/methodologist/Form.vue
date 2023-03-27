@@ -25,7 +25,7 @@ const form = reactive({
 	monitor_id: '1',
 	discipline_id: '7',
 	sports_scene: 'Cancha Principal Punta Brava',
-	municipality: '5',
+	municipality_id: '5',
 	beneficiary_coverage: '9',
 	evaluation: '1',
 	event_support_id: '1',
@@ -177,8 +177,8 @@ const onSubmit = async () => {
 				disabled />
 			<CommonSelect
 				label="Municipios *"
-				name="municipality"
-				v-model="form.municipality"
+				name="municipality_id"
+				v-model="form.municipality_id"
 				:options="municipalities"
 				disabled />
 			<CommonInput
