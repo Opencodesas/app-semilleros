@@ -1,45 +1,50 @@
 <script setup lang="ts">
+import { searchData } from '@/composables/search';
+import { onboardingStore } from '@/stores/onboardingStore';
 import { Header, Item } from 'vue3-easy-data-table';
 
-const router = useRouter();
-const route = useRoute();
+const store = onboardingStore();
 
-const routeName = computed(() => {
-	return String(route.name).split('.')[0];
-});
+const router = useRouter();
 
 const create = () => {
 	setLoading(true);
-	router.replace('subdirector/visit').finally(() => {
+	router.push({ name: 'subdirector_visit.create' }).finally(() => {
 		setLoading(false);
 	});
 };
 
 // onBeforeMount(async () => {
-// 	await subdirectorVisitServices.getAll().then((response) => {
+// 	await subdirectorVisitServices.getAll(id = store.user.id).then((response) => {
 // 		items.value = response?.data.items
 // 	});
 // });
+const deleteModule = async (id: string | number) => {
+	console.log(id);
+	// await subdirectorVisitServices.delete(id).then((response) => {
+	// 	console.log(response);
+	// });
+};
 
 const headers: Header[] = [
 	{ text: 'No', value: 'id' },
-	{ text: 'Fecha', value: 'date' },
+	{ text: 'Fecha', value: 'date_visit' },
 	{ text: 'Municipio', value: 'municipality' },
 	{ text: 'Monitor', value: 'monitor_name' },
-	{ text: 'Escenario Deportivo', value: 'sport_facility' },
+	{ text: 'Escenario Deportivo', value: 'sport_scene' },
 	{ text: 'Estado', value: 'status' },
 	{ text: 'Acciones', value: 'actions' },
 ];
 
 // const items = ref<Item[]>([]);
-
+const search = ref('');
 const items = ref<Item[]>([
 	{
 		id: '1',
-		date: '2023-02-15',
+		date_visit: '2023-02-15',
 		municipality: 'Jamundi',
 		monitor_name: 'Oscar Martinez',
-		sport_facility: 'Cancha Marcella',
+		sport_scene: 'Cancha Marcella',
 		status: {
 			id: 2,
 			name: 'En Revisión',
@@ -48,10 +53,10 @@ const items = ref<Item[]>([
 	},
 	{
 		id: '2',
-		date: '2023-02-20',
+		date_visit: '2023-02-20',
 		municipality: 'Jamundi',
 		monitor_name: 'Oscar Martinez',
-		sport_facility: 'Cancha Marcella',
+		sport_scene: 'Cancha Marcella',
 		status: {
 			id: 2,
 			name: 'En Revisión',
@@ -60,10 +65,10 @@ const items = ref<Item[]>([
 	},
 	{
 		id: '3',
-		date: '2023-02-27',
+		date_visit: '2023-02-27',
 		municipality: 'Jamundi',
 		monitor_name: 'Oscar Martinez',
-		sport_facility: 'Cancha Marcella',
+		sport_scene: 'Cancha Marcella',
 		status: {
 			id: 2,
 			name: 'Rechazado',
@@ -71,6 +76,8 @@ const items = ref<Item[]>([
 		},
 	},
 ]);
+
+const data = computed(() => searchData(items.value, search.value));
 </script>
 
 <template>
@@ -88,19 +95,15 @@ const items = ref<Item[]>([
 
 	<!-- BEGIN: Page Layout -->
 	<div class="p-5 mt-5 intro-y box">
-		<FormInput
-			placeholder="Buscar"
-			class="input w-full h-9 border rounded-none border-b-2 border-x-0 border-t-0 shadow-none pl-1 outline-none focus:outline-none focus:shadow-none focus:border-transparent focus:border-primary-500 mb-2"
-			icon="search" />
+		<CommonInput
+			type="search"
+			name="search"
+			v-model="search"
+			placeholder="Buscar" />
 		<Crud
 			:headers="headers"
-			:items="items" />
-		<!-- <DataTable
-			:headers="headers"
-			:items="items"
-			buttons-pagination
-			table-class-name="customize-table">
-		</DataTable> -->
+			:items="data"
+			:onDeleteFnc="deleteModule" />
 	</div>
 	<!-- END: Page Layout -->
 </template>

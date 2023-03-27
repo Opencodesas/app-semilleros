@@ -10,44 +10,45 @@ const { multiple } = useFilepondEvents();
 const store = onboardingStore();
 const router = useRouter();
 const route = useRoute();
-const { id } = route.params;
 
 const form = reactive({
-	observations: '',
-	monitor: '',
-	municipalities: '',
-	event_support: '',
+	status_id: '3',
+	rejection_message: '',
+	date_visit: '',
 	hour_visit: '',
-	disciplines: '',
+	municipality_id: '',
 	sidewalk: '',
+	monitor_id: '',
+	discipline_id: '',
 	sports_scene: '',
 	beneficiary_coverage: '',
 	technical: '',
-	date_visit: '',
+	event_support: '',
 	description: '',
+	observations: '',
 	file: [],
-	status: '3',
-
+	created_by: store.user.id,
 });
 
 const form_rules = computed(() => ({
-	observations: { required },
-	monitor: { required },
-	municipalities: { required },
-	event_support: { required },
+	status_id: { required },
+	rejection_message: {},
+	date_visit: { required },
 	hour_visit: { required },
-	disciplines: { required },
+	municipality_id: { required },
 	sidewalk: { required },
+	monitor_id: { required },
+	discipline_id: { required },
 	sports_scene: { required },
 	beneficiary_coverage: { required },
 	technical: { required },
-	date_visit: { required },
+	event_support: { required },
 	description: { required },
+	observations: { required },
 	file: { required },
-	status: { required },
+	created_by: { required },
 }));
 
-const municipalities = ref([]);
 const disciplinesList = ref([]);
 const monitorList = [
 	{ label: 'Joselito', value: 1 },
@@ -63,47 +64,44 @@ const evaluationList = [
 ];
 const v$ = useVuelidate(form_rules, form);
 
+const municipalities = asyncComputed(async () => {
+	return await getSelect(['municipalities']);
+}, null);
 
-const fetch = async () => {
-	await store.getListSelect().then((response) => {
-		console.log(`data fetch: ${response?.data}`);
-		if (response?.status == 200 || response?.status == 201) {
-			municipalities.value = JSON.parse(
-				JSON.stringify(response.data['municipalities'])
-			);
-			disciplinesList.value = JSON.parse(
-				JSON.stringify(response.data['disciplines'])
-			);
-		} else {
-			Swal.fire('', 'No se pudieron obtener los datos', 'error');
-		}
-	});
-};
-onMounted(() => {
-	fetch();
-});
+const disciplines = asyncComputed(async () => {
+	return await getSelect(['disciplines']);
+}, null);
+
 const onSubmit = async () => {
 	const valid = await v$.value.$validate();
 
 	if (valid) {
-		await subdirectorVisitServices.create(formdataParser(form)).then(
-			(response) => {
+		await subdirectorVisitServices
+			.create(formdataParser(form), (store.user.id! && store.user.id))
+			.then((response) => {
 				if (response?.status == 200 || response?.status == 201) {
 					Swal.fire('', 'Creación exitosa!', 'success');
 					setLoading(true);
-					router.push('index').finally(() => {
-						setLoading(false);
-					});
+					router
+						.push({
+							name: 'subdirector_visit.index',
+						})
+						.finally(() => {
+							setLoading(false);
+						});
 				} else {
 					Swal.fire('', 'No se pudo crear', 'error');
 				}
-			}
-		);
+			});
 		Swal.fire('', 'Creación exitosa!', 'success');
 		setLoading(true);
-		router.push('index').finally(() => {
-			setLoading(false);
-		});
+		router
+			.push({
+				name: 'subdirector_visit.index',
+			})
+			.finally(() => {
+				setLoading(false);
+			});
 	} else {
 		alerts.validation();
 	}
@@ -136,43 +134,47 @@ const onSubmit = async () => {
 				:validator="v$" />
 			<CommonSelect
 				label="Municipio *"
-				name="municipalities"
+				placeholder="Seleccione"
+				name="municipality_id"
 				class="cursor-pointer"
-				v-model="form.municipalities"
+				v-model="form.municipality_id"
 				:validator="v$"
 				:options="municipalities" />
 
 			<CommonInput
 				type="text"
-				placeholder="Ingrese"
+				placeholder="Ingrese el corregimiento o vereda"
 				label="Corregimiento / Vereda *"
 				name="sidewalk"
 				v-model="form.sidewalk"
 				:validator="v$" />
 			<CommonSelect
 				label="Monitor *"
-				name="monitor"
+				name="monitor_id"
+				placeholder="Seleccione"
 				class="cursor-pointer"
-				v-model="form.monitor"
+				v-model="form.monitor_id"
 				:validator="v$"
 				:options="monitorList" />
 			<CommonSelect
 				label="Disciplinas *"
-				name="disciplines"
+				placeholder="Seleccione"
+				name="discipline_id"
 				class="cursor-pointer"
-				v-model="form.disciplines"
+				v-model="form.discipline_id"
 				:validator="v$"
-				:options="disciplinesList" />
+				:options="disciplines" />
 			<CommonInput
 				type="text"
-				placeholder="Ingrese"
+				placeholder="Ingrese el escenario deportivo"
 				label="Escenario deportivo *"
 				name="sports_scene"
 				v-model="form.sports_scene"
 				:validator="v$" />
 			<CommonInput
-				type="text"
-				placeholder="Ingrese"
+				type="number"
+				min="0"
+				placeholder="Ingrese un numero de beneficiarios"
 				label="Cobertura de benificiario *"
 				name="beneficiary_coverage"
 				v-model="form.beneficiary_coverage"
@@ -180,6 +182,7 @@ const onSubmit = async () => {
 			<CommonSelect
 				label="Cumple con el desarrollo tecnico del mes *"
 				name="technical"
+				placeholder="Seleccione"
 				class="cursor-pointer"
 				v-model="form.technical"
 				:validator="v$"
@@ -187,6 +190,7 @@ const onSubmit = async () => {
 			<CommonSelect
 				label="Apoyo a eventos *"
 				name="event_support"
+				placeholder="Seleccione"
 				class="cursor-pointer"
 				v-model="form.event_support"
 				:validator="v$"

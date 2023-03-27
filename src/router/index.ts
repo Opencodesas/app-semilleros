@@ -1,7 +1,7 @@
 import { accessStore } from "@/stores/accessStore";
-import { onboardingStore } from "@/stores/onboardingStore"
-import { storeToRefs } from "pinia"
-import { NavigationGuardNext, RouteLocationNormalized, RouteMeta, RouteRecordRaw, createRouter, createWebHistory } from "vue-router";
+import { onboardingStore } from "@/stores/onboardingStore";
+import { storeToRefs } from "pinia";
+import { createRouter, createWebHistory, NavigationGuardNext, RouteLocationNormalized, RouteMeta, RouteRecordRaw } from "vue-router";
 // import SimpleMenu from "../layouts/SimpleMenu/SimpleMenu.vue";
 // import TopMenu from "../layouts/TopMenu/TopMenu.vue";
 
@@ -408,6 +408,45 @@ const routes = [
 						// component: () => import('@/pages/contractors/Form.vue')
 					},
 				]
+			},	
+			{
+				path: "psychosocial",
+				name: "psychosocial",
+				meta: { provider: 'psychosocial' },
+				children: [
+					{
+						path: "visit",
+						name: "psychosocial.visit",
+						component: () => import('@/pages/psychosocial/visit/Form.vue'),
+					},
+					{
+						path: "custom-visit",
+						name: "psychosocial.custom-visit",
+						component: () => import('@/pages/psychosocial/custom-visit/Form.vue'),
+					},
+					{
+						path: "custom-update/:status",
+						name: "psychosocial.custom-update",
+						component: () => import('@/pages/psychosocial/custom-visit/FormEdit.vue'),
+					},
+					{
+						path: "visits",
+						name: "psychosocial.visits",
+						component: () => import('@/pages/psychosocial/visits/index.vue'),
+					},
+				],
+			},
+			{
+				path: "coordinador-psicosocial",
+				name: "coordinador-psicosocial",
+				meta: { provider: 'coordinador-psicosocial' },
+				children: [
+					{
+						path: "visit",
+						name: "coordinador-psicosocial.reviews",
+						component: () => import('@/pages/psychosocial_coordinator/reviews/Index.vue'),
+					},
+				],
 			},
 			{
 				path: "subdirector",
@@ -430,21 +469,9 @@ const routes = [
 						component: () => import('@/pages/subdirector/visit/Edit.vue')
 					},
 					{
-						path: "methodologist",
-						name: "subdirector_methodologist",
-						meta: { provider: 'subdirector_methodologist' },
-						children: [
-							{
-								path: "",
-								name: "subdirector_methodologist.list",
-								component: () => import('@/pages/subdirector/methodologist/Index.vue'),
-							},
-							{
-								path: "edit/:id",
-								name: "subdirector_methodologist.reviewControl",
-								component: () => import('@/pages/subdirector/methodologist/Form.vue'),
-							},
-						]
+						path: 'review',
+						name: 'review.index',
+						component: () => import('@/pages/subdirector/review/Index.vue')
 					}
 				]
 			},
@@ -505,6 +532,23 @@ const routes = [
 							},
 						]
 					},
+					{
+						path: 'transversal-activity',
+						name: 'psychosocial.transversal-activity',
+						children: [
+							{
+								path: '',
+								name: 'psychosocial.transversal-activity.index',
+								component: () => import('@/pages/psychosocial/transversal-activity/Index.vue'),
+							},
+							{
+								path: "create",
+								name: "psychosocial.transversal-activity.create",
+								component: () => import('@/pages/psychosocial/transversal-activity/Form.vue'),
+							},
+						]
+					}
+					
 				],
 			},
 			

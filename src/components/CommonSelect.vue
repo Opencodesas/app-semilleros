@@ -106,7 +106,7 @@ const value = computed({
             </FormLabel>
         </template>
 
-        <VueMultiSelect v-model="value" placeholder="Selecciona" :options="options_handle" :class="[
+        <VueMultiSelect v-model="value" :placeholder="placeholder" :options="options_handle" :class="[
             {
                 'border-danger': validator && validator[name].$error
                     || collection_validator && collection_validator.v$[collection_validator.name].$error

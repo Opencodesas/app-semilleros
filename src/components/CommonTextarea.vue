@@ -12,7 +12,7 @@ interface Props {
     name: string
     rows?: string
     cols?: string
-    validator: Validation
+    validator?: Validation
 }
 
 const props = withDefaults(defineProps<Props>(), {})
