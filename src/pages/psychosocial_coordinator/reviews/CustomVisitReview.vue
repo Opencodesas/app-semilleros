@@ -2,16 +2,13 @@
 import FormSwitch from "@/base-components/Form/FormSwitch";
 import useVuelidate from '@vuelidate/core'
 import { required } from '@/utils/validators'
-import { filePondValue } from '@/composables/useFilepondEvents';
 import { customVisitServices } from '@/services/psychosocial/customVisitServices';
 import { selectOption } from '@/components/CommonSelect.vue';
+import { filePondValue } from '@/composables/useFilepondEvents';
 
 const { multiple } = useFilepondEvents();
 
 const route = useRoute();
-
-
-//const router = useRouter(); ya existe
 
 //Usar para verificar
 const { isProvider } = useProvider()
@@ -23,7 +20,7 @@ const props = defineProps<{
 //Quitar datos de prueba
 const form = reactive({
     reason: 'Fue rechazado por...',
-    month: '1', //Se guarda como posicion
+    month: '1',
     municipality: '2',
     beneficiary: '2',
     theme: 'Físico',
@@ -99,7 +96,7 @@ const getData = async () => {
             form.concept = response.data.items.concept;
             form.guardian_knows_semilleros = response.data.items.guardian_knows_semilleros;
             form.file = response.data.items.file;
-            form.status = response.data.items.status;
+            //form.status = response.data.items.status; //Revisar si es necesario traerlo
             alerts.custom('', response?.data.message, 'info');
 
         } else {

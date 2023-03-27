@@ -25,10 +25,10 @@ const routeName = computed(() => {
 //     await psychosocialVisitServices.getAll().then((response) => {
 //          itemsVisit.value = response?.data.items
 //      })
-//     await psychosocialCustomVisitServices.getAll().then((response) => {
+//     await customVisitServices.getAll().then((response) => {
 //          itemsCustomVisit.value = response?.data.items
 //      })
-//     await psychosocialTransversalActivityServices.getAll().then((response) => {
+//     await transversalActivityServices.getAll().then((response) => {
 //         itemsTransversalActivity.value = response?.data.items
 //     })
 // })

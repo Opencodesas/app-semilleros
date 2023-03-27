@@ -16,27 +16,27 @@ const { multiple } = useFilepondEvents();
 const store = onboardingStore();
 
 const form = reactive({
-    date_visit: "",
-    hour_visit: "",
-    municipality: "",
-    sidewalk: "",
-    monitor: "",
-    discipline: "",
-    sports_scene: "",
-    beneficiary_coverage: "",
-    meets_monthly_technical_development: "",
-    event_support: "",
-    description: "",
-    observations: "",
-    file: [],
-    status: "2", //id:2 => En revisión => ENR
-    //createdBy: store.get_user, Preguntar si es necesario
+    date: "", //Date
+    hour: "", //time
+    municipality: "", //ID
+    sidewalk: "", //String
+    monitor: "", //ID
+    discipline: "", //ID
+    sports_scene: "", //String
+    beneficiary_coverage: "", //Int
+    meets_monthly_technical_development: "", //ID => 1 => Si, 2 => No
+    event_support: "", //ID => 1 => Si, 2 => No
+    description: "", //String
+    observations: "", //String
+    file: [], //File
+    status: "2", //ID
+    createdBy: store.get_user, //ID
 
 });
 
 const form_rules = computed(() => ({
-    date_visit: { required },
-    hour_visit: { required },
+    date: { required },
+    hour: { required },
     municipality: { required },
     sidewalk: { required },
     monitor: { required },
@@ -128,6 +128,7 @@ const onSubmit = async () => {
         alerts.validation()
     }
 }
+
 </script>
 
 <template>
@@ -140,8 +141,8 @@ const onSubmit = async () => {
     <div class="p-5 mt-5 intro-y box">
         <form @submit.prevent="onSubmit" class="space-y-8 divide-y divide-slate-200">
             <div class="grid grid-cols-2 md:grid md:grid-cols-2 gap-6 justify-evenly">
-                <CommonInput type="date" label="Fecha  *" name="date_visit" v-model="form.date_visit" :validator="v$" />
-                <CommonInput type="time" label="Hora  *" name="hour_visit" v-model="form.hour_visit" :validator="v$" />
+                <CommonInput type="date" label="Fecha  *" name="date" v-model="form.date" :validator="v$" />
+                <CommonInput type="time" label="Hora  *" name="hour" v-model="form.hour" :validator="v$" />
                 <CommonSelect label="Municipio *" name="municipality" v-model="form.municipality" :validator="v$"
                     :options="municipalities" />
 

@@ -15,9 +15,9 @@ const { isProvider } = useProvider()
 
 const store = onboardingStore();
 
+//Recibe datos para editar visita personalizada
 //QUITAR DATOS DE PRUEBA
 const form = reactive({
-    reason: 'Fue rechazado por...',
     month: '1',
     municipality: '2',
     beneficiary: '2',
@@ -27,6 +27,7 @@ const form = reactive({
     guardian_knows_semilleros: true,
     file: [],
     status: '4', //id:4 => Rechazado => REC cambiamos si queremos ver otra vista
+    reason: 'Fue rechazado por...', 
 })
 
 
@@ -41,6 +42,17 @@ const form_rules = computed(() => ({
     file: [],
 }))
 
+const months = asyncComputed(async () => {
+    return await getSelect(['months'])
+}, null)
+
+const municipalities = asyncComputed(async () => {
+    return await getSelect(['municipalities'])
+}, null)
+
+
+const municipality_id = computed(() => form.municipality)
+
 const beneficiary_data = reactive({
     grade: 'PRIMARIA',
     health_entity: 'NUEVA EPS',
@@ -49,14 +61,7 @@ const beneficiary_data = reactive({
     guardian_identification: '1074936855',
 })
 
-const months = asyncComputed(async () => {
-    return await getSelect(['months'])
-}, null)
-
-const cities = asyncComputed(async () => {
-    return await getSelect(['municipalities'])
-}, null)
-
+//Datos de prueba
 const beneficiaries = ref<selectOption[]>([
     { label: 'Pedro', value: '1' },
     { label: 'Juan', value: '2' },
@@ -64,12 +69,10 @@ const beneficiaries = ref<selectOption[]>([
     { label: 'Jose', value: '4' },
     { label: 'Luis', value: '5' },
 ])
-// Lo de arriba sale de esta funcion cuando haya conexion
+//Usar para traer beneficiarios (nombre y id) por municipio
 // const beneficiaries = asyncComputed(async () => {
 //     return municipality_id.value ? await getBeneficiariesByMunicipaly(municipality_id.value) : []
 //  }, null)
-
-const municipality_id = computed(() => form.municipality)
 
 const dataLoaded = ref(false)
 //Verificar si se puede hacer con asycComputed
@@ -185,7 +188,7 @@ const positionRange = computed(() => {
                         <CommonSelect :disabled="diableElements" label="Mes *" name="month" v-model="form.month"
                             :validator="v$" :options="months" />
                         <CommonSelect :disabled="diableElements" label="Municipio *" name="municipality"
-                            v-model="form.municipality" :validator="v$" :options="cities" />
+                            v-model="form.municipality" :validator="v$" :options="municipalities" />
                         <CommonSelect @select="getBeneficiaryData" :disabled="diableElements" label="Beneficiario *"
                             name="beneficiary" v-model="form.beneficiary" :validator="v$" :options="beneficiaries" />
                     </div>

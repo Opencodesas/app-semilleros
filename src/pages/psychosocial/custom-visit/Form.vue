@@ -9,20 +9,20 @@ import { customVisitServices } from '@/services/psychosocial/customVisitServices
 const { multiple } = useFilepondEvents();
 
 const store = onboardingStore();
+//id:2 => En revisión => ENR
 
+//Se manda la siguiente información para crear visita personalizada
 const form = reactive({
-    month: '',
-    municipality: '',
-    beneficiary: '',
-    theme: '',
-    agreements: '',
-    concept: '1',
-    guardian_knows_semilleros: false,
-    file: [],
-    status: '2', //id:2 => En revisión => ENR
-    //createdBy: store.get_user, Preguntar si es necesario
-
-
+    month: '', //ID del mes
+    municipality: '', //ID del municipio
+    beneficiary: '', //ID del beneficiario
+    theme: '', //String
+    agreements: '', //String
+    concept: '1', //String
+    guardian_knows_semilleros: false, //Boolean
+    file: [], //Un archivo (foto)
+    status: '2', //ID del estado                           
+    createdBy: store.get_user.id, //ID del usuario (Psicologo) que crea la visita personalizada
 })
 
 
@@ -37,15 +37,6 @@ const form_rules = computed(() => ({
     file: [{ required }],
 }))
 
-const beneficiary_data = reactive({
-    grade: '',
-    health_entity: '',
-    guardian_name: '',
-    guardian_lastname: '',
-    guardian_identification: '',
-})
-
-
 const months = asyncComputed(async () => {
     return await getSelect(['months'])
 }, null)
@@ -56,13 +47,22 @@ const municipalities = asyncComputed(async () => {
 
 const municipality_id = computed(() => form.municipality)
 
-//Usar para traer beneficiarios cuando haya funcion
+//Usar para traer beneficiarios (nombre y id) por municipio
 // const beneficiaries = asyncComputed(async () => {
 //     return municipality_id.value ? await getBeneficiariesByMunicipaly(municipality_id.value) : []
 //  }, null)
 
+//Se necesita traer la siguiente información del beneficiario por su id: (Adjuntar foto de lo visual)
+const beneficiary_data = reactive({
+    grade: '',
+    health_entity: '',
+    guardian_name: '',
+    guardian_lastname: '',
+    guardian_identification: '',
+})
+
+//revisar este servicio para ver si trae lo que se necesita
 const getBeneficiaryData = async () => {
-    //Verificar que traiga los datos necesarios y ver cómo le mando el id para que busque
     await beneficiaryServices.get(form.beneficiary as string).then((response) => {
         console.log(response?.data.items);
         if (response?.status == 200 || response?.status == 201) {

@@ -18,8 +18,8 @@ const route = useRoute();
 const store = onboardingStore();
 
 const form = reactive({
-    date_visit: "",
-    hour_visit: "",
+    date: "",
+    hour: "",
     municipality: "",
     sidewalk: "",
     monitor: "",
@@ -35,8 +35,8 @@ const form = reactive({
 });
 
 const form_rules = computed(() => ({
-    date_visit: { required },
-    hour_visit: { required },
+    date: { required },
+    hour: { required },
     municipality: { required },
     sidewalk: { required },
     monitor: { required },
@@ -110,8 +110,8 @@ const getData = async () => {
     await technicalSubdirectorVisitServices.get(route.params.id as string).then((response) => {
         console.log(response?.data.items);
         if (response?.status == 200 || response?.status == 201) {
-            form.date_visit = response.data.items.date_visit;
-            form.hour_visit = response.data.items.hour_visit;
+            form.date = response.data.items.date;
+            form.hour = response.data.items.hour;
             form.municipality = response.data.items.municipality;
             form.sidewalk = response.data.items.sidewalk;
             form.monitor = response.data.items.monitor;
@@ -186,9 +186,9 @@ const download = () => {
             <p class="text-left">{{ form.reason }}</p>
         </div>
         <div class="grid grid-cols-2 md:grid md:grid-cols-2 gap-6 justify-evenly mt-4">
-            <CommonInput :disabled="diableElements" type="date" label="Fecha  *" name="date_visit" v-model="form.date_visit"
+            <CommonInput :disabled="diableElements" type="date" label="Fecha  *" name="date" v-model="form.date"
                 :validator="v$" />
-            <CommonInput :disabled="diableElements" type="time" label="Hora  *" name="hour_visit" v-model="form.hour_visit"
+            <CommonInput :disabled="diableElements" type="time" label="Hora  *" name="hour" v-model="form.hour"
                 :validator="v$" />
             <CommonSelect :disabled="diableElements" label="Municipio *" name="municipality" v-model="form.municipality"
                 :validator="v$" :options="municipalities" />
