@@ -1,5 +1,6 @@
 let module = "methodologist_visits"
 
+
 export const methodologistVisitServices = {
     get: async (id: string) => {
         try {
@@ -14,13 +15,20 @@ export const methodologistVisitServices = {
             alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
         }
     },
-    getAll: async () => {
+    getAll: async (subdirector_id?: number) => {
         try {
             setLoading(true)
-
-            const response = await api.get(`/${apiPath}/${module}`).finally(() => {
+            let response
+            if(subdirector_id){
+                response = await api.get(`/${apiPath}/${module}?subdirector_id=${subdirector_id}`).finally(() => {
                 setLoading(false)
             })
+            }
+            else {
+                response = await api.get(`/${apiPath}/${module}`).finally(() => {
+                    setLoading(false)
+                })
+            }
 
             return response
         } catch (error: any) {

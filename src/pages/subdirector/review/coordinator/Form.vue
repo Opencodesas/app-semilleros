@@ -1,15 +1,23 @@
 <script setup lang="ts">
+import { coordinatorVisitServices } from '@/services/coordinatorVisitServices';
+import { onboardingStore } from '@/stores/onboardingStore';
 import { required } from '@/utils/validators';
 import useVuelidate from '@vuelidate/core';
+
+const store = onboardingStore();
+console.log(store.user.id);
+
 const { isProvider } = useProvider();
 const router = useRouter();
 const route = useRoute();
 const { id } = route.params;
 
+const props = defineProps<{
+	closeModal: Function;
+}>();
+
 const form = reactive({
 	id: '',
-	status_id: '',
-	reason: '',
 	coordinator_id: 'Camilo Martinez',
 	date_visit: '2023-03-15',
 	hour_visit: '10:00',
@@ -21,18 +29,20 @@ const form = reactive({
 	beneficiary_coverage: '9',
 	description: 'Mejorar dominio de grupo',
 	observations: 'Mejorar dominio de grupo',
+	coordinator_name: 'Camilo Martinez',
 
 	monitor: '1',
 
 	file: [],
 });
 const formStatus = reactive({
-	status: '',
-	reason: '',
+	status_id: '',
+	rejection_message: '',
+	revised_by: store.user.id,
 });
 const form_rules = computed(() => ({
-	status: { required },
-	reason: { required: parseInt(formStatus.status) == 2 },
+	status_id: { required },
+	rejection_message: { required: parseInt(formStatus.status_id) == 2 },
 }));
 const disciplines = asyncComputed(async () => {
 	return await getSelect(['disciplines']);
@@ -64,7 +74,7 @@ const onSubmit = async () => {
 	const valid = await v$.value.$validate();
 
 	if (valid) {
-		await coordinatorServices
+		await coordinatorVisitServices
 			.update(id.toString(), formdataParser(formStatus))
 			.then((response) => {
 				if (response) {
@@ -89,32 +99,36 @@ const onSubmit = async () => {
 </script>
 
 <template>
-	<div class="flex items-center justify-between mt-8 intro-y">
+	<div class="flex items-center justify-between intro-y">
 		<div class="flex items-center space-x-4">
-			<CommonBackButton
-				:to="'subdirector_coordinator.list'"
-				title="Listado" />
 			<h2 class="mr-auto text-lg font-medium">Revisar Visita</h2>
 		</div>
 	</div>
 
 	<div class="p-5 mt-5 intro-y box space-y-5 divide-y">
-		<h3 class="text-lg font-medium text-gray-900">ESTADO *</h3>
+		<h3 class="text-lg font-medium text-gray-900">Estado *</h3>
 		<CommonSelect
 			placeholder="Estado *"
-			name="status"
-			v-model="formStatus.status"
+			name="status_id"
+			v-model="formStatus.status_id"
 			:validator="v$"
 			:options="statusList" />
 		<CommonTextarea
 			placeholder="Motivo del rechazo*"
-			name="reason"
+			name="rejection_message"
 			class="intro-x box"
-			v-model="formStatus.reason"
+			v-model="formStatus.rejection_message"
 			:validator="v$"
 			rows="4"
-			v-if="parseInt(formStatus.status) == 2" />
-		<div class="mt-6 flex justify-end col-span-1 md:col-span-2 border-none">
+			v-if="parseInt(formStatus.status_id) == 2" />
+		<div
+			class="mt-6 gap-1 flex justify-end col-span-1 md:col-span-2 border-none"
+			tabindex="1">
+			<Button
+				variant="danger"
+				@click="props.closeModal"
+				>Cerrar</Button
+			>
 			<Button
 				variant="primary"
 				class="btn btn-primary"
@@ -126,8 +140,11 @@ const onSubmit = async () => {
 
 	<div class="p-5 mt-5 intro-y box">
 		<h3 class="text-lg font-medium leading-6 text-gray-900">Revision</h3>
-
-		<div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+		<p class="mt-3">
+			<span class="font-bold">Coordinador regional: </span
+			>{{ form.coordinator_name }}
+		</p>
+		<div class="mt-3 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
 			<CommonInput
 				type="date"
 				placeholder="Fecha "

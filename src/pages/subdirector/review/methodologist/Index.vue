@@ -2,7 +2,12 @@
 import Crud from '@/components/Crud.vue';
 import { searchData } from '@/composables/search';
 import { Header, Item } from 'vue3-easy-data-table';
+import { editFnc } from '@/composables/crudFnc';
+import Form from './Form.vue'
+import { onboardingStore } from "@/stores/onboardingStore";
 
+const store = onboardingStore();
+console.log(store.user.id);
 const router = useRouter();
 const { find } = useApiV1();
 
@@ -14,7 +19,7 @@ const { find } = useApiV1();
 // }, null)
 
 // onBeforeMount(async () => {
-//     await methodologistVisitServices.getAll().then((response) => {
+//     await methodologistVisitServices.getAll(subdirector = store.user.id).then((response) => {
 //         console.log(response?.data);
 //         items.value = response?.data.items
 //     })
@@ -26,8 +31,9 @@ const headers: Header[] = [
 	{ text: 'Nro.', value: 'id' },
 	{ text: 'Fecha', value: 'date_visit' },
 	{ text: 'Municipio', value: 'municipality' },
-	{ text: 'Coordinador', value: 'coordinator_name' },
+	{ text: 'Metodologo', value: 'methodologist_name' },
 	{ text: 'Escenario Deportivo', value: 'sport_scene' },
+	{ text: 'Evaluacion', value: 'evaluation' },
 	{ text: 'Estado', value: 'status' },
 	{ text: 'Acciones', value: 'actions' },
 ];
@@ -37,21 +43,35 @@ const items = ref<Item[]>([
 		id: '1',
 		date_visit: '2021-05-01',
 		municipality: 'Palmira',
-		coordinator_name: 'Pepito',
+		methodologist_name: 'Pepito',
 		sport_scene: 'Cancha',
+		evaluation: 'Aprobada',
 		status: {
 			id: 2,
 			name: 'En Revisión',
 			slug: 'ENR',
 		},
-		actions: 'actions',
 	},
 	{
 		id: '2',
 		date_visit: '2021-05-01',
 		municipality: 'Palmira',
-		coordinator_name: 'Pepito',
+		methodologist_name: 'Pepito',
 		sport_scene: 'Cancha',
+		evaluation: 'Aprobada',
+		status: {
+			id: 2,
+			name: 'En Revisión',
+			slug: 'ENR',
+		},
+	},
+	{
+		id: '2',
+		date_visit: '2021-05-01',
+		municipality: 'Palmira',
+		methodologist_name: 'Pepito',
+		sport_scene: 'Cancha',
+		evaluation: 'Aprobada',
 		status: {
 			id: 2,
 			name: 'Aprobado',
@@ -60,32 +80,10 @@ const items = ref<Item[]>([
 		actions: 'actions',
 	},
 ]);
-
 const dataSearch = computed(() => searchData(items.value, search.value));
-
-// const dataSearch = computed<Item[]>(() => {
-// 	if (items.value) {
-// 		const searchValue = search.value.toLowerCase();
-// 		return items.value.filter(
-// 			(item) =>
-// 				item?.date_visit.includes(searchValue) ||
-// 				item?.municipality.toLowerCase().includes(searchValue) ||
-// 				item?.coordinator_name.toLowerCase().includes(searchValue) ||
-// 				item?.sport_scene.toLowerCase().includes(searchValue) ||
-// 				item?.evaluation.toLowerCase().includes(searchValue) ||
-// 				item?.status.name.toLowerCase().includes(searchValue) ||
-// 				item?.methodologist_name.toLowerCase().includes(searchValue) ||
-// 				item?.monitor_name.toLowerCase().includes(searchValue)
-// 		);
-// 	}
-// 	return items.value;
-// });
 </script>
 
 <template>
-	<div class="flex items-center mt-8 intro-y">
-		<h2 class="mr-auto text-lg font-medium">Listado Visitas Coordinador</h2>
-	</div>
 	<!-- BEGIN: Page Layout -->
 	<div class="p-5 mt-5 intro-y box">
 		<CommonInput
@@ -94,8 +92,9 @@ const dataSearch = computed(() => searchData(items.value, search.value));
 			v-model="search"
 			placeholder="Buscar" />
 		<Crud
+			:Form="Form"
 			:headers="headers"
-			:items="dataSearch" />
+			:items="dataSearch"/>
 	</div>
 	<!-- END: Page Layout -->
 </template>

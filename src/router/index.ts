@@ -469,39 +469,10 @@ const routes = [
 						component: () => import('@/pages/subdirector/visit/Edit.vue')
 					},
 					{
-						path: "methodologist",
-						name: "subdirector_methodologist",
-						meta: { provider: 'subdirector_methodologist' },
-						children: [
-							{
-								path: "",
-								name: "subdirector_methodologist.list",
-								component: () => import('@/pages/subdirector/methodologist/Index.vue'),
-							},
-							{
-								path: "edit/:id",
-								name: "subdirector_methodologist.reviewControl",
-								component: () => import('@/pages/subdirector/methodologist/Form.vue'),
-							},
-						]
-					},
-					{
-						path: "coordinator",
-						name: "subdirector_coordinator",
-						meta: { provider: 'subdirector_coordinator' },
-						children: [
-							{
-								path: "",
-								name: "subdirector_coordinator.list",
-								component: () => import('@/pages/subdirector/coordinator/Index.vue'),
-							},
-							{
-								path: "edit/:id",
-								name: "subdirector_coordinator.reviewControl",
-								component: () => import('@/pages/subdirector/coordinator/Form.vue'),
-							},
-						]
-					},
+						path: 'review',
+						name: 'review.index',
+						component: () => import('@/pages/subdirector/review/Index.vue')
+					}
 				]
 			},
 			{

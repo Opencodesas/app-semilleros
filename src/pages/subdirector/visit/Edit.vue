@@ -1,15 +1,11 @@
 <script setup lang="ts">
 import CommonFile from '@/components/CommonFile.vue';
 import { filePondValue } from '@/composables/useFilepondEvents';
-import { onboardingStore } from '@/stores/onboardingStore';
-import { datetime } from '@intlify/core-base';
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
-import { fromPairs } from 'lodash';
 import Swal from 'sweetalert2';
 
 const { multiple } = useFilepondEvents();
-const store = onboardingStore();
 const router = useRouter();
 const route = useRoute();
 const { id } = route.params;
@@ -28,7 +24,8 @@ const form = reactive({
 	sports_scene: 'Cancha Marcella',
 	beneficiary_coverage: '8',
 	technical: '',
-	description: 'se encontró en el escenario, confunde los componentes se le deben reforzar.',
+	description:
+		'se encontró en el escenario, confunde los componentes se le deben reforzar.',
 	file: [],
 });
 
@@ -100,7 +97,7 @@ const data = async () => {
 onMounted(() => {
 	form.status = '2';
 	form.reason = 'La foto no es una evidencia de la visita';
-	form.hour_visit = '9:30'
+	form.hour_visit = '9:30';
 	form.municipalities = '39';
 	form.monitor = '2';
 	form.disciplines = '8';
@@ -130,7 +127,7 @@ const onSubmit = async () => {
 			});
 		Swal.fire('', 'Modificacion exitosa!', 'success');
 		setLoading(true);
-		router.push('index').finally(() => {
+		router.push({name: 'subdirector_visit.index'}).finally(() => {
 			setLoading(false);
 		});
 	} else {
@@ -138,9 +135,6 @@ const onSubmit = async () => {
 	}
 };
 
-function formatDate(arg0: string): string {
-throw new Error('Function not implemented.');
-}
 </script>
 
 <template>
@@ -167,7 +161,6 @@ throw new Error('Function not implemented.');
 				label="Fecha  *"
 				name="date_visit"
 				v-model="form.date_visit"
-				
 				:validator="v$" />
 			<CommonInput
 				type="time"

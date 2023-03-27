@@ -1,11 +1,13 @@
-let module = "subdirector_visits"
+const module = "subdirector"
+
 
 export const subdirectorVisitServices = {
     get: async (id: string) => {
+
         try {
             setLoading(true)
 
-            const response = await api.get(`/${apiPath}/${module}/${id}`).finally(() => {
+            const response = await api.get(`/${apiPath}/${module}?id=${id}`).finally(() => {
                 setLoading(false)
             })
 
@@ -14,11 +16,11 @@ export const subdirectorVisitServices = {
             alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
         }
     },
-    getAll: async () => {
+    getAll: async (user_id: string) => {
         try {
             setLoading(true)
-
-            const response = await api.get(`/${apiPath}/${module}`).finally(() => {
+            
+            const response = await api.get(`/${apiPath}/${module}?user_id=${user_id}`).finally(() => {
                 setLoading(false)
             })
 
@@ -27,11 +29,11 @@ export const subdirectorVisitServices = {
             alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
         }
     },
-    create: async (payload: FormData) => {
+    create: async (payload: FormData, user_id: number) => {
         try {
             setLoading(true)
 
-            const response = await api.post(`/${apiPath}/${module}`, payload).finally(() => {
+            const response = await api.post(`/${apiPath}/${module}?user_id=${user_id}`, payload).finally(() => {
                 setLoading(false)
             })
 
@@ -44,7 +46,7 @@ export const subdirectorVisitServices = {
         try {
             setLoading(true)
 
-            const response = await api.post(`/${apiPath}/${module}/${id}?_method=PUT`, payload).finally(() => {
+            const response = await api.post(`/${apiPath}/${module}?_method=PUT&id=${id}`, payload).finally(() => {
                 setLoading(false)
             })
 
@@ -57,7 +59,7 @@ export const subdirectorVisitServices = {
         try {
             setLoading(true)
 
-            const response = await api.delete(`/${apiPath}/${module}/${id}`).finally(() => {
+            const response = await api.delete(`/${apiPath}/${module}?id=${id}`).finally(() => {
                 setLoading(false)
             })
 

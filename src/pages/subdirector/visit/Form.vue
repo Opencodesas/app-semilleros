@@ -10,7 +10,6 @@ const { multiple } = useFilepondEvents();
 const store = onboardingStore();
 const router = useRouter();
 const route = useRoute();
-const { id } = route.params;
 
 const form = reactive({
 	status_id: '3',
@@ -75,7 +74,7 @@ const onSubmit = async () => {
 
 	if (valid) {
 		await subdirectorVisitServices
-			.create(formdataParser(form))
+			.create(formdataParser(form), (store.user.id! && store.user.id))
 			.then((response) => {
 				if (response?.status == 200 || response?.status == 201) {
 					Swal.fire('', 'Creación exitosa!', 'success');

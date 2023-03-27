@@ -168,13 +168,8 @@ export const useSideMenuStore = defineStore("sideMenu", {
           },
           {
             icon: "Activity",
-            pageName: "subdirector_methodologist.list",
-            title: "Revision metodólogo",
-          },
-          {
-            icon: "Activity",
-            pageName: "subdirector_coordinator.list",
-            title: "Revision coordinador",
+            pageName: "review.index",
+            title: "Revisiones",
           },
         ]
       },
