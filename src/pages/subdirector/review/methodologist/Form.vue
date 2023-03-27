@@ -9,7 +9,6 @@ console.log(store.user.id);
 
 const router = useRouter();
 const route = useRoute();
-const { id } = route.params;
 
 const props = defineProps<{
 	closeModal: Function;
@@ -86,12 +85,58 @@ const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
 }, null);
 
+// onMounted(async() => {
+// 	await methodologistVisitServices
+// 		.get(props.id_review.toString())
+// 		.then((response) => {
+// 			if (response) {
+// 				if (response.status >= 200 && response.status <= 300) {
+// 					form.id = response.data.id;
+// 					form.methodologist_id = response.data.methodologist_id;
+// 					form.date_visit = response.data.date_visit;
+// 					form.hour_visit = response.data.hour_visit;
+// 					form.sidewalk = response.data.sidewalk;
+// 					form.monitor_id = response.data.monitor_id;
+// 					form.discipline_id = response.data.discipline_id;
+// 					form.sports_scene = response.data.sports_scene;
+// 					form.municipality_id = response.data.municipality_id;
+// 					form.beneficiary_coverage = response.data.beneficiary_coverage;
+// 					form.evaluation = response.data.evaluation;
+// 					form.event_support_id = response.data.event_support_id;
+// 					form.methologist_name = response.data.methologist_name;
+// 					form.file = response.data.file;
+// 					form.lesson_plan = response.data.lesson_plan;
+// 					form.congruent_activity = response.data.congruent_activity;
+// 					form.develop_technical_sports_component_month =
+// 						response.data.develop_technical_sports_component_month;
+// 					form.functional_component_month =
+// 						response.data.functional_component_month;
+// 					form.management_development_activities =
+// 						response.data.management_development_activities;
+// 					form.puntuality = response.data.puntuality;
+// 					form.personal_presentation = response.data.personal_presentation;
+// 					form.patient = response.data.patient;
+// 					form.discipline = response.data.discipline;
+// 					form.parent_child_communication =
+// 						response.data.parent_child_communication;
+// 					form.verbalization = response.data.verbalization;
+// 					form.traditional = response.data.traditional;
+// 					form.behavioral = response.data.behavioral;
+// 					form.romantic = response.data.romantic;
+// 					form.constructivist = response.data.constructivist;
+// 					form.globalizer = response.data.globalizer;
+// 					form.observations = response.data.observations;
+// 				}
+// 			}
+// 		});
+// })
+
 const onSubmit = async () => {
 	const valid = await v$.value.$validate();
 
 	if (valid) {
 		await methodologistVisitServices
-			.update(id.toString(), formdataParser(formStatus))
+			.update(props.id_review.toString(), formdataParser(formStatus))
 			.then((response) => {
 				if (response) {
 					if (response.status >= 200 && response.status <= 300) {

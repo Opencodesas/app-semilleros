@@ -2,7 +2,6 @@
 import Crud from '@/components/Crud.vue';
 import { searchData } from '@/composables/search';
 import { Header, Item } from 'vue3-easy-data-table';
-import { editFnc } from '@/composables/crudFnc';
 import Form from './Form.vue'
 import { onboardingStore } from "@/stores/onboardingStore";
 
@@ -80,6 +79,14 @@ const items = ref<Item[]>([
 		actions: 'actions',
 	},
 ]);
+
+// onMounted(async () => {
+// 	await find<{ items: Item[] }>('methodologist_visit').then((response) => {
+// 		console.log(response.data.items);
+// 		items.value = response.data.items;
+// 	});
+// });
+
 const dataSearch = computed(() => searchData(items.value, search.value));
 </script>
 

@@ -5,15 +5,12 @@ import { required } from '@/utils/validators';
 import useVuelidate from '@vuelidate/core';
 
 const store = onboardingStore();
-console.log(store.user.id);
 
-const { isProvider } = useProvider();
 const router = useRouter();
-const route = useRoute();
-const { id } = route.params;
 
 const props = defineProps<{
 	closeModal: Function;
+	id_review: number;
 }>();
 
 const form = reactive({
@@ -69,13 +66,41 @@ const v$ = useVuelidate(form_rules, formStatus);
 const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
 }, null);
+// onMounted(async () => {
+// 	await coordinatorVisitServices
+// 		.get(props.id_review.toString())
+// 		.then((response) => {
+// 			if (response) {
+// 				if (response.status >= 200 && response.status <= 300) {
+// 					form.id = response.data.id;
+// 					form.coordinator_id = response.data.coordinator_id;
+// 					form.date_visit = response.data.date_visit;
+// 					form.hour_visit = response.data.hour_visit;
+// 					form.sidewalk = response.data.sidewalk;
+// 					form.monitor_id = response.data.monitor_id;
+// 					form.discipline_id = response.data.discipline_id;
+// 					form.sports_scene = response.data.sports_scene;
+// 					form.municipality_id = response.data.municipality_id;
+// 					form.beneficiary_coverage = response.data.beneficiary_coverage;
+// 					form.description = response.data.description;
+// 					form.observations = response.data.observations;
+// 					form.coordinator_name = response.data.coordinator_name;
+// 					form.monitor = response.data.monitor;
+// 					form.file = response.data.file;
+// 				}
+// 			}
+// 		})
+// 		.catch((error) => {
+// 			console.log(error);
+// 		});
+// });
 
 const onSubmit = async () => {
 	const valid = await v$.value.$validate();
 
 	if (valid) {
 		await coordinatorVisitServices
-			.update(id.toString(), formdataParser(formStatus))
+			.update(props.id_review.toString(), formdataParser(formStatus))
 			.then((response) => {
 				if (response) {
 					if (response.status >= 200 && response.status <= 300) {
