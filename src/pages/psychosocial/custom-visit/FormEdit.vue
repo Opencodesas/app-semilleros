@@ -271,10 +271,10 @@ const positionRange = computed(() => {
                         Editar visita
                     </Button>
 
-                    <Button v-else-if="form.status == '1'" type="button" variant="dark" @click="download">
+                    <Button v-else-if="form.status == '1'" type="button" variant="primary" @click="download">
                         Descargar visita
                     </Button>
-                    <Button v-else type="button" variant="dark"
+                    <Button v-else type="button" variant="primary"
                         @click="() => { router.push({ name: 'psychosocial.visits' }) }">
                         Atrás
                     </Button>

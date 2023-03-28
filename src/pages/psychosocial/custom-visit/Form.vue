@@ -198,7 +198,7 @@ const positionRange = computed(() => {
             </div>
             <div class="pt-5">
                 <div class="flex justify-center gap-x-4">
-                    <Button type="submit" variant="dark">
+                    <Button type="submit" variant="primary">
                         Registrar
                     </Button>
                 </div>
