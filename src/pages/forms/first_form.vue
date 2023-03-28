@@ -6,238 +6,303 @@
         </div>
   </div>
   <!-- BEGIN: Page Layout -->
-  <div class="p-5 mt-5 intro-y box">
-    <CommonInput
-      label="Fecha de inscripcion"
-      name="fechaInscripcion"
-      v-model="fechaInscripcion"
-      :validator="v$"
-      type="date"
-    />
-    <div class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-3 justify-evenly">
-      <CommonSelect
-        label="Municipio"
-        name="municipio"
-        v-model="municipio"
-        :validator="v$"
-        :options="municipalitiesList"
-      />
-      <CommonSelect
-        label="disciplinas"
-        name="disciplinas"
-        v-model="disciplinas"
-        :validator="v$"
-        :options="diciplinesList"
-      />
-      <CommonInput
-        label="nombres"
-        name="nombres"
-        v-model="nombres"
-        :validator="v$"
-      />
-      <CommonInput
-        label="Apellidos"
-        name="apellidos"
-        v-model="apellidos"
-        :validator="v$"
-      />
-      <CommonInput
-        label="Fecha de nacimiento"
-        name="fechaNacimiento"
-        type="date"
-        v-model="fechaNacimiento"
-        :validator="v$"
-      />
-      <CommonInput
-        label="Lugar de nacimiento"
-        name="lugarNacimiento"
-        v-model="lugarNacimiento"
-        :validator="v$"
-      />
-      <CommonSelect
-        label="identificacion"
-        name="tipoIdentificacion"
-        v-model="tipoIdentificacion"
-        :validator="v$"
-        :options="optionsIdentificacion"
-      />
-      <CommonInput
-        label="Numero de documento"
-        name="numeroDocumento"
-        v-model="numeroDocumento"
-        :validator="v$"
-      />
+  <form @submit="ingreso">
+    <div class="p-5 mt-5 intro-y box">
+      <h1 class="my-4 text-xl bold text-left text-gray-800">
+        Datos del beneficiario
+      </h1>
+      <div v-show="accordion[0].shown">
+        <CommonInput
+          label="Fecha de inscripcion"
+          name="fechaInscripcion"
+          v-model="fechaInscripcion"
+          :validator="v$"
+          :required="true"
+          type="date"
+        />
+        <div class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-3 justify-evenly">
+          <CommonSelect
+            label="Municipio"
+            name="municipio"
+            v-model="municipio"
+            :validator="v$"
+            :allowEmpty="false"
+            :options="municipalitiesList"
+          />
+          <CommonSelect
+            label="disciplinas"
+            name="disciplinas"
+            v-model="disciplinas"
+            :validator="v$"
+            :required="true"
+            :options="diciplinesList"
+          />
+          <CommonInput
+            label="nombres"
+            name="nombres"
+            v-model="nombres"
+            :validator="v$"
+            :required="true"
+          />
+          <CommonInput
+            label="Apellidos"
+            name="apellidos"
+            v-model="apellidos"
+            :validator="v$"
+            :required="true"
+          />
+          <CommonInput
+            label="Fecha de nacimiento"
+            name="fechaNacimiento"
+            :max="maxDate"
+            type="date"
+            v-model="fechaNacimiento"
+            :validator="v$"
+            :required="true"
+          />
+          <CommonInput
+            label="Lugar de nacimiento"
+            name="lugarNacimiento"
+            v-model="lugarNacimiento"
+            :validator="v$"
+            :required="true"
+          />
+          <CommonSelect
+            label="identificacion"
+            name="tipoIdentificacion"
+            v-model="tipoIdentificacion"
+            :validator="v$"
+            :required="true"
+            :options="optionsIdentificacion"
+          />
+          <CommonInput
+            label="Numero de documento"
+            name="numeroDocumento"
+            v-model="numeroDocumento"
+            type="number"
+            min="0"
+            :validator="v$"
+            :required="true"
+          />
+        </div>
+        <div class="mt-5 grid grid-cols-1 md:grid md:grid-cols-3 gap-6 justify-evenly">
+          <CommonInput
+            label="Direccion de residencia"
+            name="direccionResidencia"
+            v-model="direccionRes"
+            :validator="v$"
+            :required="true"
+          />
+          <CommonInput
+            label="Numero de celular"
+            name="numeroCel"
+            v-model="numeroCel"
+            :validator="v$"
+            :required="true"
+          />
+          <CommonSelect
+            label="Estrato"
+            name="estrato"
+            v-model="estrato"
+            :validator="v$"
+            :required="true"
+            :options="optionsEstrato"
+          />
+          <CommonSelect
+            label="Zona"
+            name="zona"
+            v-model="zona"
+            :validator="v$"
+            :required="true"
+            :options="zonesList"
+          />
+          <CommonSelect
+            label="Victima de conflicto"
+            name="victimaConflicto"
+            v-model="victimaConf"
+            :validator="v$"
+            :required="true"
+            :options="optionsVictima"
+          />
+          <CommonInput
+            label="Corregimiento/Barrio/Vereda"
+            name="pueblo"
+            v-model="pueblo"
+            :validator="v$"
+            :required="true"
+          />
+        </div>
+        <div class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
+          <CommonSelect
+            label="Genero"
+            name="genero"
+            v-model="genero"
+            :validator="v$"
+            :required="true"
+            :options="optionsGenero"
+          />
+          <CommonSelect
+            label="Etnia"
+            name="etnia"
+            v-model="etnia"
+            :validator="v$"
+            :required="true"
+            :options="ethniacityList"
+          />
+          <CommonSelect
+            label="Discapacidad"
+            name="discapacidad"
+            v-model="discapacidad"
+            :validator="v$"
+            :required="true"
+            :options="optionsDiscapacidad"
+          />
+          <CommonInput
+            label="¿Cual?"
+            name="otroDisc"
+            v-model="otroDiscapacidad"
+            :validator="v$"
+            :required="discapacidad === '1'"
+            :disabled="discapacidad !== '1'"
+          />
+          <CommonSelect
+            label="Patologia"
+            name="patologia"
+            v-model="patologia"
+            :validator="v$"
+            :required="true"
+            :options="optionsPatologia"
+          />
+          <CommonInput
+            label="¿Cual?"
+            name="otroPato"
+            v-model="otroPatologia"
+            :validator="v$"
+            :required="patologia === '1'"
+            :disabled="patologia !== '1'"
+          />
+          <CommonSelect
+            label="Tipo de sangre"
+            name="sangre"
+            v-model="sangre"
+            :validator="v$"
+            :required="true"
+            :options="optionsSangre"
+          />
+          <CommonSelect
+            label="Escolaridad"
+            name="escolaridad"
+            v-model="escolaridad"
+            :validator="v$"
+            :required="true"
+            :options="optionsEscolaridad"
+          />
+        </div>
+        <CommonSelect
+          class="mt-5"
+          label="Vivo con"
+          name="vivoCon"
+          v-model="vivoCon"
+          :validator="v$"
+            :required="true"
+          :options="optionsVivo"
+        />
+        <CommonSelect class="mt-5"
+          label="Tipo afiliacion(EPS)"
+          name="afiliacion"
+          v-model="afiliacion"
+          :validator="v$"
+            :required="true"
+          :options="optionsAfiliacion"
+        />
+        <!--
+          <div class="m-4 text-center">
+            <Button type="submit" >Continuar</Button>
+          </div>
+        -->
+      </div>
     </div>
-    <div class="grid grid-cols-1 md:grid md:grid-cols-3 gap-6 justify-evenly">
-      <CommonInput
-        label="Direccion de residencia"
-        name="direccionResidencia"
-        v-model="direccionRes"
-        :validator="v$"
-      />
-      <CommonInput
-        label="Numero de celular"
-        name="numeroCel"
-        v-model="numeroCel"
-        :validator="v$"
-      />
-      <CommonSelect
-        label="Estrato"
-        name="estrato"
-        v-model="estrato"
-        :validator="v$"
-        :options="optionsEstrato"
-      />
-      <CommonSelect
-        label="Zona"
-        name="zona"
-        v-model="zona"
-        :validator="v$"
-        :options="zonesList"
-      />
-      <CommonSelect
-        label="Victima de conflicto"
-        name="victimaConflicto"
-        v-model="victimaConf"
-        :validator="v$"
-        :options="optionsVictima"
-      />
-      <CommonInput
-        label="Corregimiento/Barrio/Vereda"
-        name="pueblo"
-        v-model="pueblo"
-        :validator="v$"
-      />
+    <div class="p-5 mt-5 intro-y box">
+      <h1 class="my-4 text-xl bold text-left text-gray-800">
+        Datos del acudiente
+      </h1>
+      <div v-show="accordion[1].shown">
+        <div class="mt-5 grid grid-cols-1 md:grid md:grid-cols-3 gap-6 justify-evenly">
+          <CommonInput
+            label="Nombres"
+            name="nombresAcudiente"
+            v-model="nombresAcudiente"
+            :validator="v$"
+            :required="true"
+          />
+          <CommonInput
+            label="Apellidos"
+            name="apellidosAcudiente"
+            v-model="apellidosAcudiente"
+            :validator="v$"
+            :required="true"
+          />
+          <CommonInput
+            label="Numero de documento"
+            name="nDocuAcudiente"
+            v-model="nDocuAcudiente"
+            type="number"
+            min="0"
+            :validator="v$"
+            :required="true"
+          />
+          <CommonInput
+            label="Parentesco"
+            name="parentesco"
+            v-model="parentesco"
+            :validator="v$"
+            :required="true"
+          />
+          <CommonInput 
+            label="Email"
+            name="email"
+            v-model="email"
+            type="email"
+            :validator="v$"
+            :required="true"
+          />
+          <!-- <FormCheckInput label="No tiene" name="checkEmail" v-model="checkEmail" type="checkbox" @click="check"/> -->
+          <CommonInput
+            label="Numero de celular"
+            name="nCelularAcudiente"
+            v-model="nCelularAcudiente"
+            :validator="v$"
+            :required="true"
+          />
+          <!-- <FormCheck label="No tiene" name="checkNCel" v-model="form.checkNCel" />  -->
+        </div>
+        <div class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
+          <CommonSelect
+            label="Redes sociales"
+            name="redesAcudiente"
+            v-model="redesAcudiente"
+            :multiple="true"
+            :validator="v$"
+            :required="true"
+            :options="optionsRedes"
+          />
+          <CommonSelect
+            label="¿Como se entero del proyecto?"
+            name="enterado"
+            v-model="enterado"
+            :multiple="true"
+            :validator="v$"
+            :required="true"
+            :options="optionsEnterado"
+          />
+        </div>
+        <div class="m-4 text-center">
+          <Button type="submit">Ingresar</Button>
+        </div>
+      </div>
+
     </div>
-    <div class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
-      <CommonSelect
-        label="Genero"
-        name="genero"
-        v-model="genero"
-        :validator="v$"
-        :options="optionsGenero"
-      />
-      <CommonSelect
-        label="Etnia"
-        name="etnia"
-        v-model="etnia"
-        :validator="v$"
-        :options="ethniacityList"
-      />
-      <CommonSelect
-        label="Discapacidad"
-        name="discapacidad"
-        v-model="discapacidad"
-        :validator="v$"
-        :options="optionsDiscapacidad"
-      />
-      <CommonInput
-        label="¿Cual?"
-        name="otroDisc"
-        v-model="otroDiscapacidad"
-        :validator="v$"
-      />
-      <CommonSelect
-        label="Patologia"
-        name="patologia"
-        v-model="patologia"
-        :validator="v$"
-        :options="optionsPatologia"
-      />
-      <CommonInput
-        label="¿Cual?"
-        name="otroPato"
-        v-model="otroPatologia"
-        :validator="v$"
-      />
-      <CommonSelect
-        label="Tipo de sangre"
-        name="sangre"
-        v-model="sangre"
-        :validator="v$"
-        :options="optionsSangre"
-      />
-      <CommonSelect
-        label="Escolaridad"
-        name="escolaridad"
-        v-model="escolaridad"
-        :validator="v$"
-        :options="optionsEscolaridad"
-      />
-    </div>
-    <CommonSelect
-      class="mt-5"
-      label="Vivo con"
-      name="vivoCon"
-      v-model="vivoCon"
-      :validator="v$"
-      :options="optionsVivo"
-    />
-    <CommonSelect class="mt-5"
-      label="Tipo afiliacion(EPS)"
-      name="afiliacion"
-      v-model="afiliacion"
-      :validator="v$"
-      :options="optionsAfiliacion"
-    />
-    <h1 class="m-4 text-xl bold text-left text-gray-800">
-      Datos del acudiente
-    </h1>
-    <div class="mt-5 grid grid-cols-1 md:grid md:grid-cols-3 gap-6 justify-evenly">
-      <CommonInput
-        label="Nombres"
-        name="nombresAcudiente"
-        v-model="nombresAcudiente"
-        :validator="v$"
-      />
-      <CommonInput
-        label="Apellidos"
-        name="apellidosAcudiente"
-        v-model="apellidosAcudiente"
-        :validator="v$"
-      />
-      <CommonInput
-        label="Numero de documento"
-        name="nDocuAcudiente"
-        v-model="nDocuAcudiente"
-        :validator="v$"
-      />
-      <CommonInput
-        label="Parentesco"
-        name="parentesco"
-        v-model="parentesco"
-        :validator="v$"
-      />
-      <CommonInput label="Email" name="email" v-model="email" :validator="v$" />
-      <!-- <FormCheckInput label="No tiene" name="checkEmail" v-model="checkEmail" type="checkbox" @click="check"/> -->
-      <CommonInput
-        label="Numero de celular"
-        name="nCelularAcudiente"
-        v-model="nCelularAcudiente"
-        :validator="v$"
-      />
-      <!-- <FormCheck label="No tiene" name="checkNCel" v-model="form.checkNCel" />  -->
-    </div>
-    <div class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
-      <CommonSelect
-        label="Redes sociales"
-        name="redesAcudiente"
-        v-model="redesAcudiente"
-        :validator="v$"
-        :options="optionsRedes"
-      />
-      <CommonSelect
-        label="¿Como se entero del proyecto?"
-        name="enterado"
-        v-model="enterado"
-        :validator="v$"
-        :options="optionsEnterado"
-      />
-    </div>
-    <div class="m-4 text-center">
-      <Button @click="ingreso">Ingresar</Button>
-    </div>
-  </div>
+  </form>
 </template>
 
 <script setup lang="ts">
@@ -349,6 +414,14 @@ const v$ = useVuelidate(form_rules, form);
 export default defineComponent({
   data() {
     return {
+      accordion: [
+        {
+          shown: true
+        },
+        {
+          shown: true
+        }
+      ],
       fechaInscripcion: "",
       municipio: "",
       disciplinas: "",
@@ -450,6 +523,8 @@ export default defineComponent({
         { label: "B+", value: "3" },
         { label: "B-", value: "4" },
         { label: "AB+", value: "5" },
+        { label: "O+", value: "6" },
+        { label: "O-", value: "7" },
       ],
       optionsEscolaridad: [
         { label: "Si", value: "1" },
@@ -485,9 +560,20 @@ export default defineComponent({
       checkNCel: false,
     };
   },
-  computed: {},
+  computed: {
+    maxDate: () => {
+      const yearsAgo = new Date().getFullYear() - 7;
+      return `${yearsAgo}-12-31`
+    }
+  },
   methods: {
-    ingreso() {
+    toggleAccordion( pos: number ) {
+      this.accordion.map( item => item.shown = false )
+      this.accordion[ pos ].shown = !this.accordion[ pos ].shown
+    },
+    ingreso( evt: any ) {
+      evt.preventDefault();
+      
       const data = {
         registration_date: this.fechaInscripcion,
         beneficiary_name: this.nombres,
@@ -523,7 +609,7 @@ export default defineComponent({
 
         // datos prueba para la base de datos que no pueden ser null
         created_by: 1,
-        full_name: this.nombres,
+        full_name: `${this.nombres} ${this.apellidos}`,
         accept: 1,
         linkage_project:1,
        
@@ -537,7 +623,6 @@ export default defineComponent({
 
       };
       axios.addBeneficiary(data).then((res: any) => {
-        console.log(res)
         if(res){
           Swal.fire('', res.data.message, 'success').finally(() => {
           })
