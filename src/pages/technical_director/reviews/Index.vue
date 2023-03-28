@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { Header, Item } from 'vue3-easy-data-table';
 import { technicalSubdirectorVisitServices } from '@/services/technical_subdirector/technicalSubdirectorVisitServices';
-import useVuelidate from '@vuelidate/core'
-import { required } from '@/utils/validators'
+import subdirectoVisitReview from './subdirectorVisitReview.vue'
 
 
 
@@ -60,6 +59,6 @@ const dataSearch = computed(() => searchData(items.value, search.value));
         <CommonInput type="search" name="search" v-model="search" placeholder="Buscar" />
     </div>
     <div class="" >
-        <Crud :headers="header" :items="dataSearch" />
+        <Crud :headers="header" :items="dataSearch" :Form="subdirectoVisitReview" />
     </div>
 </template>

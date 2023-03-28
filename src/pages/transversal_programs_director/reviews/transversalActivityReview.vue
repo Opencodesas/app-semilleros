@@ -18,6 +18,12 @@ const router = useRouter();
 const route = useRoute();
 const store = onboardingStore();
 
+const props = defineProps<{
+    closeModal: Function;
+    id_review: String | number;
+}>();
+
+
 const form = reactive({
     municipality: {id: '', name: ''},
     date: '',
@@ -61,7 +67,7 @@ const dataLoaded = ref(false)
 
 const getData = async () => {
 
-    await transversalActivityServices.get(route.params.id as string).then((response) => {
+    await transversalActivityServices.get(props.id_review as string).then((response) => {
         console.log(response?.data.items);
         if (response?.status == 200 || response?.status == 201) {
             form.municipality = response.data.items.municipality;
@@ -100,6 +106,7 @@ const onSubmit = async () => {
         await transversalActivityServices.update(route.params.id as string, formdataParser(form)).then((response) => {
             if (response) {
                 if (response.status >= 200 && response.status <= 300) {
+                    props.closeModal
                     alerts.update()
                     setLoading(true)
                     router.push('psychosocial-coordinator.reviews').finally(() => {
@@ -131,6 +138,12 @@ const defineReason = () => {
         <div v-if="form.status == '4'" class="pt-4">
             <CommonTextarea name="reason" class="" label="Comentario *" placeholder="Escriba..." rows="5"
                 v-model="form.reason" :validator="v$" />
+        </div>
+        <div class="mt-6 flex justify-end col-span-1 md:col-span-2 border-none gap-1" tabindex="1">
+            <Button variant="danger" @click="props.closeModal">Cerrar</Button>
+            <Button variant="primary" class="btn btn-primary" @click="onSubmit">
+                Enviar
+            </Button>
         </div>
     </div>
 
@@ -164,17 +177,6 @@ const defineReason = () => {
             <h1 class="text-center font-bold">Evidencia</h1>
             <!-- <img v-if="form.file" v-for="x in files" :src="x.url" alt=""> -->
             <img src="/semilleros.png" width="200" alt="">
-        </div>
-        <div class="pt-5">
-            <div class="text-right space-x-3 mx-5 pt-5">
-                <Button type="button" variant="dark" class="w-24"
-                    @click="() => { router.push({ name: 'psychosocial-coordinator.reviews' }) }">
-                    Cancelar
-                </Button>
-                <Button @click="onSubmit" variant="primary" class="w-24">
-                    Revisar
-                </Button>
-            </div>
         </div>
     </div>
 </template>

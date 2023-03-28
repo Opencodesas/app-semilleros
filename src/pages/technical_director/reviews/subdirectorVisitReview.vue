@@ -18,6 +18,11 @@ const router = useRouter();
 const route = useRoute();
 const store = onboardingStore();
 
+const props = defineProps<{
+    closeModal: Function;
+    id_review: String | number;
+}>();
+
 const form = reactive({
     date_visit: "",
     hour_visit: "",
@@ -32,7 +37,7 @@ const form = reactive({
     description: "",
     observations: "",
     file: [],
-    createdBy: {ide: '1', name: 'Joselito'},
+    createdBy: { ide: '1', name: 'Joselito' },
     status: "", //id:2 => En revisión => ENR
     reason: 'Rechazado ya que...',
 });
@@ -98,7 +103,7 @@ const dataLoaded = ref(false)
 //Verificar si se puede hacer con asycComputed
 const getData = async () => {
 
-    await technicalSubdirectorVisitServices.get(route.params.id as string).then((response) => {
+    await technicalSubdirectorVisitServices.get(props.id_review as string).then((response) => {
         console.log(response?.data.items);
         if (response?.status == 200 || response?.status == 201) {
             form.date_visit = response.data.items.date_visit;
@@ -138,6 +143,7 @@ const onSubmit = async () => {
         await technicalSubdirectorVisitServices.update(route.params.id as string, formdataParser(form)).then((response) => {
             if (response) {
                 if (response.status >= 200 && response.status <= 300) {
+                    props.closeModal
                     alerts.update()
                     setLoading(true)
                     router.push('psychosocial-coordinator.reviews').finally(() => {
@@ -170,6 +176,12 @@ const defineReason = () => {
             <CommonTextarea name="reason" class="" label="Comentario *" placeholder="Escriba..." rows="5"
                 v-model="form.reason" :validator="v$" />
         </div>
+        <div class="mt-6 flex justify-end col-span-1 md:col-span-2 border-none gap-1" tabindex="1">
+            <Button variant="danger" @click="props.closeModal">Cerrar</Button>
+            <Button variant="primary" class="btn btn-primary" @click="onSubmit">
+                Enviar
+            </Button>
+        </div>
     </div>
 
     <div v-if="dataLoaded" class="p-5 pt-1 mt-5 intro-y box">
@@ -177,19 +189,20 @@ const defineReason = () => {
             <h3><span class="font-bold">Subdirector:</span> {{ form.createdBy.name }}</h3>
         </div>
         <div class="grid grid-cols-2 md:grid md:grid-cols-2 gap-6 justify-evenly mt-4">
-            <CommonInput disabled type="date" label="Fecha  *" name="date_visit" v-model="form.date_visit"/>
-            <CommonInput disabled type="time" label="Hora  *" name="hour_visit" v-model="form.hour_visit"/>
+            <CommonInput disabled type="date" label="Fecha  *" name="date_visit" v-model="form.date_visit" />
+            <CommonInput disabled type="time" label="Hora  *" name="hour_visit" v-model="form.hour_visit" />
             <CommonSelect disabled label="Municipio *" name="municipality" v-model="form.municipality"
                 :options="municipalities" />
 
             <CommonInput disabled type="text" placeholder="Ingrese" label="Corregimiento / Vereda *" name="sidewalk"
-                v-model="form.sidewalk"/>
-            <CommonSelect disabled label="Monitor *" name="monitor" v-model="form.monitor"         :options="monitorList" />
-            <CommonSelect disabled label="Diciplinas *" name="discipline" v-model="form.discipline" :options="disciplinesList" />
+                v-model="form.sidewalk" />
+            <CommonSelect disabled label="Monitor *" name="monitor" v-model="form.monitor" :options="monitorList" />
+            <CommonSelect disabled label="Diciplinas *" name="discipline" v-model="form.discipline"
+                :options="disciplinesList" />
             <CommonInput disabled type="text" placeholder="Ingrese" label="Escenario deportivo *" name="sports_scene"
-                v-model="form.sports_scene"/>
+                v-model="form.sports_scene" />
             <CommonInput disabled type="number" placeholder="Ingrese" label="Cobertura de benificiario *"
-                name="beneficiary_coverage" v-model="form.beneficiary_coverage"/>
+                name="beneficiary_coverage" v-model="form.beneficiary_coverage" />
             <CommonSelect disabled label="Cumple con el desarrollo del componente técnico del mes *"
                 name="meets_monthly_technical_development" v-model="form.meets_monthly_technical_development"
                 :options="yes_no_List" />
@@ -210,17 +223,6 @@ const defineReason = () => {
             <h1 class="text-center font-bold">Evidencia</h1>
             <!-- <img v-if="form.file" :src="form.file[0]" alt=""> -->
             <img src="/semilleros.png" width="200" alt="">
-        </div>
-        <div class="pt-5">
-            <div class="text-right space-x-3 mx-5 pt-5">
-                <Button type="button" variant="dark" class="w-24"
-                    @click="() => { router.push({ name: 'psychosocial-coordinator.reviews' }) }">
-                    Cancelar
-                </Button>
-                <Button @click="onSubmit" variant="primary" class="w-24">
-                    Revisar
-                </Button>
-            </div>
         </div>
     </div>
 </template>

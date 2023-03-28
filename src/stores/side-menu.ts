@@ -208,27 +208,6 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: "psychosocial-coordinator.reviews",
             title: "Revisiones",
           },
-          {
-            icon: "Activity",
-            pageName: "psychosocial-coordinator.prueba",
-            title: "Prueba",
-          },
-        ]
-      },
-      {
-        icon: "User",
-        title: "Subdirector Tecnico Regional",
-        subMenu: [
-          {
-            icon: "Activity",
-            pageName: "technical_subdirector.visit",
-            title: "Crear Visita",
-          },
-          {
-            icon: "Activity",
-            pageName: "technical_subdirector.visits",
-            title: "Visitas Insertadas",
-          },
         ]
       },
       {

@@ -467,39 +467,6 @@ const routes = [
 						name: "psychosocial-coordinator.reviews",
 						component: () => import('@/pages/psychosocial_coordinator/reviews/Index.vue'),
 					},
-					{
-						//Pagina para aprobar o rechazar las visitas personalizadas.
-						path: "custom-review/:id",
-						name: "psychosocial-coordinator.custom-review",
-						component: () => import('@/pages/psychosocial_coordinator/reviews/CustomVisitReview.vue'),
-					},
-					{
-						path: "prueba",
-						name: "psychosocial-coordinator.prueba",
-						component: () => import('@/pages/psychosocial_coordinator/reviews/PruebaModal.vue'),
-					},
-				],
-			},
-			{
-				path: "technical_subdirector",
-				name: "technical_subdirector",
-				meta: { provider: 'technical_subdirector' },
-				children: [
-					{
-						path: "visit",
-						name: "technical_subdirector.visit",
-						component: () => import('@/pages/technical_subdirector/visit/Form.vue'),
-					},
-					{
-						path: "update/:id",
-						name: "technical_subdirector.update",
-						component: () => import('@/pages/technical_subdirector/visit/FormEdit.vue'),
-					},
-					{
-						path: "visits",
-						name: "technical_subdirector.visits",
-						component: () => import('@/pages/technical_subdirector/visits/Index.vue'),
-					},
 				],
 			},
 			{
@@ -512,11 +479,6 @@ const routes = [
 						name: "technical_director.reviews",
 						component: () => import('@/pages/technical_director/reviews/Index.vue'),
 					},
-					{
-						path: "visit-review/:id",
-						name: "technical_director.visit-review",
-						component: () => import('@/pages/technical_director/reviews/subdirectorVisitReview.vue'),
-					},
 				],
 			},
 			{
@@ -528,11 +490,6 @@ const routes = [
 						path: "reviews",
 						name: "transversal_programs_director.reviews",
 						component: () => import('@/pages/transversal_programs_director/reviews/Index.vue'),
-					},
-					{
-						path: "transversal-activity-review/:id",
-						name: "transversal_programs_director.transversal-activity-review",
-						component: () => import('@/pages/transversal_programs_director/reviews/transversalActivityReview.vue'),
 					},
 				],
 			},

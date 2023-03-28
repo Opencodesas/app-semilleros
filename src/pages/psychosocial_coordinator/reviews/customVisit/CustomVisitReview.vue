@@ -14,8 +14,9 @@ const route = useRoute();
 const { isProvider } = useProvider()
 
 const props = defineProps<{
-    id: string | number
-}>()
+    closeModal: Function;
+    id_review: String | number;
+}>();
 
 //Quitar datos de prueba
 const form = reactive({
@@ -84,7 +85,7 @@ const dataLoaded = ref(false)
 //Verificar si se puede hacer con asycComputed
 const getData = async () => {
 
-    await customVisitServices.get(props.id as string).then((response) => {
+    await customVisitServices.get(props.id_review as string).then((response) => {
         console.log(response?.data.items);
         if (response?.status == 200 || response?.status == 201) {
             form.reason = response.data.items.reason;
@@ -129,6 +130,7 @@ const onSubmit = async () => {
         await customVisitServices.update(route.params.id as string, formdataParser(form)).then((response) => {
             if (response) {
                 if (response.status >= 200 && response.status <= 300) {
+                    props.closeModal
                     alerts.update()
                     setLoading(true)
                     router.push('psychosocial-coordinator.reviews').finally(() => {
@@ -148,8 +150,8 @@ const positionRange = computed(() => {
 });
 
 //Manejo de reason para no guardarla si el user selecciona rechazado y pone reason y despues pone aprobado.
-const defineReason = () =>{
-    if(form.status == '1') form.reason = '';
+const defineReason = () => {
+    if (form.status == '1') form.reason = '';
 }
 </script>
 
@@ -160,11 +162,17 @@ const defineReason = () =>{
 
     <div class="space-y-2 box px-5 py-4">
         <h2 class="font-bold">Revisión</h2>
-        <CommonSelect @select="defineReason" label="Estado de la tarea *" name="status" v-model="form.status" :validator="v$"
-            :options="statusesList" />
+        <CommonSelect @select="defineReason" label="Estado de la tarea *" name="status" v-model="form.status"
+            :validator="v$" :options="statusesList" />
         <div v-if="form.status == '4'" class="pt-4">
             <CommonTextarea name="reason" class="" label="Comentario *" placeholder="Escriba..." rows="5"
-                v-model="form.reason"  :validator="v$"/>
+                v-model="form.reason" :validator="v$" />
+        </div>
+        <div class="mt-6 flex justify-end col-span-1 md:col-span-2 border-none gap-1" tabindex="1">
+            <Button variant="danger" @click="props.closeModal">Cerrar</Button>
+            <Button variant="primary" class="btn btn-primary" @click="onSubmit">
+                Enviar
+            </Button>
         </div>
     </div>
 
@@ -244,15 +252,6 @@ const defineReason = () =>{
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="text-right space-x-3 mx-5 pt-5">
-                <Button type="button" variant="dark" class="w-24"
-                    @click="() => { router.push({ name: 'psychosocial-coordinator.reviews' }) }">
-                    Cancelar
-                </Button>
-                <Button type="submit" variant="primary" class="w-24">
-                    Revisar
-                </Button>
             </div>
         </form>
     </div>

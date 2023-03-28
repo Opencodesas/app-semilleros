@@ -199,7 +199,7 @@ const dataSearch = computed(() => searchData(items.value, search.value));
 <template>
     <TabGroup>
         <TabList class="py-5">
-            <!-- Use the `selected` state to conditionally style the selected tab. -->
+
             <Tab as="template" v-slot="{ selected }">
                 <button @click="selectedTab = 1"
                     :class="{ 'select-none inline-block p-2 text-slate-800 font-medium dark:text-slate-400 border-b-2 border-b-primary rounded-t-lg active outline-none': selected, 'select-none inline-block p-2 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300': !selected }">
