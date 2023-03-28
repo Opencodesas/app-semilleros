@@ -375,6 +375,9 @@ const _getStatus = (status: any) => getStatus(status);
 |    }
 |
 */
+
+//Selected tab
+const selectedTab = inject('selectedTab', ref(0))
 </script>
 
 <template>
@@ -583,118 +586,51 @@ const _getStatus = (status: any) => getStatus(status);
 						</template>
 					</template>
 					<template v-else-if="isProvider('psychosocial')">
-						<!-- <template v-if="item.status.slug == 'REC'">
-							<Button
-								variant="outline-secondary"
-								@click="
-									() => {
-										router.push({
-											name: 'psychosocial.custom-update',
-											params: { status: 'REC' },
-										});
-									}
-								">
-								<Lucide
-									icon="FileEdit"
-									class="mr-2" />
-								<span class="text-sm"> Editar </span>
-							</Button>
-						</template> -->
-						<template
-							v-if="
-								item.status.slug === 'REC' ||
-								(item.status.slug === 'APR' && route.name !== 'review.index')
-							">
-							<CommonButtonLink v-if="item.status.slug === 'REC'"
-									:to="{
-										name: 'psychosocial.transversal-activity.edit',
-										params: { id: item.id },
-									}"
-									variant="outline-secondary">
-									<Lucide
-										icon="FileEdit"
-										class="mr-2" />
-									<span class="text-sm"> Editar </span>
-								</CommonButtonLink>
-							<!-- <Button
-								variant="outline-danger"
-								@click="onDeleteFnc(item.id)">
-								<Lucide
-									icon="Delete"
-									class="mr-2" />
-								<span class="text-sm"> Eliminar </span>
-							</Button> -->
-						</template>
-						<template
-							v-else-if="
-								item.status.slug === 'ENR' && route.name === 'review.index'
-							">
-							<template v-if="props.Form!">
+						<template v-if="true">
+                            <Button variant="outline-secondary" @click="() => {
+                                switch (selectedTab) {
+                                     case 1:
+                                         router.push({ name: 'psychosocial.update', params: { id: item.id } })
+                                         break;
+                                    case 2:
+                                        router.push({ name: 'psychosocial.custom-update', params: { id: item.id } })
+                                        break;
+                                     case 3:
+                                         router.push({ name: 'psychosocial.transversal-update', query: { id: item.id } })
+                                    //  default:
+                                    //     pruebas
+                                    //      break;
+                                }
+                            }">
+                                <Lucide v-if="item.status.slug == 'REC'" icon="FileEdit" class="mr-2" />
+                                <Lucide v-else icon="Eye" class="mr-2" />
+                                <span v-if="item.status.slug == 'REC'" class="text-sm">
+                                    Editar
+                                </span>
+                                <span v-else class="text-sm">
+                                    Visualizar
+                                </span>
+                            </Button>
+                        </template>
+					</template>
+                    <template v-else-if="isProvider('psychosocial-coordinator')">
+                        <template v-if="route.name == 'psychosocial-coordinator.reviews'">
+                            <template v-if="props.Form!">
 								<Modal
 									:Form="props.Form"
 									:id_review="item.id" />
 							</template>
-						</template>
-						<!-- <template v-else>
-							<Button
-								variant="outline-secondary"
-								@click="
-									() => {
-										if (item.status.slug == 'APR') {
-											router.push({
-												name: 'psychosocial.custom-update',
-												params: { status: 'APR' },
-											});
-										} else {
-											router.push({
-												name: 'psychosocial.custom-update',
-												params: { status: 'ENR' },
-											});
-										}
-									}
-								">
-								<Lucide
-									icon="FileArchive"
-									class="mr-2" />
-								<span class="text-sm"> Visualizar </span>
-							</Button>
-						</template> -->
-					</template>
-					<template v-else>
-						<Button
-							variant="outline-secondary"
-							@click="editAction(item.id)">
-							<Lucide
-								icon="FileEdit"
-								class="mr-2" />
-							<span class="text-sm"> Editar </span>
-						</Button>
-						<template v-if="item.status == 'PRO'">
-							<!-- @click="editAction(item.id)" -->
-							<Button
-								variant="outline-pending"
-								@click="signatureAction(item.consecutive)">
-								<Lucide
-									icon="FileSignature"
-									class="mr-2" />
-								<span class="text-sm"> Firmar </span>
-							</Button>
-						</template>
-						<template v-if="item.status == 'APRO'">
-							<!-- @click="editAction(item.id)" -->
-							<Button variant="outline-success">
-								<Lucide
-									icon="FileCheck"
-									class="mr-2" />
-								<a
-									class="text-sm"
-									href="/Contrato.pdf"
-									target="_blank">
-									Contrato
-								</a>
-							</Button>
-						</template>
-					</template>
+                        </template>
+                    </template>
+                    <template v-else-if="isProvider('technical_director') || isProvider('transversal_programs_director')">
+                        <template v-if="route.name == 'technical_director.reviews' || route.name == 'transversal_programs_director.reviews'">
+                            <template v-if="props.Form!">
+								<Modal
+									:Form="props.Form"
+									:id_review="item.id" />
+							</template>
+                        </template>
+                    </template>
 				</div>
 			</template>
 			<template #item-actionsDocuments="item">

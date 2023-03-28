@@ -3,23 +3,26 @@ import useVuelidate from '@vuelidate/core'
 import { required } from '@/utils/validators'
 import FormSwitch from "@/base-components/Form/FormSwitch";
 import { filePondValue } from '@/composables/useFilepondEvents';
+import { onboardingStore } from "@/stores/onboardingStore";
 import { customVisitServices } from '@/services/psychosocial/customVisitServices';
-import { Tooltip } from 'chart.js';
-
 
 const { multiple } = useFilepondEvents();
 
-const form = reactive({
-    month: '',
-    municipality: '',
-    beneficiary: '',
-    theme: '',
-    agreements: '',
-    concept: '1',
-    swich_guardian_knows: false,
-    file: [],
-    status: 'ENR',
+const store = onboardingStore();
+//id:2 => En revisión => ENR
 
+//Se manda la siguiente información para crear visita personalizada
+const form = reactive({
+    month: '', //ID del mes
+    municipality: '', //ID del municipio
+    beneficiary: '', //ID del beneficiario
+    theme: '', //String
+    agreements: '', //String
+    concept: '1', //String
+    guardian_knows_semilleros: false, //Boolean
+    file: [], //Un archivo (foto)
+    status: '2', //ID del estado                           
+    createdBy: store.get_user.id, //ID del usuario (Psicologo) que crea la visita personalizada
 })
 
 
@@ -30,10 +33,26 @@ const form_rules = computed(() => ({
     theme: { required },
     agreements: { required },
     concept: {},
-    swich_guardian_knows: { required },
+    guardian_knows_semilleros: { required },
     file: [{ required }],
 }))
 
+const months = asyncComputed(async () => {
+    return await getSelect(['months'])
+}, null)
+
+const municipalities = asyncComputed(async () => {
+    return await getSelect(['municipalities'])
+}, null)
+
+const municipality_id = computed(() => form.municipality)
+
+//Usar para traer beneficiarios (nombre y id) por municipio
+// const beneficiaries = asyncComputed(async () => {
+//     return municipality_id.value ? await getBeneficiariesByMunicipaly(municipality_id.value) : []
+//  }, null)
+
+//Se necesita traer la siguiente información del beneficiario por su id: (Adjuntar foto de lo visual)
 const beneficiary_data = reactive({
     grade: '',
     health_entity: '',
@@ -42,31 +61,23 @@ const beneficiary_data = reactive({
     guardian_identification: '',
 })
 
-
-const months = asyncComputed(async () => {
-    return await getSelect(['months'])
-}, null)
-
-const cities = asyncComputed(async () => {
-    return await getSelect(['municipalities'])
-}, null)
-
-const municipality_id = computed(() => form.municipality)
-
-// const beneficiaries = asyncComputed(async () => {
-//     return municipality_id.value ? await getBeneficiariesByMunicipaly(municipality_id.value) : []
-//  }, null)
-
-// const beneficiary_data = asyncComputed(async () => {
-//     return form.beneficiary ? await getBeneficiaryData(form.beneficiary) : null
-// }, null)
-//      |
-//    grade: '',
-//     health_entity: '',
-//     guardian_name: '',
-//     guardian_lastname: '',
-//     guardian_identification: '',
-//     
+//revisar este servicio para ver si trae lo que se necesita
+const getBeneficiaryData = async () => {
+    await beneficiaryServices.get(form.beneficiary as string).then((response) => {
+        console.log(response?.data.items);
+        if (response?.status == 200 || response?.status == 201) {
+            beneficiary_data.grade = response.data.items.grade;
+            beneficiary_data.health_entity = response.data.items.health_entity;
+            beneficiary_data.guardian_name = response.data.items.guardian_name;
+            beneficiary_data.guardian_lastname = response.data.items.guardian_lastname;
+            beneficiary_data.guardian_identification = response.data.items.guardian_identification;
+            alerts.custom("", "Datos obtenidos", "success");
+        } else {
+            alerts.custom("", "No se pudieron obtener los datos", "error");
+        }
+        console.log(form);
+    })
+}
 
 const v$ = useVuelidate(form_rules, form)
 
@@ -95,6 +106,11 @@ const onSubmit = async () => {
     }
 }
 
+const positionRange = computed(() => {
+    const positionTooltip = (parseInt(form.concept) - 1) / (4);
+    return `calc(${positionTooltip * 100}% - ${(2*(parseInt(form.concept) - 1)**2)/5 + 2*(parseInt(form.concept) -1)}px)`;
+});
+
 </script>
 
 <template>
@@ -107,12 +123,11 @@ const onSubmit = async () => {
             <div class="space-y-8 divide-y divide-slate-200">
                 <div>
                     <div class="mt-0 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-3 ">
-                        <CommonSelect label="Mes *" name="month" v-model="form.month" :validator="v$"
-                            :options="months" />
-                        <CommonSelect label="Municipio *" name="municipality" v-model="form.municipality"
-                            :validator="v$" :options="cities" />
-                        <CommonSelect label="Beneficiario *" name="beneficiary" v-model="form.beneficiary"
-                            :validator="v$" :options="cities" />
+                        <CommonSelect label="Mes *" name="month" v-model="form.month" :validator="v$" :options="months" />
+                        <CommonSelect label="Municipio *" name="municipality" v-model="form.municipality" :validator="v$"
+                            :options="municipalities" />
+                        <CommonSelect @select="getBeneficiaryData" label="Beneficiario *" name="beneficiary" v-model="form.beneficiary" :validator="v$"
+                            :options="beneficiaries" />
                     </div>
                     <!-- cambiar condicion por "beneficiary_data" cuando haya función para traer los datos -->
                     <div v-if="form.beneficiary">
@@ -138,29 +153,37 @@ const onSubmit = async () => {
                             <div class="">
 
                                 <FormSwitch.Input name="swich_plans" id="swich_plans" type="checkbox"
-                                    v-model="form.swich_guardian_knows" :validator="v$" />
+                                    v-model="form.guardian_knows_semilleros" :validator="v$" />
                                 <FormSwitch.Label htmlFor="swich_plans"> ¿El padre o acudiente conoce el proyecto de
                                     Semilleros Deportivos?. </FormSwitch.Label>
                             </div>
                         </div>
                         <div class="col-span-3 sm:grid-cols-3">
                             <CommonTextarea
-                                label="Temáticas durante la visita: físico, emocional, familiar, escolar, social, espiritual *" placeholder="Escriba..."
-                                name="theme" rows="5" v-model="form.theme" :validator="v$" />
+                                label="Temáticas durante la visita: físico, emocional, familiar, escolar, social, espiritual *"
+                                placeholder="Escriba..." name="theme" rows="5" v-model="form.theme" :validator="v$" />
 
                         </div>
                         <div class="col-span-3 sm:grid-cols-3">
-                            <CommonTextarea label="Acuerdos y recomendaciones *" placeholder="Escriba..." name="agreements" rows="5"
-                                v-model="form.agreements" :validator="v$" />
+                            <CommonTextarea label="Acuerdos y recomendaciones *" placeholder="Escriba..." name="agreements"
+                                rows="5" v-model="form.agreements" :validator="v$" />
                         </div>
 
-                        <div class="grid justify-center col-span-3">
-                            <CommonInput type="range"
-                                label="Concepto del padre o acudiente que atendió la visita en una escala de 1 a 5 donde 1 es deficiente y 5 excelente"
-                                name="concept" min="1" max="5" class="focus:outline-none" v-model="form.concept" />
 
+
+                        <div class="grid col-span-3 justify-center">
+                            <label for="range" class="text-xs">Concepto del padre o acudiente que atendió la visita en una
+                                escala de 1 a 5 donde 1 es deficiente y 5 excelente:
+                            </label>
+                            <div id="range" class="relative mb-5">
+                                <input class="w-full accent-primary" type="range" min="1" max="5"
+                                    v-model="form.concept" />
+                                <div :style="{ left: positionRange }"
+                                    class="absolute -translate-x-1/4 border-zinc-500 border-2 p-2 rounded-full bg-primary text-white select-none">
+                                    {{ form.concept }}
+                                </div>
+                            </div>
                         </div>
-
 
                         <div class="grid col-span-3">
                             <CommonDropzone name="file" label="Suba su archivo aqui *" :accept-multiple="false"
@@ -169,15 +192,13 @@ const onSubmit = async () => {
                                 @removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }"
                                 :validator="v$" />
                         </div>
-                        <!-- <div>
-                                                        <CommonFile label="Documento 1" name="file"/>
-                                                    </div> -->
+
                     </div>
                 </div>
             </div>
             <div class="pt-5">
                 <div class="flex justify-center gap-x-4">
-                    <Button type="submit" variant="dark">
+                    <Button type="submit" variant="primary">
                         Registrar
                     </Button>
                 </div>

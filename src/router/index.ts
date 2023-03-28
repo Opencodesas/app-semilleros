@@ -430,25 +430,46 @@ const routes = [
 						component: () => import('@/pages/psychosocial/custom-visit/Form.vue'),
 					},
 					{
-						path: "custom-update/:status",
-						name: "psychosocial.custom-update",
-						component: () => import('@/pages/psychosocial/custom-visit/FormEdit.vue'),
-					},
-					{
 						path: "visits",
 						name: "psychosocial.visits",
 						component: () => import('@/pages/psychosocial/visits/index.vue'),
 					},
+					// {
+					// 	path: "update/:id",
+					// 	name: "psychosocial.update",
+					// 	component: () => import('@/pages/...'),
+					// },
+					{
+						path: "custom-update/:id",
+						name: "psychosocial.custom-update",
+						component: () => import('@/pages/psychosocial/custom-visit/FormEdit.vue'),
+					},
+					{
+						path: 'transversal-activity',
+						name: 'psychosocial.transversal-activity',
+						children: [
+							{
+								path: '',
+								name: 'psychosocial.transversal-activity.index',
+								component: () => import('@/pages/psychosocial/transversal-activity/Index.vue'),
+							},
+							{
+								path: "create",
+								name: "psychosocial.transversal-activity.create",
+								component: () => import('@/pages/psychosocial/transversal-activity/Form.vue'),
+							},
+						]
+					}
 				],
 			},
 			{
-				path: "coordinador-psicosocial",
-				name: "coordinador-psicosocial",
-				meta: { provider: 'coordinador-psicosocial' },
+				path: "psychosocial-coordinator",
+				name: "psychosocial-coordinator",
+				meta: { provider: 'psychosocial-coordinator' },
 				children: [
 					{
-						path: "visit",
-						name: "coordinador-psicosocial.reviews",
+						path: "reviews",
+						name: "psychosocial-coordinator.reviews",
 						component: () => import('@/pages/psychosocial_coordinator/reviews/Index.vue'),
 					},{
 						path: "create",
@@ -459,6 +480,30 @@ const routes = [
 						path: ":id",
 						name: "coordinador-psicosocial.edit",
 						component: () => import('@/pages/views/FormEdit.vue')
+					},
+				],
+			},
+			{
+				path: "technical_director",
+				name: "technical_director",
+				meta: { provider: 'technical_director' },
+				children: [
+					{
+						path: "reviews",
+						name: "technical_director.reviews",
+						component: () => import('@/pages/technical_director/reviews/Index.vue'),
+					},
+				],
+			},
+			{
+				path: "transversal_programs_director",
+				name: "transversal_programs_director",
+				meta: { provider: 'transversal_programs_director' },
+				children: [
+					{
+						path: "reviews",
+						name: "transversal_programs_director.reviews",
+						component: () => import('@/pages/transversal_programs_director/reviews/Index.vue'),
 					},
 				],
 			},
@@ -526,46 +571,6 @@ const routes = [
 					},
 				]
 			},
-			{
-				path: "psychosocial",
-				name: "psychosocial",
-				meta: { provider: 'psychosocial' },
-				children: [
-					{
-						path: "visit",
-						children: [
-							{
-								path: "",
-								name: "psychosocial.visit",
-								component: () => import('@/pages/psychosocial_visit/Form.vue'),
-							},
-							{
-								path: "viewer",
-								name: "manager.contractsViewer",
-								component: () => import('@/pages/contracts/PDFViewer.vue'),
-							},
-						]
-					},
-					{
-						path: 'transversal-activity',
-						name: 'psychosocial.transversal-activity',
-						children: [
-							{
-								path: '',
-								name: 'psychosocial.transversal-activity.index',
-								component: () => import('@/pages/psychosocial/transversal-activity/Index.vue'),
-							},
-							{
-								path: "create",
-								name: "psychosocial.transversal-activity.create",
-								component: () => import('@/pages/psychosocial/transversal-activity/Form.vue'),
-							},
-						]
-					}
-					
-				],
-			},
-			
 		],
 	},
 	{
