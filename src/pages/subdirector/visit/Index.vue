@@ -19,12 +19,6 @@ const create = () => {
 // 		items.value = response?.data.items
 // 	});
 // });
-const deleteModule = async (id: string | number) => {
-	console.log(id);
-	// await subdirectorVisitServices.delete(id).then((response) => {
-	// 	console.log(response);
-	// });
-};
 
 const headers: Header[] = [
 	{ text: 'No', value: 'id' },
@@ -102,8 +96,7 @@ const data = computed(() => searchData(items.value, search.value));
 			placeholder="Buscar" />
 		<Crud
 			:headers="headers"
-			:items="data"
-			:onDeleteFnc="deleteModule" />
+			:items="data" />
 	</div>
 	<!-- END: Page Layout -->
 </template>

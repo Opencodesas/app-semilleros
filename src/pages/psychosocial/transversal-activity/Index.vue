@@ -2,6 +2,7 @@
 import Crud from '@/components/Crud.vue';
 import { searchData } from '@/composables/search';
 import { Header, Item } from 'vue3-easy-data-table';
+import FormActivity from './Form.vue'
 
 const router = useRouter();
 const { find } = useApiV1();
@@ -70,6 +71,18 @@ const items = ref<Item[]>([
 		},
 		actions: 'actions',
 	},
+	{
+		id: '3',
+		date_visit: '2023-02-27',
+		municipality: 'Jamundi',
+		coordinator_name: 'Oscar Martinez',
+		sport_scene: 'Cancha Marcella',
+		status: {
+			id: 2,
+			name: 'Rechazado',
+			slug: 'REC',
+		},
+	},
 ]);
 
 const dataSearch = computed(() => searchData(items.value, search.value));
@@ -95,13 +108,13 @@ const dataSearch = computed(() => searchData(items.value, search.value));
 
 <template>
 	<div class="flex items-center mt-8 intro-y">
-		<h2 class="mr-auto text-lg font-medium">Listado Visitas Coordinador</h2>
+		<h2 class="mr-auto text-lg font-medium">Listado Actividades Transversales</h2>
 		<div class="w-full sm:w-auto flex mt-4 sm:mt-0">
 			<Button
 				variant="primary"
 				class="btn btn-primary"
 				@click="create">
-				Crear Visita
+				Crear Actividad
 			</Button>
 		</div>
 	</div>
@@ -113,6 +126,7 @@ const dataSearch = computed(() => searchData(items.value, search.value));
 			v-model="search"
 			placeholder="Buscar" />
 		<Crud
+			:Form="FormActivity"
 			:headers="headers"
 			:items="dataSearch" />
 	</div>

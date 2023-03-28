@@ -194,9 +194,14 @@ export const useSideMenuStore = defineStore("sideMenu", {
           },
           {
             icon: "Activity",
+            pageName: "psychosocial.transversal-activity.create",
+            title: "Crear actividades transversales",
+          },
+          {
+            icon: "Activity",
             pageName: "psychosocial.transversal-activity.index",
             title: "Actividades transversales",
-          }
+          },
         ]
       },
       {

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import CommonFile from '@/components/CommonFile.vue';
 import { filePondValue } from '@/composables/useFilepondEvents';
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
@@ -21,7 +20,7 @@ const form = reactive({
 	team_socialization: '',
 	development_activity: '',
 	content_network: '',
-	file: [],
+	files: [],
 	create_by: '',
 });
 
@@ -37,7 +36,7 @@ const form_rules = computed(() => ({
 	team_socialization: { required },
 	development_activity: { required },
 	content_network: { required },
-	file: { required },
+	files: { required },
 	create_by: { required },
 }));
 
@@ -47,7 +46,29 @@ const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
 }, null);
 
+// onMounted(async () => {
+
+// 	await transversalActivityServices.get(router.currentRoute.value.params.id as string).then((response: any) => {
+// 		form.id = response.data.id;
+// 		form.status = response.data.status;
+// 		form.reason = response.data.reason;
+// 		form.municipality_id = response.data.municipality_id;
+// 		form.date_visit = response.data.date_visit;
+// 		form.nro_assistants = response.data.nro_assistants;
+// 		form.activity_name = response.data.activity_name;
+// 		form.objective_activity = response.data.objective_activity;
+// 		form.scene = response.data.scene;
+// 		form.meeting_planing = response.data.meeting_planing;
+// 		form.team_socialization = response.data.team_socialization;
+// 		form.development_activity = response.data.development_activity;
+// 		form.content_network = response.data.content_network;
+// 		form.files = response.data.files;
+// 		form.create_by = response.data.create_by;
+// 	});
+// })
+
 const onSubmit = async () => {
+	console.log(form.files);
 	const valid = await v$.value.$validate();
 	if (form.nro_assistants < 0) {
 		alerts.error('El numero de asistentes no puede ser negativo');
@@ -78,6 +99,9 @@ const onSubmit = async () => {
 <template>
 	<div class="flex items-center mt-8 intro-y">
 		<div class="flex items-center space-x-4">
+			<CommonBackButton
+				:to="'psychosocial.transversal-activity.index'"
+				title="Listado" />
 			<h2 class="mr-auto text-lg font-medium">
 				Registrar actividad transversal
 			</h2>
@@ -104,8 +128,8 @@ const onSubmit = async () => {
 				<CommonInput
 					type="number"
 					placeholder="Ingrese el numero de asistentes"
-					min="0"
-					label="No. de asistentes  *"
+					:min="0"
+					label="Numero de asistentes  *"
 					name="nro_assistants"
 					v-model="form.nro_assistants"
 					:validator="v$" />
@@ -129,8 +153,8 @@ const onSubmit = async () => {
 					:validator="v$" />
 				<CommonInput
 					type="text"
-					placeholder="Ingrese el escenario"
-					label="Escenario *"
+					placeholder="Ingrese el escenario deportivo"
+					label="Escenario deportivo *"
 					name="scene"
 					v-model="form.scene"
 					:validator="v$" />
@@ -172,15 +196,20 @@ const onSubmit = async () => {
 				v-model="form.content_network"
 				:validator="v$" />
 		</div>
-		<div class="p-5 mt-6 intro-y">
-			<CommonFile
-				:validator="v$"
-				v-model="form.file"
-				:accept_multiple="true"
-				name="file"
-				class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
-				@addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
-				@removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }" />
+		<FormLabel
+			for="evidencia"
+			class="flex flex-col mt-6 w-full sm:flex-row">
+			Evidencia *
+		</FormLabel>
+		<div class="p-5 intro-y">
+			<CommonDropzone
+				class="w-3/4 mx-auto"
+				name="files"
+				:accept-multiple="true"
+				v-model="form.files"
+				@addfile="(error: any, value: filePondValue) => { form.files = multiple.addfile({ error, value }, form.files) as never[] }"
+				@removefile="(error: any, value: filePondValue) => { form.files = multiple.removefile({ error, value }, form.files) as never[] }"
+				:validator="v$" />
 		</div>
 	</div>
 
