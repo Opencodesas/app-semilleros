@@ -13,7 +13,11 @@ export const searchData = (items: Item[], search: String) => {
 				item.evaluation?.toLowerCase().includes(searchValue) ||
 				item.status.name?.toLowerCase().includes(searchValue) ||
 				item.methodologist_name?.toLowerCase().includes(searchValue) ||
-				item.monitor_name?.toLowerCase().includes(searchValue)
+				item.monitor_name?.toLowerCase().includes(searchValue) ||
+
+				//Para visita personalizadas psicosocial (se excluyen los que ya estan arriba)
+				item.month?.toLowerCase().includes(searchValue) ||
+				item.beneficiary?.toLowerCase().includes(searchValue) 		
 		);
 	}
 	return items
