@@ -196,11 +196,18 @@ const onSubmit = async () => {
 				v-model="form.content_network"
 				:validator="v$" />
 		</div>
-		<FormLabel
-			for="evidencia"
-			class="flex flex-col mt-6 w-full sm:flex-row">
-			Evidencia *
-		</FormLabel>
+		<div class="p-5 mt-6 intro-y">
+			<FormLabel
+				for="evidencia"
+				class="flex flex-col w-full sm:flex-row">
+				Evidencia *
+			</FormLabel>
+			<img
+				:alt="`Evidencia de la visita del subdirector`"
+				class="m-auto border rounded-lg"
+				src="/semilleros.png"
+				width="400" />
+		</div>
 		<div class="p-5 intro-y">
 			<CommonDropzone
 				class="w-3/4 mx-auto"

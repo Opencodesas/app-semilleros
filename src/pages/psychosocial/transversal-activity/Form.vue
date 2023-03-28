@@ -21,7 +21,7 @@ const form = reactive({
 	team_socialization: '',
 	development_activity: '',
 	content_network: '',
-	file: [],
+	files: [],
 	create_by: '',
 });
 
@@ -37,7 +37,7 @@ const form_rules = computed(() => ({
 	team_socialization: { required },
 	development_activity: { required },
 	content_network: { required },
-	file: { required },
+	files: { required },
 	create_by: { required },
 }));
 
@@ -172,15 +172,15 @@ const onSubmit = async () => {
 				v-model="form.content_network"
 				:validator="v$" />
 		</div>
-		<div class="p-5 mt-6 intro-y">
-			<CommonFile
-				:validator="v$"
-				v-model="form.file"
-				:accept_multiple="true"
-				name="file"
-				class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
-				@addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
-				@removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }" />
+		<div class="p-5 intro-y">
+			<CommonDropzone
+				class="w-3/4 mx-auto"
+				name="files"
+				:accept-multiple="true"
+				v-model="form.files"
+				@addfile="(error: any, value: filePondValue) => { form.files = multiple.addfile({ error, value }, form.files) as never[] }"
+				@removefile="(error: any, value: filePondValue) => { form.files = multiple.removefile({ error, value }, form.files) as never[] }"
+				:validator="v$" />
 		</div>
 	</div>
 
