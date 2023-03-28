@@ -1,53 +1,55 @@
 <script setup lang="ts">
 import CommonFile from '@/components/CommonFile.vue';
 import { filePondValue } from '@/composables/useFilepondEvents';
-import { onboardingStore } from '@/stores/onboardingStore';
-import { datetime } from '@intlify/core-base';
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
-import { fromPairs } from 'lodash';
+import { onboardingStore } from '@/stores/onboardingStore';
 import Swal from 'sweetalert2';
 
-const { multiple } = useFilepondEvents();
 const store = onboardingStore();
+
+const { multiple } = useFilepondEvents();
 const router = useRouter();
 const route = useRoute();
 const { id } = route.params;
 
 const form = reactive({
-	status: '',
-	reason: '',
+	status_id: '',
+	rejection_message: '',
 	date_visit: '2023-02-27',
 	hour_visit: '09:30',
 	observations: 'a pesar de la fuerte lluvia se vivencio buena población.',
-	monitor: '',
-	municipalities: '',
-	event_support: '',
-	disciplines: '',
+	monitor_id: '',
+	municipality_id: '',
+	event_support_id: '',
+	discipline_id: '',
 	sidewalk: 'Jamundi',
 	sports_scene: 'Cancha Marcella',
 	beneficiary_coverage: '8',
 	technical: '',
-	description: 'se encontró en el escenario, confunde los componentes se le deben reforzar.',
+	description:
+		'se encontró en el escenario, confunde los componentes se le deben reforzar.',
 	file: [],
+	created_by: store.user.id,
 });
 
 const form_rules = computed(() => ({
-	status: { required },
-	reason: { required: parseInt(form.status) == 2 },
+	status_id: { required },
+	rejection_message: { required: parseInt(form.status_id) == 2 },
 	date_visit: { required },
 	hour_visit: { required },
-	municipalities: { required },
+	municipality_id: { required },
 	sidewalk: { required },
-	monitor: { required },
-	disciplines: { required },
+	monitor_id: { required },
+	discipline_id: { required },
 	sports_scene: { required },
 	beneficiary_coverage: { required },
-	event_support: { required },
+	event_support_id: { required },
 	technical: { required },
 	observations: { required },
 	description: { required },
 	file: { required },
+	created_by: { required },
 }));
 
 const municipalities = asyncComputed(async () => {
@@ -75,11 +77,11 @@ const data = async () => {
 	await subdirectorVisitServices.get(id as string).then((response) => {
 		if (response?.status == 200) {
 			form.observations = response.data.observations;
-			form.monitor = response.data.monitor;
-			form.municipalities = response.data.municipalities;
-			form.event_support = response.data.event_support;
+			form.monitor_id = response.data.monitor_id;
+			form.municipality_id = response.data.municipality_id;
+			form.event_support_id = response.data.event_support_id;
 			form.hour_visit = response.data.hour_visit;
-			form.disciplines = response.data.disciplines;
+			form.discipline_id = response.data.discipline_id;
 			form.sidewalk = response.data.sidewalk;
 			form.sports_scene = response.data.sports_scene;
 			form.beneficiary_coverage = response.data.beneficiary_coverage;
@@ -87,8 +89,8 @@ const data = async () => {
 			form.date_visit = response.data.date_visit;
 			form.description = response.data.description;
 			form.file = response.data.file;
-			form.status = response.data.status;
-			form.reason = response.data.reason;
+			form.status_id = response.data.status_id;
+			form.rejection_message = response.data.rejection_message;
 			setLoading(false);
 		} else {
 			setLoading(false);
@@ -98,20 +100,20 @@ const data = async () => {
 };
 
 onMounted(() => {
-	form.status = '2';
-	form.reason = 'La foto no es una evidencia de la visita';
-	form.hour_visit = '9:30'
-	form.municipalities = '39';
-	form.monitor = '2';
-	form.disciplines = '8';
+	form.status_id = '2';
+	form.rejection_message = 'La foto no es una evidencia de la visita';
+	form.hour_visit = '9:30';
+	form.municipality_id = '39';
+	form.monitor_id = '2';
+	form.discipline_id = '8';
 	form.technical = '1';
-	form.event_support = '1';
+	form.event_support_id = '1';
 });
 
 const onSubmit = async () => {
 	console.log(form.hour_visit);
-	form.status = '3';
-	form.reason = '';
+	form.status_id = '3';
+	form.rejection_message = '';
 	const valid = await v$.value.$validate();
 
 	if (valid) {
@@ -130,7 +132,7 @@ const onSubmit = async () => {
 			});
 		Swal.fire('', 'Modificacion exitosa!', 'success');
 		setLoading(true);
-		router.push('index').finally(() => {
+		router.push({name: 'subdirector_visit.index'}).finally(() => {
 			setLoading(false);
 		});
 	} else {
@@ -138,9 +140,6 @@ const onSubmit = async () => {
 	}
 };
 
-function formatDate(arg0: string): string {
-throw new Error('Function not implemented.');
-}
 </script>
 
 <template>
@@ -156,9 +155,9 @@ throw new Error('Function not implemented.');
 	<div class="p-5 mt-5 intro-y box">
 		<div
 			class="mb-6"
-			v-if="parseInt(form.status) == 2">
+			v-if="parseInt(form.status_id) == 2">
 			<p class="text-danger font-bold">Razon de rechazo</p>
-			<p>{{ form.reason }}</p>
+			<p>{{ form.rejection_message }}</p>
 		</div>
 
 		<div class="grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
@@ -167,7 +166,6 @@ throw new Error('Function not implemented.');
 				label="Fecha  *"
 				name="date_visit"
 				v-model="form.date_visit"
-				
 				:validator="v$" />
 			<CommonInput
 				type="time"
@@ -177,9 +175,9 @@ throw new Error('Function not implemented.');
 				:validator="v$" />
 			<CommonSelect
 				label="Municipio *"
-				name="municipalities"
+				name="municipality_id"
 				class="cursor-pointer"
-				v-model="form.municipalities"
+				v-model="form.municipality_id"
 				:validator="v$"
 				:options="municipalities" />
 
@@ -192,16 +190,16 @@ throw new Error('Function not implemented.');
 				:validator="v$" />
 			<CommonSelect
 				label="Monitor *"
-				name="monitor"
+				name="monitor_id"
 				class="cursor-pointer"
-				v-model="form.monitor"
+				v-model="form.monitor_id"
 				:validator="v$"
 				:options="monitorList" />
 			<CommonSelect
 				label="Disciplinas *"
-				name="disciplines"
+				name="discipline_id"
 				class="cursor-pointer"
-				v-model="form.disciplines"
+				v-model="form.discipline_id"
 				:validator="v$"
 				:options="disciplines" />
 			<CommonInput
@@ -228,9 +226,9 @@ throw new Error('Function not implemented.');
 				:options="evaluationList" />
 			<CommonSelect
 				label="Apoyo a eventos *"
-				name="event_support"
+				name="event_support_id"
 				class="cursor-pointer"
-				v-model="form.event_support"
+				v-model="form.event_support_id"
 				:validator="v$"
 				:options="event_supportList" />
 		</div>

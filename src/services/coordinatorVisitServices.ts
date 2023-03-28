@@ -1,6 +1,6 @@
-const module = 'coordinator'
+const module = 'coordinator_visit'
 
-export const coordinatorServices = {
+export const coordinatorVisitServices = {
   get: async (id: string) => {
     try {
       setLoading(true)
@@ -14,13 +14,19 @@ export const coordinatorServices = {
       alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
     }
   },
-  getAll: async () => {
+  getAll: async (subdirector_id?: number) => {
     try {
       setLoading(true)
-
-      const response = await api.get(`/${apiPath}/${module}`).finally(() => {
-        setLoading(false)
-      })
+      let response
+      if (subdirector_id) {
+        response = await api.get(`/${apiPath}/${module}?subdirector_id=${subdirector_id}`).finally(() => {
+          setLoading(false)
+        })
+      } else {
+        response = await api.get(`/${apiPath}/${module}`).finally(() => {
+          setLoading(false)
+        })
+      }
 
       return response
     } catch (error: any) {

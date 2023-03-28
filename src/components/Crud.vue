@@ -1,24 +1,17 @@
 <script setup lang="ts">
-
-
-import dayjs from 'dayjs'
 import Lucide from '@/base-components/Lucide';
-import type { FilterOption, Header, Item } from "vue3-easy-data-table"
 import ContractorDocumentsType from '@/types/contractorDocumentsTypes';
+import dayjs from 'dayjs';
+import type { Header, Item } from 'vue3-easy-data-table';
 import CommonButtonLink from './CommonButtonLink.vue';
 import ContractCancellation from './ContractCancellation.vue';
-import ManagementButton from '../crud/ManagementButton.vue'
-import MultipleOptions from '../crud/MultipleOptions.vue'
-import DatasheetFormat from '../crud/DatasheetFormat.vue'
-import { getCurrentInstance } from 'vue';
+import Modal from './Modal.vue';
 
-import Swal, { SweetAlertIcon } from "sweetalert2"
+const storagePath = import.meta.env.VITE_BASE_URL;
 
-const storagePath = import.meta.env.VITE_BASE_URL
-
-const router = useRouter()
-const route = useRoute()
-const { isProvider } = useProvider()
+const router = useRouter();
+const route = useRoute();
+const { isProvider } = useProvider();
 
 /*
 |--------------------------------------------------------------------------
@@ -34,29 +27,33 @@ const { isProvider } = useProvider()
 |   onDeleteFnc for button of delete modal
 |
 */
-const props = withDefaults(defineProps<{
-    edit_gestor?: boolean
-    headers: Header[]
-    items: Item[]
-    item_see_fnc?: Function | boolean
-    item_see_fullview?: boolean
-    label: string
-    management_permissions?: boolean
-    onDeleteFnc: Function
-    show_exports?: boolean,
-}>(), {
-    edit_gestor: false,
-    item_see_fnc: () => (false),
-    item_see_fullview: false,
-    label: '',
-    management_permissions: false,
-    onDeleteFnc: () => (false),
-    show_exports: false
-})
+const props = withDefaults(
+	defineProps<{
+		edit_gestor?: boolean;
+		headers: Header[];
+		items: Item[];
+		item_see_fnc?: Function | boolean;
+		item_see_fullview?: boolean;
+		label: string;
+		Form?: Object;
+		management_permissions?: boolean;
+		onDeleteFnc: Function;
+		show_exports?: boolean;
+	}>(),
+	{
+		edit_gestor: false,
+		item_see_fnc: () => false,
+		item_see_fullview: false,
+		label: '',
+		management_permissions: false,
+		onDeleteFnc: () => false,
+		show_exports: false,
+	}
+);
 // Spliting route.name >>> example >>> pecs.index = pecs
 const routeName = computed(() => {
-    return String(route.name).split('.')[0]
-})
+	return String(route.name).split('.')[0];
+});
 
 // const searchOptions = computed(() => {
 //     const filter = props.headers
@@ -172,16 +169,14 @@ const routeName = computed(() => {
 
 // Function for Edit
 const editAction = (id: string | number) => {
-    if (props.edit_gestor) {
-        router.push({ name: `${routeName.value}.edit`, params: { id: id } })
-    }
-    else {
-        router.push({ name: `${routeName.value}.edit`, params: { id: id } })
-    }
+	if (props.edit_gestor) {
+		router.push({ name: `${routeName.value}.edit`, params: { id: id } });
+	} else {
+		router.push({ name: `${routeName.value}.edit`, params: { id: id } });
+	}
+};
 
-}
-
-const provider = computed(() => route.meta.provider)
+const provider = computed(() => route.meta.provider);
 
 // const computedActions = computed(() => {
 //     const provider = route.meta.provider
@@ -194,24 +189,24 @@ const provider = computed(() => route.meta.provider)
 // })
 
 const viewAction = (itemId: string) => {
-    let routeData = router.resolve({
-        name: 'documents.signature',
-        query: {
-            contract: itemId
-        }
-    })
-    window.open(routeData.href, '_blank', 'menubar=no')
-}
+	let routeData = router.resolve({
+		name: 'documents.signature',
+		query: {
+			contract: itemId,
+		},
+	});
+	window.open(routeData.href, '_blank', 'menubar=no');
+};
 
 const signatureAction = (itemId: string) => {
-    let routeData = router.resolve({
-        name: 'documents.signature',
-        query: {
-            contract: itemId
-        }
-    })
-    window.open(routeData.href, '_blank', 'menubar=no')
-}
+	let routeData = router.resolve({
+		name: 'documents.signature',
+		query: {
+			contract: itemId,
+		},
+	});
+	window.open(routeData.href, '_blank', 'menubar=no');
+};
 
 /*const editAction = () => {
     setLoading(true)
@@ -221,16 +216,21 @@ const signatureAction = (itemId: string) => {
 }
 */
 const managementAction = (id: string | number) => {
-    setLoading(true)
-    router.push({ name: 'documents.management', query: { contractor: id } }).finally(() => {
-        setLoading(false)
-    })
-    // router.replace('management').finally(() => {
-    //     setLoading(false)
-    // })
-}
+	setLoading(true);
+	router
+		.push({ name: 'documents.management', query: { contractor: id } })
+		.finally(() => {
+			setLoading(false);
+		});
+	// router.replace('management').finally(() => {
+	//     setLoading(false)
+	// })
+};
 
-const contractorHandler = (name: string, id: string | number) => ({ name, query: { contractor: id } })
+const contractorHandler = (name: string, id: string | number) => ({
+	name,
+	query: { contractor: id },
+});
 
 // const managementAction = (id: string | number) => {
 //     if (props.edit_gestor) {
@@ -279,33 +279,44 @@ const contractorHandler = (name: string, id: string | number) => ({ name, query:
 // })
 
 const sort = reactive({
-    by: '',
-    type: '',
-})
+	by: '',
+	type: '',
+});
 
-const { find } = useApiV1()
+const { find } = useApiV1();
 
-const hasDocumentsHeader = computed(() => props.headers.some((header) => header.value == 'documents' || header.value == 'contractor_documents'))
+const hasDocumentsHeader = computed(() =>
+	props.headers.some(
+		(header) =>
+			header.value == 'documents' || header.value == 'contractor_documents'
+	)
+);
 
 const contractorDocuments = computedAsync(async () => {
-    if (hasDocumentsHeader.value) {
-        const documents = await find<ContractorDocumentsType[]>('documents')
-        return documents.data.map((document) => ({ id: document.contractor_id, status: document.status.slug }))
-    }
-}, null)
+	if (hasDocumentsHeader.value) {
+		const documents = await find<ContractorDocumentsType[]>('documents');
+		return documents.data.map((document) => ({
+			id: document.contractor_id,
+			status: document.status.slug,
+		}));
+	}
+}, null);
 
-const contractorDocumentsCount = (id: number) => ((contractorDocuments.value != null) ? contractorDocuments.value.filter((doc) => doc.id == id).length : 0)
+const contractorDocumentsCount = (id: number) =>
+	contractorDocuments.value != null
+		? contractorDocuments.value.filter((doc) => doc.id == id).length
+		: 0;
 
 const documentsCount = (id: number) => {
-    if (contractorDocuments.value != null) {
-        const count = contractorDocuments.value.filter((doc) => doc.id == id)
-        const countAPR = count.filter((doc) => doc.status == 'APR')
+	if (contractorDocuments.value != null) {
+		const count = contractorDocuments.value.filter((doc) => doc.id == id);
+		const countAPR = count.filter((doc) => doc.status == 'APR');
 
-        return `${countAPR.length} de ${count.length}`
-    }
-}
+		return `${countAPR.length} de ${count.length}`;
+	}
+};
 
-const _getStatus = (status: any) => getStatus(status)
+const _getStatus = (status: any) => getStatus(status);
 
 /*
 |--------------------------------------------------------------------------
@@ -370,6 +381,474 @@ const selectedTab = inject('selectedTab', ref(0))
 </script>
 
 <template>
+	<div class="intro-y flex flex-col gap-2">
+		<section class="flex flex-col gap-3 lg:grid lg:grid-cols-4 lg:items-center">
+			<!-- <div class="grid grid-cols-2 gap-3">
+                                    <div class="w-full">
+                                        <BaseSelect label="BUSCAR EN" tooltip="Seleccione en que campo quiere buscar"
+                                            placeholder="Seleccione" name="search_field" v-model="filters.search_field"
+                                            :options="searchOptions" :validator="v$" />
+                                    </div>
+                                    <div class="w-full">
+                                        <BaseInput type="text" label="VALOR" tooltip="Ingrese el valor a buscar" placeholder="Valor"
+                                            name="search_value" v-model="filters.search_value" :validator="v$" />
+                                    </div>
+                                </div> -->
+			<!-- <div v-if="show_date" class="flex flex-col justify-start h-full">
+                                    <label for="regular-form-2" class="form-label font-bold min-w-max mr-2">FECHA RANGO</label>
+                                    <div class="grid grid-cols-2 gap-1.5 w-full intro-x">
+                                        <BaseInput class="" type="date" tooltip="Desde" name="date_criteria_start"
+                                            v-model="filters.date_criteria_start" :validator="v$" />
+                                        <BaseInput class="" type="date" tooltip="Hasta" name="date_criteria_end"
+                                            v-model="filters.date_criteria_end" :validator="v$" />
+                                    </div>
+                                </div>
+                                <div v-if="show_status" class="flex items-start gap-6 h-full">
+                                    <div class="w-full intro-x">
+                                        <BaseSelect label="ESTADO" tooltip="" placeholder="Seleccione" name="status_criteria"
+                                            v-model="filters.status_criteria" :options="status_options" :validator="v$"
+                                            :allowEmpty="true" />
+                                    </div>
+                                </div>
+                                <div v-if="show_user_status" class="flex items-start gap-6 h-full">
+                                    <div class="w-full intro-x">
+                                        <BaseSelect label="ESTADO" tooltip="" placeholder="Seleccione" name="user_status_criteria"
+                                            v-model="filters.user_status_criteria" :options="[
+                                                { label: 'ACTIVO', value: '1' },
+                                                { label: 'INACTIVO', value: '0' }
+                                            ]" :validator="v$" :allowEmpty="false" />
+                                    </div>
+                                </div> -->
+		</section>
+		<!-- :sort-by="sorts.by"
+                :filter-options="filter_options"
+                :search-field="filters.search_field"
+                :search-value="filters.search_value"
+                :sort-type="sorts.type" -->
+		<DataTable
+			:headers="headers"
+			:items="items"
+			buttons-pagination
+			:sort-by="sort.by"
+			:sort-type="sort.type"
+			table-class-name="customize-table">
+			<!-- <template #header-status="{ text }">
+                        <div class="flex gap-1 relative">
+                            <p>{{ text }}</p>
+                            <button @click="show_status = !show_status" :class="(show_status) ? 'opacity-100' : 'opacity-50'"
+                                class="hover:opacity-100 text-primary transition">
+                                <FilterIcon size="20" />
+                            </button>
+                        </div>
+                    </template>
+                    <template #header-user_status="{ text }">
+                        <div class="flex gap-1 relative">
+                            <p>{{ text }}</p>
+                            <button @click="show_user_status = !show_user_status"
+                                :class="(show_user_status) ? 'opacity-100' : 'opacity-50'"
+                                class="hover:opacity-100 text-primary transition">
+                                <FilterIcon size="20" />
+                            </button>
+                        </div>
+                    </template>
+                    <template #header-created_at="{ text }">
+                        <div class="flex gap-1 relative">
+                            <p>{{ text }}</p>
+                            <button @click="show_date = !show_date" :class="(show_date) ? 'opacity-100' : 'opacity-50'"
+                                class="hover:opacity-100 text-primary transition">
+                                <FilterIcon size="20" />
+                            </button>
+                        </div>
+                    </template> -->
+			<template #header-actions="{ text }">
+				<div class="flex justify-end">
+					{{ text }}
+				</div>
+			</template>
+			<template #header-actionsDocuments="{ text }">
+				<div class="flex justify-end">
+					{{ text }}
+				</div>
+			</template>
+			<template #header-actionsContracts="{ text }">
+				<div class="flex justify-end">
+					{{ text }}
+				</div>
+			</template>
+			<template #item-full_name="item">
+				<p>{{ `${item.full_name}` }}</p>
+			</template>
+			<template #item-contractor_fullname="item">
+				<p>
+					{{
+						`${item.contractor.name} ${
+							item.contractor.lastname ? item.contractor.lastname : ''
+						}`
+					}}
+				</p>
+			</template>
+			<template #item-created_at="{ created_at }">
+				<p>
+					{{
+						created_at != null && created_at != ''
+							? dayjs(created_at).format('MM/DD/YYYY')
+							: ''
+					}}
+				</p>
+			</template>
+			<template #item-documents="item">
+				{{ documentsCount(item.id) }}
+			</template>
+			<template #item-contractor_documents="item">
+				{{ documentsCount(item.contractor.id) }}
+			</template>
+			<template #item-status="item">
+				<span
+					:class="
+						item.status.slug == 'REC' || item.status.slug == 'NUL'
+							? ' bg-danger/10 text-danger'
+							: item.status.slug == 'COM' || item.status.slug == 'APR'
+							? 'bg-success/10 text-success'
+							: 'bg-primary/10 text-primary'
+					"
+					class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
+					{{ _getStatus(item.status) }}
+				</span>
+			</template>
+			<template #item-actions="item">
+				<div class="flex gap-2 justify-end">
+					<template v-if="isProvider('assistants')">
+						<template v-if="hasDocumentsHeader && contractorDocuments != null">
+							<template v-if="contractorDocumentsCount(item.id) < 21">
+								<CommonButtonLink
+									:to="{
+										name: 'assistants.contractorsUpload',
+										query: { contractor: item.id },
+									}"
+									variant="outline-secondary">
+									<Lucide
+										icon="FileUp"
+										class="mr-2" />
+									<span class="text-sm"> Cargar </span>
+								</CommonButtonLink>
+							</template>
+							<template
+								v-else-if="
+									contractorDocumentsCount(item.id) >= 18 &&
+									item.status.slug == 'REC'
+								">
+								<CommonButtonLink
+									:to="{
+										name: 'assistants.contractorsControl',
+										query: { contractor: item.id },
+									}"
+									variant="outline-secondary">
+									<Lucide
+										icon="FileEdit"
+										class="mr-2" />
+									<span class="text-sm"> Revisar </span>
+								</CommonButtonLink>
+							</template>
+						</template>
+					</template>
+					<template v-else-if="isProvider('subdirector')">
+						<template
+							v-if="
+								item.status.slug === 'REC' ||
+								(item.status.slug === 'APR' && route.name !== 'review.index')
+							">
+							<Button v-if="item.status.slug === 'REC'"
+								variant="outline-secondary"
+								@click="editAction(item.id)">
+								<Lucide
+									icon="FileEdit"
+									class="mr-2" />
+								<span class="text-sm"> Editar </span>
+							</Button>
+							<!-- <Button
+								variant="outline-danger"
+								@click="onDeleteFnc(item.id)">
+								<Lucide
+									icon="Delete"
+									class="mr-2" />
+								<span class="text-sm"> Eliminar </span> 
+							</Button> -->
+						</template>
+						<template
+							v-else-if="
+								item.status.slug === 'ENR' && route.name === 'review.index'
+							">
+							<template v-if="props.Form!">
+								<Modal
+									:Form="props.Form"
+									:id_review="item.id" />
+							</template>
+						</template>
+					</template>
+					<template v-else-if="isProvider('psychosocial')">
+						<!-- <template v-if="item.status.slug == 'REC'">
+							<Button
+								variant="outline-secondary"
+								@click="
+									() => {
+										router.push({
+											name: 'psychosocial.custom-update',
+											params: { status: 'REC' },
+										});
+									}
+								">
+								<Lucide
+									icon="FileEdit"
+									class="mr-2" />
+								<span class="text-sm"> Editar </span>
+							</Button>
+						</template> -->
+						<template
+							v-if="
+								item.status.slug === 'REC' ||
+								(item.status.slug === 'APR' && route.name !== 'review.index')
+							">
+							<CommonButtonLink v-if="item.status.slug === 'REC'"
+									:to="{
+										name: 'psychosocial.transversal-activity.edit',
+										params: { id: item.id },
+									}"
+									variant="outline-secondary">
+									<Lucide
+										icon="FileEdit"
+										class="mr-2" />
+									<span class="text-sm"> Editar </span>
+								</CommonButtonLink>
+							<!-- <Button
+								variant="outline-danger"
+								@click="onDeleteFnc(item.id)">
+								<Lucide
+									icon="Delete"
+									class="mr-2" />
+								<span class="text-sm"> Eliminar </span>
+							</Button> -->
+						</template>
+						<template
+							v-else-if="
+								item.status.slug === 'ENR' && route.name === 'review.index'
+							">
+							<template v-if="props.Form!">
+								<Modal
+									:Form="props.Form"
+									:id_review="item.id" />
+							</template>
+						</template>
+						<!-- <template v-else>
+							<Button
+								variant="outline-secondary"
+								@click="
+									() => {
+										if (item.status.slug == 'APR') {
+											router.push({
+												name: 'psychosocial.custom-update',
+												params: { status: 'APR' },
+											});
+										} else {
+											router.push({
+												name: 'psychosocial.custom-update',
+												params: { status: 'ENR' },
+											});
+										}
+									}
+								">
+								<Lucide
+									icon="FileArchive"
+									class="mr-2" />
+								<span class="text-sm"> Visualizar </span>
+							</Button>
+						</template> -->
+					</template>
+					<template v-else>
+						<Button
+							variant="outline-secondary"
+							@click="editAction(item.id)">
+							<Lucide
+								icon="FileEdit"
+								class="mr-2" />
+							<span class="text-sm"> Editar </span>
+						</Button>
+						<template v-if="item.status == 'PRO'">
+							<!-- @click="editAction(item.id)" -->
+							<Button
+								variant="outline-pending"
+								@click="signatureAction(item.consecutive)">
+								<Lucide
+									icon="FileSignature"
+									class="mr-2" />
+								<span class="text-sm"> Firmar </span>
+							</Button>
+						</template>
+						<template v-if="item.status == 'APRO'">
+							<!-- @click="editAction(item.id)" -->
+							<Button variant="outline-success">
+								<Lucide
+									icon="FileCheck"
+									class="mr-2" />
+								<a
+									class="text-sm"
+									href="/Contrato.pdf"
+									target="_blank">
+									Contrato
+								</a>
+							</Button>
+						</template>
+					</template>
+				</div>
+			</template>
+			<template #item-actionsDocuments="item">
+				<div class="flex gap-2 justify-end">
+					<template v-if="isProvider('legal')">
+						<template v-if="item.status.slug == 'ENR'">
+							<template v-if="item.contract.cap_date == null">
+								<CommonButtonLink
+									:to="contractorHandler('legal.documentsManagement', item.id)"
+									variant="outline-secondary">
+									<Lucide
+										icon="FileDiff"
+										class="mr-2" />
+									<span class="text-sm"> Revision </span>
+								</CommonButtonLink>
+							</template>
+							<template v-else> </template>
+						</template>
+						<template v-if="item.status.slug == 'COM'">
+							<CommonButtonLink
+								:to="contractorHandler('legal.contractsClauses', item.id)"
+								variant="outline-secondary">
+								<Lucide
+									icon="FileSpreadsheet"
+									class="mr-2" />
+								<span class="text-sm"> Clausulas - CAP </span>
+							</CommonButtonLink>
+						</template>
+					</template>
+					<template v-else-if="isProvider('legalMaster')">
+						<template v-if="item.status.slug == 'ENR'">
+							<CommonButtonLink
+								:to="
+									contractorHandler('legalMaster.contractsManagement', item.id)
+								"
+								variant="outline-secondary">
+								<Lucide
+									icon="FileDiff"
+									class="mr-2" />
+								<span class="text-sm"> Revision </span>
+							</CommonButtonLink>
+						</template>
+					</template>
+					<template v-else> </template>
+				</div>
+			</template>
+			<template #item-actionsContracts="item">
+				<div class="flex gap-2 justify-end">
+					<template v-if="isProvider('legal')">
+						<template v-if="item.status.slug == 'APR'">
+							<Button
+								variant="outline-pending"
+								@click="signatureAction(item.id)">
+								<Lucide
+									icon="FileSignature"
+									class="mr-2" />
+								<span class="text-sm"> Firmar </span>
+							</Button>
+						</template>
+						<template v-if="item.status.slug == 'REC'">
+							<CommonButtonLink
+								:to="{
+									name: 'legal.contractsClausesControl',
+									query: { contractor: item.contractor_id },
+								}"
+								variant="outline-secondary">
+								<Lucide
+									icon="FileEdit"
+									class="mr-2" />
+								<span class="text-sm"> Revisar </span>
+							</CommonButtonLink>
+						</template>
+					</template>
+					<template v-else-if="isProvider('legalMaster')">
+						<template v-if="item.status.slug == 'ENR'">
+							<CommonButtonLink
+								:to="{
+									name: 'legalMaster.contractsManagement',
+									query: { contractor: item.id },
+								}"
+								variant="outline-secondary">
+								<Lucide
+									icon="FileDiff"
+									class="mr-2" />
+								<span class="text-sm"> Revision </span>
+							</CommonButtonLink>
+						</template>
+						<template v-if="item.status.slug == 'APR'">
+							<ContractCancellation :contract="item" />
+							<CommonButtonLink
+								:to="{
+									name: 'legalMaster.contractsViewer',
+									query: { id: item.id },
+								}"
+								variant="outline-secondary">
+								<Lucide
+									icon="Eye"
+									class="mr-2" />
+								<span class="text-sm"> Ver </span>
+							</CommonButtonLink>
+						</template>
+					</template>
+					<template v-else-if="isProvider('manager')">
+						<CommonButtonLink
+							:to="{ name: 'manager.contractsViewer', query: { id: item.id } }"
+							variant="outline-secondary">
+							<Lucide
+								icon="Eye"
+								class="mr-2" />
+							<span class="text-sm"> Ver </span>
+						</CommonButtonLink>
+					</template>
+					<template v-else-if="isProvider('director')">
+						<CommonButtonLink
+							:to="{ name: 'director.contractsViewer', query: { id: item.id } }"
+							variant="outline-secondary">
+							<Lucide
+								icon="Eye"
+								class="mr-2" />
+							<span class="text-sm"> Ver </span>
+						</CommonButtonLink>
+						<template v-if="item.status.slug == 'APR'">
+							<CommonButtonLink
+								:to="{
+									name: 'director.contractsManagement',
+									query: { id: item.id },
+								}"
+								variant="outline-secondary">
+								<Lucide
+									icon="FileDiff"
+									class="mr-2" />
+								<span class="text-sm"> Revision </span>
+							</CommonButtonLink>
+						</template>
+					</template>
+					<!-- <template v-if="isProvider('legal')">
+                                <template v-if="item.status.slug == 'ENR'">
+                                    <template v-if="item.contract.cap_date == null">
+                                        <CommonButtonLink :to="contractorHandler('legal.documentsManagement', item.id)"
+                                            variant="outline-secondary">
+                                            <Lucide icon="FileDiff" class="mr-2" />
+                                            <span class="text-sm">
+                                                Revision
+                                            </span>
+                                        </button>
+                                    </div>
+                                </template> -->
+				</div>
+			</template>
+		</DataTable>
+	</div>
     <div class="intro-y flex flex-col gap-2">
         <section class="flex flex-col gap-3 lg:grid lg:grid-cols-4 lg:items-center">
             <!-- <div class="grid grid-cols-2 gap-3">
@@ -827,8 +1306,10 @@ const selectedTab = inject('selectedTab', ref(0))
 </template>
 <style>
 .customize-table {
-    --easy-table-body-row-height: 60px;
-    --easy-table-header-height: 60px;
-    --easy-table-header-background-color: rgb(var(--color-slate-100) / var(--tw-bg-opacity));
+	--easy-table-body-row-height: 60px;
+	--easy-table-header-height: 60px;
+	--easy-table-header-background-color: rgb(
+		var(--color-slate-100) / var(--tw-bg-opacity)
+	);
 }
 </style>

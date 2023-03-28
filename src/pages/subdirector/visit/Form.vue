@@ -10,11 +10,10 @@ const { multiple } = useFilepondEvents();
 const store = onboardingStore();
 const router = useRouter();
 const route = useRoute();
-const { id } = route.params;
 
 const form = reactive({
 	status_id: '3',
-	reason: '',
+	rejection_message: '',
 	date_visit: '',
 	hour_visit: '',
 	municipality_id: '',
@@ -28,10 +27,12 @@ const form = reactive({
 	description: '',
 	observations: '',
 	file: [],
+	created_by: store.user.id,
 });
 
 const form_rules = computed(() => ({
 	status_id: { required },
+	rejection_message: {},
 	date_visit: { required },
 	hour_visit: { required },
 	municipality_id: { required },
@@ -45,6 +46,7 @@ const form_rules = computed(() => ({
 	description: { required },
 	observations: { required },
 	file: { required },
+	created_by: { required },
 }));
 
 const disciplinesList = ref([]);
@@ -75,7 +77,7 @@ const onSubmit = async () => {
 
 	if (valid) {
 		await subdirectorVisitServices
-			.create(formdataParser(form))
+			.create(formdataParser(form), (store.user.id! && store.user.id))
 			.then((response) => {
 				if (response?.status == 200 || response?.status == 201) {
 					Swal.fire('', 'Creación exitosa!', 'success');

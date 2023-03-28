@@ -10,18 +10,19 @@ export interface selectOption {
 
 // [TypeScript] => Defining Props
 interface Props {
+    required? : boolean,
     modelValue?: string | number
     label?: string
     placeholder?: string
     multiple?: boolean
     disabled?: boolean
-    allowEmpty?: boolean
     tooltip?: string
     onRemove?: Function
     onSelect?: Function
     name: string
     options: selectOption[] | null
     validator?: Validation,
+    allowEmpty: boolean,
     collection_validator?: {
         index: number
         name: string
@@ -67,7 +68,7 @@ const options_handle = computed(() => {
 
 const label_handle = (opt: string) => {
     if (props.options != null) {
-        return props.options.find(x => x.value == opt).label
+        return props.options.find(x => x.value == opt)?.label
     }
     else {
         return 'Sin opción'

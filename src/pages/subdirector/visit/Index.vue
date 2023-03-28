@@ -1,26 +1,30 @@
 <script setup lang="ts">
 import { searchData } from '@/composables/search';
+import { onboardingStore } from '@/stores/onboardingStore';
 import { Header, Item } from 'vue3-easy-data-table';
 
-const router = useRouter();
-const route = useRoute();
+const store = onboardingStore();
 
-const routeName = computed(() => {
-	return String(route.name).split('.')[0];
-});
+const router = useRouter();
 
 const create = () => {
 	setLoading(true);
-	router.replace('subdirector/visit').finally(() => {
+	router.push({ name: 'subdirector_visit.create' }).finally(() => {
 		setLoading(false);
 	});
 };
 
 // onBeforeMount(async () => {
-// 	await subdirectorVisitServices.getAll().then((response) => {
+// 	await subdirectorVisitServices.getAll(id = store.user.id).then((response) => {
 // 		items.value = response?.data.items
 // 	});
 // });
+const deleteModule = async (id: string | number) => {
+	console.log(id);
+	// await subdirectorVisitServices.delete(id).then((response) => {
+	// 	console.log(response);
+	// });
+};
 
 const headers: Header[] = [
 	{ text: 'No', value: 'id' },
@@ -74,21 +78,6 @@ const items = ref<Item[]>([
 ]);
 
 const data = computed(() => searchData(items.value, search.value));
-
-// const dataSearch = computed<Item[]>(() => {
-// 	if (items.value) {
-// 		const searchValue = search.value.toLowerCase();
-// 		return items.value.filter(
-// 			(item) =>
-// 				item.date.includes(searchValue) ||
-// 				item.municipality.toLowerCase().includes(searchValue) ||
-// 				item.monitor_name.toLowerCase().includes(searchValue) ||
-// 				item.sport_scene.toLowerCase().includes(searchValue) ||
-// 				item.status.name.toLowerCase().includes(searchValue)
-// 		);
-// 	}
-// 	return items.value;
-// });
 </script>
 
 <template>
@@ -106,11 +95,6 @@ const data = computed(() => searchData(items.value, search.value));
 
 	<!-- BEGIN: Page Layout -->
 	<div class="p-5 mt-5 intro-y box">
-		<!-- <FormInput
-			v-model="search"
-			placeholder="Buscar"
-			class="input w-full h-9 border rounded-none border-b-2 border-x-0 border-t-0 shadow-none pl-1 outline-none focus:outline-none focus:shadow-none focus:border-transparent focus:border-primary-500 mb-2"
-			icon="search" /> -->
 		<CommonInput
 			type="search"
 			name="search"
@@ -118,13 +102,8 @@ const data = computed(() => searchData(items.value, search.value));
 			placeholder="Buscar" />
 		<Crud
 			:headers="headers"
-			:items="data" />
-		<!-- <DataTable
-			:headers="headers"
-			:items="items"
-			buttons-pagination
-			table-class-name="customize-table">
-		</DataTable> -->
+			:items="data"
+			:onDeleteFnc="deleteModule" />
 	</div>
 	<!-- END: Page Layout -->
 </template>
