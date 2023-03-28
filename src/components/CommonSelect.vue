@@ -33,6 +33,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
     multiple: false,
     allowEmpty: true,
+    placeholder: 'Seleccione una opción...'
 })
 
 // const attrs = useAttrs();
