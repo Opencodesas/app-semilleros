@@ -391,8 +391,6 @@ const routes = [
 					},
 				]
 			},
-
-
 			{
 				path: "subdirector_visit",
 				name: "subdirector_visit",
@@ -460,6 +458,31 @@ const routes = [
 							},
 						]
 					}
+				],
+			},
+			{
+				path: "coordinator_visit",
+				name: "coordinator_visit",
+				children: [
+					{
+						path: "",
+						name: "coordinator_visit.index",
+						component: () => import('@/pages/coordinators/Index.vue'),
+					},{
+						path: "create",
+						name: "coordinator_visit.create",
+						component: () => import('@/pages/coordinators/Form.vue')
+					},
+					{
+						path: ":id",
+						name: "coordinator_visit.edit",
+						component: () => import('@/pages/coordinators/FormEdit.vue')
+					},
+					{
+						path: "reviews",
+						name: "coordinator.reviews",
+						component: () => import('@/pages/coodinators/Reviews.vue'),
+					},
 				],
 			},
 			{
