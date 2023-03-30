@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import CommonFile from '@/components/CommonFile.vue';
-import { filePondValue } from '@/composables/useFilepondEvents';
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
 import { onboardingStore } from '@/stores/onboardingStore';
-import Swal from 'sweetalert2';
+import { selectOption } from '@/components/CommonSelect.vue';
+import { technicalDirectorVisitServices } from '@/services/technical_director/technicalDirectorVisitServices';
 
-const store = onboardingStore();
-
-const { multiple } = useFilepondEvents();
 const router = useRouter();
 const route = useRoute();
-const { id } = route.params;
+
+const props = defineProps<{
+    closeModal: Function;
+    id_review: String | number;
+}>();
 
 const form = reactive({
 	status_id: '',
@@ -30,32 +30,20 @@ const form = reactive({
 	description:
 		'se encontró en el escenario, confunde los componentes se le deben reforzar.',
 	file: [],
-	created_by: store.user.id,
+	created_by: { id: '1', name: 'Joselito' },
 });
-
 const form_rules = computed(() => ({
 	status_id: { required },
 	rejection_message: { required: parseInt(form.status_id) == 2 },
-	date_visit: { required },
-	hour_visit: { required },
-	municipality_id: { required },
-	sidewalk: { required },
-	monitor_id: { required },
-	discipline_id: { required },
-	sports_scene: { required },
-	beneficiary_coverage: { required },
-	event_support_id: { required },
-	technical: { required },
-	observations: { required },
-	description: { required },
-	file: { required },
-	created_by: { required },
 }));
 
+const statusesList = ref<selectOption[]>([
+    { label: 'Aprobado', value: '1' },
+    { label: 'Rechazado', value: '4' }
+])
 const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
 }, null);
-
 const disciplines = asyncComputed(async () => {
 	return await getSelect(['disciplines']);
 }, null);
@@ -71,10 +59,14 @@ const evaluationList = [
 	{ label: 'Aceptada', value: 1 },
 	{ label: 'Rechazada', value: 2 },
 ];
+
+const dataLoaded = ref(false)
+
 const v$ = useVuelidate(form_rules, form);
 
 const data = async () => {
-	await subdirectorVisitServices.get(id as string).then((response) => {
+	setLoading(true);
+	await technicalDirectorVisitServices.get(props.id_review as string).then((response) => {
 		if (response?.status == 200) {
 			form.observations = response.data.observations;
 			form.monitor_id = response.data.monitor_id;
@@ -91,23 +83,19 @@ const data = async () => {
 			form.file = response.data.file;
 			form.status_id = response.data.status_id;
 			form.rejection_message = response.data.rejection_message;
+			form.created_by = response.data.created_by;
 			setLoading(false);
 		} else {
+			alerts.custom('', 'Error al cargar los datos!', 'error');
 			setLoading(false);
 		}
 		return;
 	});
 };
-
-onMounted(() => {
-	form.status_id = '2';
-	form.rejection_message = 'La foto no es una evidencia de la visita';
-	form.hour_visit = '9:30';
-	form.municipality_id = '39';
-	form.monitor_id = '2';
-	form.discipline_id = '8';
-	form.technical = '1';
-	form.event_support_id = '1';
+onMounted(async () => {
+    console.log(route);
+    await data();
+    dataLoaded.value = true;
 });
 
 const onSubmit = async () => {
@@ -115,140 +103,151 @@ const onSubmit = async () => {
 	form.status_id = '3';
 	form.rejection_message = '';
 	const valid = await v$.value.$validate();
-
 	if (valid) {
-		await subdirectorVisitServices
-			.update(id as string, formdataParser(form))
+		await technicalDirectorVisitServices
+			.update(props.id_review as string, formdataParser(form))
 			.then((response) => {
 				if (response?.status == 200 || response?.status == 201) {
-					Swal.fire('', 'Modificacion exitosa!', 'success');
+					props.closeModal
+                    alerts.custom('', 'Revisión exitosa!', 'success');
 					setLoading(true);
-					router.push('index').finally(() => {
+					router.push('PONER RUTA').finally(() => {
 						setLoading(false);
 					});
 				} else {
-					Swal.fire('', 'No se pudieron obtener los datos', 'error');
+					alerts.custom('', 'Error al revisar!', 'error')
 				}
 			});
-		Swal.fire('', 'Modificacion exitosa!', 'success');
-		setLoading(true);
-		router.push({name: 'subdirector_visit.index'}).finally(() => {
-			setLoading(false);
-		});
-	} else {
-		alerts.validation();
 	}
 };
 
+const defineReason = () => {
+    if (form.status_id == '1') form.rejection_message = '';
+}
 </script>
 
 <template>
-	<div class="flex items-center mt-8 intro-y">
-		<div class="flex items-center space-x-4">
-			<CommonBackButton
-				:to="'subdirector_visit.index'"
-				title="Listado" />
-			<h2 class="mr-auto text-lg font-medium">Editar visita</h2>
-		</div>
-	</div>
+    <div class="flex items-center justify-between mt-5 mb-2 intro-y">
+        <h1 class="mr-auto text-lg font-medium">Revisar visitas de los directores tecnicos</h1>
+    </div>
 
-	<div class="p-5 mt-5 intro-y box">
-		<div
-			class="mb-6"
-			v-if="parseInt(form.status_id) == 2">
-			<p class="text-danger font-bold">Razon de rechazo</p>
-			<p>{{ form.rejection_message }}</p>
-		</div>
+    <div class="space-y-2 box px-5 py-4">
+        <h2 class="font-bold">Revisión</h2>
+        <CommonSelect @select="defineReason" label="Estado de la tarea *" name="status_id" v-model="form.status_id"
+            :validator="v$" :options="statusesList" />
+        <div v-if="form.status_id == '4'" class="pt-4">
+            <CommonTextarea name="rejection_message" class="" label="Comentario *" placeholder="Escriba..." rows="5"
+                v-model="form.rejection_message" :validator="v$" />
+        </div>
+        <div class="mt-6 flex justify-end col-span-1 md:col-span-2 border-none gap-1" tabindex="1">
+            <Button variant="danger" @click="props.closeModal">Cerrar</Button>
+            <Button variant="primary" class="btn btn-primary" @click="onSubmit">
+                Enviar
+            </Button>
+        </div>
+    </div>
 
+
+	<div v-if="dataLoaded" class="p-5 pt-1 mt-5 intro-y box">
+		<div class="my-4">
+            <h3><span class="font-bold">Director:</span> {{ form.created_by.name }}</h3>
+        </div>
 		<div class="grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
 			<CommonInput
+                disabled
 				type="date"
 				label="Fecha  *"
 				name="date_visit"
 				v-model="form.date_visit"
-				:validator="v$" />
+			/>
 			<CommonInput
+                disabled
 				type="time"
 				label="Hora  *"
 				name="hour_visit"
 				v-model="form.hour_visit"
-				:validator="v$" />
+			/>
 			<CommonSelect
+                disabled
 				label="Municipio *"
 				name="municipality_id"
 				class="cursor-pointer"
 				v-model="form.municipality_id"
-				:validator="v$"
 				:options="municipalities" />
 
 			<CommonInput
+                disabled
 				type="text"
 				placeholder="Ingrese"
 				label="Corregimiento / Vereda *"
 				name="sidewalk"
 				v-model="form.sidewalk"
-				:validator="v$" />
+			 />
 			<CommonSelect
+                disabled
 				label="Monitor *"
 				name="monitor_id"
 				class="cursor-pointer"
 				v-model="form.monitor_id"
-				:validator="v$"
 				:options="monitorList" />
 			<CommonSelect
+                disabled
 				label="Disciplinas *"
 				name="discipline_id"
 				class="cursor-pointer"
 				v-model="form.discipline_id"
-				:validator="v$"
 				:options="disciplines" />
 			<CommonInput
+                disabled
 				type="text"
 				placeholder="Ingrese"
 				label="Escenario deportivo *"
 				name="sports_scene"
 				v-model="form.sports_scene"
-				:validator="v$" />
+			 />
 			<CommonInput
+                disabled
 				type="number"
 				min="0"
 				placeholder="Ingresar el numero de beneficiarios"
 				label="Cobertura de benificiario *"
 				name="beneficiary_coverage"
 				v-model="form.beneficiary_coverage"
-				:validator="v$" />
+			 />
 			<CommonSelect
+                disabled
 				label="Cumple con el desarrollo tecnico del mes *"
 				name="technical"
 				class="cursor-pointer"
 				v-model="form.technical"
-				:validator="v$"
 				:options="evaluationList" />
 			<CommonSelect
+                disabled
 				label="Apoyo a eventos *"
 				name="event_support_id"
 				class="cursor-pointer"
 				v-model="form.event_support_id"
-				:validator="v$"
 				:options="event_supportList" />
 		</div>
 		<div class="mt-6 intro-y">
 			<CommonTextarea
+                disabled
 				label="Descripcion *"
 				rows="5"
 				placeholder="Ingrese las Descripcion"
 				name="description"
 				v-model="form.description"
-				:validator="v$" />
+			 />
 		</div>
 		<div class="mt-6 intro-y">
 			<CommonTextarea
+                disabled
 				label="Observaciones *"
 				rows="5"
 				placeholder="Ingrese las observaciones"
 				name="observations"
 				v-model="form.observations"
-				:validator="v$" />
+			/>
 		</div>
 		<div class="p-5 mt-6 intro-y">
 			<FormLabel
@@ -257,28 +256,11 @@ const onSubmit = async () => {
 				Evidencia *
 			</FormLabel>
 			<img
-				:alt="`Evidencia de la visita del subdirector`"
+				:alt="`Evidencia de la visita del director`"
 				class="m-auto border rounded-lg"
 				src="/semilleros.png"
 				width="400" />
 		</div>
-		<div class="p-5 mt-6 intro-y">
-			<CommonFile
-				:validator="v$"
-				v-model="form.file"
-				name="file"
-				class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
-				@addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
-				@removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }" />
-		</div>
-	</div>
-
-	<div class="mt-6 flex justify-end col-span-1 md:col-span-2">
-		<Button
-			variant="primary"
-			class="btn btn-primary"
-			@click="onSubmit">
-			Actualizar
-		</Button>
 	</div>
 </template>
+    

@@ -19,6 +19,12 @@ const create = () => {
 // 		items.value = response?.data.items
 // 	});
 // });
+const deleteModule = async (id: string | number) => {
+	console.log(id);
+	// await subdirectorVisitServices.delete(id).then((response) => {
+	// 	console.log(response);
+	// });
+};
 
 const headers: Header[] = [
 	{ text: 'No', value: 'id' },
@@ -76,15 +82,7 @@ const data = computed(() => searchData(items.value, search.value));
 
 <template>
 	<div class="flex items-center mt-8 intro-y">
-		<h2 class="mr-auto text-lg font-medium">Listado Visitas Subdirector</h2>
-		<div class="w-full sm:w-auto flex mt-4 sm:mt-0">
-			<Button
-				variant="primary"
-				class="btn btn-primary"
-				@click="create">
-				Crear Visita
-			</Button>
-		</div>
+		<h2 class="mr-auto text-lg font-medium">Listado Visitas Director Técnico</h2>
 	</div>
 
 	<!-- BEGIN: Page Layout -->
@@ -96,7 +94,8 @@ const data = computed(() => searchData(items.value, search.value));
 			placeholder="Buscar" />
 		<Crud
 			:headers="headers"
-			:items="data" />
+			:items="data"
+			:onDeleteFnc="deleteModule" />
 	</div>
 	<!-- END: Page Layout -->
 </template>

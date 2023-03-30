@@ -1,7 +1,6 @@
-let module = "methodologist_visits"
+let module = "technical-director/visits"
 
-
-export const methodologistVisitServices = {
+export const technicalDirectorVisitServices = {
     get: async (id: string) => {
         try {
             setLoading(true)
@@ -18,9 +17,10 @@ export const methodologistVisitServices = {
     getAll: async () => {
         try {
             setLoading(true)
+
             const response = await api.get(`/${apiPath}/${module}`).finally(() => {
-                    setLoading(false)
-                })
+                setLoading(false)
+            })
 
             return response
         } catch (error: any) {

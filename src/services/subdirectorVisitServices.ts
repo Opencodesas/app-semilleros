@@ -1,12 +1,13 @@
-let module = "methodologist_visits"
+const module = "subdirector_visits"
 
 
-export const methodologistVisitServices = {
+export const subdirectorVisitServices = {
     get: async (id: string) => {
+
         try {
             setLoading(true)
 
-            const response = await api.get(`/${apiPath}/${module}/${id}`).finally(() => {
+            const response = await api.get(`/${apiPath}/${module}?id=${id}`).finally(() => {
                 setLoading(false)
             })
 
@@ -18,9 +19,11 @@ export const methodologistVisitServices = {
     getAll: async () => {
         try {
             setLoading(true)
+            
             const response = await api.get(`/${apiPath}/${module}`).finally(() => {
-                    setLoading(false)
-                })
+                setLoading(false)
+            })
+            
 
             return response
         } catch (error: any) {
@@ -44,7 +47,7 @@ export const methodologistVisitServices = {
         try {
             setLoading(true)
 
-            const response = await api.post(`/${apiPath}/${module}/${id}?_method=PUT`, payload).finally(() => {
+            const response = await api.post(`/${apiPath}/${module}?_method=PUT&id=${id}`, payload).finally(() => {
                 setLoading(false)
             })
 
@@ -57,7 +60,7 @@ export const methodologistVisitServices = {
         try {
             setLoading(true)
 
-            const response = await api.delete(`/${apiPath}/${module}/${id}`).finally(() => {
+            const response = await api.delete(`/${apiPath}/${module}?id=${id}`).finally(() => {
                 setLoading(false)
             })
 

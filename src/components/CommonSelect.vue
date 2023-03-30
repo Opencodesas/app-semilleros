@@ -34,7 +34,8 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
     multiple: false,
     allowEmpty: true,
-    setSort: true
+    setSort: true,
+    placeholder: 'Seleccione una opción...'
 })
 
 // const attrs = useAttrs();
@@ -111,7 +112,7 @@ const value = computed({
             </FormLabel>
         </template>
 
-        <VueMultiSelect v-model="value" placeholder="Selecciona" :options="options_handle" :class="[
+        <VueMultiSelect v-model="value" :placeholder="placeholder" :options="options_handle" :class="[
             {
                 'border-danger': validator && validator[name].$error
                     || collection_validator && collection_validator.v$[collection_validator.name].$error
