@@ -489,6 +489,11 @@ const routes = [
 						name: "technical_director.visits",
 						component: () => import('@/pages/technical_director/visits/Index.vue'),
 					},
+					{
+						path: "reviews",
+						name: "technical_director.reviews",
+						component: () => import('@/pages/technical_director/reviews/Index.vue'),
+					},
 				],
 			},
 			{
