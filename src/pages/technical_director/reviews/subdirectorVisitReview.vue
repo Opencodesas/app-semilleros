@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { selectOption } from '@/components/CommonSelect.vue';
-import { technicalDirectorVisitServices } from '@/services/technical_subdirector/technicalDirectorVisitServices';
 import { onboardingStore } from '@/stores/onboardingStore';
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
@@ -100,9 +99,9 @@ const statusesList = ref<selectOption[]>([
 const dataLoaded = ref(false);
 //Verificar si se puede hacer con asycComputed
 const getData = async () => {
-	await technicalDirectorVisitServices
+	await subdirectorVisitServices
 		.get(props.id_review as string)
-		.then((response) => {
+		.then((response: any) => {
 			console.log(response?.data.items);
 			if (response?.status == 200 || response?.status == 201) {
 				form.date_visit = response.data.items.date_visit;
@@ -135,7 +134,7 @@ onMounted(async () => {
 const onSubmit = async () => {
 	const valid = await v$.value.$validate();
 	if (valid) {
-		await technicalDirectorVisitServices
+		await subdirectorVisitServices
 			.update(route.params.id as string, formdataParser(form))
 			.then((response) => {
 				if (response) {
