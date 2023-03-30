@@ -10,9 +10,6 @@ const { multiple } = useFilepondEvents();
 
 const route = useRoute();
 
-//Usar para verificar
-const { isProvider } = useProvider()
-
 const props = defineProps<{
     closeModal: Function;
     id_review: String | number;
@@ -20,7 +17,8 @@ const props = defineProps<{
 
 //Quitar datos de prueba
 const form = reactive({
-    reason: 'Fue rechazado por...',
+    rejection_message: 'Fue rechazado por...',
+    status: '',
     month: '1',
     municipality: '2',
     beneficiary: '2',
@@ -29,14 +27,13 @@ const form = reactive({
     concept: '4',
     guardian_knows_semilleros: true,
     file: [],
-    status: '',
     createdBy: { id: '', name: 'Gabriel' }, //Revisar si recibe un objeto
 })
 
 
 const form_rules = computed(() => ({
-    reason: { required },
     status: { required },
+    rejection_message: { required }
 
 }))
 
@@ -88,7 +85,7 @@ const getData = async () => {
     await customVisitServices.get(props.id_review as string).then((response) => {
         console.log(response?.data.items);
         if (response?.status == 200 || response?.status == 201) {
-            form.reason = response.data.items.reason;
+            form.rejection_message = response.data.items.rejection_message;
             form.month = response.data.items.month;
             form.municipality = response.data.items.municipality;
             form.beneficiary = response.data.items.beneficiary;
@@ -97,7 +94,7 @@ const getData = async () => {
             form.concept = response.data.items.concept;
             form.guardian_knows_semilleros = response.data.items.guardian_knows_semilleros;
             form.file = response.data.items.file;
-            //form.status = response.data.items.status; //Revisar si es necesario traerlo
+            form.createdBy = response.data.items.createdBy;
             alerts.custom('', response?.data.message, 'info');
 
         } else {
@@ -130,12 +127,15 @@ const onSubmit = async () => {
         await customVisitServices.update(route.params.id as string, formdataParser(form)).then((response) => {
             if (response) {
                 if (response.status >= 200 && response.status <= 300) {
-                    props.closeModal
-                    alerts.update()
                     setLoading(true)
+                    props.closeModal
+                    alerts.custom('', 'Revisión exitosa!', 'success');
                     router.push('psychosocial-coordinator.reviews').finally(() => {
                         setLoading(false)
                     })
+                }
+                else{
+                    alerts.custom('', 'Error al revisar!', 'error');
                 }
             }
         })
@@ -149,9 +149,9 @@ const positionRange = computed(() => {
     return `calc(${positionTooltip * 100}% - ${(2 * (parseInt(form.concept) - 1) ** 2) / 5 + 2 * (parseInt(form.concept) - 1)}px)`;
 });
 
-//Manejo de reason para no guardarla si el user selecciona rechazado y pone reason y despues pone aprobado.
-const defineReason = () => {
-    if (form.status == '1') form.reason = '';
+//Manejo de rejection_message para no guardarla si el user selecciona rechazado y pone rejection_message y despues pone aprobado.
+const definerejection_message = () => {
+    if (form.status == '1') form.rejection_message = '';
 }
 </script>
 
@@ -162,11 +162,11 @@ const defineReason = () => {
 
     <div class="space-y-2 box px-5 py-4">
         <h2 class="font-bold">Revisión</h2>
-        <CommonSelect @select="defineReason" label="Estado de la tarea *" name="status" v-model="form.status"
+        <CommonSelect @select="definerejection_message" label="Estado de la tarea *" name="status" v-model="form.status"
             :validator="v$" :options="statusesList" />
         <div v-if="form.status == '4'" class="pt-4">
-            <CommonTextarea name="reason" class="" label="Comentario *" placeholder="Escriba..." rows="5"
-                v-model="form.reason" :validator="v$" />
+            <CommonTextarea name="rejection_message" class="" label="Comentario *" placeholder="Escriba..." rows="5"
+                v-model="form.rejection_message" :validator="v$" />
         </div>
         <div class="mt-6 flex justify-end col-span-1 md:col-span-2 border-none gap-1" tabindex="1">
             <Button variant="danger" @click="props.closeModal">Cerrar</Button>

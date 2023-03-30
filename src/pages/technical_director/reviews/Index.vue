@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Header, Item } from 'vue3-easy-data-table';
-import { technicalSubdirectorVisitServices } from '@/services/technical_subdirector/technicalSubdirectorVisitServices';
-import subdirectoVisitReview from './subdirectorVisitReview.vue'
+import subdirectorVisitReview from './subdirectorVisitReview.vue'
 
 
 
@@ -30,15 +29,7 @@ const header: Header[] = [
     { text: 'Acciones', value: 'actions' },
 ]
 
-//Traer visitas personalizadas en revisión
-
-// const items = ref<Item[]>([])
-
-// onBeforeMount(async () => {
-//     await subdirectorVisitServices.getAll().then((response) => {
-//         items.value = response?.data.items
-//     })
-// })
+//Traer visitas en revisión
 
 const items = ref<Item[]>([
     { id: '1', date_visit: '2023-03-11', monitor: 'Juan', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 2, name: 'En Revisión', slug: 'ENR' } },
@@ -59,6 +50,6 @@ const dataSearch = computed(() => searchData(items.value, search.value));
         <CommonInput type="search" name="search" v-model="search" placeholder="Buscar" />
     </div>
     <div class="" >
-        <Crud :headers="header" :items="dataSearch" :Form="subdirectoVisitReview" />
+        <Crud :headers="header" :items="dataSearch" :Form="subdirectorVisitReview" />
     </div>
 </template>

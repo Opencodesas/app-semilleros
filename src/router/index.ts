@@ -420,24 +420,24 @@ const routes = [
 						component: () => import('@/pages/psychosocial/visit/Form.vue'),
 					},
 					{
+						// {
+						// 	path: "update/:id",
+						// 	name: "psychosocial.update",
+						// 	component: () => import('@/pages/...'),
+						// },
 						path: "custom-visit",
 						name: "psychosocial.custom-visit",
 						component: () => import('@/pages/psychosocial/custom-visit/Form.vue'),
 					},
 					{
-						path: "visits",
-						name: "psychosocial.visits",
-						component: () => import('@/pages/psychosocial/visits/index.vue'),
-					},
-					// {
-					// 	path: "update/:id",
-					// 	name: "psychosocial.update",
-					// 	component: () => import('@/pages/...'),
-					// },
-					{
 						path: "custom-update/:id",
 						name: "psychosocial.custom-update",
 						component: () => import('@/pages/psychosocial/custom-visit/FormEdit.vue'),
+					},
+					{
+						path: "visits",
+						name: "psychosocial.visits",
+						component: () => import('@/pages/psychosocial/visits/index.vue'),
 					},
 					{
 						path: 'transversal-activity',
@@ -474,6 +474,21 @@ const routes = [
 				name: "technical_director",
 				meta: { provider: 'technical_director' },
 				children: [
+					{
+						path: "visit",
+						name: "technical_director.visit",
+						component: () => import('@/pages/technical_director/visits/Form.vue'),
+					},
+					{
+						path: "update/:id",
+						name: "technical_director.update",
+						component: () => import('@/pages/technical_director/visits/FormEdit.vue'),
+					},
+					{
+						path: "visits",
+						name: "technical_director.visits",
+						component: () => import('@/pages/technical_director/visits/Index.vue'),
+					},
 					{
 						path: "reviews",
 						name: "technical_director.reviews",
@@ -520,6 +535,46 @@ const routes = [
 					}
 				]
 			},
+			{
+				path: "administrative_director",
+				name: "administrative_director",
+				meta: { provider: 'administrative_director' },
+				children: [
+					{
+						path: "reviews",
+						name: "administrative_director.reviews",
+						component: () => import('@/pages/administrative_director/reviews/directorVisit/Index.vue'),
+					},
+				],
+			},
+			{
+				path: "subdirector",
+				name: "subdirector",
+				meta: { provider: 'subdirector' },
+				children: [
+					{
+						path: "",
+						name: "subdirector_visit.index",
+						component: () => import('@/pages/subdirector/visit/Index.vue')
+					},
+					{
+						path: "visit",
+						name: "subdirector_visit.create",
+						component: () => import('@/pages/subdirector/visit/Form.vue')
+					},
+					{
+						path: "edit/:id",
+						name: "subdirector_visit.edit",
+						component: () => import('@/pages/subdirector/visit/Edit.vue')
+					},
+					{
+						path: 'review',
+						name: 'review.index',
+						component: () => import('@/pages/subdirector/review/Index.vue')
+					}
+				]
+			},
+
 			{
 				path: "users_of_zones",
 				name: "users_of_zones",

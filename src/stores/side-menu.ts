@@ -216,6 +216,16 @@ export const useSideMenuStore = defineStore("sideMenu", {
         subMenu: [
           {
             icon: "Activity",
+            pageName: "technical_director.visit",
+            title: "Crear visita",
+          },
+          {
+            icon: "Activity",
+            pageName: "technical_director.visits",
+            title: "Visitas Ingresadas",
+          },
+          {
+            icon: "Activity",
             pageName: "technical_director.reviews",
             title: "Revisiones",
           },
@@ -228,6 +238,17 @@ export const useSideMenuStore = defineStore("sideMenu", {
           {
             icon: "Activity",
             pageName: "transversal_programs_director.reviews",
+            title: "Revisiones",
+          },
+        ]
+      },
+      {
+        icon: "User",
+        title: "Director Administrativo",
+        subMenu: [
+          {
+            icon: "Activity",
+            pageName: "administrative_director.reviews",
             title: "Revisiones",
           },
         ]

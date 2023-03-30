@@ -3,7 +3,6 @@ import { required } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
 import { onboardingStore } from "@/stores/onboardingStore";
 import { filePondValue } from '@/composables/useFilepondEvents';
-import { technicalSubdirectorVisitServices } from '@/services/technical_subdirector/technicalSubdirectorVisitServices';
 import { selectOption } from '@/components/CommonSelect.vue';
 // import { addFile } from "@/types/filepond";
 // import Swal, { SweetAlertIcon } from "sweetalert2";
@@ -37,7 +36,7 @@ const form = reactive({
     description: "",
     observations: "",
     file: [],
-    createdBy: { ide: '1', name: 'Joselito' },
+    createdBy: { id: '1', name: 'Joselito' },
     status: "", //id:2 => En revisión => ENR
     reason: 'Rechazado ya que...',
 });
@@ -103,7 +102,7 @@ const dataLoaded = ref(false)
 //Verificar si se puede hacer con asycComputed
 const getData = async () => {
 
-    await technicalSubdirectorVisitServices.get(props.id_review as string).then((response) => {
+    await subdirectorVisitServices.get(props.id_review as string).then((response) => {
         console.log(response?.data.items);
         if (response?.status == 200 || response?.status == 201) {
             form.date_visit = response.data.items.date_visit;
@@ -120,6 +119,7 @@ const getData = async () => {
             form.observations = response.data.items.observations;
             form.status = response.data.items.status;
             form.reason = response.data.items.reason;
+            form.createdBy = response.data.items.createdBy;
         } else {
             alerts.custom("", "No se pudieron obtener los datos", "error");
         }
@@ -140,7 +140,7 @@ onMounted(async () => {
 const onSubmit = async () => {
     const valid = await v$.value.$validate()
     if (valid) {
-        await technicalSubdirectorVisitServices.update(route.params.id as string, formdataParser(form)).then((response) => {
+        await subdirectorVisitServices.update(route.params.id as string, formdataParser(form)).then((response) => {
             if (response) {
                 if (response.status >= 200 && response.status <= 300) {
                     props.closeModal
@@ -165,7 +165,7 @@ const defineReason = () => {
 
 <template>
     <div class="flex items-center justify-between mt-5 mb-2 intro-y">
-        <h1 class="mr-auto text-lg font-medium">Revisar visitas personalizadas de los Psicologos</h1>
+        <h1 class="mr-auto text-lg font-medium">Revisar visitas de los Subdirectores</h1>
     </div>
 
     <div class="space-y-2 box px-5 py-4">

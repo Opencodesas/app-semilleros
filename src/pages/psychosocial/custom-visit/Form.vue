@@ -108,7 +108,7 @@ const onSubmit = async () => {
 
 const positionRange = computed(() => {
     const positionTooltip = (parseInt(form.concept) - 1) / (4);
-    return `calc(${positionTooltip * 100}% - ${(2*(parseInt(form.concept) - 1)**2)/5 + 2*(parseInt(form.concept) -1)}px)`;
+    return `calc(${positionTooltip * 100}% - ${(2 * (parseInt(form.concept) - 1) ** 2) / 5 + 2 * (parseInt(form.concept) - 1)}px)`;
 });
 
 </script>
@@ -126,8 +126,8 @@ const positionRange = computed(() => {
                         <CommonSelect label="Mes *" name="month" v-model="form.month" :validator="v$" :options="months" />
                         <CommonSelect label="Municipio *" name="municipality" v-model="form.municipality" :validator="v$"
                             :options="municipalities" />
-                        <CommonSelect @select="getBeneficiaryData" label="Beneficiario *" name="beneficiary" v-model="form.beneficiary" :validator="v$"
-                            :options="beneficiaries" />
+                        <CommonSelect @select="getBeneficiaryData" label="Beneficiario *" name="beneficiary"
+                            v-model="form.beneficiary" :validator="v$" :options="beneficiaries" />
                     </div>
                     <!-- cambiar condicion por "beneficiary_data" cuando haya función para traer los datos -->
                     <div v-if="form.beneficiary">
@@ -176,8 +176,7 @@ const positionRange = computed(() => {
                                 escala de 1 a 5 donde 1 es deficiente y 5 excelente:
                             </label>
                             <div id="range" class="relative mb-5">
-                                <input class="w-full accent-primary" type="range" min="1" max="5"
-                                    v-model="form.concept" />
+                                <input class="w-full accent-primary" type="range" min="1" max="5" v-model="form.concept" />
                                 <div :style="{ left: positionRange }"
                                     class="absolute -translate-x-1/4 border-zinc-500 border-2 p-2 rounded-full bg-primary text-white select-none">
                                     {{ form.concept }}
@@ -185,12 +184,12 @@ const positionRange = computed(() => {
                             </div>
                         </div>
 
-                        <div class="grid col-span-3">
-                            <CommonDropzone name="file" label="Suba su archivo aqui *" :accept-multiple="false"
-                                v-model="form.file"
+                        <div class="p-5 mt-6 intro-y">
+                            <CommonFile :validator="v$" v-model="form.file" name="file"
+                                class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
+                                :accept-multiple="false"
                                 @addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
-                                @removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }"
-                                :validator="v$" />
+                                @removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }" />
                         </div>
 
                     </div>

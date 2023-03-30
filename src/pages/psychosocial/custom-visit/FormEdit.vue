@@ -136,6 +136,8 @@ const v$ = useVuelidate(form_rules, form)
 const router = useRouter()
 
 const onSubmit = async () => {
+    form.status = '3';
+	form.reason = '';
     const valid = await v$.value.$validate()
     if (valid) {
         await customVisitServices.update(route.params.id as string, formdataParser(form)).then((response) => {
@@ -252,10 +254,10 @@ const positionRange = computed(() => {
                             <img src="/semilleros.png" width="200" alt="">
                         </div>
 
-                        <div v-if="form.status == '4'" class="grid col-span-3">
-                            <CommonDropzone :validator="v$" name="file"
-                                label="Suba su archivo aqui para cambiar evidencia *" :accept-multiple="false"
-                                v-model="form.file"
+                        <div class="p-5 mt-6 intro-y">
+                            <CommonFile :validator="v$" v-model="form.file" name="file"
+                                class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
+                                :accept-multiple="false"
                                 @addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
                                 @removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }" />
                         </div>
@@ -273,10 +275,6 @@ const positionRange = computed(() => {
 
                     <Button v-else-if="form.status == '1'" type="button" variant="primary" @click="download">
                         Descargar visita
-                    </Button>
-                    <Button v-else type="button" variant="primary"
-                        @click="() => { router.push({ name: 'psychosocial.visits' }) }">
-                        Atrás
                     </Button>
                 </div>
             </div>
