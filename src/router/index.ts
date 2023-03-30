@@ -148,6 +148,11 @@ const routes = [
 						name: "chronograms.store",
 						component: () => import('@/pages/chronogram/Form.vue')
 					},
+					{
+						path: ":id",
+						name: "chronograms.edit",
+						component: () => import('@/pages/chronogram/FormEdit.vue')
+					}
 				]
 			},
 			{

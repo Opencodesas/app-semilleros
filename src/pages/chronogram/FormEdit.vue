@@ -71,6 +71,7 @@ const scheduleBone = {
 const v$ = useVuelidate(form_rules, form)
 
 const router = useRouter()
+const route  = useRoute()
 
 const months = computedAsync(async () => {
     const data = await getSelect(['months'])
@@ -93,11 +94,11 @@ const onSubmit = async () => {
     const valid = await v$.value.$validate()
     if (valid) {
         if ( !hayCruce ) {
-            
-            await chronogramServices.create( formdataParser(form) )
+
+            await chronogramServices.update( route.params.id as string, formdataParser(form) )
             .then((res: any) => {
                 if(res){
-                    alerts.create();
+                    alerts.update();
                     router.push('/dashboard/chronograms')
                     .finally(() => {
                         setLoading(false)
@@ -113,6 +114,31 @@ const onSubmit = async () => {
         alerts.validation()
     }
 }
+
+const fetch = async () => {
+    await chronogramServices.get(route.params.id as string)
+    .then((response) => {
+        if (response?.status == 200 || response?.status == 201) {
+            form.month = response.data.items.month;
+            form.municipality = response.data.items.municipality;
+            form.note = response.data.items.note;
+            form.groups = response.data.items.groups;
+            // form.gender = response.data.items.gender;
+            // form.phone = response.data.items.phone;
+            // form.document_type = response.data.items.document_type;
+            // form.document_number = response.data.items.document_number;
+            // form.roles = response.data.items.roles[0];
+            alerts.custom('', response?.data.message, 'info');
+        } else {
+            alerts.custom("", "No se pudieron obtener los datos", "error");
+        }
+        console.log(form);
+    });
+}
+
+onBeforeMount(async () => {
+    await fetch();
+})
 
 const checkChronogram = () => {
     
