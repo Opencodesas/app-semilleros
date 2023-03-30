@@ -16,33 +16,25 @@ export const subdirectorVisitServices = {
             alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
         }
     },
-    getAll: async (user_id?: string, director_id?: number) => {
+    getAll: async () => {
         try {
             setLoading(true)
             
-            let response
-            
-            if (director_id) {
-                response = await api.get(`/${apiPath}/${module}?director_id=${director_id}`).finally(() => {
-                    setLoading(false)
-                })
-            } else {
-
-            response = await api.get(`/${apiPath}/${module}?user_id=${user_id}`).finally(() => {
+            const response = await api.get(`/${apiPath}/${module}`).finally(() => {
                 setLoading(false)
             })
-            }
+            
 
             return response
         } catch (error: any) {
             alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
         }
     },
-    create: async (payload: FormData, user_id: number) => {
+    create: async (payload: FormData) => {
         try {
             setLoading(true)
 
-            const response = await api.post(`/${apiPath}/${module}?user_id=${user_id}`, payload).finally(() => {
+            const response = await api.post(`/${apiPath}/${module}`, payload).finally(() => {
                 setLoading(false)
             })
 

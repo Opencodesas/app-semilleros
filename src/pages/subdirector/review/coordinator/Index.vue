@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import Crud from '@/components/Crud.vue';
 import { searchData } from '@/composables/search';
+import { onboardingStore } from '@/stores/onboardingStore';
 import { Header, Item } from 'vue3-easy-data-table';
-import { onboardingStore } from "@/stores/onboardingStore";
 import Form from './Form.vue';
 
 const store = onboardingStore();
@@ -17,12 +17,20 @@ const { find } = useApiV1();
 //     })
 // }, null)
 
-// onBeforeMount(async () => {
-//     await methodologistVisitServices.getAll(subdirector = store.user.id).then((response) => {
-//         console.log(response?.data);
-//         items.value = response?.data.items
-//     })
-// })
+// onMounted(async () => {
+// 	setLoading(true);
+// 	await coordinatorVisitServices
+// 		.getAll()
+// 		.then((response) => {
+// 			console.log(response?.data);
+// 			items.value = response?.data.items;
+// 			setLoading(false);
+// 		}).catch((error) => {
+// 			console.log(error);
+// 			setLoading(false);
+// 			Alerts.error('Error al cargar los datos');
+// 		});
+// });
 
 const search = ref('');
 
@@ -57,7 +65,7 @@ const items = ref<Item[]>([
 		coordinator_name: 'Pepito',
 		sport_scene: 'Cancha',
 		status: {
-			id: 2,
+			id: 1,
 			name: 'Aprobado',
 			slug: 'APR',
 		},

@@ -1,18 +1,16 @@
 <script setup lang="ts">
 import CommonFile from '@/components/CommonFile.vue';
 import { filePondValue } from '@/composables/useFilepondEvents';
-import { onboardingStore } from '@/stores/onboardingStore';
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
 import Swal from 'sweetalert2';
 
 const { multiple } = useFilepondEvents();
-const store = onboardingStore();
 const router = useRouter();
 const route = useRoute();
 
 const form = reactive({
-	status_id: '3',
+	status_id: '2',
 	rejection_message: '',
 	date_visit: '',
 	hour_visit: '',
@@ -27,7 +25,6 @@ const form = reactive({
 	description: '',
 	observations: '',
 	file: [],
-	created_by: store.user.id,
 });
 
 const form_rules = computed(() => ({
@@ -46,7 +43,6 @@ const form_rules = computed(() => ({
 	description: { required },
 	observations: { required },
 	file: { required },
-	created_by: { required },
 }));
 
 const disciplinesList = ref([]);
@@ -74,33 +70,21 @@ const disciplines = asyncComputed(async () => {
 
 const onSubmit = async () => {
 	const valid = await v$.value.$validate();
-
 	if (valid) {
 		await subdirectorVisitServices
-			.create(formdataParser(form), (store.user.id! && store.user.id))
+			.create(formdataParser(form))
 			.then((response) => {
-				if (response?.status == 200 || response?.status == 201) {
-					Swal.fire('', 'Creación exitosa!', 'success');
-					setLoading(true);
-					router
-						.push({
-							name: 'subdirector_visit.index',
-						})
-						.finally(() => {
+				if (response) {
+					if (response.status >= 200 && response.status <= 300) {
+						alerts.create();
+						setLoading(true);
+						router.push({ name: 'subdirector_visit.index' }).finally(() => {
 							setLoading(false);
 						});
+					}
 				} else {
 					Swal.fire('', 'No se pudo crear', 'error');
 				}
-			});
-		Swal.fire('', 'Creación exitosa!', 'success');
-		setLoading(true);
-		router
-			.push({
-				name: 'subdirector_visit.index',
-			})
-			.finally(() => {
-				setLoading(false);
 			});
 	} else {
 		alerts.validation();
