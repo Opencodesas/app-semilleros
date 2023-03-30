@@ -79,8 +79,8 @@ const dataSearch = computed(() => searchData(items.value, search.value));
 </script>
 
 <template>
-
-    <CommonInput type="search" name="search" v-model="search" placeholder="Buscar" />
-    <Crud :headers="headerCustomVisits" :items="items" :Form="customVisitReview"/>
-
+    <div class="p-5 mt-5 intro-y box">
+        <CommonInput type="search" name="search" v-model="search" placeholder="Buscar" />
+        <Crud :headers="headerCustomVisits" :items="items" :Form="customVisitReview" />
+    </div>
 </template>

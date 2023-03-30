@@ -29,7 +29,7 @@ const Alerts = {
     Swal.fire('Éxito', message, 'success')
   },
   error: (message: string) => {
-    Swal.fire('!Aviso', message, 'info')
+    Swal.fire('Aviso!', message, 'info')
   },
 }
 

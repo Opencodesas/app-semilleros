@@ -15,20 +15,12 @@ export const methodologistVisitServices = {
             alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
         }
     },
-    getAll: async (subdirector_id?: number) => {
+    getAll: async () => {
         try {
             setLoading(true)
-            let response
-            if(subdirector_id){
-                response = await api.get(`/${apiPath}/${module}?subdirector_id=${subdirector_id}`).finally(() => {
-                setLoading(false)
-            })
-            }
-            else {
-                response = await api.get(`/${apiPath}/${module}`).finally(() => {
+            const response = await api.get(`/${apiPath}/${module}`).finally(() => {
                     setLoading(false)
                 })
-            }
 
             return response
         } catch (error: any) {

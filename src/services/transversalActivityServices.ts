@@ -1,6 +1,6 @@
-const module = 'coordinator_visit'
+const module = 'transversal-activity'
 
-export const coordinatorVisitServices = {
+export const transversalActivityServices = {
   get: async (id: string) => {
     try {
       setLoading(true)
@@ -9,7 +9,7 @@ export const coordinatorVisitServices = {
         setLoading(false)
       })
 
-      return response 
+      return response
     } catch (error: any) {
       alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
     }
@@ -17,10 +17,10 @@ export const coordinatorVisitServices = {
   getAll: async () => {
     try {
       setLoading(true)
+
       const response = await api.get(`/${apiPath}/${module}`).finally(() => {
-          setLoading(false)
-        })
-      
+        setLoading(false)
+      })
 
       return response
     } catch (error: any) {
@@ -65,5 +65,5 @@ export const coordinatorVisitServices = {
     } catch (error: any) {
       alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
     }
-  },
+  }
 }

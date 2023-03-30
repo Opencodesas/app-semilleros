@@ -4,6 +4,7 @@ import { searchData } from '@/composables/search';
 import { Header, Item } from 'vue3-easy-data-table';
 import Form from './Form.vue'
 import { onboardingStore } from "@/stores/onboardingStore";
+import Alerts from '@/composables/alerts';
 
 const store = onboardingStore();
 console.log(store.user.id);
@@ -81,9 +82,15 @@ const items = ref<Item[]>([
 ]);
 
 // onMounted(async () => {
+// 	setLoading(true);
 // 	await find<{ items: Item[] }>('methodologist_visit').then((response) => {
 // 		console.log(response.data.items);
 // 		items.value = response.data.items;
+// 		setLoading(false);
+// 	}).catch((error) => {
+// 		console.log(error);
+// 		setLoading(false);
+// 		Alerts.error('Error al cargar los datos');
 // 	});
 // });
 

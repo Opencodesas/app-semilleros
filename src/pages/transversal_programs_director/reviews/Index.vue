@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Header, Item } from 'vue3-easy-data-table';
-import { technicalSubdirectorVisitServices } from '@/services/technical_subdirector/technicalSubdirectorVisitServices';
 import transversalActivityReview from './transversalActivityReview.vue'
 
 
@@ -35,7 +34,7 @@ const header: Header[] = [
 // const items = ref<Item[]>([])
 
 // onBeforeMount(async () => {
-//     await subdirectorVisitServices.getAll().then((response) => {
+//     await transversalActivityServices.getAll().then((response) => {
 //         items.value = response?.data.items
 //     })
 // })
