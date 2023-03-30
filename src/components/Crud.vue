@@ -589,6 +589,44 @@ const selectedTab = inject('selectedTab', ref(0))
 							</template>
 						</template>
 					</template>
+					<template v-else-if="isProvider('coordinator_visit')">
+						<template v-if=true>
+							<Button v-if="true"
+								variant="outline-secondary"
+								@click="seeAction(item.id)">
+								<Lucide
+									icon="Eye"
+									class="mr-2" />
+								<span class="text-sm"> Ver </span>
+							</Button>
+							<Button v-if="item.status.slug == 'ENR'"
+								variant="outline-secondary"
+								@click="editAction(item.id)">
+								<Lucide
+									icon="FileEdit"
+									class="mr-2" />
+								<span class="text-sm"> Editar </span>
+							</Button>
+							<Button
+								variant="outline-danger"
+								@click="onDeleteFnc(item.id)">
+								<Lucide
+									icon="Delete"
+									class="mr-2" />
+								<span class="text-sm"> Eliminar </span> 
+							</Button>
+						</template>
+						<template
+							v-else-if="
+								item.status.slug === 'ENR' && route.name === 'review.index'
+							">
+							<template v-if="props.Form!">
+								<Modal
+									:Form="props.Form"
+									:id_review="item.id" />
+							</template>
+						</template>
+					</template>
 					<template v-else-if="isProvider('subdirector')">
 						<template
 							v-if="

@@ -3,6 +3,7 @@ import { searchData } from '@/composables/search';
 import Crud from '@/components/Crud.vue'
 import { onboardingStore } from '@/stores/onboardingStore';
 import { Header, Item } from 'vue3-easy-data-table';
+import Swal, { SweetAlertIcon } from "sweetalert2";
 
 const router = useRouter()
 const route = useRoute()
@@ -21,10 +22,22 @@ const create = () => {
         setLoading(false)
     })
 }
-
+const fetchData = () => {
+    coordinatorVisitServices.getAll(store.user.id).then((response) => {
+        items.value = response?.data
+        console.log(items.value)
+    })
+}
 async function deleteModule(id: string | number) {
-  await coordinatorVisitServices.delete(id as string);
-  //fetchData();
+  await coordinatorVisitServices.delete(id as string).then((response) => {
+    if (response?.status == 200 || response?.status == 201) {
+            Swal.fire("", response?.data.items, "success");
+            setLoading(true)
+        } else {
+            Swal.fire("", response?.data.items, "error");
+        }
+        fetchData()
+    });
 }
 onBeforeMount(async () => {
     await coordinatorVisitServices.getAll(store.user.id).then((response) => {
@@ -37,6 +50,7 @@ const headers: Header[] = [
     { text: 'ID', value: 'id' },
     { text: 'FECHA VISITA', value: 'date_visit'},
     { text: 'HORA VISITA', value: 'hour_visit' },
+    { text: 'MUNICIPIO', value: 'municipalities.name'},
     { text: 'ESCENARIO DEPORTIVO', value: 'sports_scene'},
     { text: 'Estado', value: 'status' },
 	// { text: "ROLES", value: "roles" },

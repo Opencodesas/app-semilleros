@@ -12,7 +12,6 @@ const router = useRouter();
 const route = useRoute();
 
 const form = reactive({
-	status_id: '3',
 	rejection_message: '',
 	date_visit: '',
 	hour_visit: '',
@@ -26,6 +25,7 @@ const form = reactive({
 	observations: '',
 	file: [],
 	created_by: store.user.id,
+	status_id:'2'
 });
 
 const form_rules = computed(() => ({
@@ -42,7 +42,7 @@ const form_rules = computed(() => ({
 	description: { required },
 	observations: { required },
 	file: { required },
-	created_by: { required },
+	created_by: { },
 }));
 
 const disciplinesList = ref([]);
@@ -75,10 +75,10 @@ const onSubmit = async () => {
             if (response) {
                 if (response.status >= 200 && response.status <= 300) {
                     alerts.create()
-                    setLoading(true)
+                    /*setLoading(true)
                     router.push({name: 'coordinator_visit.index'}).finally(() => {
                         setLoading(false)
-                    })
+                    })*/
                 }
             } else {
                     Swal.fire('', 'No se pudo crear', 'error');

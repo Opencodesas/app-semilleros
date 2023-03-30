@@ -464,6 +464,7 @@ const routes = [
 			{
 				path: "coordinator_visit",
 				name: "coordinator_visit",
+				meta: { provider: 'coordinator_visit' },
 				children: [
 					{
 						path: "",
@@ -480,9 +481,9 @@ const routes = [
 						component: () => import('@/pages/coordinators/FormEdit.vue')
 					},
 					{
-						path: "reviews",
-						name: "coordinator.reviews",
-						component: () => import('@/pages/coodinators/Reviews.vue'),
+						path: ":id",
+						name: "coordinator_visit.see",
+						component: () => import('@/pages/coordinators/FormSee.vue'),
 					},
 				],
 			},
