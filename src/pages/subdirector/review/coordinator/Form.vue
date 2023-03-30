@@ -126,7 +126,7 @@ const onSubmit = async () => {
 <template>
 	<div class="flex items-center justify-between intro-y">
 		<div class="flex items-center space-x-4">
-			<h2 class="mr-auto text-lg font-medium">Coordinador</h2>
+			<h2 class="mr-auto text-lg font-medium">Revisar Visita Coordinador</h2>
 		</div>
 	</div>
 
