@@ -75,10 +75,10 @@ const onSubmit = async () => {
             if (response) {
                 if (response.status >= 200 && response.status <= 300) {
                     alerts.create()
-                    /*setLoading(true)
+                    setLoading(true)
                     router.push({name: 'coordinator_visit.index'}).finally(() => {
                         setLoading(false)
-                    })*/
+                    })
                 }
             } else {
                     Swal.fire('', 'No se pudo crear', 'error');
