@@ -1,4 +1,4 @@
-let module = "director_visits"
+let module = "technical-director/visits"
 
 export const technicalDirectorVisitServices = {
     get: async (id: string) => {

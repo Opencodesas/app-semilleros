@@ -19,15 +19,7 @@ const header: Header[] = [
 	{ text: 'Acciones', value: 'actions' },
 ];
 
-//Traer visitas personalizadas en revisión
-
-// const items = ref<Item[]>([])
-
-// onBeforeMount(async () => {
-//     await subdirectorVisitServices.getAll().then((response) => {
-//         items.value = response?.data.items
-//     })
-// })
+//Traer visitas en revisión
 
 const items = ref<Item[]>([
 	{
