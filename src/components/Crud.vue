@@ -241,14 +241,14 @@ const contractorHandler = (name: string, id: string | number) => ({
 //     }
 // }
 
-// const seeAction = (id: string | number) => {
-//     if (props.edit_gestor) {
-//         router.push({ name: `${routeName.value}.editManagers`, params: { id: id } })
-//     }
-//     else {
-//         router.push({ name: `${routeName.value}.edit`, params: { id: id } })
-//     }
-// }
+ const seeAction = (id: string | number) => {
+     if (props.edit_gestor) {
+         router.push({ name: `${routeName.value}.see`, params: { id: id } })
+     }
+     else {
+         router.push({ name: `${routeName.value}.see`, params: { id: id } })
+     }
+}
 
 // const changePasswordAction = (id: string | number) => {
 //     router.push({ name: `${routeName.value}.changePassword`, params: { id: id } })
@@ -551,13 +551,51 @@ const selectedTab = inject('selectedTab', ref(0))
 							</template>
 						</template>
 					</template>
+					<template v-else-if="isProvider('methodologist_visits')">
+						<template v-if=true>
+							<Button v-if="true"
+								variant="outline-secondary"
+								@click="seeAction(item.id)">
+								<Lucide
+									icon="Eye"
+									class="mr-2" />
+								<span class="text-sm"> Ver </span>
+							</Button>
+							<Button v-if="item.status.slug == 'ENR'"
+								variant="outline-secondary"
+								@click="editAction(item.id)">
+								<Lucide
+									icon="FileEdit"
+									class="mr-2" />
+								<span class="text-sm"> Editar </span>
+							</Button>
+							<Button
+								variant="outline-danger"
+								@click="onDeleteFnc(item.id)">
+								<Lucide
+									icon="Delete"
+									class="mr-2" />
+								<span class="text-sm"> Eliminar </span> 
+							</Button>
+						</template>
+						<template
+							v-else-if="
+								item.status.slug === 'ENR' && route.name === 'review.index'
+							">
+							<template v-if="props.Form!">
+								<Modal
+									:Form="props.Form"
+									:id_review="item.id" />
+							</template>
+						</template>
+					</template>
 					<template v-else-if="isProvider('subdirector')">
 						<template
 							v-if="
 								item.status.slug === 'REC' ||
 								(item.status.slug === 'APR' && route.name !== 'review.index')
 							">
-							<Button v-if="item.status.slug === 'REC'"
+							<Button v-if="item.status.slug === 'ENR'"
 								variant="outline-secondary"
 								@click="editAction(item.id)">
 								<Lucide

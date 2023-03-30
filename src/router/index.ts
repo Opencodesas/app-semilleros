@@ -368,6 +368,7 @@ const routes = [
 			{
 				path: "methodologist_visits",
 				name: "methodologist_visits",
+				meta: { provider: 'methodologist_visits' },
 				children: [
 					{
 						path: "",

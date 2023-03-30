@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Crud from '@/components/Crud.vue'
 import { Header, Item } from 'vue3-easy-data-table';
+import Swal, { SweetAlertIcon } from "sweetalert2";
 
 const router = useRouter()
 const route = useRoute()
@@ -15,31 +16,42 @@ const create = () => {
         setLoading(false)
     })
 }
+const fetchData = () => {
+    methodologistVisitServices.getAll().then((response) => {
+        items.value = response?.data.items
+        console.log(items.value)
+    })
+}
 async function deleteModule(id: string | number) {
-  await methodologistVisitServices.delete(id as string);
-  //fetchData();
+  await methodologistVisitServices.delete(id as string).then((response) => {
+    if (response?.status == 200 || response?.status == 201) {
+            Swal.fire("", response?.data.items, "success");
+        } else {
+            Swal.fire("", response?.data.items, "error");
+        }
+    });
+    fetchData();
 }
 
 onBeforeMount(async () => {
     await methodologistVisitServices.getAll().then((response) => {
-        console.log(response?.data);
         items.value = response?.data.items
+        console.log(items.value)
     })
 })
 
 const headers: Header[] = [
     { text: 'ID', value: 'id' },
-    // { text: 'MONITOR', value: 'monitor' },
     { text: 'FECHA VISITA', value: 'date_visit'},
     { text: 'HORA VISITA', value: 'hour_visit' },
+    { text: 'DISCIPLINA', value: 'disciplines.name' },
     // { text: 'MUNICIPIO', value: 'municipalities' },
     // { text: 'EVALUACION', value: 'evaluations' },
-    { text: 'Observaciones', value: 'observations' },
+    { text: 'ESTADO', value: 'status.name' },
     { text: 'ACCIONES', value: 'actions' },
 ]
 
 const items = ref<Item[]>([])
-
 </script>
 
 <template>
