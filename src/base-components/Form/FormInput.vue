@@ -50,7 +50,15 @@ const computedClass = computed(() =>
   ])
 );
 
-const localValue = ref(props.modelValue);
+const localValue = computed({
+    get() {
+        return props.modelValue as string
+    },
+    set(value) {
+        emit('update:modelValue', value)
+    }
+});
+
 const emit = defineEmits<FormInputEmit>();
 
 watch(localValue, () => {

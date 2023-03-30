@@ -20,9 +20,10 @@ interface Props {
     onRemove?: Function
     onSelect?: Function
     name: string
-    options: selectOption[] | null
-    validator?: Validation,
     allowEmpty: boolean,
+    options: selectOption[] | null
+    setSort?: boolean,
+    validator?: Validation,
     collection_validator?: {
         index: number
         name: string
@@ -33,6 +34,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
     multiple: false,
     allowEmpty: true,
+    setSort: true
 })
 
 // const attrs = useAttrs();
@@ -52,11 +54,14 @@ const options_handle = computed(() => {
     if (props.options != null) {
 
         const mapped = props.options.sort((a, b) => {
-            if (typeof (a.value) == 'number' && typeof (b.value) == 'number') {
-                return a.value - b.value
-            }
-            else {
-                return a.label.toString().localeCompare(b.label.toString())
+            if (!props.setSort) {
+                return 1
+            } else {
+                if (typeof (a.value) == 'number' && typeof (b.value) == 'number') {
+                    return a.value - b.value
+                } else {
+                    return a.label.toString().localeCompare(b.label.toString())
+                }
             }
         }).map(item => item.value)
         return mapped
