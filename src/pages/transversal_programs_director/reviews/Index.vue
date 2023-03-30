@@ -92,10 +92,9 @@ const dataSearch = computed(() => searchData(items.value, search.value));
 
 <template>
     <div class="m-5"><h1 class="mr-auto text-lg font-medium">Actividades Transversales </h1></div>
-    <div class="m-5">
+
+    <div class="p-5 mt-5 intro-y space-y-2 box">
         <CommonInput type="search" name="search" v-model="search" placeholder="Buscar" />
-    </div>
-    <div class="">
         <Crud :headers="header" :items="dataSearch" :Form="transversalActivityReview"/>
     </div>
 </template>

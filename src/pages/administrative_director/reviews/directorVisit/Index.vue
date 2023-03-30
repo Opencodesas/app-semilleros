@@ -67,7 +67,7 @@ const dataSearch = computed(() => searchData(items.value, search.value));
     <div class="flex items-center justify-between mt-5 mb-2 intro-y">
         <h1 class="mr-auto text-lg font-medium">Revisar visitas personalizadas de los Psicologos</h1>
     </div>
-    <div class="space-y-4 mt-4">
+    <div class="p-5 mt-5 intro-y space-y-2 box">
         <CommonInput type="search" name="search" v-model="search" placeholder="Buscar" />
         <Crud :headers="headers" :items="items" :Form="visitReview" />
     </div>
