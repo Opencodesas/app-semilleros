@@ -158,13 +158,13 @@ const positionRange = computed(() => {
                                     Semilleros Deportivos?. </FormSwitch.Label>
                             </div>
                         </div>
-                        <div class="col-span-3 sm:grid-cols-3">
+                        <div class="col-span-3">
                             <CommonTextarea
                                 label="Temáticas durante la visita: físico, emocional, familiar, escolar, social, espiritual *"
                                 placeholder="Escriba..." name="theme" rows="5" v-model="form.theme" :validator="v$" />
 
                         </div>
-                        <div class="col-span-3 sm:grid-cols-3">
+                        <div class="col-span-3">
                             <CommonTextarea label="Acuerdos y recomendaciones *" placeholder="Escriba..." name="agreements"
                                 rows="5" v-model="form.agreements" :validator="v$" />
                         </div>
@@ -184,7 +184,7 @@ const positionRange = computed(() => {
                             </div>
                         </div>
 
-                        <div class="p-5 mt-6 intro-y">
+                        <div class="col-span-3 p-5 mt-6 intro-y">
                             <CommonFile :validator="v$" v-model="form.file" name="file"
                                 class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
                                 :accept-multiple="false"

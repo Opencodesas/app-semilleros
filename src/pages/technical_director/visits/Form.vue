@@ -11,7 +11,7 @@ const router = useRouter();
 const route = useRoute();
 
 const form = reactive({
-	status_id: '3',
+	status_id: '2',
 	rejection_message: '',
 	date_visit: '',
 	hour_visit: '',

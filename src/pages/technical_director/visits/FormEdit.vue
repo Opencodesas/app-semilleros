@@ -15,7 +15,7 @@ const route = useRoute();
 const { id } = route.params;
 
 const form = reactive({
-	status_id: '',
+	status_id: '4',
 	rejection_message: '',
 	date_visit: '2023-02-27',
 	hour_visit: '09:30',
@@ -96,14 +96,14 @@ const data = async () => {
 	});
 };
 onMounted(() => {
-	form.status_id = '2';
-	form.rejection_message = 'La foto no es una evidencia de la visita';
-	form.hour_visit = '9:30';
-	form.municipality_id = '39';
-	form.monitor_id = '2';
-	form.discipline_id = '8';
-	form.technical = '1';
-	form.event_support_id = '1';
+	// form.status_id = '2';
+	 form.rejection_message = 'La foto no es una evidencia de la visita';
+	// form.hour_visit = '9:30';
+	// form.municipality_id = '39';
+	// form.monitor_id = '2';
+	// form.discipline_id = '8';
+	// form.technical = '1';
+	// form.event_support_id = '1';
 });
 const onSubmit = async () => {
 	console.log(form.hour_visit);
@@ -151,7 +151,7 @@ const diableElements = computed(() => {
 	<div class="p-5 mt-5 intro-y box">
 		<div
 			class="mb-6"
-			v-if="parseInt(form.status_id) == 2">
+			v-if="form.status_id == '4'">
 			<p class="text-danger font-bold">Razon de rechazo</p>
 			<p>{{ form.rejection_message }}</p>
 		</div>
@@ -282,7 +282,7 @@ const diableElements = computed(() => {
 		</div>
 	</div>
 
-	<div class="mt-6 flex justify-end col-span-1 md:col-span-2">
+	<div class="mt-6 flex justify-center col-span-1 md:col-span-2">
 		<Button v-if="form.status_id == '4'" type="submit" variant="primary">
             Editar visita
         </Button>

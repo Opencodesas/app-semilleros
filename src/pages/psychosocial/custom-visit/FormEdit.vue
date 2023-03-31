@@ -254,7 +254,7 @@ const positionRange = computed(() => {
                             <img src="/semilleros.png" width="200" alt="">
                         </div>
 
-                        <div class="p-5 mt-6 intro-y">
+                        <div class="col-span-3 p-5 mt-6 intro-y">
                             <CommonFile :validator="v$" v-model="form.file" name="file"
                                 class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
                                 :accept-multiple="false"
