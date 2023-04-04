@@ -10,7 +10,7 @@ const router = useRouter();
 const route = useRoute();
 
 const form = reactive({
-	status_id: '2',
+	status_id: '',
 	rejection_message: '',
 	date_visit: '',
 	hour_visit: '',
@@ -28,7 +28,7 @@ const form = reactive({
 });
 
 const form_rules = computed(() => ({
-	status_id: { required },
+	status_id: {},
 	rejection_message: {},
 	date_visit: { required },
 	hour_visit: { required },
@@ -44,7 +44,6 @@ const form_rules = computed(() => ({
 	observations: { required },
 	file: { required },
 }));
-
 const disciplinesList = ref([]);
 const monitorList = [
 	{ label: 'Joselito', value: 1 },
@@ -69,6 +68,7 @@ const disciplines = asyncComputed(async () => {
 }, null);
 
 const onSubmit = async () => {
+	console.log(form.file);
 	const valid = await v$.value.$validate();
 	if (valid) {
 		await subdirectorVisitServices
@@ -90,6 +90,9 @@ const onSubmit = async () => {
 		alerts.validation();
 	}
 };
+const prueba = (event: any) => {
+	console.log(event);
+}
 </script>
 
 <template>
@@ -204,7 +207,7 @@ const onSubmit = async () => {
 				v-model="form.file"
 				name="file"
 				class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
-				@addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
+				@addfile="prueba($event)"
 				@removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }" />
 		</div>
 	</div>

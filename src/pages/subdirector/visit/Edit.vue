@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import CommonFile from '@/components/CommonFile.vue';
-import { filePondValue } from '@/composables/useFilepondEvents';
+import { onboardingStore } from '@/stores/onboardingStore';
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
-import { onboardingStore } from '@/stores/onboardingStore';
 import Swal from 'sweetalert2';
 
 const store = onboardingStore();
@@ -16,21 +15,19 @@ const { id } = route.params;
 const form = reactive({
 	status_id: '',
 	rejection_message: '',
-	date_visit: '2023-02-27',
-	hour_visit: '09:30',
-	observations: 'a pesar de la fuerte lluvia se vivencio buena población.',
+	date_visit: '',
+	hour_visit: '',
+	observations: '',
 	monitor_id: '',
 	municipality_id: '',
 	event_support_id: '',
 	discipline_id: '',
-	sidewalk: 'Jamundi',
-	sports_scene: 'Cancha Marcella',
-	beneficiary_coverage: '8',
+	sidewalk: '',
+	sports_scene: '',
+	beneficiary_coverage: '',
 	technical: '',
-	description:
-		'se encontró en el escenario, confunde los componentes se le deben reforzar.',
-	file: [],
-	created_by: store.user.id,
+	description: '',
+	file: '',
 });
 
 const form_rules = computed(() => ({
@@ -49,7 +46,6 @@ const form_rules = computed(() => ({
 	observations: { required },
 	description: { required },
 	file: { required },
-	created_by: { required },
 }));
 
 const municipalities = asyncComputed(async () => {
@@ -73,41 +69,31 @@ const evaluationList = [
 ];
 const v$ = useVuelidate(form_rules, form);
 
-const data = async () => {
+//const data =
+
+onBeforeMount(async () => {
 	await subdirectorVisitServices.get(id as string).then((response) => {
+		console.log(response?.data.items);
 		if (response?.status == 200) {
-			form.observations = response.data.observations;
-			form.monitor_id = response.data.monitor_id;
-			form.municipality_id = response.data.municipality_id;
-			form.event_support_id = response.data.event_support_id;
-			form.hour_visit = response.data.hour_visit;
-			form.discipline_id = response.data.discipline_id;
-			form.sidewalk = response.data.sidewalk;
-			form.sports_scene = response.data.sports_scene;
-			form.beneficiary_coverage = response.data.beneficiary_coverage;
-			form.technical = response.data.technical;
-			form.date_visit = response.data.date_visit;
-			form.description = response.data.description;
-			form.file = response.data.file;
-			form.status_id = response.data.status_id;
-			form.rejection_message = response.data.rejection_message;
-			setLoading(false);
-		} else {
-			setLoading(false);
+			form.observations = response.data.items.observations;
+			form.monitor_id = response.data.items.monitor_id;
+			form.municipality_id = response.data.items.municipality_id;
+			form.event_support_id = response.data.items.event_support_id;
+			form.hour_visit = response.data.items.hour_visit;
+			form.discipline_id = response.data.items.discipline_id;
+			form.sidewalk = response.data.items.sidewalk;
+			form.sports_scene = response.data.items.sports_scene;
+			form.beneficiary_coverage = response.data.items.beneficiary_coverage;
+			form.technical = response.data.items.technical;
+			form.date_visit = response.data.items.date_visit;
+			form.description = response.data.items.description;
+			form.file = response.data.items.file;
+			form.status_id = response.data.items.status_id;
+			form.rejection_message = response.data.items.rejection_message;
 		}
+		setLoading(false);
 		return;
 	});
-};
-
-onMounted(() => {
-	form.status_id = '2';
-	form.rejection_message = 'La foto no es una evidencia de la visita';
-	form.hour_visit = '9:30';
-	form.municipality_id = '39';
-	form.monitor_id = '2';
-	form.discipline_id = '8';
-	form.technical = '1';
-	form.event_support_id = '1';
 });
 
 const onSubmit = async () => {
@@ -132,14 +118,13 @@ const onSubmit = async () => {
 			});
 		Swal.fire('', 'Modificacion exitosa!', 'success');
 		setLoading(true);
-		router.push({name: 'subdirector_visit.index'}).finally(() => {
+		router.push({ name: 'subdirector_visit.index' }).finally(() => {
 			setLoading(false);
 		});
 	} else {
 		alerts.validation();
 	}
 };
-
 </script>
 
 <template>
@@ -267,9 +252,7 @@ const onSubmit = async () => {
 				:validator="v$"
 				v-model="form.file"
 				name="file"
-				class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
-				@addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
-				@removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }" />
+				class="w-11/12 sm:w-8/12 m-auto cursor-pointer" />
 		</div>
 	</div>
 

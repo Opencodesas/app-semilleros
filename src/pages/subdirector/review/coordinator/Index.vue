@@ -17,20 +17,24 @@ const { find } = useApiV1();
 //     })
 // }, null)
 
-// onMounted(async () => {
-// 	setLoading(true);
-// 	await coordinatorVisitServices
-// 		.getAll()
-// 		.then((response) => {
-// 			console.log(response?.data);
-// 			items.value = response?.data.items;
-// 			setLoading(false);
-// 		}).catch((error) => {
-// 			console.log(error);
-// 			setLoading(false);
-// 			Alerts.error('Error al cargar los datos');
-// 		});
-// });
+onMounted(async () => {
+	setLoading(true);
+	await coordinatorVisitServices
+		.getAll()
+		.then((response) => {
+			console.log(response?.data);
+			items.value = response?.data.items;
+
+			console.log(items.value[0].status_id);
+			console.log(items.value[0].created_by);
+			setLoading(false);
+		})
+		.catch((error) => {
+			console.log(error);
+			setLoading(false);
+			alerts.error('Error al cargar los datos');
+		});
+});
 
 const search = ref('');
 

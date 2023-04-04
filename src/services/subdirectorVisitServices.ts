@@ -7,7 +7,7 @@ export const subdirectorVisitServices = {
         try {
             setLoading(true)
 
-            const response = await api.get(`/${apiPath}/${module}?id=${id}`).finally(() => {
+            const response = await api.get(`/${apiPath}/${module}/${id}`).finally(() => {
                 setLoading(false)
             })
 

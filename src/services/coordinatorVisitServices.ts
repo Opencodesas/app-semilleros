@@ -1,4 +1,4 @@
-const module = 'coordinator_visit'
+const module = 'coordinator_visits'
 
 export const coordinatorVisitServices = {
   get: async (id: string) => {
