@@ -16,7 +16,7 @@ const form = reactive({
     month: '', //ID del mes
     municipality: '', //ID del municipio
     beneficiary: '', //ID del beneficiario
-    theme: '', //String
+    topic: '', //String
     agreements: '', //String
     concept: '1', //String
     guardian_knows_semilleros: false, //Boolean
@@ -30,7 +30,7 @@ const form_rules = computed(() => ({
     month: { required },
     municipality: { required },
     beneficiary: { required },
-    theme: { required },
+    topic: { required },
     agreements: { required },
     concept: {},
     guardian_knows_semilleros: { required },
@@ -161,7 +161,7 @@ const positionRange = computed(() => {
                         <div class="col-span-3">
                             <CommonTextarea
                                 label="Temáticas durante la visita: físico, emocional, familiar, escolar, social, espiritual *"
-                                placeholder="Escriba..." name="theme" rows="5" v-model="form.theme" :validator="v$" />
+                                placeholder="Escriba..." name="topic" rows="5" v-model="form.topic" :validator="v$" />
 
                         </div>
                         <div class="col-span-3">
