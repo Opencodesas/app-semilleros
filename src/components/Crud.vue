@@ -232,6 +232,7 @@ const contractorHandler = (name: string, id: string | number) => ({
 	query: { contractor: id },
 });
 
+
 // const managementAction = (id: string | number) => {
 //     if (props.edit_gestor) {
 //         router.push({ name: `${routeName.value}.editManagers`, params: { id: id } })
@@ -632,8 +633,39 @@ const selectedTab = inject('selectedTab', ref(0))
 							</template>
 						</template>
 					</template>
+					<template v-else-if="isProvider('fichaInscrip')">
+						<template v-if="item.status.slug == 'SIN'">
+							<Button variant="soft-success" @click="() => {
+								router.push({ name: 'fichas_inscripcion.index', query: { id: item.id, slug: item.status.slug, acc: 'APR'} })
+							}">									
+								<Lucide icon="ClipboardCheck" class="mr-2" />
+								<span class="text-sm">
+									Aprobar
+								</span>
+							</Button>
+								<Button variant="soft-danger" @click="() => {
+								router.push({ name: 'fichas_inscripcion.index', query: { id: item.id,  slug: item.status.slug, acc: 'REC'} })
+							}">
+								<Lucide icon="ClipboardX" class="mr-2" />
+								<span class="text-sm">
+									Rechazar
+								</span>
+							</Button>
+						</template>
+						<template v-else>
+							<Button variant="soft-secondary" @click="() => {
+								router.push({ name: 'fichas_inscripcion.index', query: { id: item.id,  slug: item.status.slug, acc: 'SIN'} })
+							}">
+								<Lucide icon="ClipboardCopy" class="mr-2" />
+								<span class="text-sm">
+									Revertir
+								</span>
+							</Button>
+						</template>
+					</template>					
 				</div>
 			</template>
+
 			<template #item-actionsDocuments="item">
 				<div class="flex gap-2 justify-end">
 					<template v-if="isProvider('legal')">
@@ -668,6 +700,7 @@ const selectedTab = inject('selectedTab', ref(0))
 					<template v-else> </template>
 				</div>
 			</template>
+			
 			<template #item-actionsContracts="item">
 				<div class="flex gap-2 justify-end">
 					<template v-if="isProvider('legal')">
@@ -745,6 +778,15 @@ const selectedTab = inject('selectedTab', ref(0))
 				                                </template> -->
 				</div>
 			</template>
+
+			<template #item-fichasViewer="item">
+				<CommonButtonLink variant="outline-secondary" 
+				:to="{name: 'fichas_inscripcion.create', query: { id: item.id },}">
+					<Lucide icon="Eye" class="mr-2" />
+					<span class="text-sm"> Ver ficha </span>
+				</CommonButtonLink>
+			</template>
+
 		</DataTable>
 	</div>
 </template>

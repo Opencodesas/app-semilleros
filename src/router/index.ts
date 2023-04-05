@@ -134,6 +134,24 @@ const routes = [
 				]
 			},
 			{
+				path: "monitors",
+				name: "monitors",
+				meta: {provider:"fichaInscrip"},
+				children: [
+					{
+						path: "",
+						name: "fichas_inscripcion.index",
+						
+						component: () => import('@/pages/monitors/Index.vue')
+					},
+					{
+						path: "create",
+						name: "fichas_inscripcion.create",
+						component: () => import('@/pages/monitors/fichaInscView.vue')
+					},
+				]
+			},
+			{
 				path: "chronograms",
 				name: "chronograms",
 				children: [
