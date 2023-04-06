@@ -6,6 +6,7 @@ import type { Header, Item } from 'vue3-easy-data-table';
 import CommonButtonLink from './CommonButtonLink.vue';
 import ContractCancellation from './ContractCancellation.vue';
 import Modal from './Modal.vue';
+import { FormLabel } from '@/base-components/Form';
 
 const storagePath = import.meta.env.VITE_BASE_URL;
 
@@ -44,12 +45,15 @@ const props = withDefaults(
 		edit_gestor: false,
 		item_see_fnc: () => false,
 		item_see_fullview: false,
-		label: '',
+		label: 'ww',
 		management_permissions: false,
 		onDeleteFnc: () => false,
 		show_exports: false,
 	}
 );
+
+
+
 // Spliting route.name >>> example >>> pecs.index = pecs
 const routeName = computed(() => {
 	return String(route.name).split('.')[0];
@@ -633,36 +637,6 @@ const selectedTab = inject('selectedTab', ref(0))
 							</template>
 						</template>
 					</template>
-					<template v-else-if="isProvider('fichaInscrip')">
-						<template v-if="item.status.slug == 'SIN'">
-							<Button variant="soft-success" @click="() => {
-								router.push({ name: 'fichas_inscripcion.index', query: { id: item.id, slug: item.status.slug, acc: 'APR'} })
-							}">									
-								<Lucide icon="ClipboardCheck" class="mr-2" />
-								<span class="text-sm">
-									Aprobar
-								</span>
-							</Button>
-								<Button variant="soft-danger" @click="() => {
-								router.push({ name: 'fichas_inscripcion.index', query: { id: item.id,  slug: item.status.slug, acc: 'REC'} })
-							}">
-								<Lucide icon="ClipboardX" class="mr-2" />
-								<span class="text-sm">
-									Rechazar
-								</span>
-							</Button>
-						</template>
-						<template v-else>
-							<Button variant="soft-secondary" @click="() => {
-								router.push({ name: 'fichas_inscripcion.index', query: { id: item.id,  slug: item.status.slug, acc: 'SIN'} })
-							}">
-								<Lucide icon="ClipboardCopy" class="mr-2" />
-								<span class="text-sm">
-									Revertir
-								</span>
-							</Button>
-						</template>
-					</template>					
 				</div>
 			</template>
 
@@ -780,12 +754,12 @@ const selectedTab = inject('selectedTab', ref(0))
 			</template>
 
 			<template #item-fichasViewer="item">
-				<CommonButtonLink variant="outline-secondary" 
-				:to="{name: 'fichas_inscripcion.create', query: { id: item.id },}">
-					<Lucide icon="Eye" class="mr-2" />
-					<span class="text-sm"> Ver ficha </span>
-				</CommonButtonLink>
+					<template v-if="props.Form">
+						<Modal :Form="props.Form" :id_review="item.id" />
+					</template>
 			</template>
+
+
 
 		</DataTable>
 	</div>
