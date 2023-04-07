@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import FormSwitch from '@/base-components/Form/FormSwitch';
-import { onboardingStore } from '@/stores/onboardingStore';
 import { required } from '@/utils/validators';
 import useVuelidate from '@vuelidate/core';
 
-const store = onboardingStore();
-console.log(store.user.id);
+
 
 const router = useRouter();
 const route = useRoute();

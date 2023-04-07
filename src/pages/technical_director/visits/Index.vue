@@ -94,8 +94,7 @@ const data = computed(() => searchData(items.value, search.value));
 			placeholder="Buscar" />
 		<Crud
 			:headers="headers"
-			:items="data"
-			:onDeleteFnc="deleteModule" />
+			:items="data" />
 	</div>
 	<!-- END: Page Layout -->
 </template>

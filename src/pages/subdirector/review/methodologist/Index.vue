@@ -3,11 +3,9 @@ import Crud from '@/components/Crud.vue';
 import { searchData } from '@/composables/search';
 import { Header, Item } from 'vue3-easy-data-table';
 import Form from './Form.vue'
-import { onboardingStore } from "@/stores/onboardingStore";
 import Alerts from '@/composables/alerts';
 
-const store = onboardingStore();
-console.log(store.user.id);
+
 const router = useRouter();
 const { find } = useApiV1();
 
