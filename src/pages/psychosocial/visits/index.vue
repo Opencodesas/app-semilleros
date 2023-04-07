@@ -3,6 +3,7 @@ import useVuelidate from '@vuelidate/core'
 import { required } from '@/utils/validators'
 import { Header, Item } from 'vue3-easy-data-table';
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
+import { customVisitServices } from '@/services/psychosocial/customVisitServices';
 import { onboardingStore } from "@/stores/onboardingStore";
 
 const { multiple } = useFilepondEvents();
@@ -182,14 +183,26 @@ const headerTransversalActivities: Header[] = [
 const selectedTab = ref(1);
 provide('selectedTab', selectedTab)
 
+const visits = ref<Item[]>([]);
 const searchVisits = ref('');
-const dataSearchVisits = computed(() => searchData(items.value, searchVisits.value));
+const dataSearchVisits = computed(() => searchData(visits.value, searchVisits.value));
 
+
+const customVisits = ref<Item[]>([]);
 const searchCustomVisits = ref('');
-const dataSearchCustomVisits = computed(() => searchData(items2.value, searchCustomVisits.value));
+const dataSearchCustomVisits = computed(() => searchData(customVisits.value, searchCustomVisits.value));
 
+const transversalActivities = ref<Item[]>([]);
 const searchTransversalActivities = ref('');
-const dataSearchTransversalActivities = computed(() => searchData(items.value, searchTransversalActivities.value));
+const dataSearchTransversalActivities = computed(() => searchData(transversalActivities.value, searchTransversalActivities.value));
+
+
+onBeforeMount(async () => {
+	await customVisitServices.getAll().then((response) => {
+		customVisits.value = response?.data.items
+		console.log(customVisits.value)
+	});
+});
 
 </script>
 

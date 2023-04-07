@@ -2,60 +2,71 @@
 import { Header, Item } from 'vue3-easy-data-table';
 import { searchData } from '@/composables/search';
 import visitReview from './VisitReview.vue'
+import { onboardingStore } from '@/stores/onboardingStore';
 
 //Traer visitas del director tecnico en revisión
 
-const items = ref<Item[]>([
-    {
-        id: '1',
-        date_visit: '2023-02-15',
-        municipality: 'Jamundi',
-        director_name: 'Oscar Martinez',
-        sport_scene: 'Cancha Marcella',
-        status: {
-            id: 2,
-            name: 'En Revisión',
-            slug: 'ENR',
-        },
-    },
-    {
-        id: '2',
-        date_visit: '2023-02-20',
-        municipality: 'Jamundi',
-        director_name: 'Oscar Martinez',
-        sport_scene: 'Cancha Marcella',
-        status: {
-            id: 2,
-            name: 'En Revisión',
-            slug: 'ENR',
-        },
-    },
-    {
-        id: '3',
-        date_visit: '2023-02-27',
-        municipality: 'Jamundi',
-        director_name: 'Oscar Martinez',
-        sport_scene: 'Cancha Marcella',
-        status: {
-            id: 2,
-            name: 'Rechazado',
-            slug: 'REC',
-        },
-    },
-]);
+// const items = ref<Item[]>([
+//     {
+//         id: '1',
+//         date_visit: '2023-02-15',
+//         municipality: 'Jamundi',
+//         director_name: 'Oscar Martinez',
+//         sport_scene: 'Cancha Marcella',
+//         status: {
+//             id: 2,
+//             name: 'En Revisión',
+//             slug: 'ENR',
+//         },
+//     },
+//     {
+//         id: '2',
+//         date_visit: '2023-02-20',
+//         municipality: 'Jamundi',
+//         director_name: 'Oscar Martinez',
+//         sport_scene: 'Cancha Marcella',
+//         status: {
+//             id: 2,
+//             name: 'En Revisión',
+//             slug: 'ENR',
+//         },
+//     },
+//     {
+//         id: '3',
+//         date_visit: '2023-02-27',
+//         municipality: 'Jamundi',
+//         director_name: 'Oscar Martinez',
+//         sport_scene: 'Cancha Marcella',
+//         status: {
+//             id: 2,
+//             name: 'Rechazado',
+//             slug: 'REC',
+//         },
+//     },
+// ]);
+
+const store = onboardingStore();
+
+const items = ref<Item[]>([]);
+
+onBeforeMount(async () => {
+    console.log(store.get_user_role);
+
+	await subdirectorVisitServices.getAll().then((response) => {
+		items.value = response?.data.items;
+		console.log(items.value)
+	});
+});
 
 const headers: Header[] = [
     { text: 'No', value: 'id' },
     { text: 'Fecha', value: 'date_visit' },
-    { text: 'Director', value: 'director_name' },
-    { text: 'Municipio', value: 'municipality' },
+    { text: 'Director', value: 'created_by.name' },
+    { text: 'Municipio', value: 'municipality.name' },
     { text: 'Escenario Deportivo', value: 'sport_scene' },
     { text: 'Estado', value: 'status' },
     { text: 'Acciones', value: 'actions' },
 ];
-
-const { isProvider } = useProvider()
-const router = useRouter()
 
 
 const search = ref('');

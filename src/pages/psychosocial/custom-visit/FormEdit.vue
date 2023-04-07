@@ -117,7 +117,6 @@ const getBeneficiaryData = async () => {
             beneficiary_data.guardian_name = response.data.items.guardian_name;
             beneficiary_data.guardian_lastname = response.data.items.guardian_lastname;
             beneficiary_data.guardian_identification = response.data.items.guardian_identification;
-            alerts.custom("", "Datos obtenidos correctamente", "success");
         } else {
             alerts.custom("", "No se pudieron obtener los datos", "error");
         }
