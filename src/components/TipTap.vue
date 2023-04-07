@@ -38,10 +38,9 @@ const value = computed(() => props.modelValue)
 
 watch(value, () => {
     const isSame = editor.value?.getHTML() === value.value
-
+    
     if (isSame) return
-
-    editor.value?.commands.setContent(value, false)
+    editor.value?.commands.setContent(value.value, false)
 })
 
 onBeforeUnmount(() => {
