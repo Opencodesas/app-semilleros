@@ -68,7 +68,6 @@ const disciplines = asyncComputed(async () => {
 }, null);
 
 const onSubmit = async () => {
-	console.log(form.file);
 	const valid = await v$.value.$validate();
 	if (valid) {
 		await subdirectorVisitServices
@@ -207,7 +206,7 @@ const prueba = (event: any) => {
 				v-model="form.file"
 				name="file"
 				class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
-				@addfile="prueba($event)"
+				@addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
 				@removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }" />
 		</div>
 	</div>

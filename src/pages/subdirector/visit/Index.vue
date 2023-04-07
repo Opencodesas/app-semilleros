@@ -24,8 +24,8 @@ const items = ref<Item[]>([]);
 const headers: Header[] = [
 	{ text: 'No', value: 'id' },
 	{ text: 'Fecha', value: 'date_visit' },
-	{ text: 'Municipio', value: 'municipality' },
-	{ text: 'Monitor', value: 'monitor_name' },
+	{ text: 'Municipio', value: 'municipality.name' },
+	{ text: 'Monitor', value: 'monitor.name' },
 	{ text: 'Escenario Deportivo', value: 'sport_scene' },
 	{ text: 'Estado', value: 'status' },
 	{ text: 'Acciones', value: 'actions' },
@@ -34,37 +34,7 @@ const headers: Header[] = [
 onBeforeMount(async () => {
 	const res = await subdirectorVisitServices.getAll();
 	items.value = await res?.data.items;
-	const statues = await getSelectStatus();
-	let index = 0;
-	while (true) {
-		if (index == items.value.length) {
-			break;
-		}
-		items.value[index].status = statues[items.value[index].status_id.id - 1];
-		index++;
-	}
 });
-// onBeforeMount(async () => {
-// 	const res = await subdirectorVisitServices.getAll();
-
-// 	// console.log(res?.data.items);
-// 	items.value = await res?.data.items;
-// 	const statusData = await getSelectStatus();
-// 	let index = 0;
-// 	while (true) {
-// 		// console.log(items.value[0]);
-// 		if (statusData[index].value === items.value[index].status_id.id) {
-// 			items.value[index].status = statusData[index];
-// 			console.log(items.value[index].status);
-// 			break;
-// 		}
-// 		if (index === statusData.length) {
-// 			break;
-// 		}
-// 		index++;
-// 	}
-// 	console.log(items.value);
-// });
 
 // const items = ref<Item[]>([]);
 const search = ref('');

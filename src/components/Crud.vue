@@ -535,23 +535,18 @@ const selectedTab = inject('selectedTab', ref(0))
 						</template>
 					</template>
 					<template v-else-if="isProvider('subdirector')">
-						<template v-if="
-							item.status.slug === 'REC' ||
-							(item.status.slug === 'APR' && route.name !== 'review.index')
-						">
-							<Button v-if="item.status.slug === 'REC'" variant="outline-secondary"
+						<template v-if="route.name !== 'review.index'">
+							<Button variant="outline-secondary"
 								@click="editAction(item.id)">
-								<Lucide icon="FileEdit" class="mr-2" />
-								<span class="text-sm"> Editar </span>
+								<Lucide v-if="item.status.slug == 'REC'" icon="FileEdit" class="mr-2" />
+								<Lucide v-else icon="Eye" class="mr-2" />
+								<span v-if="item.status.slug == 'REC'" class="text-sm">
+									Editar
+								</span>
+								<span v-else class="text-sm">
+									Visualizar
+								</span>
 							</Button>
-							<!-- <Button
-												variant="outline-danger"
-												@click="onDeleteFnc(item.id)">
-												<Lucide
-													icon="Delete"
-													class="mr-2" />
-												<span class="text-sm"> Eliminar </span> 
-											</Button> -->
 						</template>
 						<template v-else-if="
 							item.status.slug === 'ENR' && route.name === 'review.index'
@@ -631,6 +626,28 @@ const selectedTab = inject('selectedTab', ref(0))
 								<Modal :Form="props.Form" :id_review="item.id" />
 							</template>
 						</template>
+					</template>
+					<template v-else-if="isProvider('coordinator')">
+							<Button variant="outline-secondary"
+								@click="editAction(item.id)">
+								<Lucide v-if="item.status.slug == 'REC'" icon="FileEdit" class="mr-2" />
+								<Lucide v-else icon="Eye" class="mr-2" />
+								<span v-if="item.status.slug == 'REC'" class="text-sm">
+									Editar
+								</span>
+								<span v-else class="text-sm">
+									Visualizar
+								</span>
+							</Button>
+
+							<!-- <Button
+												variant="outline-danger"
+												@click="onDeleteFnc(item.id)">
+												<Lucide
+													icon="Delete"
+													class="mr-2" />
+												<span class="text-sm"> Eliminar </span> 
+											</Button> -->
 					</template>
 				</div>
 			</template>
