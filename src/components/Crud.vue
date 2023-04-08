@@ -567,7 +567,7 @@ const selectedTab = inject('selectedTab', ref(0))
 										router.push({ name: 'psychosocial.custom-update', params: { id: item.id } })
 										break;
 									case 3:
-										router.push({ name: 'psychosocial.transversal-update', query: { id: item.id } })
+										router.push({ name: 'psychosocial.transversal-update', params: { id: item.id } })
 									//  default:
 									//     pruebas
 									//      break;

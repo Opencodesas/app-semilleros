@@ -11,7 +11,7 @@ const route = useRoute();
 const dataLoaded = ref(false);
 const form = reactive({
 	id: '',
-	rejection_message: '',
+	reject_message: '',
 	date_visit: '',
 	hour_visit: '',
 	municipalitie_id: '',
@@ -28,7 +28,7 @@ const form = reactive({
 });
 
 const form_rules = computed(() => ({
-	rejection_message: {},
+	reject_message: {},
 	date_visit: { required },
 	hour_visit: { required },
 	municipalitie_id: { required },
@@ -75,7 +75,7 @@ const fetch = async () => {
 				form.user_id = response.data.items.user_id;
 				form.sidewalk = response.data.items.sidewalk;
 				form.status_id = response.data.items.status_id;
-				form.rejection_message = response.data.items.rejection_message;
+				form.reject_message = response.data.items.reject_message;
 				dataLoaded.value = true;
 			} else {
 				Swal.fire('', 'No se pudieron obtener los datos', 'error');
@@ -103,7 +103,7 @@ const onSubmit = async () => {
 	form.id = route.params.id as string;
 	if (valid) {
 		await coordinatorVisitServices
-			.update(route.params.id as string, formdataParser(form))
+			.update(form.id, formdataParser(form))
 			.then((response) => {
 				if (response) {
 					if (response.status >= 200 && response.status <= 300) {
@@ -139,14 +139,14 @@ const download = () => {};
 		</div>
 	</div>
 	<div
-		class="conten"
+		class="content"
 		v-if="dataLoaded">
 		<div class="p-5 mt-5 intro-y box">
 			<div
 				class="mb-6"
 				v-if="form.status_id == '4'">
 				<p class="text-danger font-bold">Razon de rechazo</p>
-				<p>{{ form.rejection_message }}</p>
+				<p>{{ form.reject_message }}</p>
 			</div>
 			<div class="grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
 				<CommonInput
@@ -267,7 +267,7 @@ const download = () => {};
 				v-if="!disableElements"
 				@click="onSubmit"
 				variant="primary">
-				Editar visita
+				Guardar
 			</Button>
 
 			<Button

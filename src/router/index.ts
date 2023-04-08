@@ -609,11 +609,6 @@ const routes = [
 						name: "coordinator.edit",
 						component: () => import('@/pages/coordinators/FormEdit.vue')
 					},
-					{
-						path: ":id",
-						name: "coordinator.see",
-						component: () => import('@/pages/coordinators/FormSee.vue'),
-					},
 				],
 			},
 		],

@@ -213,11 +213,6 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: "coordinator.index",
             title: "Visitas",
           },
-          {
-            icon: "Activity",
-            pageName: "coordinator.reviews",
-            title: "Revisiones",
-          },
         ]
       },
       {
