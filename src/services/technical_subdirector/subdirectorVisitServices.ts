@@ -1,6 +1,6 @@
-let module = "custom_visits"
+let module = "subdirector-visits"
 
-export const customVisitServices = {
+export const subdirectorVisitServices = {
     get: async (id: string) => {
         try {
             setLoading(true)

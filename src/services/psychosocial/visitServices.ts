@@ -1,6 +1,6 @@
-let module = "custom_visits"
+let module = "psychosocial/visits"
 
-export const customVisitServices = {
+export const visitServices = {
     get: async (id: string) => {
         try {
             setLoading(true)

@@ -34,11 +34,22 @@ const headers: Header[] = [
 onBeforeMount(async () => {
 	const res = await subdirectorVisitServices.getAll();
 	items.value = await res?.data.items;
+	const statues = await getSelectStatus();
+    let index = 0;
+
+    while(true){
+        if (index == items.value.length) {
+            break;
+        }
+		console.log(index)
+        items.value[index].status = statues[items.value[index].status_id.id - 1];
+        index ++;
+    }
+
+    console.log(items.value)
 });
 
-// const items = ref<Item[]>([]);
 const search = ref('');
-
 const data = computed(() => searchData(items.value, search.value));
 </script>
 

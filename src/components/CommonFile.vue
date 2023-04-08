@@ -26,7 +26,7 @@ interface Props {
     accept_pdf_only?: boolean
     accept_word?: boolean
     accept_docs?: boolean
-    validator: Validation
+    validator?: Validation
 }
 
 const props = withDefaults(defineProps<Props>(), {

@@ -425,11 +425,11 @@ const routes = [
 						component: () => import('@/pages/psychosocial/visit/Form.vue'),
 					},
 					{
-						// {
-						// 	path: "update/:id",
-						// 	name: "psychosocial.update",
-						// 	component: () => import('@/pages/...'),
-						// },
+						path: "update/:id",
+						name: "psychosocial.update",
+						component: () => import('@/pages/psychosocial/visit/FormEdit.vue'),
+					},
+					{
 						path: "custom-visit",
 						name: "psychosocial.custom-visit",
 						component: () => import('@/pages/psychosocial/custom-visit/Form.vue'),
