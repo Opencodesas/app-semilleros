@@ -21,8 +21,6 @@ const form = reactive({
     concept: '1', //String
     guardian_knows_semilleros: false, //Boolean
     file: [], //Un archivo (foto)
-    status: '2', //ID del estado                           
-    createdBy: store.get_user.id, //ID del usuario (Psicologo) que crea la visita personalizada
 })
 
 
@@ -52,6 +50,11 @@ const municipality_id = computed(() => form.municipality)
 //     return municipality_id.value ? await getBeneficiariesByMunicipaly(municipality_id.value) : []
 //  }, null)
 
+const beneficiaries = [
+    {label: 'Beneficiario 1', value: '1'},
+    {label: 'Beneficiario 2', value: '2'},
+]
+
 //Se necesita traer la siguiente información del beneficiario por su id: (Adjuntar foto de lo visual)
 const beneficiary_data = reactive({
     grade: '',
@@ -71,7 +74,6 @@ const getBeneficiaryData = async () => {
             beneficiary_data.guardian_name = response.data.items.guardian_name;
             beneficiary_data.guardian_lastname = response.data.items.guardian_lastname;
             beneficiary_data.guardian_identification = response.data.items.guardian_identification;
-            alerts.custom("", "Datos obtenidos", "success");
         } else {
             alerts.custom("", "No se pudieron obtener los datos", "error");
         }
@@ -81,7 +83,6 @@ const getBeneficiaryData = async () => {
 
 const v$ = useVuelidate(form_rules, form)
 
-const { isProvider } = useProvider()
 const router = useRouter()
 
 const onSubmit = async () => {
@@ -92,11 +93,11 @@ const onSubmit = async () => {
             if (response) {
                 if (response.status >= 200 && response.status <= 300) {
                     alerts.create()
-                    setLoading(true)
+                    // setLoading(true)
 
-                    router.push('/dashboard').finally(() => {
-                        setLoading(false)
-                    })
+                    // router.push('/dashboard').finally(() => {
+                    //     setLoading(false)
+                    // })
                 }
             }
         })
@@ -158,13 +159,13 @@ const positionRange = computed(() => {
                                     Semilleros Deportivos?. </FormSwitch.Label>
                             </div>
                         </div>
-                        <div class="col-span-3 sm:grid-cols-3">
+                        <div class="col-span-3">
                             <CommonTextarea
                                 label="Temáticas durante la visita: físico, emocional, familiar, escolar, social, espiritual *"
                                 placeholder="Escriba..." name="theme" rows="5" v-model="form.theme" :validator="v$" />
 
                         </div>
-                        <div class="col-span-3 sm:grid-cols-3">
+                        <div class="col-span-3">
                             <CommonTextarea label="Acuerdos y recomendaciones *" placeholder="Escriba..." name="agreements"
                                 rows="5" v-model="form.agreements" :validator="v$" />
                         </div>
@@ -184,7 +185,7 @@ const positionRange = computed(() => {
                             </div>
                         </div>
 
-                        <div class="p-5 mt-6 intro-y">
+                        <div class="col-span-3 p-5 mt-6 intro-y">
                             <CommonFile :validator="v$" v-model="form.file" name="file"
                                 class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
                                 :accept-multiple="false"

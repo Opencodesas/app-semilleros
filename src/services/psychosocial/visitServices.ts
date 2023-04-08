@@ -1,9 +1,7 @@
-const module = "subdirector_visits"
+let module = "psychosocial/visits"
 
-
-export const subdirectorVisitServices = {
+export const visitServices = {
     get: async (id: string) => {
-
         try {
             setLoading(true)
 
@@ -19,11 +17,10 @@ export const subdirectorVisitServices = {
     getAll: async () => {
         try {
             setLoading(true)
-            
+
             const response = await api.get(`/${apiPath}/${module}`).finally(() => {
                 setLoading(false)
             })
-            
 
             return response
         } catch (error: any) {
@@ -47,7 +44,7 @@ export const subdirectorVisitServices = {
         try {
             setLoading(true)
 
-            const response = await api.post(`/${apiPath}/${module}/${id}`, payload).finally(() => {
+            const response = await api.post(`/${apiPath}/${module}/${id}?_method=PUT`, payload).finally(() => {
                 setLoading(false)
             })
 
@@ -60,7 +57,7 @@ export const subdirectorVisitServices = {
         try {
             setLoading(true)
 
-            const response = await api.delete(`/${apiPath}/${module}?id=${id}`).finally(() => {
+            const response = await api.delete(`/${apiPath}/${module}/${id}`).finally(() => {
                 setLoading(false)
             })
 
