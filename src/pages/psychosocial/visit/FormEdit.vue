@@ -161,7 +161,7 @@ const disableElements = computed(() => {
                         v-model="form.monitor_id" :validator="v$" :options="monitorList" />
                     <CommonSelect :disabled="disableElements" label="Disciplinas *" name="discipline_id"
                         v-model="form.discipline_id" :validator="v$" :options="disciplinesList" />
-                    <CommonInput :disabled="disableElements" type="number" label="No. Beneficiarios en el campo *"
+                    <CommonInput :disabled="disableElements" type="number" min="0" label="No. Beneficiarios en el campo *"
                         placeholder="Escriba..." name="numberBeneficiary" v-model="form.numberBeneficiary"
                         :validator="v$" />
                     <CommonInput :disabled="disableElements" type="text" label="Escenario Deportivo *"

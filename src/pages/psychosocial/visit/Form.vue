@@ -14,7 +14,7 @@ const form = reactive({
     municipality_id: '',
     monitor_id: '',
     discipline_id: '',
-    numberBeneficiary: '',
+    numberBeneficiaries: '',
     sports_scene: '',
     objetive: '',
     beneficiaries_knows_project: false,
@@ -30,7 +30,7 @@ const form_rules = computed(() => ({
     municipality_id: { required },
     monitor_id: { required },
     discipline_id: { required },
-    numberBeneficiary: { required },
+    numberBeneficiaries: { required },
     sports_scene: { required },
     objetive: { required },
     beneficiaries_knows_project: { required },
@@ -49,6 +49,7 @@ const monitorList = [
 const v$ = useVuelidate(form_rules, form)
 const { isProvider } = useProvider()
 const router = useRouter()
+
 const fetch = async () => {
     await store.getListSelect().then((response) => {
         console.log(`data fetch: ${response?.data}`);
@@ -65,8 +66,7 @@ onMounted(() => {
 });
 const onSubmit = async () => {
     const valid = await v$.value.$validate()
-    alerts.create()
-    /*if (valid) {
+    if (valid) {
         await contractorServices.create(formdataParser(form)).then((response) => {
             if (response) {
                 if (response.status >= 200 && response.status <= 300) {
@@ -88,7 +88,7 @@ const onSubmit = async () => {
     }
     else {
         alerts.validation()
-    }*/
+    }
 }
 </script>
 
@@ -110,7 +110,7 @@ const onSubmit = async () => {
                     <CommonSelect label="Disciplinas *" name="discipline_id" v-model="form.discipline_id" :validator="v$"
                         :options="disciplinesList" />
                     <CommonInput type="number" min="0" label="No. Beneficiarios en el campo *" placeholder="Escriba..."
-                        name="numberBeneficiary" v-model="form.numberBeneficiary" :validator="v$" />
+                        name="numberBeneficiaries" v-model="form.numberBeneficiaries" :validator="v$" />
                     <CommonInput type="text" label="Escenario Deportivo *" placeholder="Escriba..." name="sports_scene"
                         v-model="form.sports_scene" :validator="v$" />
                     <div class="col-span-2 sm:grid-cols-3">

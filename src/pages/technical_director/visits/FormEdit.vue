@@ -106,6 +106,10 @@ onMounted(async () => {
 });
 const update = async () => {
 	const valid = await v$.value.$validate();
+	if (parseInt(form.beneficiary_coverage) < 0) {
+		alerts.error('El numero de asistentes no puede ser negativo');
+		return;
+	}
 	if (valid) {
 		await subdirectorVisitServices
 			.update(id as string, formdataParser(form))
