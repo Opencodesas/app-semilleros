@@ -6,6 +6,7 @@ import type { Header, Item } from 'vue3-easy-data-table';
 import CommonButtonLink from './CommonButtonLink.vue';
 import ContractCancellation from './ContractCancellation.vue';
 import Modal from './Modal.vue';
+import { FormLabel } from '@/base-components/Form';
 
 const storagePath = import.meta.env.VITE_BASE_URL;
 
@@ -34,11 +35,12 @@ const props = withDefaults(
 		items: Item[];
 		item_see_fnc?: Function | boolean;
 		item_see_fullview?: boolean;
-		label: string;
+		label?: string;
 		Form?: Object;
 		management_permissions?: boolean;
-		onDeleteFnc: Function;
+		onDeleteFnc?: Function;
 		show_exports?: boolean;
+		payloadFunctions?: Object | undefined;
 	}>(),
 	{
 		edit_gestor: false,
@@ -50,6 +52,9 @@ const props = withDefaults(
 		show_exports: false,
 	}
 );
+
+
+
 // Spliting route.name >>> example >>> pecs.index = pecs
 const routeName = computed(() => {
 	return String(route.name).split('.')[0];
@@ -231,6 +236,7 @@ const contractorHandler = (name: string, id: string | number) => ({
 	name,
 	query: { contractor: id },
 });
+
 
 // const managementAction = (id: string | number) => {
 //     if (props.edit_gestor) {
@@ -651,6 +657,7 @@ const selectedTab = inject('selectedTab', ref(0))
 					</template>
 				</div>
 			</template>
+
 			<template #item-actionsDocuments="item">
 				<div class="flex gap-2 justify-end">
 					<template v-if="isProvider('legal')">
@@ -685,6 +692,7 @@ const selectedTab = inject('selectedTab', ref(0))
 					<template v-else> </template>
 				</div>
 			</template>
+			
 			<template #item-actionsContracts="item">
 				<div class="flex gap-2 justify-end">
 					<template v-if="isProvider('legal')">
@@ -762,6 +770,20 @@ const selectedTab = inject('selectedTab', ref(0))
 					                                </template> -->
 				</div>
 			</template>
+
+			<template #item-fichasViewer="item">
+					<template v-if="props.Form">
+						<template v-if="(item.status.slug==='REC') || (item.status.slug==='APR')">
+							<Modal :Form="props.Form" :id_review="item.id" label="Actualizar" :payloadFunctions="payloadFunctions"/>
+						</template>
+						<template v-else>
+							<Modal :Form="props.Form" :id_review="item.id" :payloadFunctions="payloadFunctions"/>
+						</template>
+					</template>
+			</template>
+
+
+
 		</DataTable>
 	</div>
 </template>

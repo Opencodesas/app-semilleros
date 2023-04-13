@@ -114,6 +114,12 @@ const routes = [
 							}
 						],
 					},
+					{
+						path: "",
+						name: "fichas_inscripcion.index",
+						meta: {provider:"fichaInscrip"},						
+						component: () => import('@/pages/monitors/Index.vue')
+					},
 				]
 			},
 			{
@@ -130,6 +136,18 @@ const routes = [
 						path: "create",
 						name: "contractors.store",
 						component: () => import('@/pages/contractor/Form.vue')
+					},
+				]
+			},
+			{
+				path: "monitors",
+				name: "monitors",
+				children: [
+					{
+						path: "fichaInscrip",
+						name: "fichas_inscripcion.index",
+						meta: {provider:"fichaInscrip"},						
+						component: () => import('@/pages/monitors/Index.vue')
 					},
 				]
 			},
