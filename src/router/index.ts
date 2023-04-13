@@ -142,11 +142,11 @@ const routes = [
 			{
 				path: "monitors",
 				name: "monitors",
-				meta: {provider:"fichaInscrip"},
 				children: [
 					{
-						path: "",
-						name: "fichas_inscripcion.index",						
+						path: "fichaInscrip",
+						name: "fichas_inscripcion.index",
+						meta: {provider:"fichaInscrip"},						
 						component: () => import('@/pages/monitors/Index.vue')
 					},
 				]

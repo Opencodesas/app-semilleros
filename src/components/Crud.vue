@@ -35,17 +35,18 @@ const props = withDefaults(
 		items: Item[];
 		item_see_fnc?: Function | boolean;
 		item_see_fullview?: boolean;
-		label: string;
+		label?: string;
 		Form?: Object;
 		management_permissions?: boolean;
-		onDeleteFnc: Function;
+		onDeleteFnc?: Function;
 		show_exports?: boolean;
+		payloadFunctions?: Object | undefined;
 	}>(),
 	{
 		edit_gestor: false,
 		item_see_fnc: () => false,
 		item_see_fullview: false,
-		label: 'ww',
+		label: '',
 		management_permissions: false,
 		onDeleteFnc: () => false,
 		show_exports: false,
@@ -755,7 +756,12 @@ const selectedTab = inject('selectedTab', ref(0))
 
 			<template #item-fichasViewer="item">
 					<template v-if="props.Form">
-						<Modal :Form="props.Form" :id_review="item.id" />
+						<template v-if="(item.status.slug==='REC') || (item.status.slug==='APR')">
+							<Modal :Form="props.Form" :id_review="item.id" label="Actualizar" :payloadFunctions="payloadFunctions"/>
+						</template>
+						<template v-else>
+							<Modal :Form="props.Form" :id_review="item.id" :payloadFunctions="payloadFunctions"/>
+						</template>
 					</template>
 			</template>
 

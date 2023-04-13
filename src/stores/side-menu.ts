@@ -255,12 +255,12 @@ export const useSideMenuStore = defineStore("sideMenu", {
       },
       {
         icon: "User",
-        title: "Metodólogo",
+        title: "Fichas Inscripción Monitores",
         subMenu: [
           {
             icon: "Pencil",
             pageName: "fichas_inscripcion.index",
-            title: "Fi. Inscr. Monitores",
+            title: "Revisar",
           },
         ]
       },
