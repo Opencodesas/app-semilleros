@@ -67,8 +67,22 @@ const disciplines = asyncComputed(async () => {
 	return await getSelect(['disciplines']);
 }, null);
 
+const selectFile = (event: any) => {
+	form.file = event.target.files[0];
+}
+
+const formdataParser = (form: any) => {
+	const formData = new FormData();
+	Object.keys(form).forEach((key) => {
+		formData.append(key, form[key]);
+	});
+	return formData;
+};
+
 const onSubmit = async () => {
 	const valid = await v$.value.$validate();
+	const formData = formdataParser(form)
+
 	if (valid) {
 		await subdirectorVisitServices
 			.create(formdataParser(form))
@@ -82,16 +96,13 @@ const onSubmit = async () => {
 						});
 					}
 				} else {
-					Swal.fire('', 'No se pudo crear', 'error');
+					Swal.fire('Error', 'Error al crear la visita', 'error')
 				}
 			});
 	} else {
 		alerts.validation();
 	}
 };
-const prueba = (event: any) => {
-	console.log(event);
-}
 </script>
 
 <template>
@@ -206,8 +217,8 @@ const prueba = (event: any) => {
 				v-model="form.file"
 				name="file"
 				class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
-				@addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
-				@removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }" />
+				@change="selectFile" 
+				/>
 		</div>
 	</div>
 

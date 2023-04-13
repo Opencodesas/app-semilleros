@@ -5,21 +5,6 @@ import { Header, Item } from 'vue3-easy-data-table';
 import FormActivity from './Form.vue'
 
 const router = useRouter();
-const { find } = useApiV1();
-
-// const { state: methodologist, isLoading, error, execute } = useAsyncState(async () => {
-//     return await find<{ items: Item[] }>('methodologist_visit').then((response) => {
-//         console.log(response.data.items)
-//         return response.data.items
-//     })
-// }, null)
-
-// onBeforeMount(async () => {
-//     await methodologistVisitServices.getAll().then((response) => {
-//         console.log(response?.data);
-//         items.value = response?.data.items
-//     })
-// })
 
 const create = () => {
 	setLoading(true);
@@ -37,89 +22,67 @@ const search = ref('');
 const headers: Header[] = [
 	{ text: 'Nro.', value: 'id' },
 	{ text: 'Fecha', value: 'date_visit' },
-	{ text: 'Municipio', value: 'municipality' },
-	{ text: 'Coordinador', value: 'coordinator_name' },
-	{ text: 'Escenario Deportivo', value: 'sport_scene' },
+	{ text: 'Municipio', value: 'municipalities.name' },
+	{ text: 'Coordinador', value: 'creator.name' },
+	{ text: 'Escenario Deportivo', value: 'scene' },
 	{ text: 'Estado', value: 'status' },
 	{ text: 'Acciones', value: 'actions' },
 ];
 
 const items = ref<Item[]>([
-	{
-		id: '1',
-		date_visit: '2021-05-01',
-		municipality: 'Palmira',
-		coordinator_name: 'Pepito',
-		sport_scene: 'Cancha',
-		status: {
-			id: 2,
-			name: 'En Revisión',
-			slug: 'ENR',
-		},
-		actions: 'actions',
-	},
-	{
-		id: '2',
-		date_visit: '2021-05-01',
-		municipality: 'Palmira',
-		coordinator_name: 'Pepito',
-		sport_scene: 'Cancha',
-		status: {
-			id: 2,
-			name: 'Aprobado',
-			slug: 'APR',
-		},
-		actions: 'actions',
-	},
-	{
-		id: '3',
-		date_visit: '2023-02-27',
-		municipality: 'Jamundi',
-		coordinator_name: 'Oscar Martinez',
-		sport_scene: 'Cancha Marcella',
-		status: {
-			id: 2,
-			name: 'Rechazado',
-			slug: 'REC',
-		},
-	},
+	// {
+	// 	id: '1',
+	// 	date_visit: '2021-05-01',
+	// 	municipality: 'Palmira',
+	// 	coordinator_name: 'Pepito',
+	// 	sport_scene: 'Cancha',
+	// 	status: {
+	// 		id: 2,
+	// 		name: 'En Revisión',
+	// 		slug: 'ENR',
+	// 	},
+	// 	actions: 'actions',
+	// },
+	// {
+	// 	id: '2',
+	// 	date_visit: '2021-05-01',
+	// 	municipality: 'Palmira',
+	// 	coordinator_name: 'Pepito',
+	// 	sport_scene: 'Cancha',
+	// 	status: {
+	// 		id: 2,
+	// 		name: 'Aprobado',
+	// 		slug: 'APR',
+	// 	},
+	// 	actions: 'actions',
+	// },
+	// {
+	// 	id: '3',
+	// 	date_visit: '2023-02-27',
+	// 	municipality: 'Jamundi',
+	// 	coordinator_name: 'Oscar Martinez',
+	// 	sport_scene: 'Cancha Marcella',
+	// 	status: {
+	// 		id: 2,
+	// 		name: 'Rechazado',
+	// 		slug: 'REC',
+	// 	},
+	// },
 ]);
 
 const dataSearch = computed(() => searchData(items.value, search.value));
 
-// const dataSearch = computed<Item[]>(() => {
-// 	if (items.value) {
-// 		const searchValue = search.value.toLowerCase();
-// 		return items.value.filter(
-// 			(item) =>
-// 				item?.date_visit.includes(searchValue) ||
-// 				item?.municipality.toLowerCase().includes(searchValue) ||
-// 				item?.coordinator_name.toLowerCase().includes(searchValue) ||
-// 				item?.sport_scene.toLowerCase().includes(searchValue) ||
-// 				item?.evaluation.toLowerCase().includes(searchValue) ||
-// 				item?.status.name.toLowerCase().includes(searchValue) ||
-// 				item?.methodologist_name.toLowerCase().includes(searchValue) ||
-// 				item?.monitor_name.toLowerCase().includes(searchValue)
-// 		);
-// 	}
-// 	return items.value;
-// });
+onMounted(async () => {
+	await transversalActivityServices.getAll().then((response) => {
+		items.value = response?.data.items;
+
+	});
+});
 </script>
 
 <template>
-	<div class="flex items-center mt-8 intro-y">
-		<h2 class="mr-auto text-lg font-medium">Listado Actividades Transversales</h2>
-		<div class="w-full sm:w-auto flex mt-4 sm:mt-0">
-			<Button
-				variant="primary"
-				class="btn btn-primary"
-				@click="create">
-				Crear Actividad
-			</Button>
-		</div>
-	</div>
 	<!-- BEGIN: Page Layout -->
-	<div class="p-5 mt-5 intro-y box">
+	<div class="p-5 intro-y box">
 		<CommonInput
 			type="search"
 			name="search"

@@ -7,6 +7,7 @@ import { required } from '@vuelidate/validators';
 import Swal from 'sweetalert2';
 
 const store = onboardingStore();
+const urlStorage = `${import.meta.env.VITE_BASE_URL}/storage/`;
 
 const { multiple } = useFilepondEvents();
 const router = useRouter();
@@ -70,7 +71,7 @@ const evaluationList = [
 	{ label: 'Rechazada', value: 2 },
 ];
 const v$ = useVuelidate(form_rules, form);
-
+let file;
 const fetch = async () => {
 	await subdirectorVisitServices.get(id as string).then((response) => {
 		if (response?.status == 200 || response?.status == 201) {
@@ -89,13 +90,13 @@ const fetch = async () => {
 			form.file = response.data.items.file;
 			form.status_id = response.data.items.status_id;
 			form.reject_message = response.data.items.reject_message;
+			file = `http://localhost:8000/storage/${form.file}`;
 			dataLoaded.value = true;
 		} else {
 			Swal.fire('', 'No se pudieron obtener los datos', 'error');
 		}
 	});
 };
-
 onMounted(() => {
 	fetch();
 });
@@ -125,9 +126,8 @@ const onSubmit = async () => {
 
 const disableElements = computed(() => {
 	return form.status_id == '4' ? false : true; //id: 4 => Rechazado => REC
-})
+});
 const download = () => {};
-
 </script>
 
 <template>
@@ -156,23 +156,23 @@ const download = () => {};
 				label="Fecha  *"
 				name="date_visit"
 				v-model="form.date_visit"
-				:validator="v$" 
-				:disabled="disableElements"/>
+				:validator="v$"
+				:disabled="disableElements" />
 			<CommonInput
 				type="time"
 				label="Hora  *"
 				name="hour_visit"
 				v-model="form.hour_visit"
-				:validator="v$" 
-				:disabled="disableElements"/>
+				:validator="v$"
+				:disabled="disableElements" />
 			<CommonSelect
 				label="Municipio *"
 				name="municipality_id"
 				class="cursor-pointer"
 				v-model="form.municipality_id"
 				:validator="v$"
-				:options="municipalities" 
-				:disabled="disableElements"/>
+				:options="municipalities"
+				:disabled="disableElements" />
 
 			<CommonInput
 				type="text"
@@ -180,32 +180,32 @@ const download = () => {};
 				label="Corregimiento / Vereda *"
 				name="sidewalk"
 				v-model="form.sidewalk"
-				:validator="v$" 
-				:disabled="disableElements"/>
+				:validator="v$"
+				:disabled="disableElements" />
 			<CommonSelect
 				label="Monitor *"
 				name="monitor_id"
 				class="cursor-pointer"
 				v-model="form.monitor_id"
 				:validator="v$"
-				:options="monitorList" 
-				:disabled="disableElements"/>
+				:options="monitorList"
+				:disabled="disableElements" />
 			<CommonSelect
 				label="Disciplinas *"
 				name="discipline_id"
 				class="cursor-pointer"
 				v-model="form.discipline_id"
 				:validator="v$"
-				:options="disciplines" 
-				:disabled="disableElements"/>
+				:options="disciplines"
+				:disabled="disableElements" />
 			<CommonInput
 				type="text"
 				placeholder="Ingrese"
 				label="Escenario deportivo *"
 				name="sports_scene"
 				v-model="form.sports_scene"
-				:validator="v$" 
-				:disabled="disableElements"/>
+				:validator="v$"
+				:disabled="disableElements" />
 			<CommonInput
 				type="number"
 				min="0"
@@ -213,24 +213,24 @@ const download = () => {};
 				label="Cobertura de benificiario *"
 				name="beneficiary_coverage"
 				v-model="form.beneficiary_coverage"
-				:validator="v$" 
-				:disabled="disableElements"/>
+				:validator="v$"
+				:disabled="disableElements" />
 			<CommonSelect
 				label="Cumple con el desarrollo tecnico del mes *"
 				name="technical"
 				class="cursor-pointer"
 				v-model="form.technical"
 				:validator="v$"
-				:options="evaluationList" 
-				:disabled="disableElements"/>
+				:options="evaluationList"
+				:disabled="disableElements" />
 			<CommonSelect
 				label="Apoyo a eventos *"
 				name="event_support"
 				class="cursor-pointer"
 				v-model="form.event_support"
 				:validator="v$"
-				:options="event_supportList" 
-				:disabled="disableElements"/>
+				:options="event_supportList"
+				:disabled="disableElements" />
 		</div>
 		<div class="mt-6 intro-y">
 			<CommonTextarea
@@ -239,8 +239,8 @@ const download = () => {};
 				placeholder="Ingrese las Descripcion"
 				name="description"
 				v-model="form.description"
-				:validator="v$" 
-				:disabled="disableElements"/>
+				:validator="v$"
+				:disabled="disableElements" />
 		</div>
 		<div class="mt-6 intro-y">
 			<CommonTextarea
@@ -249,8 +249,8 @@ const download = () => {};
 				placeholder="Ingrese las observaciones"
 				name="observations"
 				v-model="form.observations"
-				:validator="v$" 
-				:disabled="disableElements"/>
+				:validator="v$"
+				:disabled="disableElements" />
 		</div>
 		<div class="p-5 mt-6 intro-y">
 			<FormLabel
@@ -261,35 +261,35 @@ const download = () => {};
 			<img
 				:alt="`Evidencia de la visita del subdirector`"
 				class="m-auto border rounded-lg"
-				src="/semilleros.png"
+				:src="`${urlStorage}/${form.file}`"
 				width="400" />
 		</div>
 		<div class="p-5 mt-6 intro-y">
-				<CommonFile
-					:validator="v$"
-					v-model="form.file"
-					name="file"
-					class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
-					v-if="!disableElements"
-					@addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
-					@removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }" />
-			</div>
+			<CommonFile
+				:validator="v$"
+				v-model="form.file"
+				name="file"
+				class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
+				v-if="!disableElements"
+				@addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
+				@removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }" />
+		</div>
 	</div>
 
 	<div class="mt-6 flex justify-center col-span-1 md:col-span-2">
-			<Button
-				v-if="!disableElements"
-				@click="onSubmit"
-				variant="primary">
-				Editar visita
-			</Button>
+		<Button
+			v-if="!disableElements"
+			@click="onSubmit"
+			variant="primary">
+			Editar visita
+		</Button>
 
-			<Button
-				v-else-if="form.status_id == '1'"
-				type="button"
-				variant="primary"
-				@click="download">
-				Descargar visita
-			</Button>
-		</div>
+		<Button
+			v-else-if="form.status_id == '1'"
+			type="button"
+			variant="primary"
+			@click="download">
+			Descargar visita
+		</Button>
+	</div>
 </template>

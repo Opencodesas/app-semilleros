@@ -17,7 +17,12 @@ export const searchData = (items: Item[], search: String) => {
 
 				//Para visita personalizadas psicosocial (se excluyen los que ya estan arriba)
 				item.month?.toLowerCase().includes(searchValue) ||
-				item.beneficiary?.toLowerCase().includes(searchValue) 		
+				item.beneficiary?.toLowerCase().includes(searchValue) 		||
+			
+				//Para actividades transversales
+				item.municipalities?.name?.toLowerCase().includes(searchValue) ||
+				item.creator?.name?.toLowerCase().includes(searchValue) ||
+				item.scene?.toLowerCase().includes(searchValue)
 		);
 	}
 	return items
