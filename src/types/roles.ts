@@ -14,6 +14,7 @@ type roles = "apoyo_administrativo" |
 "psicologo" |
 "root" |
 "subdirector_tecnico" |
-"super.root";
+"super.root" |
+"director_administrator";
 
 export default roles

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
 import customVisit from './customVisit/Index.vue'
+import visit from './visit/Index.vue'
 
 const route = useRoute()
 
@@ -27,7 +28,7 @@ const router = useRouter()
         </TabList>
         <TabPanels>
             <TabPanel>
-                <!-- <Crud :headers="headerVisits" :items="items" /> -->
+                <visit />
             </TabPanel>
             <TabPanel>
                 <customVisit />
