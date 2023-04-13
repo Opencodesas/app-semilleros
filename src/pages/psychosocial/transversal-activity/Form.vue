@@ -7,6 +7,8 @@ const { multiple } = useFilepondEvents();
 const router = useRouter();
 
 const form = reactive({
+	status: '',
+	rejection_message: '',
 	municipality_id: '',
 	date_visit: '',
 	nro_assistants: 0,
@@ -17,7 +19,7 @@ const form = reactive({
 	team_socialization: '',
 	development_activity: '',
 	content_network: '',
-	files: [],
+	file: [],
 });
 
 const form_rules = computed(() => ({
@@ -31,32 +33,57 @@ const form_rules = computed(() => ({
 	team_socialization: { required },
 	development_activity: { required },
 	content_network: { required },
-	files: { required },
+	file: { required },
 }));
 
 const v$ = useVuelidate(form_rules, form);
-
+const foto = ref(null);
 const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
 }, null);
+let file: any = ref(null);
 
+const obtenerImagen = (e: any) => {
+	file = e.target.files[0];
+	console.log(file);
+};
 const onSubmit = async () => {
-	const valid = await v$.value.$validate();
-	console.log(form);
+	// console.log(form.file[0]);
+	// file = form.file[0] as never[];
+	console.log(form.file);
+	const formData = new FormData();
+	formData.append('municipality_id', form.municipality_id);
+	formData.append('date_visit', form.date_visit);
+	formData.append('nro_assistants', form.nro_assistants);
+	formData.append('activity_name', form.activity_name);
+	formData.append('objective_activity', form.objective_activity);
+	formData.append('scene', form.scene);
+	formData.append('meeting_planing', form.meeting_planing);
+	formData.append('team_socialization', form.team_socialization);
+	formData.append('development_activity', form.development_activity);
+	formData.append('content_network', form.content_network);
+	formData.append('file', form.file);
+	console.log(formData);
+	// console.log(form);
+
+
+
+	const valid = await v$.value.$validate()
 	if (form.nro_assistants < 0) {
 		alerts.error('El numero de asistentes no puede ser negativo');
 		return;
 	}
 	if (valid) {
 		await transversalActivityServices
-			.create(formdataParser(form))
+			.create(formData)
 			.then((response) => {
+				console.log(response);
 				if (response?.status == 200 || response?.status == 201) {
 					alerts.create();
 					setLoading(true);
 					router
 						.push({
-							name: 'psychosocial.transversal-activity.index',
+							name: 'psychosocial.visits',
 						})
 						.finally(() => {
 							setLoading(false);
@@ -68,7 +95,6 @@ const onSubmit = async () => {
 	}
 };
 </script>
-
 <template>
 	<div class="flex items-center mt-8 intro-y">
 		<div class="flex items-center space-x-4">
@@ -78,6 +104,7 @@ const onSubmit = async () => {
 		</div>
 	</div>
 
+	<form enctype="multipart/form-data" >
 	<div class="p-5 mt-5 intro-y box">
 		<div class="grid grid-cols-1 gap-3 justify-evenly">
 			<div class="grid md:grid-cols-3 gap-6">
@@ -169,21 +196,23 @@ const onSubmit = async () => {
 		<div class="p-5 intro-y">
 			<CommonDropzone
 				class="w-3/4 mx-auto"
-				name="files"
+				name="file"
 				:accept-multiple="true"
-				v-model="form.files"
-				@addfile="(error: any, value: filePondValue) => { form.files = multiple.addfile({ error, value }, form.files) as never[] }"
-				@removefile="(error: any, value: filePondValue) => { form.files = multiple.removefile({ error, value }, form.files) as never[] }"
-				:validator="v$" />
+				v-model="form.file"
+				@change="obtenerImagen"
+				@addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
+				@removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }"
+				:validator="v$" 
+				:files="form.file"/>
 		</div>
 	</div>
-
-	<div class="mt-6 flex justify-end col-span-1 md:col-span-2">
+	<div class="mt-6 flex justify-center col-span-1 md:col-span-2">
 		<Button
 			variant="primary"
 			class="btn btn-primary"
-			@click="onSubmit">
+			@click.prevent="onSubmit">
 			Registrar
 		</Button>
 	</div>
+	</form>
 </template>
