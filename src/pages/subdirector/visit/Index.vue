@@ -22,31 +22,28 @@ const items = ref<Item[]>([]);
 // 	});
 // });
 const headers: Header[] = [
-	{ text: 'No', value: 'id' },
-	{ text: 'Fecha', value: 'date_visit' },
-	{ text: 'Municipio', value: 'municipality.name' },
-	{ text: 'Monitor', value: 'monitor.name' },
+	{ text: 'No', value: 'id', sortable: true },
+	{ text: 'Fecha', value: 'date_visit', sortable: true },
+	{ text: 'Municipio', value: 'municipality.name', sortable: true },
+	{ text: 'Monitor', value: 'monitor.name', sortable: true },
 	{ text: 'Escenario Deportivo', value: 'sport_scene' },
-	{ text: 'Estado', value: 'status' },
+	{ text: 'Estado', value: 'status', sortable: true },
 	{ text: 'Acciones', value: 'actions' },
 ];
 
-onBeforeMount(async () => {
+onMounted(async () => {
 	const res = await subdirectorVisitServices.getAll();
 	items.value = await res?.data.items;
 	const statues = await getSelectStatus();
-    let index = 0;
-
-    while(true){
-        if (index == items.value.length) {
-            break;
-        }
-		console.log(index)
-        items.value[index].status = statues[items.value[index].status_id.id - 1];
-        index ++;
-    }
-
-    console.log(items.value)
+	let index = 0;
+	console.log(items.value[1].status);
+	while (true) {
+		if (index == items.value.length) {
+			break;
+		}
+		items.value[index].status = statues[items.value[index].status_id.id - 1];
+		index++;
+	}
 });
 
 const search = ref('');
