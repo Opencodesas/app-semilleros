@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Header, Item } from 'vue3-easy-data-table';
 import subdirectoVisitReview from './subdirectorVisitReview.vue';
-//import { subdirectorVisitServices } from '@/services/subdirectorVisitServices';
 
 const { multiple } = useFilepondEvents();
 
@@ -22,57 +21,48 @@ const header: Header[] = [
 
 //Traer visitas en revisión
 
-// const items = ref<Item[]>([
-// 	{
-// 		id: '1',
-// 		date_visit: '2023-03-11',
-// 		monitor: 'Juan',
-// 		municipality: 'Cartago',
-// 		sport_arena: 'Estadio Nacional',
-// 		status: { id: 2, name: 'En Revisión', slug: 'ENR' },
-// 	},
-// 	{
-// 		id: '2',
-// 		date_visit: '2023-04-11',
-// 		monitor: 'Pedro',
-// 		municipality: 'Cartago',
-// 		sport_arena: 'Estadio Nacional',
-// 		status: { id: 2, name: 'En Revisión', slug: 'ENR' },
-// 	},
-// 	{
-// 		id: '3',
-// 		date_visit: '2023-02-11',
-// 		monitor: 'Juan',
-// 		municipality: 'Cartago',
-// 		sport_arena: 'Estadio Nacional',
-// 		status: { id: 2, name: 'En Revisión', slug: 'ENR' },
-// 	},
-// 	{
-// 		id: '4',
-// 		date_visit: '2023-02-11',
-// 		monitor: 'Maria',
-// 		municipality: 'Cartago',
-// 		sport_arena: 'Estadio Nacional',
-// 		status: { id: 2, name: 'En Revisión', slug: 'ENR' },
-// 	},
-// 	{
-// 		id: '5',
-// 		date_visit: '2023-02-11',
-// 		monitor: 'Jose',
-// 		municipality: 'Cartago',
-// 		sport_arena: 'Estadio Nacional',
-// 		status: { id: 2, name: 'En Revisión', slug: 'ENR' },
-// 	},
-// ]);
-
-const items = ref<Item[]>([]);
-// onBeforeMount(async () => {
-//     await subdirectorVisitServices.getAll().then((response) => {
-//          items.value = response?.data.items
-//      });
-// });
-
-
+const items = ref<Item[]>([
+	{
+		id: '1',
+		date_visit: '2023-03-11',
+		monitor: 'Juan',
+		municipality: 'Cartago',
+		sport_arena: 'Estadio Nacional',
+		status: { id: 2, name: 'En Revisión', slug: 'ENR' },
+	},
+	{
+		id: '2',
+		date_visit: '2023-04-11',
+		monitor: 'Pedro',
+		municipality: 'Cartago',
+		sport_arena: 'Estadio Nacional',
+		status: { id: 2, name: 'En Revisión', slug: 'ENR' },
+	},
+	{
+		id: '3',
+		date_visit: '2023-02-11',
+		monitor: 'Juan',
+		municipality: 'Cartago',
+		sport_arena: 'Estadio Nacional',
+		status: { id: 2, name: 'En Revisión', slug: 'ENR' },
+	},
+	{
+		id: '4',
+		date_visit: '2023-02-11',
+		monitor: 'Maria',
+		municipality: 'Cartago',
+		sport_arena: 'Estadio Nacional',
+		status: { id: 2, name: 'En Revisión', slug: 'ENR' },
+	},
+	{
+		id: '5',
+		date_visit: '2023-02-11',
+		monitor: 'Jose',
+		municipality: 'Cartago',
+		sport_arena: 'Estadio Nacional',
+		status: { id: 2, name: 'En Revisión', slug: 'ENR' },
+	},
+]);
 
 //Filter
 const search = ref('');

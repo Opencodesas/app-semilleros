@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { searchData } from '@/composables/search';
 import { onboardingStore } from '@/stores/onboardingStore';
 import { Header, Item } from 'vue3-easy-data-table';
 
@@ -12,44 +13,64 @@ const create = () => {
 		setLoading(false);
 	});
 };
-const items = ref<Item[]>([]);
 
 // onBeforeMount(async () => {
-// 	subdirectorVisitServices.then((response) => {
-// 		items.value = response?.data.items;
-// 		console.log(response?.data.items);
-// 		return items;
+// 	await subdirectorVisitServices.getAll(id = store.user.id).then((response) => {
+// 		items.value = response?.data.items
 // 	});
 // });
+
 const headers: Header[] = [
 	{ text: 'No', value: 'id' },
 	{ text: 'Fecha', value: 'date_visit' },
-	{ text: 'Municipio', value: 'municipality.name' },
-	{ text: 'Monitor', value: 'monitor.name' },
+	{ text: 'Municipio', value: 'municipality' },
+	{ text: 'Monitor', value: 'monitor_name' },
 	{ text: 'Escenario Deportivo', value: 'sport_scene' },
 	{ text: 'Estado', value: 'status' },
 	{ text: 'Acciones', value: 'actions' },
 ];
 
-onBeforeMount(async () => {
-	const res = await subdirectorVisitServices.getAll();
-	items.value = await res?.data.items;
-	const statues = await getSelectStatus();
-    let index = 0;
-
-    while(true){
-        if (index == items.value.length) {
-            break;
-        }
-		console.log(index)
-        items.value[index].status = statues[items.value[index].status_id.id - 1];
-        index ++;
-    }
-
-    console.log(items.value)
-});
-
+// const items = ref<Item[]>([]);
 const search = ref('');
+const items = ref<Item[]>([
+	{
+		id: '1',
+		date_visit: '2023-02-15',
+		municipality: 'Jamundi',
+		monitor_name: 'Oscar Martinez',
+		sport_scene: 'Cancha Marcella',
+		status: {
+			id: 2,
+			name: 'En Revisión',
+			slug: 'ENR',
+		},
+	},
+	{
+		id: '2',
+		date_visit: '2023-02-20',
+		municipality: 'Jamundi',
+		monitor_name: 'Oscar Martinez',
+		sport_scene: 'Cancha Marcella',
+		status: {
+			id: 2,
+			name: 'En Revisión',
+			slug: 'ENR',
+		},
+	},
+	{
+		id: '3',
+		date_visit: '2023-02-27',
+		municipality: 'Jamundi',
+		monitor_name: 'Oscar Martinez',
+		sport_scene: 'Cancha Marcella',
+		status: {
+			id: 2,
+			name: 'Rechazado',
+			slug: 'REC',
+		},
+	},
+]);
+
 const data = computed(() => searchData(items.value, search.value));
 </script>
 
