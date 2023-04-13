@@ -1,15 +1,13 @@
 <script setup lang="ts">
 import useVuelidate from '@vuelidate/core'
 import { required } from '@/utils/validators'
-import { onboardingStore } from '@/stores/onboardingStore'
-import CommonFile from '@/components/CommonFile.vue'
 import FormSwitch from "@/base-components/Form/FormSwitch";
 import { filePondValue } from '@/composables/useFilepondEvents';
-import Swal from 'sweetalert2';
+import { visitServices } from '@/services/psychosocial/visitServices';
+
 const { multiple } = useFilepondEvents();
-const store = onboardingStore();
+
 const form = reactive({
-    status_id: '2',
     date_visit: '',
     municipality_id: '',
     monitor_id: '',
@@ -23,8 +21,9 @@ const form = reactive({
     description: '',
     observations: '',
     file: [],
-    //created_by: store.user.id,
 });
+//status_id: '2',
+//created_by: store.user.id,
 const form_rules = computed(() => ({
     date_visit: { required },
     municipality_id: { required },
@@ -40,8 +39,13 @@ const form_rules = computed(() => ({
     observations: { required },
     file: { required },
 }));
-const municipalities = ref([]);
+
+const municipalities = asyncComputed(async () => {
+    return await getSelect(['municipalities'])
+}, null)
+
 const disciplinesList = ref([]);
+
 const monitorList = [
     { label: "Joselito", value: 1 },
     { label: "Miguelito", value: 2 },
@@ -50,38 +54,18 @@ const v$ = useVuelidate(form_rules, form)
 const { isProvider } = useProvider()
 const router = useRouter()
 
-const fetch = async () => {
-    await store.getListSelect().then((response) => {
-        console.log(`data fetch: ${response?.data}`);
-        if (response?.status == 200 || response?.status == 201) {
-            municipalities.value = JSON.parse(JSON.stringify(response.data["municipalities"]));
-            disciplinesList.value = JSON.parse(JSON.stringify(response.data["diciplines"]));
-        } else {
-            Swal.fire("", "No se pudieron obtener los datos", "error");
-        }
-    });
-};
-onMounted(() => {
-    fetch();
-});
+
 const onSubmit = async () => {
     const valid = await v$.value.$validate()
     if (valid) {
-        await contractorServices.create(formdataParser(form)).then((response) => {
+        await visitServices.create(formdataParser(form)).then((response) => {
             if (response) {
                 if (response.status >= 200 && response.status <= 300) {
                     alerts.create()
                     setLoading(true)
-                    if (isProvider('assistants')) {
                         router.push('').finally(() => {
                             setLoading(false)
                         })
-                    }
-                    else {
-                        router.push('').finally(() => {
-                            setLoading(false)
-                        })
-                    }
                 }
             }
         })
@@ -113,11 +97,11 @@ const onSubmit = async () => {
                         name="numberBeneficiaries" v-model="form.numberBeneficiaries" :validator="v$" />
                     <CommonInput type="text" label="Escenario Deportivo *" placeholder="Escriba..." name="sports_scene"
                         v-model="form.sports_scene" :validator="v$" />
-                    <div class="col-span-2 sm:grid-cols-3">
+                    <div class="col-span-2">
                         <CommonInput label="Objetivo del acompañamiento *" placeholder="Escriba..." name="objetive"
                             v-model="form.objetive" :validator="v$" />
                     </div>
-                    <div class="p-5 intro-y box col-span-2 sm:grid-cols-3 bg-gray-200 flex flex-col gap-3">
+                    <div class="p-5 intro-y box col-span-2 bg-gray-200 flex flex-col gap-3">
                         <div class="">
 
                             <FormSwitch.Input name="beneficiaries_knows_project" id="beneficiaries_knows_project"

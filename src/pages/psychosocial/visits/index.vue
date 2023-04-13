@@ -185,24 +185,24 @@ provide('selectedTab', selectedTab)
 
 const visits = ref<Item[]>([]);
 const searchVisits = ref('');
-const dataSearchVisits = computed(() => searchData(visits.value, searchVisits.value));
+const dataSearchVisits = computed(() => searchData(items.value, searchVisits.value));
 
 
 const customVisits = ref<Item[]>([]);
 const searchCustomVisits = ref('');
-const dataSearchCustomVisits = computed(() => searchData(customVisits.value, searchCustomVisits.value));
+const dataSearchCustomVisits = computed(() => searchData(items2.value, searchCustomVisits.value));
 
 const transversalActivities = ref<Item[]>([]);
 const searchTransversalActivities = ref('');
 const dataSearchTransversalActivities = computed(() => searchData(transversalActivities.value, searchTransversalActivities.value));
 
 
-onBeforeMount(async () => {
-	await customVisitServices.getAll().then((response) => {
-		customVisits.value = response?.data.items
-		console.log(customVisits.value)
-	});
-});
+// onBeforeMount(async () => {
+// 	await customVisitServices.getAll().then((response) => {
+// 		customVisits.value = response?.data.items
+// 		console.log(customVisits.value)
+// 	});
+// });
 
 </script>
 

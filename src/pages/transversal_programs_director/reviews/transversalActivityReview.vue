@@ -37,13 +37,13 @@ const form = reactive({
     network_content: '',
     files: [],
     createdBy: { ide: '1', name: 'Joselito' },
-    status: "",
-    reason: 'Rechazado ya que...',
+    status_id: "",
+    rejection_message: 'Rechazado ya que...',
 });
 
 const form_rules = computed(() => ({
-    reason: { required },
-    status: { required },
+    rejection_message: { required },
+    status_id: { required },
 }));
 
 const v$ = useVuelidate(form_rules, form);
@@ -58,7 +58,7 @@ const yes_no_List = [
     { label: "No", value: 2 },
 ];
 
-const statusesList = ref<selectOption[]>([
+const status_idesList = ref<selectOption[]>([
     { label: 'Aprobado', value: '1' },
     { label: 'Rechazado', value: '4' }
 ])
@@ -95,7 +95,7 @@ onMounted(async () => {
     console.log(route);
     await getData();
     dataLoaded.value = true;
-    console.log(form.status)
+    console.log(form.status_id)
 });
 
 
@@ -121,8 +121,8 @@ const onSubmit = async () => {
     }
 }
 
-const defineReason = () => {
-    if (form.status == '1') form.reason = '';
+const definerejection_message = () => {
+    if (form.status_id == '1') form.rejection_message = '';
 }
 </script>
 
@@ -133,11 +133,11 @@ const defineReason = () => {
 
     <div class="space-y-2 box px-5 py-4">
         <h2 class="font-bold">Revisión</h2>
-        <CommonSelect @select="defineReason" label="Estado de la tarea *" name="status" v-model="form.status"
-            :validator="v$" :options="statusesList" />
-        <div v-if="form.status == '4'" class="pt-4">
-            <CommonTextarea name="reason" class="" label="Comentario *" placeholder="Escriba..." rows="5"
-                v-model="form.reason" :validator="v$" />
+        <CommonSelect @select="definerejection_message" label="Estado de la tarea *" name="status_id" v-model="form.status_id"
+            :validator="v$" :options="status_idesList" />
+        <div v-if="form.status_id == '4'" class="pt-4">
+            <CommonTextarea name="rejection_message" class="" label="Comentario *" placeholder="Escriba..." rows="5"
+                v-model="form.rejection_message" :validator="v$" />
         </div>
         <div class="mt-6 flex justify-end col-span-1 md:col-span-2 border-none gap-1" tabindex="1">
             <Button variant="danger" @click="props.closeModal">Cerrar</Button>
