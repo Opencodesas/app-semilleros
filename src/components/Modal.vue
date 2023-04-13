@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Lucide from '@/base-components/Lucide';
 import { required } from '@/utils/validators';
 import {
 	Dialog,
@@ -21,6 +22,9 @@ function openModal() {
 const props = defineProps<{
 	Form: Object;
 	id_review: number;
+	payloadFunctions?: Object;
+	label?: string;
+	icon?: string;
 }>();
 
 const form = reactive({
@@ -34,7 +38,6 @@ const formRules = computed(() => ({
 	note: form.status == '4' ? { required } : {},
 	identifier_number: form.status != '4' ? { required } : {},
 }));
-
 </script>
 
 <template>
@@ -44,9 +47,9 @@ const formRules = computed(() => ({
 			outline-secondary
 			@click="openModal()">
 			<Lucide
-				icon="Eye"
+				:icon="props.icon?props.icon.toString():'Eye'"
 				class="mr-2" />
-			<span class="text-sm">Revisar</span>
+			<span class="text-sm">{{ props.label?props.label:'Revisar' }}</span>
 		</Button>
 	</div>
 	<!-- END: Modal Toggle -->
@@ -84,9 +87,10 @@ const formRules = computed(() => ({
 						leave-from="opacity-100 scale-100"
 						leave-to="opacity-0 scale-95">
 						<DialogPanel
-							class="transform overflow-hidden rounded-md bg-white p-6 text-left align-middle shadow-xl transition-all">
+							class="transform overflow-hidden rounded-md bg-white p-6 pt-2 text-left align-middle shadow-xl transition-all"
+							scrollClass="dialogPanel">
 							<!-- <Form /> -->
-							<props.Form :closeModal="closeModal" :id_review="id_review" />
+							<props.Form :closeModal="closeModal" :id_review="props.id_review" :payloadFunctions="payloadFunctions"/>
 						</DialogPanel>
 					</TransitionChild>
 				</div>

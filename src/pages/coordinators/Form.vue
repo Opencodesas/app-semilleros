@@ -1,49 +1,50 @@
 <script setup lang="ts">
 import CommonFile from '@/components/CommonFile.vue';
 import { filePondValue } from '@/composables/useFilepondEvents';
+import { onboardingStore } from '@/stores/onboardingStore';
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
 import Swal from 'sweetalert2';
 
 const { multiple } = useFilepondEvents();
+const store = onboardingStore();
 const router = useRouter();
 const route = useRoute();
 
 const form = reactive({
-	status_id: '',
 	rejection_message: '',
 	date_visit: '',
 	hour_visit: '',
-	municipality_id: '',
+	municipalitie_id: '',
 	sidewalk: '',
-	monitor_id: '',
+	user_id: '',
 	discipline_id: '',
 	sports_scene: '',
 	beneficiary_coverage: '',
-	technical: '',
-	event_support: '',
 	description: '',
 	observations: '',
 	file: [],
+	created_by: store.user.id,
+	status_id: '2',
 });
 
 const form_rules = computed(() => ({
-	status_id: {},
+	status_id: { required },
 	rejection_message: {},
 	date_visit: { required },
 	hour_visit: { required },
-	municipality_id: { required },
+	municipalitie_id: { required },
 	sidewalk: { required },
-	monitor_id: { required },
+	user_id: { required },
 	discipline_id: { required },
 	sports_scene: { required },
 	beneficiary_coverage: { required },
-	technical: { required },
-	event_support: { required },
 	description: { required },
 	observations: { required },
 	file: { required },
+	created_by: {},
 }));
+
 const disciplinesList = ref([]);
 const monitorList = [
 	{ label: 'Joselito', value: 1 },
@@ -67,36 +68,23 @@ const disciplines = asyncComputed(async () => {
 	return await getSelect(['disciplines']);
 }, null);
 
-const selectFile = (event: any) => {
-	form.file = event.target.files[0];
-}
-
-const formdataParser = (form: any) => {
-	const formData = new FormData();
-	Object.keys(form).forEach((key) => {
-		formData.append(key, form[key]);
-	});
-	return formData;
-};
-
 const onSubmit = async () => {
+	console.log(form);
 	const valid = await v$.value.$validate();
-	const formData = formdataParser(form)
-
 	if (valid) {
-		await subdirectorVisitServices
+		await coordinatorVisitServices
 			.create(formdataParser(form))
 			.then((response) => {
 				if (response) {
 					if (response.status >= 200 && response.status <= 300) {
 						alerts.create();
 						setLoading(true);
-						router.push({ name: 'subdirector_visit.index' }).finally(() => {
+						router.push({ name: 'coordinator_visit.index' }).finally(() => {
 							setLoading(false);
 						});
 					}
 				} else {
-					Swal.fire('Error', 'Error al crear la visita', 'error')
+					Swal.fire('', 'No se pudo crear', 'error');
 				}
 			});
 	} else {
@@ -108,9 +96,6 @@ const onSubmit = async () => {
 <template>
 	<div class="flex items-center mt-8 intro-y">
 		<div class="flex items-center space-x-4">
-			<CommonBackButton
-				:to="'subdirector_visit.index'"
-				title="Listado" />
 			<h2 class="mr-auto text-lg font-medium">Registrar visita</h2>
 		</div>
 	</div>
@@ -132,9 +117,9 @@ const onSubmit = async () => {
 			<CommonSelect
 				label="Municipio *"
 				placeholder="Seleccione"
-				name="municipality_id"
+				name="municipalitie_id"
 				class="cursor-pointer"
-				v-model="form.municipality_id"
+				v-model="form.municipalitie_id"
 				:validator="v$"
 				:options="municipalities" />
 
@@ -147,10 +132,10 @@ const onSubmit = async () => {
 				:validator="v$" />
 			<CommonSelect
 				label="Monitor *"
-				name="monitor_id"
+				name="user_id"
 				placeholder="Seleccione"
 				class="cursor-pointer"
-				v-model="form.monitor_id"
+				v-model="form.user_id"
 				:validator="v$"
 				:options="monitorList" />
 			<CommonSelect
@@ -176,22 +161,6 @@ const onSubmit = async () => {
 				name="beneficiary_coverage"
 				v-model="form.beneficiary_coverage"
 				:validator="v$" />
-			<CommonSelect
-				label="Cumple con el desarrollo tecnico del mes *"
-				name="technical"
-				placeholder="Seleccione"
-				class="cursor-pointer"
-				v-model="form.technical"
-				:validator="v$"
-				:options="evaluationList" />
-			<CommonSelect
-				label="Apoyo a eventos *"
-				name="event_support"
-				placeholder="Seleccione"
-				class="cursor-pointer"
-				v-model="form.event_support"
-				:validator="v$"
-				:options="event_supportList" />
 		</div>
 		<div class="mt-6 intro-y">
 			<CommonTextarea
@@ -217,12 +186,12 @@ const onSubmit = async () => {
 				v-model="form.file"
 				name="file"
 				class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
-				@change="selectFile" 
-				/>
+				@addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
+				@removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }" />
 		</div>
 	</div>
 
-	<div class="mt-6 flex justify-end col-span-1 md:col-span-2">
+	<div class="mt-6 flex justify-center col-span-1 md:col-span-2">
 		<Button
 			variant="primary"
 			class="btn btn-primary"

@@ -1,4 +1,4 @@
-const module = 'coordinator_visit'
+const module = 'coordinator_visits'
 
 export const coordinatorVisitServices = {
   get: async (id: string) => {
@@ -44,7 +44,7 @@ export const coordinatorVisitServices = {
     try {
       setLoading(true)
 
-      const response = await api.post(`/${apiPath}/${module}/${id}?_method=PUT`, payload).finally(() => {
+      const response = await api.post(`/${apiPath}/${module}/${id}`, payload).finally(() => {
         setLoading(false)
       })
 
