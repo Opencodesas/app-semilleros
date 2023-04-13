@@ -1,4 +1,4 @@
-let module = "psychosocial/custom-visits"
+let module = "custom_visits"
 
 export const customVisitServices = {
     get: async (id: string) => {

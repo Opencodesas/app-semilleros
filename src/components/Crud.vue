@@ -384,77 +384,77 @@ const selectedTab = inject('selectedTab', ref(0))
 	<div class="intro-y flex flex-col gap-2">
 		<section class="flex flex-col gap-3 lg:grid lg:grid-cols-4 lg:items-center">
 			<!-- <div class="grid grid-cols-2 gap-3">
-				                                    <div class="w-full">
-				                                        <BaseSelect label="BUSCAR EN" tooltip="Seleccione en que campo quiere buscar"
-				                                            placeholder="Seleccione" name="search_field" v-model="filters.search_field"
-				                                            :options="searchOptions" :validator="v$" />
-				                                    </div>
-				                                    <div class="w-full">
-				                                        <BaseInput type="text" label="VALOR" tooltip="Ingrese el valor a buscar" placeholder="Valor"
-				                                            name="search_value" v-model="filters.search_value" :validator="v$" />
-				                                    </div>
-				                                </div> -->
+					                                    <div class="w-full">
+					                                        <BaseSelect label="BUSCAR EN" tooltip="Seleccione en que campo quiere buscar"
+					                                            placeholder="Seleccione" name="search_field" v-model="filters.search_field"
+					                                            :options="searchOptions" :validator="v$" />
+					                                    </div>
+					                                    <div class="w-full">
+					                                        <BaseInput type="text" label="VALOR" tooltip="Ingrese el valor a buscar" placeholder="Valor"
+					                                            name="search_value" v-model="filters.search_value" :validator="v$" />
+					                                    </div>
+					                                </div> -->
 			<!-- <div v-if="show_date" class="flex flex-col justify-start h-full">
-				                                    <label for="regular-form-2" class="form-label font-bold min-w-max mr-2">FECHA RANGO</label>
-				                                    <div class="grid grid-cols-2 gap-1.5 w-full intro-x">
-				                                        <BaseInput class="" type="date" tooltip="Desde" name="date_criteria_start"
-				                                            v-model="filters.date_criteria_start" :validator="v$" />
-				                                        <BaseInput class="" type="date" tooltip="Hasta" name="date_criteria_end"
-				                                            v-model="filters.date_criteria_end" :validator="v$" />
-				                                    </div>
-				                                </div>
-				                                <div v-if="show_status" class="flex items-start gap-6 h-full">
-				                                    <div class="w-full intro-x">
-				                                        <BaseSelect label="ESTADO" tooltip="" placeholder="Seleccione" name="status_criteria"
-				                                            v-model="filters.status_criteria" :options="status_options" :validator="v$"
-				                                            :allowEmpty="true" />
-				                                    </div>
-				                                </div>
-				                                <div v-if="show_user_status" class="flex items-start gap-6 h-full">
-				                                    <div class="w-full intro-x">
-				                                        <BaseSelect label="ESTADO" tooltip="" placeholder="Seleccione" name="user_status_criteria"
-				                                            v-model="filters.user_status_criteria" :options="[
-				                                                { label: 'ACTIVO', value: '1' },
-				                                                { label: 'INACTIVO', value: '0' }
-				                                            ]" :validator="v$" :allowEmpty="false" />
-				                                    </div>
-				                                </div> -->
+					                                    <label for="regular-form-2" class="form-label font-bold min-w-max mr-2">FECHA RANGO</label>
+					                                    <div class="grid grid-cols-2 gap-1.5 w-full intro-x">
+					                                        <BaseInput class="" type="date" tooltip="Desde" name="date_criteria_start"
+					                                            v-model="filters.date_criteria_start" :validator="v$" />
+					                                        <BaseInput class="" type="date" tooltip="Hasta" name="date_criteria_end"
+					                                            v-model="filters.date_criteria_end" :validator="v$" />
+					                                    </div>
+					                                </div>
+					                                <div v-if="show_status" class="flex items-start gap-6 h-full">
+					                                    <div class="w-full intro-x">
+					                                        <BaseSelect label="ESTADO" tooltip="" placeholder="Seleccione" name="status_criteria"
+					                                            v-model="filters.status_criteria" :options="status_options" :validator="v$"
+					                                            :allowEmpty="true" />
+					                                    </div>
+					                                </div>
+					                                <div v-if="show_user_status" class="flex items-start gap-6 h-full">
+					                                    <div class="w-full intro-x">
+					                                        <BaseSelect label="ESTADO" tooltip="" placeholder="Seleccione" name="user_status_criteria"
+					                                            v-model="filters.user_status_criteria" :options="[
+					                                                { label: 'ACTIVO', value: '1' },
+					                                                { label: 'INACTIVO', value: '0' }
+					                                            ]" :validator="v$" :allowEmpty="false" />
+					                                    </div>
+					                                </div> -->
 		</section>
 		<!-- :sort-by="sorts.by"
-				                :filter-options="filter_options"
-				                :search-field="filters.search_field"
-				                :search-value="filters.search_value"
-				                :sort-type="sorts.type" -->
+					                :filter-options="filter_options"
+					                :search-field="filters.search_field"
+					                :search-value="filters.search_value"
+					                :sort-type="sorts.type" -->
 		<DataTable :headers="headers" :items="items" buttons-pagination :sort-by="sort.by" :sort-type="sort.type"
 			table-class-name="customize-table">
 			<!-- <template #header-status="{ text }">
-				                        <div class="flex gap-1 relative">
-				                            <p>{{ text }}</p>
-				                            <button @click="show_status = !show_status" :class="(show_status) ? 'opacity-100' : 'opacity-50'"
-				                                class="hover:opacity-100 text-primary transition">
-				                                <FilterIcon size="20" />
-				                            </button>
-				                        </div>
-				                    </template>
-				                    <template #header-user_status="{ text }">
-				                        <div class="flex gap-1 relative">
-				                            <p>{{ text }}</p>
-				                            <button @click="show_user_status = !show_user_status"
-				                                :class="(show_user_status) ? 'opacity-100' : 'opacity-50'"
-				                                class="hover:opacity-100 text-primary transition">
-				                                <FilterIcon size="20" />
-				                            </button>
-				                        </div>
-				                    </template>
-				                    <template #header-created_at="{ text }">
-				                        <div class="flex gap-1 relative">
-				                            <p>{{ text }}</p>
-				                            <button @click="show_date = !show_date" :class="(show_date) ? 'opacity-100' : 'opacity-50'"
-				                                class="hover:opacity-100 text-primary transition">
-				                                <FilterIcon size="20" />
-				                            </button>
-				                        </div>
-				                    </template> -->
+					                        <div class="flex gap-1 relative">
+					                            <p>{{ text }}</p>
+					                            <button @click="show_status = !show_status" :class="(show_status) ? 'opacity-100' : 'opacity-50'"
+					                                class="hover:opacity-100 text-primary transition">
+					                                <FilterIcon size="20" />
+					                            </button>
+					                        </div>
+					                    </template>
+					                    <template #header-user_status="{ text }">
+					                        <div class="flex gap-1 relative">
+					                            <p>{{ text }}</p>
+					                            <button @click="show_user_status = !show_user_status"
+					                                :class="(show_user_status) ? 'opacity-100' : 'opacity-50'"
+					                                class="hover:opacity-100 text-primary transition">
+					                                <FilterIcon size="20" />
+					                            </button>
+					                        </div>
+					                    </template>
+					                    <template #header-created_at="{ text }">
+					                        <div class="flex gap-1 relative">
+					                            <p>{{ text }}</p>
+					                            <button @click="show_date = !show_date" :class="(show_date) ? 'opacity-100' : 'opacity-50'"
+					                                class="hover:opacity-100 text-primary transition">
+					                                <FilterIcon size="20" />
+					                            </button>
+					                        </div>
+					                    </template> -->
 			<template #header-actions="{ text }">
 				<div class="flex justify-end">
 					{{ text }}
@@ -535,26 +535,21 @@ const selectedTab = inject('selectedTab', ref(0))
 						</template>
 					</template>
 					<template v-else-if="isProvider('subdirector')">
-						<template v-if="
-							item.status.slug === 'REC' ||
-							(item.status.slug === 'APR' && route.name !== 'review.index')
-						">
-							<Button v-if="item.status.slug === 'REC'" variant="outline-secondary"
+						<template v-if="route.name !== 'review.index'">
+							<Button variant="outline-secondary"
 								@click="editAction(item.id)">
-								<Lucide icon="FileEdit" class="mr-2" />
-								<span class="text-sm"> Editar </span>
+								<Lucide v-if="item.status.slug == 'REC'" icon="FileEdit" class="mr-2" />
+								<Lucide v-else icon="Eye" class="mr-2" />
+								<span v-if="item.status.slug == 'REC'" class="text-sm">
+									Editar
+								</span>
+								<span v-else class="text-sm">
+									Visualizar
+								</span>
 							</Button>
-							<!-- <Button
-												variant="outline-danger"
-												@click="onDeleteFnc(item.id)">
-												<Lucide
-													icon="Delete"
-													class="mr-2" />
-												<span class="text-sm"> Eliminar </span> 
-											</Button> -->
 						</template>
 						<template v-else-if="
-							item.status.slug === 'ENR' && route.name === 'review.index'
+							item.status_id.value === '2' && route.name === 'review.index'
 						">
 							<template v-if="props.Form!">
 								<Modal :Form="props.Form" :id_review="item.id" />
@@ -572,15 +567,15 @@ const selectedTab = inject('selectedTab', ref(0))
 										router.push({ name: 'psychosocial.custom-update', params: { id: item.id } })
 										break;
 									case 3:
-										router.push({ name: 'psychosocial.transversal-update', query: { id: item.id } })
+										router.push({ name: 'psychosocial.transversal-update', params: { id: item.id } })
 									//  default:
 									//     pruebas
 									//      break;
 								}
 							}">
-								<Lucide v-if="item.status.slug == 'REC'" icon="FileEdit" class="mr-2" />
+								<Lucide v-if="item.status.id == '4'" icon="FileEdit" class="mr-2" />
 								<Lucide v-else icon="Eye" class="mr-2" />
-								<span v-if="item.status.slug == 'REC'" class="text-sm">
+								<span v-if="item.status.id == '4'" class="text-sm">
 									Editar
 								</span>
 								<span v-else class="text-sm">
@@ -631,6 +626,28 @@ const selectedTab = inject('selectedTab', ref(0))
 								<Modal :Form="props.Form" :id_review="item.id" />
 							</template>
 						</template>
+					</template>
+					<template v-else-if="isProvider('coordinator')">
+							<Button variant="outline-secondary"
+								@click="editAction(item.id)">
+								<Lucide v-if="item.status.slug == 'REC'" icon="FileEdit" class="mr-2" />
+								<Lucide v-else icon="Eye" class="mr-2" />
+								<span v-if="item.status.slug == 'REC'" class="text-sm">
+									Editar
+								</span>
+								<span v-else class="text-sm">
+									Visualizar
+								</span>
+							</Button>
+
+							<!-- <Button
+												variant="outline-danger"
+												@click="onDeleteFnc(item.id)">
+												<Lucide
+													icon="Delete"
+													class="mr-2" />
+												<span class="text-sm"> Eliminar </span> 
+											</Button> -->
 					</template>
 				</div>
 			</template>
@@ -732,17 +749,17 @@ const selectedTab = inject('selectedTab', ref(0))
 						</template>
 					</template>
 					<!-- <template v-if="isProvider('legal')">
-				                                <template v-if="item.status.slug == 'ENR'">
-				                                    <template v-if="item.contract.cap_date == null">
-				                                        <CommonButtonLink :to="contractorHandler('legal.documentsManagement', item.id)"
-				                                            variant="outline-secondary">
-				                                            <Lucide icon="FileDiff" class="mr-2" />
-				                                            <span class="text-sm">
-				                                                Revision
-				                                            </span>
-				                                        </button>
-				                                    </div>
-				                                </template> -->
+					                                <template v-if="item.status.slug == 'ENR'">
+					                                    <template v-if="item.contract.cap_date == null">
+					                                        <CommonButtonLink :to="contractorHandler('legal.documentsManagement', item.id)"
+					                                            variant="outline-secondary">
+					                                            <Lucide icon="FileDiff" class="mr-2" />
+					                                            <span class="text-sm">
+					                                                Revision
+					                                            </span>
+					                                        </button>
+					                                    </div>
+					                                </template> -->
 				</div>
 			</template>
 		</DataTable>

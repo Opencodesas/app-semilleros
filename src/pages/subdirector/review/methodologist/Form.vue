@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import FormSwitch from '@/base-components/Form/FormSwitch';
-import { onboardingStore } from '@/stores/onboardingStore';
 import { required } from '@/utils/validators';
 import useVuelidate from '@vuelidate/core';
 
-const store = onboardingStore();
-console.log(store.user.id);
+
 
 const router = useRouter();
 const route = useRoute();
@@ -17,7 +15,7 @@ const props = defineProps<{
 
 const form = reactive({
 	id: '',
-	methodologist_id: 'Camilo Martinez',
+	methodologist_id: '',
 	date_visit: '2023-03-15',
 	hour_visit: '10:00',
 	sidewalk: 'El Aguila',
@@ -29,6 +27,8 @@ const form = reactive({
 	evaluation: '1',
 	event_support_id: '1',
 	methologist_name: 'Camilo Martinez',
+	status_id: '',
+	rejection_message: '',
 
 	file: [],
 
@@ -50,14 +50,9 @@ const form = reactive({
 	globalizer: true,
 	observations: 'Mejorar dominio de grupo',
 });
-const formStatus = reactive({
-	status_id: '',
-	rejection_message: '',
-	revised_by: store.user.id,
-});
 const form_rules = computed(() => ({
 	status_id: { required },
-	rejection_message: { required: parseInt(formStatus.status_id) == 2 },
+	rejection_message: { required: parseInt(form.status_id) == 2 },
 }));
 const disciplines = asyncComputed(async () => {
 	return await getSelect(['disciplines']);
@@ -79,7 +74,7 @@ const statusList = [
 	{ label: 'Aprobado', value: 1 },
 	{ label: 'Rechazado', value: 2 },
 ];
-const v$ = useVuelidate(form_rules, formStatus);
+const v$ = useVuelidate(form_rules, form);
 
 const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
@@ -136,7 +131,7 @@ const onSubmit = async () => {
 
 	if (valid) {
 		await methodologistVisitServices
-			.update(props.id_review.toString(), formdataParser(formStatus))
+			.update(props.id_review.toString(), formdataParser(form))
 			.then((response) => {
 				if (response) {
 					if (response.status >= 200 && response.status <= 300) {
@@ -171,17 +166,17 @@ const onSubmit = async () => {
 		<CommonSelect
 			placeholder="Estado *"
 			name="status_id"
-			v-model="formStatus.status_id"
+			v-model="form.status_id"
 			:validator="v$"
 			:options="statusList" />
 		<CommonTextarea
 			placeholder="Motivo del rechazo*"
 			name="rejection_message"
 			class="intro-x box"
-			v-model="formStatus.rejection_message"
+			v-model="form.rejection_message"
 			:validator="v$"
 			rows="4"
-			v-if="parseInt(formStatus.status_id) == 2" />
+			v-if="parseInt(form.status_id) == 2" />
 		<div
 			class="mt-6 flex justify-end col-span-1 md:col-span-2 border-none gap-1"
 			tabindex="1">

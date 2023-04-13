@@ -21,13 +21,13 @@ const form = reactive({
     month: '1',
     municipality: '2',
     beneficiary: '2',
-    theme: 'Físico',
+    topic: 'Físico',
     agreements: 'Se llegó al acuerdo de...',
     concept: '4',
     guardian_knows_semilleros: true,
     file: [],
-    status: '4', //id:4 => Rechazado => REC cambiamos si queremos ver otra vista
-    reason: 'Fue rechazado por...', 
+    status_id: '4', //id:4 => Rechazado => REC cambiamos si queremos ver otra vista
+    rejection_message: 'Fue rechazado por...',
 })
 
 
@@ -35,7 +35,7 @@ const form_rules = computed(() => ({
     month: { required },
     municipality: { required },
     beneficiary: { required },
-    theme: { required },
+    topic: { required },
     agreements: { required },
     concept: {},
     guardian_knows_semilleros: { required },
@@ -81,16 +81,16 @@ const getData = async () => {
     await customVisitServices.get(route.params.id as string).then((response) => {
         console.log(response?.data.items);
         if (response?.status == 200 || response?.status == 201) {
-            form.reason = response.data.items.reason;
+            form.rejection_message = response.data.items.rejection_message;
             form.month = response.data.items.month;
             form.municipality = response.data.items.municipality;
             form.beneficiary = response.data.items.beneficiary;
-            form.theme = response.data.items.theme;
+            form.topic = response.data.items.topic;
             form.agreements = response.data.items.agreements;
             form.concept = response.data.items.concept;
             form.guardian_knows_semilleros = response.data.items.guardian_knows_semilleros;
             form.file = response.data.items.file;
-            form.status = response.data.items.status;
+            form.status_id = response.data.items.status;
         } else {
             alerts.custom("", "No se pudieron obtener los datos", "error");
         }
@@ -104,7 +104,7 @@ onMounted(async () => {
     await getData();
     dataLoaded.value = true;
     //form.status = `${route.params.id}`
-    console.log(form.status)
+    console.log(form.status_id)
 });
 
 const getBeneficiaryData = async () => {
@@ -117,7 +117,6 @@ const getBeneficiaryData = async () => {
             beneficiary_data.guardian_name = response.data.items.guardian_name;
             beneficiary_data.guardian_lastname = response.data.items.guardian_lastname;
             beneficiary_data.guardian_identification = response.data.items.guardian_identification;
-            alerts.custom("", "Datos obtenidos correctamente", "success");
         } else {
             alerts.custom("", "No se pudieron obtener los datos", "error");
         }
@@ -136,8 +135,6 @@ const v$ = useVuelidate(form_rules, form)
 const router = useRouter()
 
 const onSubmit = async () => {
-    form.status = '3';
-	form.reason = '';
     const valid = await v$.value.$validate()
     if (valid) {
         await customVisitServices.update(route.params.id as string, formdataParser(form)).then((response) => {
@@ -161,8 +158,8 @@ const download = () => {
 
 }
 
-const diableElements = computed(() => {
-    return form.status == '4' ? false : true; //id: 4 => Rechazado => REC
+const disableElements = computed(() => {
+    return form.status_id == '4' ? false : true; //id: 4 => Rechazado => REC
 })
 
 const positionRange = computed(() => {
@@ -173,25 +170,29 @@ const positionRange = computed(() => {
 
 <template>
     <div class="flex items-center justify-between mt-8 intro-y">
-        <h2 v-if="form.status == '4'" class="mr-auto text-lg font-medium">Editar visita personalizada</h2>
-        <h2 v-else class="mr-auto text-lg font-medium">Vista visita personalizada</h2>
+        <div class="flex items-center space-x-4">
+            <CommonBackButton :to="'psychosocial.visits'" title="Listado" />
+            <h2 v-if="form.status_id == '4'" class="mr-auto text-lg font-medium">Editar visita personalizada</h2>
+            <h2 v-else class="mr-auto text-lg font-medium">Vista visita personalizada</h2>
+        </div>
     </div>
 
     <div v-if="dataLoaded" class="p-5 pt-1 mt-5 intro-y box">
-        <div v-if="form.status == '4'">
+        <div v-if="form.status_id == '4'">
             <h2 class="text-red-600 font-bold py-2">Razón de rechazo</h2>
-            <p class="text-left">{{ form.reason }}</p>
+            <p class="text-left">{{ form.rejection_message }}</p>
         </div>
         <form @submit.prevent="onSubmit" class="space-y-8 divide-y divide-slate-200">
             <div class="space-y-8 divide-y divide-slate-200 ">
                 <div>
 
-                    <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-3">
-                        <CommonSelect :disabled="diableElements" label="Mes *" name="month" v-model="form.month"
+                    <div :class="disableElements == false ? 'mt-6' : 'mt-3'"
+                        class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-3">
+                        <CommonSelect :disabled="disableElements" label="Mes *" name="month" v-model="form.month"
                             :validator="v$" :options="months" />
-                        <CommonSelect :disabled="diableElements" label="Municipio *" name="municipality"
+                        <CommonSelect :disabled="disableElements" label="Municipio *" name="municipality"
                             v-model="form.municipality" :validator="v$" :options="municipalities" />
-                        <CommonSelect @select="getBeneficiaryData" :disabled="diableElements" label="Beneficiario *"
+                        <CommonSelect @select="getBeneficiaryData" :disabled="disableElements" label="Beneficiario *"
                             name="beneficiary" v-model="form.beneficiary" :validator="v$" :options="beneficiaries" />
                     </div>
                     <!-- cambiar condicion por "beneficiary_data" cuando haya función para traer los datos -->
@@ -217,18 +218,18 @@ const positionRange = computed(() => {
                         <div class="p-5 intro-y box col-span-3 sm:grid-cols-3 bg-gray-200 flex flex-col gap-3">
                             <div class="">
 
-                                <FormSwitch.Input :disabled="diableElements" name="swich_plans" id="swich_plans"
+                                <FormSwitch.Input :disabled="disableElements" name="swich_plans" id="swich_plans"
                                     type="checkbox" v-model="form.guardian_knows_semilleros" :validator="v$" />
                                 <FormSwitch.Label htmlFor="swich_plans"> ¿El padre o acudiente conoce el proyecto de
                                     Semilleros Deportivos?. </FormSwitch.Label>
                             </div>
                         </div>
                         <div class="col-span-3 sm:grid-cols-3 space-y-6 pt-5">
-                            <CommonTextarea :disabled="diableElements"
+                            <CommonTextarea :disabled="disableElements"
                                 label="Temáticas durante la visita: físico, emocional, familiar, escolar, social, espiritual *"
-                                placeholder="Escriba..." name="theme" rows="5" v-model="form.theme" :validator="v$" />
+                                placeholder="Escriba..." name="topic" rows="5" v-model="form.topic" :validator="v$" />
 
-                            <CommonTextarea :disabled="diableElements" label="Acuerdos y recomendaciones *"
+                            <CommonTextarea :disabled="disableElements" label="Acuerdos y recomendaciones *"
                                 placeholder="Escriba..." name="agreements" rows="5" v-model="form.agreements"
                                 :validator="v$" />
 
@@ -238,7 +239,7 @@ const positionRange = computed(() => {
                                     escala de 1 a 5 donde 1 es deficiente y 5 excelente:
                                 </label>
                                 <div id="range" class="relative mb-5">
-                                    <input :disabled="diableElements" class="w-full accent-primary" type="range" min="1"
+                                    <input :disabled="disableElements" class="w-full accent-primary" type="range" min="1"
                                         max="5" v-model="form.concept" />
                                     <div :style="{ left: positionRange }"
                                         class="absolute -translate-x-1/4 border-zinc-500 border-2 p-2  rounded-full bg-primary text-white select-none">
@@ -254,26 +255,22 @@ const positionRange = computed(() => {
                             <img src="/semilleros.png" width="200" alt="">
                         </div>
 
-                        <div class="p-5 mt-6 intro-y">
+                        <div v-if="form.status_id == '4'" class="col-span-3 p-5 mt-6 intro-y">
                             <CommonFile :validator="v$" v-model="form.file" name="file"
-                                class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
-                                :accept-multiple="false"
+                                class="w-11/12 sm:w-8/12 m-auto cursor-pointer" :accept-multiple="false"
                                 @addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
                                 @removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }" />
                         </div>
-                        <!-- <div>
-                                                                <CommonFile label="Documento 1" name="file"/>
-                                                            </div> -->
                     </div>
                 </div>
             </div>
             <div class="pt-5">
                 <div class="flex justify-center gap-x-4">
-                    <Button v-if="form.status == '4'" type="submit" variant="primary">
+                    <Button v-if="form.status_id == '4'" type="submit" variant="primary">
                         Editar visita
                     </Button>
 
-                    <Button v-else-if="form.status == '1'" type="button" variant="primary" @click="download">
+                    <Button v-else-if="form.status_id == '1'" type="button" variant="primary" @click="download">
                         Descargar visita
                     </Button>
                 </div>
