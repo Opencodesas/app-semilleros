@@ -117,6 +117,18 @@ const routes = [
 				]
 			},
 			{
+				path: "reports",
+				name: "reports",
+				children: [
+					{
+						path: "",
+						name: "reports.index",
+						meta: { provider: 'reports' },
+						component: () => import('@/pages/reports/Index.vue')
+					},
+				]
+			},
+			{
 				path: "contractors",
 				name: "contractors",
 				children: [
