@@ -449,14 +449,14 @@ const routes = [
 						name: 'psychosocial.transversal-activity',
 						children: [
 							{
-								path: '',
-								name: 'psychosocial.transversal-activity.index',
-								component: () => import('@/pages/psychosocial/transversal-activity/Index.vue'),
-							},
-							{
-								path: "create",
+								path: "",
 								name: "psychosocial.transversal-activity.create",
 								component: () => import('@/pages/psychosocial/transversal-activity/Form.vue'),
+							},
+							{
+								path: "update/:id",
+								name: "psychosocial.transversal-activity.update",
+								component: () => import('@/pages/psychosocial/transversal-activity/Edit.vue'),
 							},
 						]
 					}
