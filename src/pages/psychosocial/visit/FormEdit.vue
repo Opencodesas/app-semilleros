@@ -4,8 +4,8 @@ import { required } from '@/utils/validators'
 import { onboardingStore } from '@/stores/onboardingStore'
 import FormSwitch from "@/base-components/Form/FormSwitch";
 import { filePondValue } from '@/composables/useFilepondEvents';
-import Swal from 'sweetalert2';
 import { visitServices } from '@/services/psychosocial/visitServices';
+
 const { multiple } = useFilepondEvents();
 
 const store = onboardingStore();
@@ -14,29 +14,28 @@ const route = useRoute();
 const router = useRouter();
 
 const form = reactive({
-    date_visit: '',
-    municipality_id: '',
+    date_visit: '2023-04-13',
+    municipality_id: '2',
     monitor_id: '',
     discipline_id: '',
-    numberBeneficiary: '',
-    sports_scene: '',
-    objetive: '',
-    beneficiaries_knows_project: false,
+    numberBeneficiaries: '10',
+    sports_scene: 'Canchas...',
+    objetive: 'Objetivo fue...',
+    beneficiaries_knows_project: true,
     beneficiaries_knows_monthly_value: false,
-    monitor_organization_discipline_management: false,
-    description: '',
-    observations: '',
+    monitor_organization_discipline_management: true,
+    description: 'Descripcion...',
+    observations: 'Observaciones...',
     file: [],
-    status: '4', //id:4 => Rechazado => REC cambiamos si queremos ver otra vista
-    reason: 'Fue rechazado por...',
-    //created_by: store.user.id,
+    status_id: '4',
+    rejection_message: 'Fue rechazado ya que...',
 });
 const form_rules = computed(() => ({
     date_visit: { required },
     municipality_id: { required },
     monitor_id: { required },
     discipline_id: { required },
-    numberBeneficiary: { required },
+    numberBeneficiaries: { required },
     sports_scene: { required },
     objetive: { required },
     beneficiaries_knows_project: { required },
@@ -47,7 +46,10 @@ const form_rules = computed(() => ({
     file: { required },
 }));
 
-const municipalities = ref([]);
+const municipalities = asyncComputed(async () => {
+    return await getSelect(['municipalities'])
+}, null)
+
 const disciplinesList = ref([]);
 const monitorList = [
     { label: "Joselito", value: 1 },
@@ -56,17 +58,6 @@ const monitorList = [
 
 const v$ = useVuelidate(form_rules, form)
 
-const fetch = async () => {
-    await store.getListSelect().then((response) => {
-        console.log(`data fetch: ${response?.data}`);
-        if (response?.status == 200 || response?.status == 201) {
-            municipalities.value = JSON.parse(JSON.stringify(response.data["municipalities"]));
-            disciplinesList.value = JSON.parse(JSON.stringify(response.data["diciplines"]));
-        } else {
-            Swal.fire("", "No se pudieron obtener los datos", "error");
-        }
-    });
-};
 
 const dataLoaded = ref(false)
 
@@ -75,12 +66,12 @@ const getData = async () => {
     await visitServices.get(route.params.id as string).then((response) => {
         console.log(response?.data.items);
         if (response?.status == 200 || response?.status == 201) {
-            form.reason = response.data.items.reason;
+            form.rejection_message = response.data.items.rejection_message;
             form.date_visit = response.data.items.date_visit;
             form.municipality_id = response.data.items.municipality_id;
             form.monitor_id = response.data.items.monitor_id;
             form.discipline_id = response.data.items.discipline_id;
-            form.numberBeneficiary = response.data.items.numberBeneficiary;
+            form.numberBeneficiaries = response.data.items.numberBeneficiaries;
             form.sports_scene = response.data.items.sports_scene;
             form.objetive = response.data.items.objetive;
             form.beneficiaries_knows_project = response.data.items.beneficiaries_knows_project;
@@ -89,7 +80,7 @@ const getData = async () => {
             form.description = response.data.items.description;
             form.observations = response.data.items.observations;
             form.file = response.data.items.file;
-            form.status = response.data.items.status;
+            form.status_id = response.data.items.status_id;
         } else {
             alerts.custom("", "No se pudieron obtener los datos", "error");
         }
@@ -98,7 +89,6 @@ const getData = async () => {
 };
 
 onMounted(async () => {
-    await fetch();
     await getData();
     dataLoaded.value = true;
 });
@@ -106,8 +96,8 @@ onMounted(async () => {
 const onSubmit = async () => {
     const valid = await v$.value.$validate()
     if (valid) {
-        form.status = '3';
-        form.reason = '';
+        form.status_id = '3';
+        form.rejection_message = '';
         await visitServices.update(route.params.id as string, formdataParser(form)).then((response) => {
             if (response) {
                 if (response.status >= 200 && response.status <= 300) {
@@ -130,7 +120,7 @@ const download = () => {
 }
 
 const disableElements = computed(() => {
-    return form.status == '4' ? false : true; //id: 4 => Rechazado => REC
+    return form.status_id == '4' ? false : true; //id: 4 => Rechazado => REC
 })
 
 </script>
@@ -139,15 +129,15 @@ const disableElements = computed(() => {
     <div class="flex items-center justify-between mt-8 intro-y">
         <div class="flex items-center space-x-4">
             <CommonBackButton :to="'psychosocial.visits'" title="Listado" />
-            <h2 v-if="form.status == '4'" class="mr-auto text-lg font-medium">Editar visita</h2>
+            <h2 v-if="form.status_id == '4'" class="mr-auto text-lg font-medium">Editar visita</h2>
             <h2 v-else class="mr-auto text-lg font-medium">Vista visita</h2>
         </div>
     </div>
 
     <div v-if="dataLoaded" class="p-5 pt-1 mt-5 intro-y box">
-        <div v-if="form.status == '4'">
+        <div v-if="form.status_id == '4'">
             <h2 class="text-red-600 font-bold py-2">Razón de rechazo</h2>
-            <p class="text-left">{{ form.reason }}</p>
+            <p class="text-left">{{ form.rejection_message }}</p>
         </div>
         <form @submit.prevent="onSubmit" class="space-y-8 divide-y divide-slate-200">
             <div class="space-y-8 divide-y divide-slate-200">
@@ -161,8 +151,8 @@ const disableElements = computed(() => {
                         v-model="form.monitor_id" :validator="v$" :options="monitorList" />
                     <CommonSelect :disabled="disableElements" label="Disciplinas *" name="discipline_id"
                         v-model="form.discipline_id" :validator="v$" :options="disciplinesList" />
-                    <CommonInput :disabled="disableElements" type="number" label="No. Beneficiarios en el campo *"
-                        placeholder="Escriba..." name="numberBeneficiary" v-model="form.numberBeneficiary"
+                    <CommonInput :disabled="disableElements" type="number" min="0" label="No. Beneficiarios en el campo *"
+                        placeholder="Escriba..." name="numberBeneficiaries" v-model="form.numberBeneficiaries"
                         :validator="v$" />
                     <CommonInput :disabled="disableElements" type="text" label="Escenario Deportivo *"
                         placeholder="Escriba..." name="sports_scene" v-model="form.sports_scene" :validator="v$" />
@@ -216,7 +206,7 @@ const disableElements = computed(() => {
                         <img src="/semilleros.png" width="200" alt="">
                     </div>
 
-                    <div v-if="form.status == '4'" class="col-span-2 p-5 mt-6 intro-y">
+                    <div v-if="form.status_id == '4'" class="col-span-2 p-5 mt-6 intro-y">
                         <CommonFile :validator="v$" v-model="form.file" name="file"
                             class="w-11/12 sm:w-8/12 m-auto cursor-pointer" :accept-multiple="false"
                             @addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
@@ -227,11 +217,11 @@ const disableElements = computed(() => {
             </div>
             <div class="pt-5">
                 <div class="flex justify-center gap-x-4">
-                    <Button v-if="form.status == '4'" type="submit" variant="primary">
+                    <Button v-if="form.status_id == '4'" type="submit" variant="primary">
                         Editar visita
                     </Button>
 
-                    <Button v-else-if="form.status == '1'" type="button" variant="primary" @click="download">
+                    <Button v-else-if="form.status_id == '1'" type="button" variant="primary" @click="download">
                         Descargar visita
                     </Button>
                 </div>

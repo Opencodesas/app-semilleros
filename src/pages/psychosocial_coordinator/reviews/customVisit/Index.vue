@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import { Header, Item } from 'vue3-easy-data-table';
-import { customVisitServices } from '@/services/psychosocial/customVisitServices';
 import { searchData } from '@/composables/search';
 import customVisitReview from './CustomVisitReview.vue'
 
-
-const route = useRoute()
 
 //Traer visitas personalizadas en revisión
 
@@ -60,8 +57,6 @@ const headerCustomVisits: Header[] = [
 
 //const v$ = useVuelidate(form_rules, form)
 
-const { isProvider } = useProvider()
-const router = useRouter()
 
 //Funciones para modal aun en desrrollo
 // const isOpen = ref(false)
@@ -81,6 +76,6 @@ const dataSearch = computed(() => searchData(items.value, search.value));
 <template>
     <div class="p-5 mt-5 intro-y box">
         <CommonInput type="search" name="search" v-model="search" placeholder="Buscar" />
-        <Crud :headers="headerCustomVisits" :items="items" :Form="customVisitReview" />
+        <Crud :headers="headerCustomVisits" :items="dataSearch" :Form="customVisitReview" />
     </div>
 </template>

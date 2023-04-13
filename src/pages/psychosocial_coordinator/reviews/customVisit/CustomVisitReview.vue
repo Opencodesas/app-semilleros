@@ -5,6 +5,7 @@ import { required } from '@/utils/validators'
 import { customVisitServices } from '@/services/psychosocial/customVisitServices';
 import { selectOption } from '@/components/CommonSelect.vue';
 import { filePondValue } from '@/composables/useFilepondEvents';
+import { requiredIf } from "@vuelidate/validators";
 
 const { multiple } = useFilepondEvents();
 
@@ -18,7 +19,7 @@ const props = defineProps<{
 //Quitar datos de prueba
 const form = reactive({
     rejection_message: 'Fue rechazado por...',
-    status: '',
+    status_id: '',
     month: '1',
     municipality: '2',
     beneficiary: '2',
@@ -27,17 +28,17 @@ const form = reactive({
     concept: '4',
     guardian_knows_semilleros: true,
     file: [],
-    createdBy: { id: '', name: 'Gabriel' }, //Revisar si recibe un objeto
+    created_by: { id: '', name: 'Gabriel' }, //Revisar si recibe un objeto
 })
 
 
 const form_rules = computed(() => ({
-    status: { required },
-    rejection_message: { required }
+    status_id: { required },
+    rejection_message: { required: requiredIf(() => form.status_id == '4') },
 
 }))
 
-const statusesList = ref<selectOption[]>([
+const status_idList = ref<selectOption[]>([
     { label: 'Aprobado', value: '1' },
     { label: 'Rechazado', value: '4' }
 ])
@@ -94,7 +95,7 @@ const getData = async () => {
             form.concept = response.data.items.concept;
             form.guardian_knows_semilleros = response.data.items.guardian_knows_semilleros;
             form.file = response.data.items.file;
-            form.createdBy = response.data.items.createdBy;
+            form.created_by = response.data.items.created_by;
             alerts.custom('', response?.data.message, 'info');
 
         } else {
@@ -130,11 +131,9 @@ const onSubmit = async () => {
                     setLoading(true)
                     props.closeModal
                     alerts.custom('', 'Revisión exitosa!', 'success');
-                    router.push('psychosocial-coordinator.reviews').finally(() => {
-                        setLoading(false)
-                    })
+                    setLoading(false)
                 }
-                else{
+                else {
                     alerts.custom('', 'Error al revisar!', 'error');
                 }
             }
@@ -144,6 +143,7 @@ const onSubmit = async () => {
         alerts.validation()
     }
 }
+
 const positionRange = computed(() => {
     const positionTooltip = (parseInt(form.concept) - 1) / (4);
     return `calc(${positionTooltip * 100}% - ${(2 * (parseInt(form.concept) - 1) ** 2) / 5 + 2 * (parseInt(form.concept) - 1)}px)`;
@@ -151,7 +151,7 @@ const positionRange = computed(() => {
 
 //Manejo de rejection_message para no guardarla si el user selecciona rechazado y pone rejection_message y despues pone aprobado.
 const definerejection_message = () => {
-    if (form.status == '1') form.rejection_message = '';
+    if (form.status_id == '1') form.rejection_message = '';
 }
 </script>
 
@@ -162,9 +162,9 @@ const definerejection_message = () => {
 
     <div class="space-y-2 box px-5 py-4">
         <h2 class="font-bold">Revisión</h2>
-        <CommonSelect @select="definerejection_message" label="Estado de la tarea *" name="status" v-model="form.status"
-            :validator="v$" :options="statusesList" />
-        <div v-if="form.status == '4'" class="pt-4">
+        <CommonSelect @select="definerejection_message" label="Estado de la tarea *" name="status_id"
+            v-model="form.status_id" :validator="v$" :options="status_idList" />
+        <div v-if="form.status_id == '4'" class="pt-4">
             <CommonTextarea name="rejection_message" class="" label="Comentario *" placeholder="Escriba..." rows="5"
                 v-model="form.rejection_message" :validator="v$" />
         </div>
@@ -178,81 +178,79 @@ const definerejection_message = () => {
 
     <div v-if="dataLoaded" class="p-5 pt-1 mt-5 intro-y box">
         <div class="my-4">
-            <h3><span class="font-bold">Psicologo:</span> {{ form.createdBy.name }}</h3>
+            <h3><span class="font-bold">Psicologo:</span> {{ form.created_by.name }}</h3>
         </div>
-        <form @submit.prevent="onSubmit" class="space-y-8 divide-y divide-slate-200">
-            <div class="space-y-8 divide-y divide-slate-200 ">
-                <div>
 
-                    <div class="mt-3 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-3">
-                        <CommonSelect disabled label="Mes *" name="month" v-model="form.month" :options="months" />
-                        <CommonSelect disabled label="Municipio *" name="municipality" v-model="form.municipality"
-                            :options="cities" />
-                        <CommonSelect disabled label="Beneficiario *" name="beneficiary" v-model="form.beneficiary"
-                            :options="beneficiaries" />
+        <div class="space-y-8 divide-y divide-slate-200 ">
+
+            <div class="mt-3 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-3">
+                <CommonSelect disabled label="Mes *" name="month" v-model="form.month" :options="months" />
+                <CommonSelect disabled label="Municipio *" name="municipality" v-model="form.municipality"
+                    :options="cities" />
+                <CommonSelect disabled label="Beneficiario *" name="beneficiary" v-model="form.beneficiary"
+                    :options="beneficiaries" />
+            </div>
+            <!-- cambiar condicion por "beneficiary_data" cuando haya función para traer los datos -->
+            <div v-if="form.beneficiary">
+                <!-- These inputs don't use the validator since they have data from the DB   cambiar los v-model-->
+                <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+                    <CommonInput disabled type="text" label="Grado de escolaridad" name="grade"
+                        v-model="beneficiary_data.grade" />
+                    <CommonInput disabled type="text" label="Entidad de salud" name="health_entity"
+                        v-model="beneficiary_data.health_entity" />
+                </div>
+
+                <div class="mt-6 grid grid-cols-2 gap-y-6 gap-x-4 sm:grid-cols-3">
+                    <CommonInput disabled type="text" label="Nombre del padre o acudiente" name="guardian.name"
+                        v-model="beneficiary_data.guardian_name" />
+                    <CommonInput disabled type="text" label="Apellido del padre o acudiente" name="guardian.lastname"
+                        v-model="beneficiary_data.guardian_lastname" />
+                    <CommonInput disabled type="text" label="Documento de identificación" name="guardian.identification"
+                        v-model="beneficiary_data.guardian_identification" />
+                </div>
+            </div>
+            <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-3">
+                <div class="p-5 intro-y box col-span-3 sm:grid-cols-3 bg-gray-200 flex flex-col gap-3">
+                    <div class="">
+
+                        <FormSwitch.Input disabled name="swich_plans" id="swich_plans" type="checkbox"
+                            v-model="form.guardian_knows_semilleros" />
+                        <FormSwitch.Label htmlFor="swich_plans"> ¿El padre o acudiente conoce el proyecto de
+                            Semilleros Deportivos?. </FormSwitch.Label>
                     </div>
-                    <!-- cambiar condicion por "beneficiary_data" cuando haya función para traer los datos -->
-                    <div v-if="form.beneficiary">
-                        <!-- These inputs don't use the validator since they have data from the DB   cambiar los v-model-->
-                        <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
-                            <CommonInput disabled type="text" label="Grado de escolaridad" name="grade"
-                                v-model="beneficiary_data.grade" />
-                            <CommonInput disabled type="text" label="Entidad de salud" name="health_entity"
-                                v-model="beneficiary_data.health_entity" />
-                        </div>
+                </div>
+                <div class="col-span-3 sm:grid-cols-3">
+                    <CommonTextarea disabled
+                        label="Temáticas durante la visita: físico, emocional, familiar, escolar, social, espiritual *"
+                        placeholder="Escriba..." name="topic" rows="5" v-model="form.topic" />
 
-                        <div class="mt-6 grid grid-cols-2 gap-y-6 gap-x-4 sm:grid-cols-3">
-                            <CommonInput disabled type="text" label="Nombre del padre o acudiente" name="guardian.name"
-                                v-model="beneficiary_data.guardian_name" />
-                            <CommonInput disabled type="text" label="Apellido del padre o acudiente"
-                                name="guardian.lastname" v-model="beneficiary_data.guardian_lastname" />
-                            <CommonInput disabled type="text" label="Documento de identificación"
-                                name="guardian.identification" v-model="beneficiary_data.guardian_identification" />
-                        </div>
-                    </div>
-                    <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-3">
-                        <div class="p-5 intro-y box col-span-3 sm:grid-cols-3 bg-gray-200 flex flex-col gap-3">
-                            <div class="">
+                </div>
+                <div class="col-span-3 sm:grid-cols-3">
+                    <CommonTextarea disabled label="Acuerdos y recomendaciones *" placeholder="Escriba..." name="agreements"
+                        rows="5" v-model="form.agreements" />
+                </div>
 
-                                <FormSwitch.Input disabled name="swich_plans" id="swich_plans" type="checkbox"
-                                    v-model="form.guardian_knows_semilleros" />
-                                <FormSwitch.Label htmlFor="swich_plans"> ¿El padre o acudiente conoce el proyecto de
-                                    Semilleros Deportivos?. </FormSwitch.Label>
-                            </div>
-                        </div>
-                        <div class="col-span-3 sm:grid-cols-3">
-                            <CommonTextarea disabled
-                                label="Temáticas durante la visita: físico, emocional, familiar, escolar, social, espiritual *"
-                                placeholder="Escriba..." name="topic" rows="5" v-model="form.topic" />
-
-                        </div>
-                        <div class="col-span-3 sm:grid-cols-3">
-                            <CommonTextarea disabled label="Acuerdos y recomendaciones *" placeholder="Escriba..."
-                                name="agreements" rows="5" v-model="form.agreements" />
-                        </div>
-
-                        <div class="grid col-span-3 justify-center">
-                            <label for="range" class="text-xs">Concepto del padre o acudiente que atendió la visita en una
-                                escala de 1 a 5 donde 1 es deficiente y 5 excelente:
-                            </label>
-                            <div id="range" class="relative mb-5">
-                                <input disabled class="w-full accent-primary" type="range" min="1" max="5"
-                                    v-model="form.concept" />
-                                <div :style="{ left: positionRange }"
-                                    class="absolute -translate-x-1/4 border-zinc-500 border-2 p-2  rounded-full bg-primary text-white select-none">
-                                    {{ form.concept }}
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Comprobar qué es lo que se está enviando -->
-                        <div class="grid justify-center col-span-3 gap-10 p-5">
-                            <h1 class="text-center font-bold">Evidencia</h1>
-                            <!-- <img :src="form.file[0]" alt=""> -->
-                            <img src="/semilleros.png" width="200" alt="">
+                <div class="grid col-span-3 justify-center">
+                    <label for="range" class="text-xs">Concepto del padre o acudiente que atendió la visita en una
+                        escala de 1 a 5 donde 1 es deficiente y 5 excelente:
+                    </label>
+                    <div id="range" class="relative mb-5">
+                        <input disabled class="w-full accent-primary" type="range" min="1" max="5" v-model="form.concept" />
+                        <div :style="{ left: positionRange }"
+                            class="absolute -translate-x-1/4 border-zinc-500 border-2 p-2  rounded-full bg-primary text-white select-none">
+                            {{ form.concept }}
                         </div>
                     </div>
                 </div>
+                <!-- Comprobar qué es lo que se está enviando -->
+                <div class="grid justify-center col-span-3 gap-10 p-5">
+                    <h1 class="text-center font-bold">Evidencia</h1>
+                    <!-- <img :src="form.file[0]" alt=""> -->
+                    <img src="/semilleros.png" width="200" alt="">
+                </div>
             </div>
-        </form>
+
+        </div>
+
     </div>
 </template>
