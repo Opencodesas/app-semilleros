@@ -40,6 +40,16 @@ const form_rules = computed(() => ({
     file: { required },
 }));
 
+const formdataParser = (form: any) => {
+        const formData = new FormData();
+        Object.keys(form).forEach((key) => {
+            formData.append(key, form[key]);
+        });
+        return formData;
+    };
+
+const formData = formdataParser(form)
+
 const municipalities = asyncComputed(async () => {
     return await getSelect(['municipalities'])
 }, null)
@@ -51,14 +61,13 @@ const monitorList = [
     { label: "Miguelito", value: 2 },
 ];
 const v$ = useVuelidate(form_rules, form)
-const { isProvider } = useProvider()
 const router = useRouter()
 
 
 const onSubmit = async () => {
     const valid = await v$.value.$validate()
     if (valid) {
-        await visitServices.create(formdataParser(form)).then((response) => {
+        await visitServices.create(formdataParser(formData)).then((response) => {
             if (response) {
                 if (response.status >= 200 && response.status <= 300) {
                     alerts.create()

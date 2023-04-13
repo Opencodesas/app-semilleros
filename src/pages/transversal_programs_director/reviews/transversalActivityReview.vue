@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { required } from "@vuelidate/validators";
+import { required, requiredIf } from "@vuelidate/validators";
 import useVuelidate from "@vuelidate/core";
 import { onboardingStore } from "@/stores/onboardingStore";
 import { filePondValue } from '@/composables/useFilepondEvents';
@@ -42,7 +42,7 @@ const form = reactive({
 });
 
 const form_rules = computed(() => ({
-    rejection_message: { required },
+    rejection_message: { required: requiredIf(() => form.status_id == '4') },
     status_id: { required },
 }));
 
