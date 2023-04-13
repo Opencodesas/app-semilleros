@@ -1,17 +1,13 @@
 <script setup lang="ts">
 import CommonFile from '@/components/CommonFile.vue';
 import { filePondValue } from '@/composables/useFilepondEvents';
-import { onboardingStore } from '@/stores/onboardingStore';
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
 import Swal from 'sweetalert2';
 const { multiple } = useFilepondEvents();
-const store = onboardingStore();
 const router = useRouter();
-const route = useRoute();
 
 const form = reactive({
-	rejection_message: '',
 	date_visit: '',
 	hour_visit: '',
 	municipality_id: '',
@@ -27,7 +23,6 @@ const form = reactive({
 	file: [],
 });
 const form_rules = computed(() => ({
-	rejection_message: {},
 	date_visit: { required },
 	hour_visit: { required },
 	municipality_id: { required },
@@ -70,6 +65,10 @@ const disciplines = asyncComputed(async () => {
 
 const onSubmit = async () => {
 	const valid = await v$.value.$validate();
+	if (parseInt(form.beneficiary_coverage) < 0) {
+		alerts.error('El numero de asistentes no puede ser negativo');
+		return;
+	}
 	if (valid) {
 		await subdirectorVisitServices
 			.create(formdataParser(form))

@@ -26,8 +26,8 @@ const form = reactive({
     concept: '4',
     guardian_knows_semilleros: true,
     file: [],
-    status: '4', //id:4 => Rechazado => REC cambiamos si queremos ver otra vista
-    reason: 'Fue rechazado por...',
+    status_id: '4', //id:4 => Rechazado => REC cambiamos si queremos ver otra vista
+    rejection_message: 'Fue rechazado por...',
 })
 
 
@@ -81,7 +81,7 @@ const getData = async () => {
     await customVisitServices.get(route.params.id as string).then((response) => {
         console.log(response?.data.items);
         if (response?.status == 200 || response?.status == 201) {
-            form.reason = response.data.items.reason;
+            form.rejection_message = response.data.items.rejection_message;
             form.month = response.data.items.month;
             form.municipality = response.data.items.municipality;
             form.beneficiary = response.data.items.beneficiary;
@@ -90,7 +90,7 @@ const getData = async () => {
             form.concept = response.data.items.concept;
             form.guardian_knows_semilleros = response.data.items.guardian_knows_semilleros;
             form.file = response.data.items.file;
-            form.status = response.data.items.status;
+            form.status_id = response.data.items.status;
         } else {
             alerts.custom("", "No se pudieron obtener los datos", "error");
         }
@@ -104,7 +104,7 @@ onMounted(async () => {
     await getData();
     dataLoaded.value = true;
     //form.status = `${route.params.id}`
-    console.log(form.status)
+    console.log(form.status_id)
 });
 
 const getBeneficiaryData = async () => {
@@ -137,8 +137,6 @@ const router = useRouter()
 const onSubmit = async () => {
     const valid = await v$.value.$validate()
     if (valid) {
-        form.status = '3';
-        form.reason = '';
         await customVisitServices.update(route.params.id as string, formdataParser(form)).then((response) => {
             if (response) {
                 if (response.status >= 200 && response.status <= 300) {
@@ -161,7 +159,7 @@ const download = () => {
 }
 
 const disableElements = computed(() => {
-    return form.status == '4' ? false : true; //id: 4 => Rechazado => REC
+    return form.status_id == '4' ? false : true; //id: 4 => Rechazado => REC
 })
 
 const positionRange = computed(() => {
@@ -174,15 +172,15 @@ const positionRange = computed(() => {
     <div class="flex items-center justify-between mt-8 intro-y">
         <div class="flex items-center space-x-4">
             <CommonBackButton :to="'psychosocial.visits'" title="Listado" />
-            <h2 v-if="form.status == '4'" class="mr-auto text-lg font-medium">Editar visita personalizada</h2>
+            <h2 v-if="form.status_id == '4'" class="mr-auto text-lg font-medium">Editar visita personalizada</h2>
             <h2 v-else class="mr-auto text-lg font-medium">Vista visita personalizada</h2>
         </div>
     </div>
 
     <div v-if="dataLoaded" class="p-5 pt-1 mt-5 intro-y box">
-        <div v-if="form.status == '4'">
+        <div v-if="form.status_id == '4'">
             <h2 class="text-red-600 font-bold py-2">Razón de rechazo</h2>
-            <p class="text-left">{{ form.reason }}</p>
+            <p class="text-left">{{ form.rejection_message }}</p>
         </div>
         <form @submit.prevent="onSubmit" class="space-y-8 divide-y divide-slate-200">
             <div class="space-y-8 divide-y divide-slate-200 ">
@@ -257,7 +255,7 @@ const positionRange = computed(() => {
                             <img src="/semilleros.png" width="200" alt="">
                         </div>
 
-                        <div v-if="form.status == '4'" class="col-span-3 p-5 mt-6 intro-y">
+                        <div v-if="form.status_id == '4'" class="col-span-3 p-5 mt-6 intro-y">
                             <CommonFile :validator="v$" v-model="form.file" name="file"
                                 class="w-11/12 sm:w-8/12 m-auto cursor-pointer" :accept-multiple="false"
                                 @addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
@@ -268,11 +266,11 @@ const positionRange = computed(() => {
             </div>
             <div class="pt-5">
                 <div class="flex justify-center gap-x-4">
-                    <Button v-if="form.status == '4'" type="submit" variant="primary">
+                    <Button v-if="form.status_id == '4'" type="submit" variant="primary">
                         Editar visita
                     </Button>
 
-                    <Button v-else-if="form.status == '1'" type="button" variant="primary" @click="download">
+                    <Button v-else-if="form.status_id == '1'" type="button" variant="primary" @click="download">
                         Descargar visita
                     </Button>
                 </div>

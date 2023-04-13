@@ -39,8 +39,8 @@ import { onboardingStore } from '@/stores/onboardingStore';
 //         sport_scene: 'Cancha Marcella',
 //         status: {
 //             id: 2,
-//             name: 'Rechazado',
-//             slug: 'REC',
+//             name: 'En Revisión',
+//             slug: 'ENR',
 //         },
 //     },
 // ]);
