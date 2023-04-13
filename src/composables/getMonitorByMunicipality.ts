@@ -1,8 +1,7 @@
 import qs from 'qs'
 
 export const getMonitorByMunicipality = async (municipality_id: string | number) => {
-    const municipality = qs.stringify({ municipality: municipality_id })
-    const response = await api.get(`/api/v1/monitorByMunicipality/${municipality}`)
+    const response = await api.get(`/api/v1/getMonitoringMunicipality/${municipality_id}`)
 
     return response.data as Array<{ label: string, value: string | number }>
 }

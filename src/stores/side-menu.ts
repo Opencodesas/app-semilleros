@@ -201,6 +201,22 @@ export const useSideMenuStore = defineStore("sideMenu", {
       },
       {
         icon: "User",
+        title: "Coordinador",
+        subMenu: [
+          {
+            icon: "Activity",
+            pageName: "coordinator.create",
+            title: "Crear visita",
+          },
+          {
+            icon: "Activity",
+            pageName: "coordinator.index",
+            title: "Visitas",
+          },
+        ]
+      },
+      {
+        icon: "User",
         title: "Coordinador Psicosocial",
         subMenu: [
           {

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { searchData } from '@/composables/search';
 import { onboardingStore } from '@/stores/onboardingStore';
 import { Header, Item } from 'vue3-easy-data-table';
 
@@ -13,62 +12,24 @@ const create = () => {
 		setLoading(false);
 	});
 };
+const items = ref<Item[]>([]);
 
 // onBeforeMount(async () => {
-// 	await subdirectorVisitServices.getAll(id = store.user.id).then((response) => {
-// 		items.value = response?.data.items
+// 	subdirectorVisitServices.then((response) => {
+// 		items.value = response?.data.items;
+// 		console.log(response?.data.items);
+// 		return items;
 // 	});
 // });
-
 const headers: Header[] = [
 	{ text: 'No', value: 'id' },
 	{ text: 'Fecha', value: 'date_visit' },
-	{ text: 'Municipio', value: 'municipality' },
-	{ text: 'Monitor', value: 'monitor_name' },
+	{ text: 'Municipio', value: 'municipality.name' },
+	{ text: 'Monitor', value: 'monitor.name' },
 	{ text: 'Escenario Deportivo', value: 'sport_scene' },
 	{ text: 'Estado', value: 'status' },
 	{ text: 'Acciones', value: 'actions' },
 ];
-
-const items = ref<Item[]>([]);
-// const items = ref<Item[]>([
-// 	{
-// 		id: '1',
-// 		date_visit: '2023-02-15',
-// 		municipality: 'Jamundi',
-// 		monitor_name: 'Oscar Martinez',
-// 		sport_scene: 'Cancha Marcella',
-// 		status: {
-// 			id: 2,
-// 			name: 'En Revisión',
-// 			slug: 'ENR',
-// 		},
-// 	},
-// 	{
-// 		id: '2',
-// 		date_visit: '2023-02-20',
-// 		municipality: 'Jamundi',
-// 		monitor_name: 'Oscar Martinez',
-// 		sport_scene: 'Cancha Marcella',
-// 		status: {
-// 			id: 2,
-// 			name: 'En Revisión',
-// 			slug: 'ENR',
-// 		},
-// 	},
-// 	{
-// 		id: '3',
-// 		date_visit: '2023-02-27',
-// 		municipality: 'Jamundi',
-// 		monitor_name: 'Oscar Martinez',
-// 		sport_scene: 'Cancha Marcella',
-// 		status: {
-// 			id: 2,
-// 			name: 'Rechazado',
-// 			slug: 'REC',
-// 		},
-// 	},
-// ]);
 
 onBeforeMount(async () => {
 	const res = await subdirectorVisitServices.getAll();

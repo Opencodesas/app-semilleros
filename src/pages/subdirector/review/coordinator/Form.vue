@@ -3,10 +3,12 @@ import { coordinatorVisitServices } from '@/services/coordinatorVisitServices';
 import { onboardingStore } from '@/stores/onboardingStore';
 import { required } from '@/utils/validators';
 import useVuelidate from '@vuelidate/core';
+import Swal from 'sweetalert2';
 
 const store = onboardingStore();
 
 const router = useRouter();
+const dataLoaded = ref(false);
 
 const props = defineProps<{
 	closeModal: Function;
@@ -15,31 +17,28 @@ const props = defineProps<{
 
 const form = reactive({
 	id: '',
-	coordinator_id: 'Camilo Martinez',
-	date_visit: '2023-03-15',
-	hour_visit: '10:00',
-	sidewalk: 'El Aguila',
-	monitor_id: 'Miguel Torres',
-	discipline_id: '7',
-	sports_scene: 'Cancha Principal Punta Brava',
-	municipality_id: '5',
-	beneficiary_coverage: '9',
-	description: 'Mejorar dominio de grupo',
-	observations: 'Mejorar dominio de grupo',
-	coordinator_name: 'Camilo Martinez',
+	coordinator_id: '',
+	date_visit: '',
+	hour_visit: '',
+	sidewalk: '',
+	discipline_id: '',
+	sports_scene: '',
+	municipalitie_id: '',
+	beneficiary_coverage: '',
+	description: '',
+	observations: '',
+	coordinator_name: '',
 
-	monitor: '1',
+	user_id: '',
 
 	file: [],
-});
-const formStatus = reactive({
 	status_id: '',
 	rejection_message: '',
-	revised_by: store.user.id,
+	created_by: '',
 });
 const form_rules = computed(() => ({
 	status_id: { required },
-	rejection_message: { required: parseInt(formStatus.status_id) == 2 },
+	rejection_message: { required: parseInt(form.status_id) == 4 },
 }));
 const disciplines = asyncComputed(async () => {
 	return await getSelect(['disciplines']);
@@ -59,61 +58,54 @@ const apoyoList = [
 ];
 const statusList = [
 	{ label: 'Aprobado', value: 1 },
-	{ label: 'Rechazado', value: 2 },
+	{ label: 'Rechazado', value: 4 },
 ];
-const v$ = useVuelidate(form_rules, formStatus);
+const v$ = useVuelidate(form_rules, form);
 
 const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
 }, null);
-// onMounted(async () => {
-// 	await coordinatorVisitServices
-// 		.get(props.id_review.toString())
-// 		.then((response) => {
-// 			if (response) {
-// 				if (response.status >= 200 && response.status <= 300) {
-// 					form.id = response.data.id;
-// 					form.coordinator_id = response.data.coordinator_id;
-// 					form.date_visit = response.data.date_visit;
-// 					form.hour_visit = response.data.hour_visit;
-// 					form.sidewalk = response.data.sidewalk;
-// 					form.monitor_id = response.data.monitor_id;
-// 					form.discipline_id = response.data.discipline_id;
-// 					form.sports_scene = response.data.sports_scene;
-// 					form.municipality_id = response.data.municipality_id;
-// 					form.beneficiary_coverage = response.data.beneficiary_coverage;
-// 					form.description = response.data.description;
-// 					form.observations = response.data.observations;
-// 					form.coordinator_name = response.data.coordinator_name;
-// 					form.monitor = response.data.monitor;
-// 					form.file = response.data.file;
-// 				}
-// 			}
-// 		})
-// 		.catch((error) => {
-// 			console.log(error);
-// 		});
-// });
+onMounted(async () => {
+	await coordinatorVisitServices
+		.get(props.id_review.toString())
+		.then((response) => {
+			if (response?.status == 200 || response?.status == 201) {
+				form.id = response.data.items.id;
+				form.beneficiary_coverage = response.data.items.beneficiary_coverage;
+				form.date_visit = response.data.items.date_visit;
+				form.hour_visit = response.data.items.hour_visit;
+				form.sports_scene = response.data.items.sports_scene;
+				form.observations = response.data.items.observations;
+				form.description = response.data.items.description;
+				form.discipline_id = response.data.items.discipline_id;
+				form.municipalitie_id = response.data.items.municipalitie.id;
+				form.user_id = response.data.items.user_id;
+				form.sidewalk = response.data.items.sidewalk;
+				form.coordinator_name = response.data.items.created_by.name;
+				dataLoaded.value = true;
+			} else {
+				Swal.fire('', 'No se pudieron obtener los datos', 'error');
+			}
+		})
+		.catch((error) => {
+			console.log(error);
+		});
+});
 
 const onSubmit = async () => {
 	const valid = await v$.value.$validate();
-
+	console.log(form.status_id);
+	console.log(form.rejection_message);
 	if (valid) {
 		await coordinatorVisitServices
-			.update(props.id_review.toString(), formdataParser(formStatus))
+			.update(props.id_review.toString(), formdataParser(form))
 			.then((response) => {
 				if (response) {
 					if (response.status >= 200 && response.status <= 300) {
 						alerts.update();
 						setLoading(true);
-
-						router
-							.push({
-								name: 'subdirector_coordinator.list',
-							})
-							.finally(() => {
-								setLoading(false);
-							});
+						props.closeModal()
+					setLoading(false);
 					}
 				}
 			});
@@ -135,17 +127,17 @@ const onSubmit = async () => {
 		<CommonSelect
 			placeholder="Estado *"
 			name="status_id"
-			v-model="formStatus.status_id"
+			v-model="form.status_id"
 			:validator="v$"
 			:options="statusList" />
 		<CommonTextarea
 			placeholder="Motivo del rechazo*"
 			name="rejection_message"
 			class="intro-x box"
-			v-model="formStatus.rejection_message"
+			v-model="form.rejection_message"
 			:validator="v$"
 			rows="4"
-			v-if="parseInt(formStatus.status_id) == 2" />
+			v-if="parseInt(form.status_id) == 4" />
 		<div
 			class="mt-6 gap-1 flex justify-end col-span-1 md:col-span-2 border-none"
 			tabindex="1">
@@ -163,7 +155,7 @@ const onSubmit = async () => {
 		</div>
 	</div>
 
-	<div class="p-5 mt-5 intro-y box">
+	<div v-if="dataLoaded" class="p-5 mt-5 intro-y box">
 		<h3 class="text-lg font-medium leading-6 text-gray-900">Revision</h3>
 		<p class="mt-3">
 			<span class="font-bold">Coordinador regional: </span
@@ -187,7 +179,7 @@ const onSubmit = async () => {
 			<CommonSelect
 				label="Municipios *"
 				name="municipality"
-				v-model="form.municipality_id"
+				v-model="form.municipalitie_id"
 				:options="municipalities"
 				disabled />
 			<CommonInput
@@ -200,8 +192,8 @@ const onSubmit = async () => {
 				disabled />
 			<CommonSelect
 				label="Monitor Deportivo *"
-				name="monitor"
-				v-model="form.monitor"
+				name="user_id"
+				v-model="form.user_id"
 				:options="monitorList"
 				disabled />
 			<CommonSelect
