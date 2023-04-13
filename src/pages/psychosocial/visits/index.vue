@@ -3,7 +3,6 @@ import useVuelidate from '@vuelidate/core'
 import { required } from '@/utils/validators'
 import { Header, Item } from 'vue3-easy-data-table';
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
-import { customVisitServices } from '@/services/psychosocial/customVisitServices';
 import { onboardingStore } from "@/stores/onboardingStore";
 
 const { multiple } = useFilepondEvents();
@@ -34,10 +33,133 @@ const routeName = computed(() => {
 //     })
 // })
 
+const items = ref<Item[]>([
+    {
+        id: '1',
+        month: 'Enero',
+        municipality: 'Cartago',
+        beneficiary: 'Juan',
+        status: {
+            id: 2,
+            name: 'En Revisión',
+            slug: 'ENR'
+        },
+    },
+    {
+        id: '2',
+        month: 'Enero',
+        municipality: 'Cartago',
+        beneficiary: 'Pedro',
+        status: {
+            id: 4,
+            name: 'Rechazado',
+            slug: 'REC'
+        },
+    },
+    {
+        id: '3',
+        month: 'Enero',
+        municipality: 'Cartago',
+        beneficiary: 'Juan',
+        status: {
+            id: 1,
+            name: 'Aprobado',
+            slug: 'APR'
+        },
+    },
+    {
+        id: '4',
+        month: 'Enero',
+        municipality: 'Cartago',
+        beneficiary: 'Maria',
+        status: {
+            id: 4,
+            name: 'Rechazado',
+            slug: 'REC'
+        },
+    },
+    {
+        id: '5',
+        month: 'Enero',
+        municipality: 'Cartago',
+        beneficiary: 'Jose',
+        status:
+        {
+            id: 1,
+            name: 'Aprobado',
+            slug: 'APR'
+        },
+    },
+    {
+        id: '6',
+        month: 'Enero',
+        municipality: 'Cartago',
+        beneficiary: 'Luis',
+        status: {
+            id: 4,
+            name: 'Rechazado',
+            slug: 'REC'
+        },
+    },
+    {
+        id: '7',
+        month: 'Enero',
+        municipality: 'Cartago',
+        beneficiary: 'Maria',
+        status: {
+            id: 4,
+            name: 'Rechazado',
+            slug: 'REC'
+        },
+    },
+    {
+        id: '8',
+        month: 'Enero',
+        municipality: 'Cartago',
+        beneficiary: 'Pedro',
+        status: {
+            id: 4,
+            name: 'Rechazado',
+            slug: 'REC'
+        },
+    },
+    {
+        id: '9',
+        month: 'Enero',
+        municipality: 'Cartago',
+        beneficiary: 'Juan',
+        status: {
+            id: 1,
+            name: 'Aprobado',
+            slug: 'APR'
+        },
+    },
+    {
+        id: '10',
+        month: 'Enero',
+        municipality: 'Cartago',
+        beneficiary: 'Luis',
+        status: {
+            id: 1,
+            name: 'Aprobado',
+            slug: 'APR'
+        },
+    },
+
+])
+
+const items2 = ref<Item[]>([
+    { id: '1', date: '2023-02-11', monitor: 'Juan', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 1, name: 'Aprobado', slug: 'APR' } },
+    { id: '2', date: '2023-02-11', monitor: 'Pedro', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 2, name: 'En Revisión', slug: 'ENR' } },
+    { id: '3', date: '2023-02-11', monitor: 'Juan', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 1, name: 'Aprobado', slug: 'APR' } },
+    { id: '4', date: '2023-02-11', monitor: 'Maria', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 4, name: 'Rechazado', slug: 'REC' } },
+    { id: '5', date: '2023-02-11', monitor: 'Jose', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 1, name: 'Aprobado', slug: 'APR' } },
+])
+
 onMounted(() => {
     console.log(console.log(items))
-});
-    
+})
+
 
 const headerVisits: Header[] = [
     { text: 'No.', value: 'id', sortable: true },
@@ -48,13 +170,6 @@ const headerVisits: Header[] = [
     { text: 'Estado', value: 'status' },
     { text: 'Acciones', value: 'actions' },
 ]
-const items = ref<Item[]>([
-    { id: '1', date: '2023-02-11', monitor: 'Juan', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 1, name: 'Aprobado', slug: 'APR' } },
-    { id: '2', date: '2023-02-11', monitor: 'Pedro', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 2, name: 'En Revisión', slug: 'ENR' } },
-    { id: '3', date: '2023-02-11', monitor: 'Juan', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 1, name: 'Aprobado', slug: 'APR' } },
-    { id: '4', date: '2023-02-11', monitor: 'Maria', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 4, name: 'Rechazado', slug: 'REC' } },
-    { id: '5', date: '2023-02-11', monitor: 'Jose', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 1, name: 'Aprobado', slug: 'APR' } },
-]);
 
 const headerCustomVisits: Header[] = [
     { text: 'No', value: 'id', sortable: true },
@@ -64,113 +179,6 @@ const headerCustomVisits: Header[] = [
     { text: 'Estado', value: 'status' },
     { text: 'Acciones', value: 'actions' },
 ]
-
-const items2 = ref<Item[]>([
-    {
-        id: '1',
-        month: 'Enero',
-        municipality: 'Cartago',
-        beneficiary: 'Juan',
-        status: {
-            id: 1,
-            name: 'Aprobado',
-            slug: 'APR'
-        }
-    },
-    {
-        id: '2',
-        month: 'Enero',
-        municipality: 'Cartago',
-        beneficiary: 'Pedro',
-        status: {
-            id: 2,
-            name: 'En Revisión',
-            slug: 'ENR'
-        }
-    },
-    {
-        id: '3',
-        month: 'Enero',
-        municipality: 'Cartago',
-        beneficiary: 'Juan',
-        status: {
-            id: 4,
-            name: 'Rechazado',
-            slug: 'REC'}
-    },
-    {
-        id: '4',
-        month: 'Enero',
-        municipality: 'Cartago',
-        beneficiary: 'Maria',
-        status: {
-            id: 4,
-            name: 'Rechazado',
-            slug: 'REC'}
-    },
-    {
-        id: '5',
-        month: 'Enero',
-        municipality: 'Cartago',
-        beneficiary: 'Jose',
-        status: {
-            id: 1,
-            name: 'Aprobado',
-            slug: 'APR'
-        }
-    },
-    {
-        id: '6',
-        month: 'Enero',
-        municipality: 'Cartago',
-        beneficiary: 'Luis',
-        status: {
-            id: 1,
-            name: 'Aprobado',
-            slug: 'APR'}
-    },
-    {
-        id: '7',
-        month: 'Enero',
-        municipality: 'Cartago',
-        beneficiary: 'Maria',
-        status: {
-            id: 2,
-            name: 'En Revisión',
-            slug: 'ENR'}
-    },
-    {
-        id: '8',
-        month: 'Enero',
-        municipality: 'Cartago',
-        beneficiary: 'Pedro',
-        status: {
-            id: 4,
-            name: 'Rechazado',
-            slug: 'REC'}
-    },
-    {
-        id: '9',
-        month: 'Enero',
-        municipality: 'Cartago',
-        beneficiary: 'Juan',
-        status: {
-            id: 1,
-            name: 'Aprobado',
-            slug: 'APR'}
-    },
-    {
-        id: '10',
-        month: 'Enero',
-        municipality: 'Cartago',
-        beneficiary: 'Luis',
-        status: {
-            id: 1,
-            name: 'Aprobado',
-            slug: 'APR'}
-    },
-
-])
 
 const headerTransversalActivities: Header[] = [
     { text: 'No', value: 'id', sortable: true },
@@ -183,26 +191,8 @@ const headerTransversalActivities: Header[] = [
 const selectedTab = ref(1);
 provide('selectedTab', selectedTab)
 
-const visits = ref<Item[]>([]);
-const searchVisits = ref('');
-const dataSearchVisits = computed(() => searchData(items.value, searchVisits.value));
-
-
-const customVisits = ref<Item[]>([]);
-const searchCustomVisits = ref('');
-const dataSearchCustomVisits = computed(() => searchData(items2.value, searchCustomVisits.value));
-
-const transversalActivities = ref<Item[]>([]);
-const searchTransversalActivities = ref('');
-const dataSearchTransversalActivities = computed(() => searchData(transversalActivities.value, searchTransversalActivities.value));
-
-
-// onBeforeMount(async () => {
-// 	await customVisitServices.getAll().then((response) => {
-// 		customVisits.value = response?.data.items
-// 		console.log(customVisits.value)
-// 	});
-// });
+const search = ref('');
+const dataSearch = computed(() => searchData(items.value, search.value));
 
 </script>
 
@@ -229,18 +219,16 @@ const dataSearchTransversalActivities = computed(() => searchData(transversalAct
                 </button>
             </Tab>
         </TabList>
+        <CommonInput type="search" name="search" v-model="search" placeholder="Buscar" />
         <TabPanels>
             <TabPanel>
-                <CommonInput type="search" name="search" v-model="searchVisits" placeholder="Buscar" />
-                <Crud :headers="headerVisits" :items="dataSearchVisits" />
+                <Crud :headers="headerVisits" :items="items2" />
             </TabPanel>
             <TabPanel>
-                <CommonInput type="search" name="search" v-model="searchCustomVisits" placeholder="Buscar" />
-                <Crud :headers="headerCustomVisits" :items="dataSearchCustomVisits" />
+                <Crud :headers="headerCustomVisits" :items="dataSearch" />
             </TabPanel>
             <TabPanel>
-                <CommonInput type="search" name="search" v-model="searchTransversalActivities" placeholder="Buscar" />
-                <Crud :headers="headerTransversalActivities" :items="dataSearchTransversalActivities" />
+                <Crud :headers="headerTransversalActivities" :items="items" />
             </TabPanel>
         </TabPanels>
     </TabGroup>

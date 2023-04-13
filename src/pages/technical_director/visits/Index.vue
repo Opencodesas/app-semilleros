@@ -7,66 +7,76 @@ const store = onboardingStore();
 
 const router = useRouter();
 
-const items = ref<Item[]>([]);
-
-onBeforeMount(async () => {
-	await subdirectorVisitServices.getAll().then((response) => {
-		items.value = response?.data.items
-		console.log(items.value)
+const create = () => {
+	setLoading(true);
+	router.push({ name: 'subdirector_visit.create' }).finally(() => {
+		setLoading(false);
 	});
-});
+};
+
+// onBeforeMount(async () => {
+// 	await subdirectorVisitServices.getAll(id = store.user.id).then((response) => {
+// 		items.value = response?.data.items
+// 	});
+// });
+const deleteModule = async (id: string | number) => {
+	console.log(id);
+	// await subdirectorVisitServices.delete(id).then((response) => {
+	// 	console.log(response);
+	// });
+};
 
 const headers: Header[] = [
 	{ text: 'No', value: 'id' },
 	{ text: 'Fecha', value: 'date_visit' },
-	{ text: 'Municipio', value: 'municipality.name' },
-	{ text: 'Monitor', value: 'monitor.name' },
+	{ text: 'Municipio', value: 'municipality' },
+	{ text: 'Monitor', value: 'monitor_name' },
 	{ text: 'Escenario Deportivo', value: 'sport_scene' },
 	{ text: 'Estado', value: 'status' },
 	{ text: 'Acciones', value: 'actions' },
 ];
 
-// const items = ref<Item[]>([
-// 	{
-// 		id: '1',
-// 		date_visit: '2023-02-15',
-// 		municipality: 'Jamundi',
-// 		monitor_name: 'Oscar Martinez',
-// 		sport_scene: 'Cancha Marcella',
-// 		status: {
-// 			id: 2,
-// 			name: 'En Revisión',
-// 			slug: 'ENR',
-// 		},
-// 	},
-// 	{
-// 		id: '2',
-// 		date_visit: '2023-02-20',
-// 		municipality: 'Jamundi',
-// 		monitor_name: 'Oscar Martinez',
-// 		sport_scene: 'Cancha Marcella',
-// 		status: {
-// 			id: 2,
-// 			name: 'En Revisión',
-// 			slug: 'ENR',
-// 		},
-// 	},
-// 	{
-// 		id: '3',
-// 		date_visit: '2023-02-27',
-// 		municipality: 'Jamundi',
-// 		monitor_name: 'Oscar Martinez',
-// 		sport_scene: 'Cancha Marcella',
-// 		status: {
-// 			id: 2,
-// 			name: 'Rechazado',
-// 			slug: 'REC',
-// 		},
-// 	},
-// ]);
-
-
+// const items = ref<Item[]>([]);
 const search = ref('');
+const items = ref<Item[]>([
+	{
+		id: '1',
+		date_visit: '2023-02-15',
+		municipality: 'Jamundi',
+		monitor_name: 'Oscar Martinez',
+		sport_scene: 'Cancha Marcella',
+		status: {
+			id: 2,
+			name: 'En Revisión',
+			slug: 'ENR',
+		},
+	},
+	{
+		id: '2',
+		date_visit: '2023-02-20',
+		municipality: 'Jamundi',
+		monitor_name: 'Oscar Martinez',
+		sport_scene: 'Cancha Marcella',
+		status: {
+			id: 2,
+			name: 'En Revisión',
+			slug: 'ENR',
+		},
+	},
+	{
+		id: '3',
+		date_visit: '2023-02-27',
+		municipality: 'Jamundi',
+		monitor_name: 'Oscar Martinez',
+		sport_scene: 'Cancha Marcella',
+		status: {
+			id: 2,
+			name: 'Rechazado',
+			slug: 'REC',
+		},
+	},
+]);
+
 const data = computed(() => searchData(items.value, search.value));
 </script>
 
@@ -84,7 +94,8 @@ const data = computed(() => searchData(items.value, search.value));
 			placeholder="Buscar" />
 		<Crud
 			:headers="headers"
-			:items="data" />
+			:items="data"
+			:onDeleteFnc="deleteModule" />
 	</div>
 	<!-- END: Page Layout -->
 </template>

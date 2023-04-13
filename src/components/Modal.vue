@@ -84,7 +84,7 @@ const formRules = computed(() => ({
 						leave-from="opacity-100 scale-100"
 						leave-to="opacity-0 scale-95">
 						<DialogPanel
-							class="transform overflow-hidden rounded-md bg-white p-6 pt-2 text-left align-middle shadow-xl transition-all">
+							class="transform overflow-hidden rounded-md bg-white p-6 text-left align-middle shadow-xl transition-all">
 							<!-- <Form /> -->
 							<props.Form :closeModal="closeModal" :id_review="id_review" />
 						</DialogPanel>

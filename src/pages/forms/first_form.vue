@@ -157,12 +157,13 @@
             :required="true"
             :options="optionsDiscapacidad"
           />
-          <CommonInput v-if="discapacidad === '1'"
+          <CommonInput
             label="¿Cual?"
             name="otroDisc"
             v-model="otroDiscapacidad"
             :validator="v$"
-            :required="true"
+            :required="discapacidad === '1'"
+            :disabled="discapacidad !== '1'"
           />
           <CommonSelect
             label="Patologia"
@@ -172,12 +173,13 @@
             :required="true"
             :options="optionsPatologia"
           />
-          <CommonInput v-if="patologia === '1'"
+          <CommonInput
             label="¿Cual?"
             name="otroPato"
             v-model="otroPatologia"
             :validator="v$"
-            :required="true"
+            :required="patologia === '1'"
+            :disabled="patologia !== '1'"
           />
           <CommonSelect
             label="Tipo de sangre"
@@ -188,46 +190,23 @@
             :options="optionsSangre"
           />
           <CommonSelect
-            label="Vivo con"
-            name="vivoCon"
-            v-model="vivoCon"
+            label="Escolaridad"
+            name="escolaridad"
+            v-model="escolaridad"
             :validator="v$"
-              :required="true"
-            :options="optionsVivo"
+            :required="true"
+            :options="optionsEscolaridad"
           />
-          
         </div>
-        
         <CommonSelect
           class="mt-5"
-          label="Escolaridad"
-          name="escolaridad"
-          v-model="escolaridad"
+          label="Vivo con"
+          name="vivoCon"
+          v-model="vivoCon"
           :validator="v$"
-          :required="true"
-          :options="optionsEscolaridad"
+            :required="true"
+          :options="optionsVivo"
         />
-
-        <div v-if="escolaridad === '1'" class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
-            
-          <CommonSelect
-              label="Nivel de Escolaridad"
-              name="nivel_escolaridad"
-              v-model="nivel_escolaridad"
-              :validator="v$"
-              :required="true"
-              :options="optionsNivelEscolaridad"
-            />
-            
-          <CommonInput
-              label="Institución Educativa"
-              name="institucion"
-              v-model="institucion"
-              :validator="v$"
-              :required="true"
-            />
-        </div>
-
         <CommonSelect class="mt-5"
           label="Tipo afiliacion(EPS)"
           name="afiliacion"
@@ -236,11 +215,11 @@
             :required="true"
           :options="optionsAfiliacion"
         />
-        
+        <!--
           <div class="m-4 text-center">
-            <Button type="button" @click="showV()">Continuar</Button>
+            <Button type="submit" >Continuar</Button>
           </div>
-        
+        -->
       </div>
     </div>
     <div class="p-5 mt-5 intro-y box">
@@ -360,8 +339,6 @@ const form = reactive({
   otroPatologia: "",
   sangre: "",
   escolaridad: "",
-  nivel_escolaridad: "",
-  institucion: "",
   vivoCon: "",
   afiliacion: "",
   nombresAcudiente: "",
@@ -375,67 +352,62 @@ const form = reactive({
 });
 
 const form_rules = computed(() => ({
-  fechaInscripcion: { required },
-  municipio: { required },
-  disciplinas: { required },
-  nombres: { required },
-  apellidos: { required },
-  fechaNacimiento: { required },
-  lugarNacimiento: { required },
-  tipoIdentificacion: { required },
-  numeroDocumento: { required },
-  direccionResidencia: { required },
-  numeroCel: { required },
-  estrato: { required },
-  zona: { required },
-  victimaConflicto: { required },
-  pueblo: { required },
-  genero: { required },
-  etnia: { required },
-  discapacidad: { required },
-  otroDisc: { required },
-  patologia: { required },
-  otroPato: { required },
-  sangre: { required },
-  escolaridad: { required },
-  nivel_escolaridad: { required },
-  institucion:{required },
-  vivoCon: { required },
-  afiliacion: { required },
-  nombresAcudiente: { },
-  apellidosAcudiente: { required },
-  nDocuAcudiente: { required },
-  parentesco: { required },
-  email: { required },
-  // checkEmail: required{},
-  nCelularAcudiente: { required },
-  // checkNCel: required{},
-  redesAcudiente: { required },
-  enterado: { required },
+  fechaInscripcion: {  },
+  municipio: {  },
+  disciplinas: {  },
+  nombres: {  },
+  apellidos: {  },
+  fechaNacimiento: {  },
+  lugarNacimiento: {  },
+  tipoIdentificacion: {  },
+  numeroDocumento: {  },
+  direccionResidencia: {  },
+  numeroCel: {  },
+  estrato: {  },
+  zona: {  },
+  victimaConflicto: {  },
+  pueblo: {  },
+  genero: {  },
+  etnia: {  },
+  discapacidad: {  },
+  otroDisc: {  },
+  patologia: {  },
+  otroPato: {  },
+  sangre: {  },
+  escolaridad: {  },
+  vivoCon: {  },
+  afiliacion: {  },
+  nombresAcudiente: {  },
+  apellidosAcudiente: {  },
+  nDocuAcudiente: {  },
+  parentesco: {  },
+  email: {  },
+  // checkEmail: {},
+  nCelularAcudiente: {  },
+  // checkNCel: {},
+  redesAcudiente: {  },
+  enterado: {  },
 }));
 
 const municipalitiesList = ref([]);
 const diciplinesList = ref([]);
 const ethniacityList = ref([]);
+const zonesList = ref([]);
 //---------------------------//
 onMounted(async () => {
   //peticion a la api para las listas desplegables, by rick.
   store.getListSelect().then((response) => {
     if (response?.status == 200) {
-      municipalitiesList.value = JSON.parse(JSON.stringify(response.data['my_municipalities']));
+      municipalitiesList.value = JSON.parse(JSON.stringify(response.data['municipalities']));
       diciplinesList.value = JSON.parse(JSON.stringify(response.data['diciplines']));
       ethniacityList.value = JSON.parse(JSON.stringify(response.data['ethniacity']));
+      zonesList.value = JSON.parse(JSON.stringify(response.data["zones"]));
     } else {
       Swal.fire("", "No se pudieron obtener los datos", "error");
     }
   });
 });
 const v$ = useVuelidate(form_rules, form);
-
-const showV = () => {
-  console.log( v$.value.$invalid, v$.value );
-}
-
 </script>
 
 <script lang="ts">
@@ -473,8 +445,6 @@ export default defineComponent({
       otroPatologia: "",
       sangre: "",
       escolaridad: "",
-      nivel_escolaridad: "",
-      institucion: "",
       vivoCon: "",
       afiliacion: "",
       nombresAcudiente: "",
@@ -504,30 +474,34 @@ export default defineComponent({
         { label: "hapkido", value: "7" },
       ],
       optionsIdentificacion: [
-        { label: "cedula", value: "CC" },
-        { label: "nit", value: "NIT" },
-        { label: "tarjeta de identidad", value: "TI" },
-        { label: "pasaporte", value: "PP" },
+        { label: "cedula", value: "1" },
+        { label: "nit", value: "2" },
+        { label: "tarjeta de identidad", value: "3" },
+        { label: "pasaporte", value: "4" },
       ],
       optionsEstrato: [
         { label: "1", value: "1" },
         { label: "2", value: "2" },
         { label: "3", value: "3" },
         { label: "4", value: "4" },
-        { label: "5", value: "5" },
-        { label: "6", value: "6" },
       ],
-      zonesList: [
-        { label: "RURAL", value: "R" },
-        { label: "URBANA", value: "U" },
+      optionsZona: [
+        { label: "REGION 1", value: "1" },
+        { label: "REGION 2", value: "2" },
+        { label: "REGION 3", value: "3" },
+        { label: "REGION 4", value: "4" },
+        { label: "REGION 5", value: "5" },
+        { label: "REGION 6", value: "6" },
+        { label: "REGION 7", value: "7" },
+        { label: "REGION 8", value: "8" },
       ],
       optionsVictima: [
         { label: "SI", value: "1" },
         { label: "NO", value: "0" },
       ],
       optionsGenero: [
-        { label: "Masculino", value: "M" },
-        { label: "Femenino", value: "F" },
+        { label: "Masculino", value: "Masculino" },
+        { label: "Femenino", value: "Femenino" },
       ],
       optionsEtnia: [
         { label: "Indigena", value: "1" },
@@ -556,11 +530,6 @@ export default defineComponent({
         { label: "Si", value: "1" },
         { label: "No", value: "0" },
       ],
-      optionsNivelEscolaridad: [
-        { label: "Primaria", value: "1" },
-        { label: "Secundaria", value: "2" },
-        { label: "Graduado", value: "3" },
-      ],
       optionsVivo: [
         { label: "Padre", value: "Padre" },
         { label: "Madre", value: "Madre" },
@@ -570,15 +539,14 @@ export default defineComponent({
         { label: "Otros", value: "Otros" },
       ],
       optionsAfiliacion: [
-        { label: "Subsidiado", value: "SUB" },
-        { label: "Contributivo", value: "CON" },
-        { label: "No tiene", value: "NA" },
+        { label: "Subsidiado", value: "Subsidiado" },
+        { label: "Contributivo", value: "Contributivo" },
+        { label: "No tiene", value: "No tiene" },
       ],
       optionsRedes: [
         { label: "Facebook", value: "Facebook" },
         { label: "Instagram", value: "Instagram" },
         { label: "Telegram", value: "Telegram" },
-        { label: "Twitter", value: "Twitter" },
       ],
       optionsEnterado: [
         { label: "Ente municipal", value: "Ente municipal" },
@@ -608,50 +576,51 @@ export default defineComponent({
       
       const data = {
         registration_date: this.fechaInscripcion,
-        municipalities_id: this.municipio,
-        disciplines_id: this.disciplinas,
-
         beneficiary_name: this.nombres,
         beneficiary_last_name: this.apellidos,
-        full_name: `${this.nombres} ${this.apellidos}`,        
-        
         birth_date: this.fechaNacimiento,
         origin_place: this.lugarNacimiento,
-        type_document: this.tipoIdentificacion,
-        document_number: this.numeroDocumento,
+        identification_type: this.tipoIdentificacion,
+        number_document: this.numeroDocumento,
         home_address: this.direccionRes,
-        phone: this.numeroCel,
+        beneficiary_phone: this.numeroCel,
         stratum: this.estrato,
-        zone: this.zona,
         conflict_victim: this.victimaConf,
         distric: this.pueblo,
         gender: this.genero,
-        ethnicities_id: this.etnia,
         disability: this.discapacidad,
-        other_disability: this.otroDiscapacidad,
         pathology: this.patologia,
-        what_pathology: this.otroPatologia,
-        blood_type: this.sangre,
-        live_with: this.vivoCon,
         scholarship: this.escolaridad,
-        scholar_level: this.nivel_escolaridad,
-        institution: this.institucion,
+        live_with: this.vivoCon,
         affiliation_type: this.afiliacion,
-
-        // Datos del Acudiente
         attendant_name: this.nombresAcudiente,
         attendant_last_name: this.apellidosAcudiente,
         attendant_number_document: this.nDocuAcudiente,
         parentesco: this.parentesco,
         email: this.email,
-        phone_number: this.nCelularAcudiente,
+        phone_number: this.numeroCel,
         social_media: this.redesAcudiente,
         find_out: this.enterado,
+        municipalities_id: this.municipio,
+        disciplines_id: this.disciplinas,
+        zones_id: this.zona,
+        ethnicities_id: this.etnia,
+        blood_types_id: this.sangre,
 
-        // created_by: 1,
+        // datos prueba para la base de datos que no pueden ser null
+        created_by: 1,
+        full_name: `${this.nombres} ${this.apellidos}`,
         accept: 1,
-        linkage_project: 1,
+        linkage_project:1,
+       
+        document_number: this.numeroDocumento,
+        phone:this.numeroCel,
         status: "REC",
+       
+        
+
+
+
       };
       axios.addBeneficiary(data).then((res: any) => {
         if(res){
@@ -686,8 +655,6 @@ export default defineComponent({
       this.patologia = "";
       this.otroPatologia = "";
       this.sangre = "";
-      this.nivel_escolaridad = "";
-      this.institucion = "";
       this.escolaridad = "";
       this.vivoCon = "";
       this.afiliacion = "";

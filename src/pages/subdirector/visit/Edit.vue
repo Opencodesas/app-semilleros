@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import CommonFile from '@/components/CommonFile.vue';
 import { filePondValue } from '@/composables/useFilepondEvents';
-import { onboardingStore } from '@/stores/onboardingStore';
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
+import { onboardingStore } from '@/stores/onboardingStore';
 import Swal from 'sweetalert2';
 
 const store = onboardingStore();
@@ -12,29 +12,30 @@ const { multiple } = useFilepondEvents();
 const router = useRouter();
 const route = useRoute();
 const { id } = route.params;
-const dataLoaded = ref(false);
 
 const form = reactive({
 	status_id: '',
-	reject_message: '',
-	date_visit: '',
-	hour_visit: '',
-	observations: '',
+	rejection_message: '',
+	date_visit: '2023-02-27',
+	hour_visit: '09:30',
+	observations: 'a pesar de la fuerte lluvia se vivencio buena población.',
 	monitor_id: '',
 	municipality_id: '',
-	event_support: '',
+	event_support_id: '',
 	discipline_id: '',
-	sidewalk: '',
-	sports_scene: '',
-	beneficiary_coverage: '',
+	sidewalk: 'Jamundi',
+	sports_scene: 'Cancha Marcella',
+	beneficiary_coverage: '8',
 	technical: '',
-	description: '',
+	description:
+		'se encontró en el escenario, confunde los componentes se le deben reforzar.',
 	file: [],
+	created_by: store.user.id,
 });
 
 const form_rules = computed(() => ({
 	status_id: { required },
-	reject_message: { required: parseInt(form.status_id) == 2 },
+	rejection_message: { required: parseInt(form.status_id) == 2 },
 	date_visit: { required },
 	hour_visit: { required },
 	municipality_id: { required },
@@ -43,11 +44,12 @@ const form_rules = computed(() => ({
 	discipline_id: { required },
 	sports_scene: { required },
 	beneficiary_coverage: { required },
-	event_support: { required },
+	event_support_id: { required },
 	technical: { required },
 	observations: { required },
 	description: { required },
-	file: {},
+	file: { required },
+	created_by: { required },
 }));
 
 const municipalities = asyncComputed(async () => {
@@ -71,36 +73,47 @@ const evaluationList = [
 ];
 const v$ = useVuelidate(form_rules, form);
 
-const fetch = async () => {
+const data = async () => {
 	await subdirectorVisitServices.get(id as string).then((response) => {
-		if (response?.status == 200 || response?.status == 201) {
-			form.observations = response.data.items.observations;
-			form.monitor_id = response.data.items.monitor_id;
-			form.municipality_id = response.data.items.municipality_id;
-			form.event_support = response.data.items.event_support;
-			form.hour_visit = response.data.items.hour_visit;
-			form.discipline_id = response.data.items.discipline_id;
-			form.sidewalk = response.data.items.sidewalk;
-			form.sports_scene = response.data.items.sports_scene;
-			form.beneficiary_coverage = response.data.items.beneficiary_coverage;
-			form.technical = response.data.items.technical;
-			form.date_visit = response.data.items.date_visit;
-			form.description = response.data.items.description;
-			form.file = response.data.items.file;
-			form.status_id = response.data.items.status_id;
-			form.reject_message = response.data.items.reject_message;
-			dataLoaded.value = true;
+		if (response?.status == 200) {
+			form.observations = response.data.observations;
+			form.monitor_id = response.data.monitor_id;
+			form.municipality_id = response.data.municipality_id;
+			form.event_support_id = response.data.event_support_id;
+			form.hour_visit = response.data.hour_visit;
+			form.discipline_id = response.data.discipline_id;
+			form.sidewalk = response.data.sidewalk;
+			form.sports_scene = response.data.sports_scene;
+			form.beneficiary_coverage = response.data.beneficiary_coverage;
+			form.technical = response.data.technical;
+			form.date_visit = response.data.date_visit;
+			form.description = response.data.description;
+			form.file = response.data.file;
+			form.status_id = response.data.status_id;
+			form.rejection_message = response.data.rejection_message;
+			setLoading(false);
 		} else {
-			Swal.fire('', 'No se pudieron obtener los datos', 'error');
+			setLoading(false);
 		}
+		return;
 	});
 };
 
 onMounted(() => {
-	fetch();
+	form.status_id = '2';
+	form.rejection_message = 'La foto no es una evidencia de la visita';
+	form.hour_visit = '9:30';
+	form.municipality_id = '39';
+	form.monitor_id = '2';
+	form.discipline_id = '8';
+	form.technical = '1';
+	form.event_support_id = '1';
 });
 
 const onSubmit = async () => {
+	console.log(form.hour_visit);
+	form.status_id = '3';
+	form.rejection_message = '';
 	const valid = await v$.value.$validate();
 
 	if (valid) {
@@ -108,25 +121,24 @@ const onSubmit = async () => {
 			.update(id as string, formdataParser(form))
 			.then((response) => {
 				if (response?.status == 200 || response?.status == 201) {
-					// Swal.fire('', 'Modificacion exitosa!', 'success');
-					alerts.update();
+					Swal.fire('', 'Modificacion exitosa!', 'success');
 					setLoading(true);
-					router.push({ name: 'subdirector_visit.index' }).finally(() => {
+					router.push('index').finally(() => {
 						setLoading(false);
 					});
 				} else {
 					Swal.fire('', 'No se pudieron obtener los datos', 'error');
 				}
 			});
+		Swal.fire('', 'Modificacion exitosa!', 'success');
+		setLoading(true);
+		router.push({name: 'subdirector_visit.index'}).finally(() => {
+			setLoading(false);
+		});
 	} else {
 		alerts.validation();
 	}
 };
-
-const disableElements = computed(() => {
-	return form.status_id == '4' ? false : true; //id: 4 => Rechazado => REC
-})
-const download = () => {};
 
 </script>
 
@@ -140,14 +152,12 @@ const download = () => {};
 		</div>
 	</div>
 
-	<div
-		class="p-5 mt-5 intro-y box"
-		v-if="dataLoaded">
+	<div class="p-5 mt-5 intro-y box">
 		<div
 			class="mb-6"
-			v-if="form.status_id == '4'">
+			v-if="parseInt(form.status_id) == 2">
 			<p class="text-danger font-bold">Razon de rechazo</p>
-			<p>{{ form.reject_message }}</p>
+			<p>{{ form.rejection_message }}</p>
 		</div>
 
 		<div class="grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
@@ -156,23 +166,20 @@ const download = () => {};
 				label="Fecha  *"
 				name="date_visit"
 				v-model="form.date_visit"
-				:validator="v$" 
-				:disabled="disableElements"/>
+				:validator="v$" />
 			<CommonInput
 				type="time"
 				label="Hora  *"
 				name="hour_visit"
 				v-model="form.hour_visit"
-				:validator="v$" 
-				:disabled="disableElements"/>
+				:validator="v$" />
 			<CommonSelect
 				label="Municipio *"
 				name="municipality_id"
 				class="cursor-pointer"
 				v-model="form.municipality_id"
 				:validator="v$"
-				:options="municipalities" 
-				:disabled="disableElements"/>
+				:options="municipalities" />
 
 			<CommonInput
 				type="text"
@@ -180,32 +187,28 @@ const download = () => {};
 				label="Corregimiento / Vereda *"
 				name="sidewalk"
 				v-model="form.sidewalk"
-				:validator="v$" 
-				:disabled="disableElements"/>
+				:validator="v$" />
 			<CommonSelect
 				label="Monitor *"
 				name="monitor_id"
 				class="cursor-pointer"
 				v-model="form.monitor_id"
 				:validator="v$"
-				:options="monitorList" 
-				:disabled="disableElements"/>
+				:options="monitorList" />
 			<CommonSelect
 				label="Disciplinas *"
 				name="discipline_id"
 				class="cursor-pointer"
 				v-model="form.discipline_id"
 				:validator="v$"
-				:options="disciplines" 
-				:disabled="disableElements"/>
+				:options="disciplines" />
 			<CommonInput
 				type="text"
 				placeholder="Ingrese"
 				label="Escenario deportivo *"
 				name="sports_scene"
 				v-model="form.sports_scene"
-				:validator="v$" 
-				:disabled="disableElements"/>
+				:validator="v$" />
 			<CommonInput
 				type="number"
 				min="0"
@@ -213,24 +216,21 @@ const download = () => {};
 				label="Cobertura de benificiario *"
 				name="beneficiary_coverage"
 				v-model="form.beneficiary_coverage"
-				:validator="v$" 
-				:disabled="disableElements"/>
+				:validator="v$" />
 			<CommonSelect
 				label="Cumple con el desarrollo tecnico del mes *"
 				name="technical"
 				class="cursor-pointer"
 				v-model="form.technical"
 				:validator="v$"
-				:options="evaluationList" 
-				:disabled="disableElements"/>
+				:options="evaluationList" />
 			<CommonSelect
 				label="Apoyo a eventos *"
-				name="event_support"
+				name="event_support_id"
 				class="cursor-pointer"
-				v-model="form.event_support"
+				v-model="form.event_support_id"
 				:validator="v$"
-				:options="event_supportList" 
-				:disabled="disableElements"/>
+				:options="event_supportList" />
 		</div>
 		<div class="mt-6 intro-y">
 			<CommonTextarea
@@ -239,8 +239,7 @@ const download = () => {};
 				placeholder="Ingrese las Descripcion"
 				name="description"
 				v-model="form.description"
-				:validator="v$" 
-				:disabled="disableElements"/>
+				:validator="v$" />
 		</div>
 		<div class="mt-6 intro-y">
 			<CommonTextarea
@@ -249,8 +248,7 @@ const download = () => {};
 				placeholder="Ingrese las observaciones"
 				name="observations"
 				v-model="form.observations"
-				:validator="v$" 
-				:disabled="disableElements"/>
+				:validator="v$" />
 		</div>
 		<div class="p-5 mt-6 intro-y">
 			<FormLabel
@@ -265,31 +263,22 @@ const download = () => {};
 				width="400" />
 		</div>
 		<div class="p-5 mt-6 intro-y">
-				<CommonFile
-					:validator="v$"
-					v-model="form.file"
-					name="file"
-					class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
-					v-if="!disableElements"
-					@addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
-					@removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }" />
-			</div>
+			<CommonFile
+				:validator="v$"
+				v-model="form.file"
+				name="file"
+				class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
+				@addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
+				@removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }" />
+		</div>
 	</div>
 
-	<div class="mt-6 flex justify-center col-span-1 md:col-span-2">
-			<Button
-				v-if="!disableElements"
-				@click="onSubmit"
-				variant="primary">
-				Editar visita
-			</Button>
-
-			<Button
-				v-else-if="form.status_id == '1'"
-				type="button"
-				variant="primary"
-				@click="download">
-				Descargar visita
-			</Button>
-		</div>
+	<div class="mt-6 flex justify-end col-span-1 md:col-span-2">
+		<Button
+			variant="primary"
+			class="btn btn-primary"
+			@click="onSubmit">
+			Actualizar
+		</Button>
+	</div>
 </template>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import CommonFile from '@/components/CommonFile.vue';
 import { filePondValue } from '@/composables/useFilepondEvents';
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
@@ -7,6 +8,9 @@ const { multiple } = useFilepondEvents();
 const router = useRouter();
 
 const form = reactive({
+	id: '',
+	status: '',
+	reason: '',
 	municipality_id: '',
 	date_visit: '',
 	nro_assistants: 0,
@@ -18,9 +22,11 @@ const form = reactive({
 	development_activity: '',
 	content_network: '',
 	files: [],
+	create_by: '',
 });
 
 const form_rules = computed(() => ({
+	status: { required },
 	municipality_id: { required },
 	date_visit: { required },
 	nro_assistants: { required },
@@ -32,6 +38,7 @@ const form_rules = computed(() => ({
 	development_activity: { required },
 	content_network: { required },
 	files: { required },
+	create_by: { required },
 }));
 
 const v$ = useVuelidate(form_rules, form);
@@ -42,7 +49,6 @@ const municipalities = asyncComputed(async () => {
 
 const onSubmit = async () => {
 	const valid = await v$.value.$validate();
-	console.log(form);
 	if (form.nro_assistants < 0) {
 		alerts.error('El numero de asistentes no puede ser negativo');
 		return;
@@ -50,8 +56,8 @@ const onSubmit = async () => {
 	if (valid) {
 		await transversalActivityServices
 			.create(formdataParser(form))
-			.then((response) => {
-				if (response?.status == 200 || response?.status == 201) {
+			.then((response: any) => {
+				if (response.status == 200 || response.status == 201) {
 					alerts.create();
 					setLoading(true);
 					router
