@@ -132,6 +132,11 @@ const routes = [
 						meta: { provider: 'reports' },
 						component: () => import('@/pages/reports/Index.vue')
 					},
+					{
+						path: "download",
+						name: "reports.download",
+						component: () => import('@/pages/reports/Download.vue')
+					}
 				]
 			},
 			{

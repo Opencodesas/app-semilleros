@@ -14,7 +14,7 @@ const translations: Translations = {
 
 const date = ref(dayjs().format("DD_MM_YYYY"));
 
-export const exportsService = {
+export const reportServices = {
 
     exportExcel: async (type: string, form: FormData) => {
         try {

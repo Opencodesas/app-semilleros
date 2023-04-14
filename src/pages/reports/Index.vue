@@ -88,20 +88,20 @@ const filters_rules = computed(() => ({
 }));
 
 const exportExcel = async (type: string) => {
-	await exportsService.exportExcel(type, formdataParser(form));
+	await reportServices.exportExcel(type, formdataParser(form));
 };
 
 const exportPdf = async (type: string) => {
-	await exportsService.exportPdf(type, formdataParser(form));
+	await reportServices.exportPdf(type, formdataParser(form));
 };
 
 const exportZip = async (type: string) => {
-	await exportsService.exportZIP(type, formdataParser(form));
+	await reportServices.exportZIP(type, formdataParser(form));
 };
 
 const searchInfoReport = async () => {
 	form.data = true;
-	return await exportsService.searchInfoReport(formdataParser(form));
+	return await reportServices.searchInfoReport(formdataParser(form));
 };
 
 const v$ = useVuelidate(filters_rules, form, { $autoDirty: true });
@@ -190,7 +190,7 @@ const onExport = (type: string, format: string) => {
 	<div class="intro-y flex items-center mt-8">
 		<h2 class="text-lg font-medium mr-auto">Reportes</h2>
 	</div>
-	<div class="intro-y box p-5 mt-5">
+	<!-- <div class="intro-y box p-5 mt-5">
 		<section
 			class="flex flex-col lg:grid lg:grid-cols-6 xl:grid xl:grid-cols-6 gap-6 justify-evenly">
 			<div
@@ -225,7 +225,7 @@ const onExport = (type: string, format: string) => {
 				>
 				<div class="grid grid-cols-2 gap-6 w-full intro-x">
 					<Button
-					variant="outline-secondary"
+						variant="outline-secondary"
 						class="w-[4.3rem] text-[#1e293b]"
 						type="button"
 						@click="cleanFilter">
@@ -234,7 +234,7 @@ const onExport = (type: string, format: string) => {
 				</div>
 			</div>
 		</section>
-	</div>
+	</div> -->
 	<div class="intro-y box p-5 mt-5">
 		<div class="flex justify-center">
 			<RadioGroup
