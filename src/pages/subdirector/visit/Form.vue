@@ -1,13 +1,10 @@
 <script setup lang="ts">
 import CommonFile from '@/components/CommonFile.vue';
-import { filePondValue } from '@/composables/useFilepondEvents';
 import useVuelidate from '@vuelidate/core';
-import { required } from '@vuelidate/validators';
+import { required, requiredIf } from '@vuelidate/validators';
 import Swal from 'sweetalert2';
 
-const { multiple } = useFilepondEvents();
 const router = useRouter();
-const route = useRoute();
 
 const form = reactive({
 	status_id: '',
@@ -29,7 +26,7 @@ const form = reactive({
 
 const form_rules = computed(() => ({
 	status_id: {},
-	rejection_message: {},
+	rejection_message: { require: requiredIf(() => form.status_id == '2') },
 	date_visit: { required },
 	hour_visit: { required },
 	municipality_id: { required },
@@ -44,7 +41,7 @@ const form_rules = computed(() => ({
 	observations: { required },
 	file: { required },
 }));
-const disciplinesList = ref([]);
+
 const monitorList = [
 	{ label: 'Joselito', value: 1 },
 	{ label: 'Miguelito', value: 2 },
@@ -69,7 +66,7 @@ const disciplines = asyncComputed(async () => {
 
 const selectFile = (event: any) => {
 	form.file = event.target.files[0];
-}
+};
 
 const formdataParser = (form: any) => {
 	const formData = new FormData();
@@ -81,7 +78,6 @@ const formdataParser = (form: any) => {
 
 const onSubmit = async () => {
 	const valid = await v$.value.$validate();
-	const formData = formdataParser(form)
 
 	if (valid) {
 		await subdirectorVisitServices
@@ -96,7 +92,7 @@ const onSubmit = async () => {
 						});
 					}
 				} else {
-					Swal.fire('Error', 'Error al crear la visita', 'error')
+					Swal.fire('Error', 'Error al crear la visita', 'error');
 				}
 			});
 	} else {
@@ -217,8 +213,7 @@ const onSubmit = async () => {
 				v-model="form.file"
 				name="file"
 				class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
-				@change="selectFile" 
-				/>
+				@change="selectFile" />
 		</div>
 	</div>
 

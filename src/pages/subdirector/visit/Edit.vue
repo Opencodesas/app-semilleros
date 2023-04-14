@@ -1,15 +1,10 @@
 <script setup lang="ts">
 import CommonFile from '@/components/CommonFile.vue';
-import { filePondValue } from '@/composables/useFilepondEvents';
-import { onboardingStore } from '@/stores/onboardingStore';
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
 import Swal from 'sweetalert2';
 
-const store = onboardingStore();
 const urlStorage = `${import.meta.env.VITE_BASE_URL}/storage/`;
-
-const { multiple } = useFilepondEvents();
 const router = useRouter();
 const route = useRoute();
 const { id } = route.params;
@@ -71,7 +66,7 @@ const evaluationList = [
 	{ label: 'Rechazada', value: 2 },
 ];
 const v$ = useVuelidate(form_rules, form);
-let file;
+
 const fetch = async () => {
 	await subdirectorVisitServices.get(id as string).then((response) => {
 		if (response?.status == 200 || response?.status == 201) {
@@ -90,7 +85,6 @@ const fetch = async () => {
 			form.file = response.data.items.file;
 			form.status_id = response.data.items.status_id;
 			form.reject_message = response.data.items.reject_message;
-			file = `http://localhost:8000/storage/${form.file}`;
 			dataLoaded.value = true;
 		} else {
 			Swal.fire('', 'No se pudieron obtener los datos', 'error');
@@ -100,6 +94,18 @@ const fetch = async () => {
 onMounted(() => {
 	fetch();
 });
+
+const selectFile = (event: any) => {
+	form.file = event.target.files[0];
+}
+
+const formdataParser = (form: any) => {
+	const formData = new FormData();
+	Object.keys(form).forEach((key) => {
+		formData.append(key, form[key]);
+	});
+	return formData;
+};
 
 const onSubmit = async () => {
 	const valid = await v$.value.$validate();
@@ -271,8 +277,8 @@ const download = () => {};
 				name="file"
 				class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
 				v-if="!disableElements"
-				@addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
-				@removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }" />
+				@change="selectFile"
+				/>
 		</div>
 	</div>
 

@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import { onboardingStore } from '@/stores/onboardingStore';
 import { Header, Item } from 'vue3-easy-data-table';
-
-const store = onboardingStore();
 
 const router = useRouter();
 
@@ -14,13 +11,6 @@ const create = () => {
 };
 const items = ref<Item[]>([]);
 
-// onBeforeMount(async () => {
-// 	subdirectorVisitServices.then((response) => {
-// 		items.value = response?.data.items;
-// 		console.log(response?.data.items);
-// 		return items;
-// 	});
-// });
 const headers: Header[] = [
 	{ text: 'No', value: 'id', sortable: true },
 	{ text: 'Fecha', value: 'date_visit', sortable: true },
@@ -36,7 +26,6 @@ onMounted(async () => {
 	items.value = await res?.data.items;
 	const statues = await getSelectStatus();
 	let index = 0;
-	console.log(items.value[1].status);
 	while (true) {
 		if (index == items.value.length) {
 			break;
