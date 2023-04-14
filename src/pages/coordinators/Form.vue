@@ -1,18 +1,13 @@
 <script setup lang="ts">
 import CommonFile from '@/components/CommonFile.vue';
-import { filePondValue } from '@/composables/useFilepondEvents';
-import { onboardingStore } from '@/stores/onboardingStore';
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
 import Swal from 'sweetalert2';
 
-const { multiple } = useFilepondEvents();
-const store = onboardingStore();
+
 const router = useRouter();
-const route = useRoute();
 
 const form = reactive({
-	rejection_message: '',
 	date_visit: '',
 	hour_visit: '',
 	municipalitie_id: '',
@@ -24,13 +19,9 @@ const form = reactive({
 	description: '',
 	observations: '',
 	file: [],
-	created_by: store.user.id,
-	status_id: '2',
 });
 
 const form_rules = computed(() => ({
-	status_id: { required },
-	rejection_message: {},
 	date_visit: { required },
 	hour_visit: { required },
 	municipalitie_id: { required },
@@ -42,22 +33,13 @@ const form_rules = computed(() => ({
 	description: { required },
 	observations: { required },
 	file: { required },
-	created_by: {},
 }));
 
-const disciplinesList = ref([]);
 const monitorList = [
 	{ label: 'Joselito', value: 1 },
 	{ label: 'Miguelito', value: 2 },
 ];
-const event_supportList = [
-	{ label: 'Si', value: 1 },
-	{ label: 'No', value: 2 },
-];
-const evaluationList = [
-	{ label: 'Aceptada', value: 1 },
-	{ label: 'Rechazada', value: 2 },
-];
+
 const v$ = useVuelidate(form_rules, form);
 
 const municipalities = asyncComputed(async () => {
@@ -68,8 +50,19 @@ const disciplines = asyncComputed(async () => {
 	return await getSelect(['disciplines']);
 }, null);
 
+const selectFile = (event: any) => {
+	form.file = event.target.files[0];
+}
+
+const formdataParser = (form: any) => {
+	const formData = new FormData();
+	Object.keys(form).forEach((key) => {
+		formData.append(key, form[key]);
+	});
+	return formData;
+};
+
 const onSubmit = async () => {
-	console.log(form);
 	const valid = await v$.value.$validate();
 	if (valid) {
 		await coordinatorVisitServices
@@ -79,7 +72,7 @@ const onSubmit = async () => {
 					if (response.status >= 200 && response.status <= 300) {
 						alerts.create();
 						setLoading(true);
-						router.push({ name: 'coordinator_visit.index' }).finally(() => {
+						router.push({ name: 'coordinator.index' }).finally(() => {
 							setLoading(false);
 						});
 					}
@@ -186,8 +179,7 @@ const onSubmit = async () => {
 				v-model="form.file"
 				name="file"
 				class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
-				@addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
-				@removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }" />
+				@change="selectFile"/>
 		</div>
 	</div>
 

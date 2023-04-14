@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import CommonFile from '@/components/CommonFile.vue';
-import { filePondValue } from '@/composables/useFilepondEvents';
 import useVuelidate from '@vuelidate/core';
-import { required } from '@vuelidate/validators';
+import { required, requiredIf } from '@vuelidate/validators';
 import Swal from 'sweetalert2';
 
-const { multiple } = useFilepondEvents();
+const urlStorage = `${import.meta.env.VITE_BASE_URL}/storage/`;
 const router = useRouter();
 const route = useRoute();
 const dataLoaded = ref(false);
@@ -28,7 +27,7 @@ const form = reactive({
 });
 
 const form_rules = computed(() => ({
-	reject_message: {},
+	reject_message: { required: requiredIf(() => form.status_id == '2') },
 	date_visit: { required },
 	hour_visit: { required },
 	municipalitie_id: { required },
@@ -40,7 +39,6 @@ const form_rules = computed(() => ({
 	description: { required },
 	observations: { required },
 	file: { required },
-	created_by: {},
 }));
 
 const monitorList = [
@@ -62,7 +60,6 @@ const fetch = async () => {
 		.get(route.params.id as string)
 		.then((response) => {
 			if (response?.status == 200 || response?.status == 201) {
-				console.log(response.data.items);
 				form.id = response.data.items.id;
 				form.beneficiary_coverage = response.data.items.beneficiary_coverage;
 				form.date_visit = response.data.items.date_visit;
@@ -76,6 +73,7 @@ const fetch = async () => {
 				form.sidewalk = response.data.items.sidewalk;
 				form.status_id = response.data.items.status_id;
 				form.reject_message = response.data.items.reject_message;
+				form.file = response.data.items.file;
 				dataLoaded.value = true;
 			} else {
 				Swal.fire('', 'No se pudieron obtener los datos', 'error');
@@ -237,9 +235,7 @@ const download = () => {};
 					:validator="v$"
 					:disabled="disableElements" />
 			</div>
-			<div
-				class="p-5 mt-6 intro-y"
-				v-if="!disableElements">
+			<div class="p-5 mt-6 intro-y">
 				<FormLabel
 					for="evidencia"
 					class="flex flex-col w-full sm:flex-row">
@@ -248,7 +244,7 @@ const download = () => {};
 				<img
 					:alt="`Evidencia de la visita del subdirector`"
 					class="m-auto border rounded-lg"
-					src="/semilleros.png"
+					:src="`${urlStorage}${form.file}`"
 					width="400" />
 			</div>
 			<div class="p-5 mt-6 intro-y">
@@ -257,9 +253,7 @@ const download = () => {};
 					v-model="form.file"
 					name="file"
 					class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
-					v-if="!disableElements"
-					@addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
-					@removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }" />
+					v-if="!disableElements" />
 			</div>
 		</div>
 		<div class="mt-6 flex justify-center col-span-1 md:col-span-2">
