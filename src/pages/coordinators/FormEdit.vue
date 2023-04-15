@@ -55,6 +55,8 @@ const disciplines = asyncComputed(async () => {
 	return await getSelect(['disciplines']);
 }, null);
 
+const file = ref(null);
+
 const fetch = async () => {
 	await coordinatorVisitServices
 		.get(route.params.id as string)
@@ -74,6 +76,7 @@ const fetch = async () => {
 				form.status_id = response.data.items.status_id;
 				form.reject_message = response.data.items.reject_message;
 				form.file = response.data.items.file;
+				file.value = response.data.items.file;
 				dataLoaded.value = true;
 			} else {
 				Swal.fire('', 'No se pudieron obtener los datos', 'error');
@@ -96,9 +99,28 @@ onMounted(() => {
  *      servicios.create(fd)
  */
 
+const selectFile = (event: any) => {
+	console.log(file.value);
+	if (event.target.files.length < 0) {
+		form.file = file.value
+		console.log(form.file);
+		return 
+	};
+	console.log(form.file);
+	form.file = event.target.files[0];
+}
+
+const formdataParser = (form: any) => {
+	const formData = new FormData();
+	Object.keys(form).forEach((key) => {
+		formData.append(key, form[key]);
+	});
+	return formData;
+};
+
 const onSubmit = async () => {
+	console.log(file.value);
 	const valid = await v$.value.$validate();
-	form.id = route.params.id as string;
 	if (valid) {
 		await coordinatorVisitServices
 			.update(form.id, formdataParser(form))
@@ -244,7 +266,7 @@ const download = () => {};
 				<img
 					:alt="`Evidencia de la visita del subdirector`"
 					class="m-auto border rounded-lg"
-					:src="`${urlStorage}${form.file}`"
+					:src="`${urlStorage}${file}`"
 					width="400" />
 			</div>
 			<div class="p-5 mt-6 intro-y">
@@ -252,6 +274,7 @@ const download = () => {};
 					:validator="v$"
 					v-model="form.file"
 					name="file"
+					@change="selectFile"
 					class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
 					v-if="!disableElements" />
 			</div>
