@@ -60,7 +60,7 @@ export const subdirectorVisitServices = {
         try {
             setLoading(true)
 
-            const response = await api.delete(`/${apiPath}/${module}?id=${id}`).finally(() => {
+            const response = await api.delete(`/${apiPath}/${module}/${id}`).finally(() => {
                 setLoading(false)
             })
 

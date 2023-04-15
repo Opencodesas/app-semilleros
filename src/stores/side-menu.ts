@@ -190,7 +190,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
           {
             icon: "Activity",
             pageName: "psychosocial.transversal-activity.create",
-            title: "Actividades transversales",
+            title: "Crear actividades transversales",
           },
           {
             icon: "Activity",
