@@ -10,6 +10,11 @@ interface Translations {
 
 const translations: Translations = {
     users: "Usuarios",
+    infoUsers: "Usuarios informacion",
+    visitSubDirector: "Visitas subdirector",
+    transversalActivity: "Actividades transversales",
+    coordinatorVisit: "Visitas coordinador regional",
+    customVisit: "Visitas personalizas psicosocial",
 };
 
 const date = ref(dayjs().format("DD_MM_YYYY"));
