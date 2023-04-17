@@ -12,6 +12,9 @@ export const numeric = withI18nMessage(validators.numeric)
 export const minLength = withI18nMessage(validators.minLength, { withArguments: true })
 export const maxLength = withI18nMessage(validators.maxLength, { withArguments: true })
 
+
+export const maxDecimalsLength = () => {}
+
 const _unique = (group: Array<any>, key: string) => {
     return (value: string) => {
         const found = group.filter(item => {

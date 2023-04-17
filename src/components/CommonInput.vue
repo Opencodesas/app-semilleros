@@ -21,6 +21,7 @@ interface Props {
     required? : boolean,
     modelValue?: string | number | Object | boolean
     label?: string
+    step?: string,
     placeholder?: string
     min?: string | number
     max?: string | number
@@ -84,6 +85,7 @@ export default {
                 || collection_validator && collection_validator.v$[collection_validator.name].$error
         }, { 'block px-4 py-3 intro-x login__input min-w-full xl:min-w-[350px]': $route.name == 'login' }]"
             :max="max"
+            :step="step"
             :placeholder="placeholder"
             :onfocus="
                 (type == 'time' || type == 'date')
