@@ -1,4 +1,4 @@
-const module = 'transversal-activity'
+const module = 'transversal_activity'
 
 export const transversalActivityServices = {
   get: async (id: string) => {

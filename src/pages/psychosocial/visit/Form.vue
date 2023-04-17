@@ -1,121 +1,80 @@
 <script setup lang="ts">
 import useVuelidate from '@vuelidate/core'
 import { required } from '@/utils/validators'
-import CommonFile from '@/components/CommonFile.vue'
 import FormSwitch from "@/base-components/Form/FormSwitch";
 import { filePondValue } from '@/composables/useFilepondEvents';
+import { visitServices } from '@/services/psychosocial/visitServices';
 
 const { multiple } = useFilepondEvents();
 
 const form = reactive({
-    // account_number: '',
-    address: '',
-    bank_account_type: '',
-    bank: '',
-    birth_date: '',
-    business_name: '',
-    consecutive: '',
-    contract_value: '',
-    department: '',
-    email: '',
-    identification_type: '',
-    identification: '',
-    lastname: '',
-    municipality: '',
-    name: '',
-    nit: '',
-    // number_share: '',
-    phone: '',
-    validity_periods_id: '',
-    file: []
-    
-})
-
+    date_visit: '',
+    municipality_id: '',
+    monitor_id: '',
+    discipline_id: '',
+    numberBeneficiaries: '',
+    sports_scene: '',
+    objetive: '',
+    beneficiaries_knows_project: false,
+    beneficiaries_knows_monthly_value: false,
+    monitor_organization_discipline_management: false,
+    description: '',
+    observations: '',
+    file: [],
+});
+//status_id: '2',
+//created_by: store.user.id,
 const form_rules = computed(() => ({
-    // account_number: {required},
-    address: {},
-    bank_account_type: { required },
-    bank: { required },
-    birth_date: { required },
-    business_name: { required },
-    consecutive: {},
-    contract_value: { required },
-    department: { required },
-    email: { required },
-    identification_type: { required },
-    identification: { required },
-    lastname: { required },
-    municipality: { required },
-    name: { required },
-    nit: {},
-    // number_share: {},
-    phone: { required },
-    validity_periods_id: { required },
-    file: [{ required }],
-}))
+    date_visit: { required },
+    municipality_id: { required },
+    monitor_id: { required },
+    discipline_id: { required },
+    numberBeneficiaries: { required },
+    sports_scene: { required },
+    objetive: { required },
+    beneficiaries_knows_project: { required },
+    beneficiaries_knows_monthly_value: { required },
+    monitor_organization_discipline_management: { required },
+    description: { required },
+    observations: { required },
+    file: { required },
+}));
+
+const formdataParser = (form: any) => {
+        const formData = new FormData();
+        Object.keys(form).forEach((key) => {
+            formData.append(key, form[key]);
+        });
+        return formData;
+    };
+
+const formData = formdataParser(form)
+
+const municipalities = asyncComputed(async () => {
+    return await getSelect(['municipalities'])
+}, null)
+
+const disciplinesList = ref([]);
 
 const monitorList = [
     { label: "Joselito", value: 1 },
     { label: "Miguelito", value: 2 },
 ];
-
-const _maxBirthDate = maxBirthDate.value
-
-const departments = asyncComputed(async () => {
-    return await getSelect(['departments'])
-}, null)
-
-const department_id = computed(() => form.department)
-
-const cities = asyncComputed(async () => {
-    return department_id.value ? await getCitiesByDepartment(department_id.value) : []
-}, null)
-
-const validity_periods = asyncComputed(async () => {
-    return await getSelect(['validity_periods'])
-}, null)
-
-const banks = asyncComputed(async () => {
-    return await getSelect(['banks'])
-}, null)
-
-const bank_account_types = asyncComputed(async () => {
-    return await getSelect(['bank_account_types'])
-}, null)
-
-const identification_types = asyncComputed(async () => {
-    return await getSelect(['identification_types'])
-}, null)
-
 const v$ = useVuelidate(form_rules, form)
-
-const { isProvider } = useProvider()
 const router = useRouter()
 
-onBeforeMount(async () => {
-    await getConsecutive('contractors', 'C').then((response) => form.consecutive = response)
-})
 
 const onSubmit = async () => {
     const valid = await v$.value.$validate()
-
     if (valid) {
-        await contractorServices.create(formdataParser(form)).then((response) => {
+        await visitServices.create(formdataParser(formData)).then((response) => {
             if (response) {
                 if (response.status >= 200 && response.status <= 300) {
                     alerts.create()
                     setLoading(true)
-
-                    if (isProvider('assistants')) {
                         router.push('').finally(() => {
                             setLoading(false)
                         })
-                    }
-                    else {
-                        router.push('').finally(() => {
-                            setLoading(false)
-                        })
-                    }
                 }
             }
         })
@@ -124,7 +83,6 @@ const onSubmit = async () => {
         alerts.validation()
     }
 }
-
 </script>
 
 <template>
@@ -135,76 +93,77 @@ const onSubmit = async () => {
     <div class="p-5 mt-5 intro-y box">
         <form @submit.prevent="onSubmit" class="space-y-8 divide-y divide-slate-200">
             <div class="space-y-8 divide-y divide-slate-200">
-                <div>
-                    <h3 class="text-lg font-medium leading-6 text-gray-900">
-                        Información Personal
-                    </h3>
 
-                    <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
-                        <CommonInput type="date" placeholder="Fecha de Nacimiento*" name="birth_date"
-                            v-model="form.birth_date" :validator="v$" />
-                        <CommonSelect placeholder="Municipio*" name="municipality" v-model="form.municipality"
-                            :validator="v$" :options="cities" />
-                        <CommonSelect placeholder="Monitor Deportivo*" name="municipality" v-model="form.municipality"
-                            :validator="v$" :options="cities" />
-                        <CommonSelect placeholder="Disciplinas*" name="municipality" v-model="form.municipality"
-                            :validator="v$" :options="cities" />
-                        <CommonInput type="number" placeholder="No. Beneficiarios en el campo *" name="name"
-                            v-model="form.name" :validator="v$" />
-                        <CommonInput type="text" placeholder="Escenario Deportivo*" name="phone" v-model="form.phone"
-                            :validator="v$" />
-                        <div class="col-span-2 sm:grid-cols-3">
-                            <CommonTextarea placeholder="Objetivo del acompañamiento*" name="phone" v-model="form.phone"
-                                :validator="v$" />
+                <div class="grid grid-cols-2 gap-y-6 gap-x-4">
+                    <CommonInput type="date" label="Fecha *" name="date_visit" v-model="form.date_visit" :validator="v$" />
+                    <CommonSelect label="Municipio *" name="municipality_id" v-model="form.municipality_id" :validator="v$"
+                        :options="municipalities" />
+                    <CommonSelect label="Monitor Deportivo *" name="monitor_id" v-model="form.monitor_id" :validator="v$"
+                        :options="monitorList" />
+                    <CommonSelect label="Disciplinas *" name="discipline_id" v-model="form.discipline_id" :validator="v$"
+                        :options="disciplinesList" />
+                    <CommonInput type="number" min="0" label="No. Beneficiarios en el campo *" placeholder="Escriba..."
+                        name="numberBeneficiaries" v-model="form.numberBeneficiaries" :validator="v$" />
+                    <CommonInput type="text" label="Escenario Deportivo *" placeholder="Escriba..." name="sports_scene"
+                        v-model="form.sports_scene" :validator="v$" />
+                    <div class="col-span-2">
+                        <CommonInput label="Objetivo del acompañamiento *" placeholder="Escriba..." name="objetive"
+                            v-model="form.objetive" :validator="v$" />
+                    </div>
+                    <div class="p-5 intro-y box col-span-2 bg-gray-200 flex flex-col gap-3">
+                        <div class="">
+
+                            <FormSwitch.Input name="beneficiaries_knows_project" id="beneficiaries_knows_project"
+                                type="checkbox" v-model="form.beneficiaries_knows_project" :validator="v$" />
+                            <FormSwitch.Label class="text-sm" htmlFor="beneficiaries_knows_project"> ¿LOS BENEFICIARIOS
+                                RECONOCEN EL NOMBRE
+                                DEL
+                                PROYECTO? </FormSwitch.Label>
                         </div>
-                        <div class="p-5 intro-y box col-span-2 sm:grid-cols-3 bg-gray-200 flex flex-col gap-3">
-                            <div class="">
+                        <div class="">
 
-                                <FormSwitch.Input name="swich_plans" id="swich_plans" type="checkbox"
-                                    v-model="form.swich_plans_r" :validator="v$" />
-                                <FormSwitch.Label htmlFor="swich_plans"> Plan de clases </FormSwitch.Label>
-                            </div>
-                            <div class="">
-
-                                <FormSwitch.Input name="swich_plans" id="swich_plans" type="checkbox"
-                                    v-model="form.swich_plans_r" :validator="v$" />
-                                <FormSwitch.Label htmlFor="swich_plans"> Plan de clases </FormSwitch.Label>
-                            </div>
-                            <div class="">
-
-                                <FormSwitch.Input name="swich_plans" id="swich_plans" type="checkbox"
-                                    v-model="form.swich_plans_r" :validator="v$" />
-                                <FormSwitch.Label htmlFor="swich_plans"> Plan de clases </FormSwitch.Label>
-                            </div>
+                            <FormSwitch.Input name="beneficiaries_knows_monthly_value"
+                                id="beneficiaries_knows_monthly_value" type="checkbox"
+                                v-model="form.beneficiaries_knows_monthly_value" :validator="v$" />
+                            <FormSwitch.Label htmlFor="beneficiaries_knows_monthly_value"> ¿LOS BENEFICIARIOS RECONOCEN EL
+                                VALOR DESARROLLADO
+                                EN EL MES? </FormSwitch.Label>
                         </div>
-                        <div class="col-span-2 sm:grid-cols-3">
-                            <CommonTextarea placeholder="Objetivo del acompañamiento*" name="phone" rows="5"
-                                v-model="form.phone" :validator="v$" />
-                        </div>
-                        <div class="col-span-2 sm:grid-cols-3">
-                            <CommonTextarea placeholder="Objetivo del acompañamiento*" name="phone" rows="5"
-                                v-model="form.phone" :validator="v$" />
-                        </div>
+                        <div class="">
 
-                        <div class="grid col-span-2">
-                            <CommonDropzone name="file" label="Suba su archivo aqui *" :accept-multiple="false"
-                                v-model="form.file"
-                                @addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
-                                @removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }"
-                                :validator="v$" />
+                            <FormSwitch.Input name="monitor_organization_discipline_management"
+                                id="monitor_organization_discipline_management" type="checkbox"
+                                v-model="form.monitor_organization_discipline_management" :validator="v$" />
+                            <FormSwitch.Label htmlFor="monitor_organization_discipline_management"> ¿SE OBSERVA
+                                ORGANIZACIÓN, DISCIPLINA Y BUEN MANEJO
+                                DE GRUPO DURANTE LAS SESIONES DE CLASE DEL MONITOR? </FormSwitch.Label>
                         </div>
                     </div>
+                    <div class="col-span-2 sm:grid-cols-3">
+                        <CommonTextarea label="Descripción de actividades *" placeholder="Escriba..." name="description"
+                            rows="5" v-model="form.description" :validator="v$" />
+                    </div>
+                    <div class="col-span-2 sm:grid-cols-3">
+                        <CommonTextarea label="Observaciones *" placeholder="Escriba..." name="observations" rows="5"
+                            v-model="form.observations" :validator="v$" />
+                    </div>
+
+                    <div class="col-span-2 p-5 mt-6 intro-y">
+                        <CommonDropzone name="file"
+                        class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
+                        :accept-multiple="false"
+                            v-model="form.file"
+                            @addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
+                            @removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }"
+                            :validator="v$" />
+                    </div>
                 </div>
+
             </div>
             <div class="pt-5">
-                <div class="flex justify-end gap-x-4">
-                    <Button
-                        @click="$router.push({ name: isProvider('assistants') ? 'assistants.contractors' : 'contractors.index' })"
-                        type="button" variant="outline-secondary">
-                        Cancelar
-                    </Button>
+                <div class="flex justify-center gap-x-4">
                     <Button type="submit" variant="primary">
-                        Guardar
+                        Registrar
                     </Button>
                 </div>
             </div>
