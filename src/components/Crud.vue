@@ -241,14 +241,14 @@ const contractorHandler = (name: string, id: string | number) => ({
 //     }
 // }
 
-// const seeAction = (id: string | number) => {
-//     if (props.edit_gestor) {
-//         router.push({ name: `${routeName.value}.editManagers`, params: { id: id } })
-//     }
-//     else {
-//         router.push({ name: `${routeName.value}.edit`, params: { id: id } })
-//     }
-// }
+const seeAction = (id: string | number) => {
+    if (props.edit_gestor) {
+        router.push({ name: `${routeName.value}.editManagers`, params: { id: id } })
+    }
+    else {
+        router.push({ name: `${routeName.value}.edit`, params: { id: id } })
+    }
+}
 
 // const changePasswordAction = (id: string | number) => {
 //     router.push({ name: `${routeName.value}.changePassword`, params: { id: id } })
@@ -425,8 +425,15 @@ const selectedTab = inject('selectedTab', ref(0))
 				                :search-field="filters.search_field"
 				                :search-value="filters.search_value"
 				                :sort-type="sorts.type" -->
-		<DataTable :headers="headers" :items="items" buttons-pagination :sort-by="sort.by" :sort-type="sort.type"
-			table-class-name="customize-table">
+		<DataTable 
+			buttons-pagination
+			:headers="headers"
+			:items="items"
+			:rows-per-page="20"
+			:sort-by="sort.by"
+			:sort-type="sort.type"
+			table-class-name="customize-table"
+		>
 			<!-- <template #header-status="{ text }">
 				                        <div class="flex gap-1 relative">
 				                            <p>{{ text }}</p>
@@ -631,6 +638,18 @@ const selectedTab = inject('selectedTab', ref(0))
 								<Modal :Form="props.Form" :id_review="item.id" />
 							</template>
 						</template>
+					</template>
+					<template v-else>
+						<Button v-if="item.status.slug === 'ENREV'" variant="outline-secondary"
+							@click="seeAction(item.id)">
+							<Lucide icon="Search" class="mr-2" />
+							<span class="text-sm"> Ver </span>
+						</Button>
+						<Button v-else-if="item.status.slug === 'REC'" variant="outline-secondary"
+							@click="editAction(item.id)">
+							<Lucide icon="FileEdit" class="mr-2" />
+							<span class="text-sm"> Editar </span>
+						</Button>
 					</template>
 				</div>
 			</template>
