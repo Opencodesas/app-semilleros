@@ -12,7 +12,7 @@ onBeforeMount(async () => {
 });
 
 const headers: Header[] = [
-	{ text: 'ID', value: 'id' },
+	//{ text: 'ID', value: 'id' },
 	{ text: 'FECHA VISITA', value: 'date_visit' },
 	{ text: 'HORA VISITA', value: 'hour_visit' },
 	{ text: 'MUNICIPIO', value: 'municipalitie.name' },

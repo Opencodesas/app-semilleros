@@ -12,7 +12,7 @@ const create = () => {
 const items = ref<Item[]>([]);
 
 const headers: Header[] = [
-	{ text: 'No', value: 'id', sortable: true },
+	//{ text: 'No', value: 'id', sortable: true },
 	{ text: 'Fecha', value: 'date_visit', sortable: true },
 	{ text: 'Municipio', value: 'municipality.name', sortable: true },
 	{ text: 'Monitor', value: 'monitor.name', sortable: true },
