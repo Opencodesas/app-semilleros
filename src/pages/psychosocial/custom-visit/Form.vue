@@ -5,6 +5,8 @@ import FormSwitch from "@/base-components/Form/FormSwitch";
 import { filePondValue } from '@/composables/useFilepondEvents';
 import { onboardingStore } from "@/stores/onboardingStore";
 import { customVisitServices } from '@/services/psychosocial/customVisitServices';
+import { getBeneficiariesByDepartment } from '@/composables/getBeneficiariesByMunicipaly'
+import { Item } from 'vue3-easy-data-table';
 
 const { multiple } = useFilepondEvents();
 
@@ -32,8 +34,24 @@ const form_rules = computed(() => ({
     agreements: { required },
     concept: {},
     guardian_knows_semilleros: { required },
-    file: [{ required }],
+    file: { required },
 }))
+
+const formdataParser = (form: any) => {
+    console.log(form);
+    const formData = new FormData();
+    Object.keys(form).forEach((key) => {
+        formData.append(key, form[key]);
+    });
+    console.log(formData);
+    return formData;
+};
+
+
+const selectFile = (event: any) => {
+    console.log(form.file);
+    form.file = event.target.files[0];
+}
 
 const months = asyncComputed(async () => {
     return await getSelect(['months'])
@@ -45,16 +63,30 @@ const municipalities = asyncComputed(async () => {
 
 const municipality_id = computed(() => form.municipality)
 
-//Usar para traer beneficiarios (nombre y id) por municipio
-// const beneficiaries = asyncComputed(async () => {
-//     return municipality_id.value ? await getBeneficiariesByMunicipaly(municipality_id.value) : []
-//  }, null)
+// const beneficiariesList = [
+//     { label: 'Beneficiario 1', value: '1' },
+//     { label: 'Beneficiario 2', value: '2' },
+// ]
 
-const beneficiaries = [
-    {label: 'Beneficiario 1', value: '1'},
-    {label: 'Beneficiario 2', value: '2'},
-]
+const beneficiaries = ref<Item[]>([]);
 
+const beneficiariesList = computed(() => {
+    // const beneficiaries = await getBeneficiariesByDepartment(form.municipality).data
+    // console.log(beneficiaries)
+    return beneficiaries.value.map((item: Item) => {
+        return {
+            label: item.full_name,
+            value: item.id
+        }
+    })
+})
+
+onBeforeMount(async () => {
+     await beneficiaryServices.getAll().then((response) => {
+        beneficiaries.value = response?.data.items
+      })
+      console.log(beneficiaries.value)
+ })
 //Se necesita traer la siguiente información del beneficiario por su id: (Adjuntar foto de lo visual)
 const beneficiary_data = reactive({
     grade: '',
@@ -87,9 +119,11 @@ const router = useRouter()
 
 const onSubmit = async () => {
     const valid = await v$.value.$validate()
-
+    const formData = formdataParser(form)
+    console.log(form);
+    console.log(formData);
     if (valid) {
-        await customVisitServices.create(formdataParser(form)).then((response) => {
+        await customVisitServices.create(formData).then((response) => {
             if (response) {
                 if (response.status >= 200 && response.status <= 300) {
                     alerts.create()
@@ -128,7 +162,7 @@ const positionRange = computed(() => {
                         <CommonSelect label="Municipio *" name="municipality" v-model="form.municipality" :validator="v$"
                             :options="municipalities" />
                         <CommonSelect @select="getBeneficiaryData" label="Beneficiario *" name="beneficiary"
-                            v-model="form.beneficiary" :validator="v$" :options="beneficiaries" />
+                            v-model="form.beneficiary" :validator="v$" :options="beneficiariesList" />
                     </div>
                     <!-- cambiar condicion por "beneficiary_data" cuando haya función para traer los datos -->
                     <div v-if="form.beneficiary">
@@ -187,10 +221,8 @@ const positionRange = computed(() => {
 
                         <div class="col-span-3 p-5 mt-6 intro-y">
                             <CommonFile :validator="v$" v-model="form.file" name="file"
-                                class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
-                                :accept-multiple="false"
-                                @addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
-                                @removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }" />
+                                class="w-11/12 sm:w-8/12 m-auto cursor-pointer" :accept-multiple="false"
+                                @change="selectFile" />
                         </div>
 
                     </div>

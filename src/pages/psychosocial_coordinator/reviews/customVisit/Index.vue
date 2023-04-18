@@ -2,6 +2,8 @@
 import { Header, Item } from 'vue3-easy-data-table';
 import { searchData } from '@/composables/search';
 import customVisitReview from './CustomVisitReview.vue'
+import { customVisitServices } from '@/services/psychosocial/customVisitServices';
+
 
 
 //Traer visitas personalizadas en revisión
@@ -47,29 +49,25 @@ const items = ref<Item[]>([
 
 const headerCustomVisits: Header[] = [
     { text: 'No', value: 'id', sortable: true },
-    { text: 'Mes', value: 'month', sortable: true },
-    { text: 'Usuario', value: 'created_by', sortable: true },
-    { text: 'Municipio', value: 'municipality', sortable: true },
-    { text: 'Beneficiario', value: 'beneficiary' },
+    { text: 'Mes', value: 'months.name', sortable: true },
+    { text: 'Usuario', value: 'createdBy.name', sortable: true },
+    { text: 'Municipio', value: 'municipalities.name', sortable: true },
+    { text: 'Beneficiario', value: 'beneficiaries.full_name' },
     { text: 'Estado', value: 'status' },
     { text: 'Acciones', value: 'actions' },
 ]
 
-//const v$ = useVuelidate(form_rules, form)
+const customVisits = ref<Item[]>([]);
 
-
-//Funciones para modal aun en desrrollo
-// const isOpen = ref(false)
-
-// function closeModal() {
-//     isOpen.value = false
-// }
-// function openModal() {
-//     isOpen.value = true
-// }
+onBeforeMount(async () => {
+     await customVisitServices.getAll().then((response) => {
+          customVisits.value = response?.data.items
+          console.log(response?.data.items)
+      })
+ })
 
 const search = ref('');
-const dataSearch = computed(() => searchData(items.value, search.value));
+const dataSearch = computed(() => searchData(customVisits.value, search.value));
 
 </script>
 

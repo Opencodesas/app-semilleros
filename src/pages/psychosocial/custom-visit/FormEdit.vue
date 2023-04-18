@@ -11,7 +11,8 @@ const { multiple } = useFilepondEvents();
 
 const route = useRoute();
 
-const { isProvider } = useProvider()
+const { id } = route.params;
+const urlStorage = `${import.meta.env.VITE_BASE_URL}/storage/`;
 
 const store = onboardingStore();
 
@@ -21,7 +22,7 @@ const form = reactive({
     month: '1',
     municipality: '2',
     beneficiary: '2',
-    topic: 'Físico',
+    theme: 'Físico',
     agreements: 'Se llegó al acuerdo de...',
     concept: '4',
     guardian_knows_semilleros: true,
@@ -35,12 +36,20 @@ const form_rules = computed(() => ({
     month: { required },
     municipality: { required },
     beneficiary: { required },
-    topic: { required },
+    theme: { required },
     agreements: { required },
     concept: {},
     guardian_knows_semilleros: { required },
     file: [],
 }))
+
+const beneficiary_data = reactive({
+    grade: 'PRIMARIA',
+    health_entity: 'NUEVA EPS',
+    guardian_name: 'Liliana',
+    guardian_lastname: 'Garcia',
+    guardian_identification: '1074936855',
+})
 
 const months = asyncComputed(async () => {
     return await getSelect(['months'])
@@ -53,13 +62,11 @@ const municipalities = asyncComputed(async () => {
 
 const municipality_id = computed(() => form.municipality)
 
-const beneficiary_data = reactive({
-    grade: 'PRIMARIA',
-    health_entity: 'NUEVA EPS',
-    guardian_name: 'Liliana',
-    guardian_lastname: 'Garcia',
-    guardian_identification: '1074936855',
-})
+//Usar para traer beneficiarios (nombre y id) por municipio
+// const beneficiaries = asyncComputed(async () => {
+//     return await getBeneficiariesByMunicipaly(municipality_id.value) : []
+// }, null)
+
 
 //Datos de prueba
 const beneficiaries = ref<selectOption[]>([
@@ -69,10 +76,6 @@ const beneficiaries = ref<selectOption[]>([
     { label: 'Jose', value: '4' },
     { label: 'Luis', value: '5' },
 ])
-//Usar para traer beneficiarios (nombre y id) por municipio
-// const beneficiaries = asyncComputed(async () => {
-//     return municipality_id.value ? await getBeneficiariesByMunicipaly(municipality_id.value) : []
-//  }, null)
 
 const dataLoaded = ref(false)
 //Verificar si se puede hacer con asycComputed
@@ -82,10 +85,10 @@ const getData = async () => {
         console.log(response?.data.items);
         if (response?.status == 200 || response?.status == 201) {
             form.rejection_message = response.data.items.rejection_message;
-            form.month = response.data.items.month;
-            form.municipality = response.data.items.municipality;
-            form.beneficiary = response.data.items.beneficiary;
-            form.topic = response.data.items.topic;
+            form.month = response.data.items.month_id;
+            form.municipality = response.data.items.municipality_id;
+            form.beneficiary = response.data.items.beneficiary_id;
+            form.theme = response.data.items.theme;
             form.agreements = response.data.items.agreements;
             form.concept = response.data.items.concept;
             form.guardian_knows_semilleros = response.data.items.guardian_knows_semilleros;
@@ -227,7 +230,7 @@ const positionRange = computed(() => {
                         <div class="col-span-3 sm:grid-cols-3 space-y-6 pt-5">
                             <CommonTextarea :disabled="disableElements"
                                 label="Temáticas durante la visita: físico, emocional, familiar, escolar, social, espiritual *"
-                                placeholder="Escriba..." name="topic" rows="5" v-model="form.topic" :validator="v$" />
+                                placeholder="Escriba..." name="theme" rows="5" v-model="form.theme" :validator="v$" />
 
                             <CommonTextarea :disabled="disableElements" label="Acuerdos y recomendaciones *"
                                 placeholder="Escriba..." name="agreements" rows="5" v-model="form.agreements"
@@ -251,8 +254,8 @@ const positionRange = computed(() => {
                         <!-- Comprobar qué es lo que se está enviando -->
                         <div class="grid justify-center col-span-3 gap-10 p-5">
                             <h1 class="text-center font-bold">Evidencia</h1>
-                            <!-- <img v-if="form.file" :src="form.file[0]" alt=""> -->
-                            <img src="/semilleros.png" width="200" alt="">
+                            <img :alt="`Evidencia de la visita del subdirector`" class="m-auto border rounded-lg"
+                                :src="`${urlStorage}/${form.file}`" width="400" />
                         </div>
 
                         <div v-if="form.status_id == '4'" class="col-span-3 p-5 mt-6 intro-y">

@@ -7,11 +7,10 @@ import { onboardingStore } from '@/stores/onboardingStore';
 import Swal from 'sweetalert2';
 
 
-const store = onboardingStore();
-const { multiple } = useFilepondEvents();
 const router = useRouter();
 const route = useRoute();
 const { id } = route.params;
+const urlStorage = `${import.meta.env.VITE_BASE_URL}/storage/`;
 
 const form = reactive({
 	status_id: '',
@@ -48,6 +47,23 @@ const form_rules = computed(() => ({
 	description: { required },
 	created_by: { required },
 }));
+
+const formdataParser = (form: any) => {
+	console.log(form);
+	const formData = new FormData();
+	Object.keys(form).forEach((key) => {
+		formData.append(key, form[key]);
+	});
+	console.log(formData);
+	return formData;
+};
+
+
+const selectFile = (event: any) => {
+	console.log(form.file);
+	form.file = event.target.files[0];
+}
+
 const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
 }, null);
@@ -73,6 +89,7 @@ const v$ = useVuelidate(form_rules, form);
 
 const dataLoaded = ref(false);
 
+let file;
 const data = async () => {
 	await subdirectorVisitServices.get(id as string).then((response) => {
 		if (response?.status == 200) {
@@ -93,6 +110,8 @@ const data = async () => {
 			form.observations = response.data.items.observations;
 			form.description = response.data.items.description;
 			form.file = response.data.items.file;
+			file = `http://localhost:8000/storage/${form.file}`;
+			dataLoaded.value = true;
 			console.log(form)
 			setLoading(false);
 		} else {
@@ -102,8 +121,8 @@ const data = async () => {
 };
 onMounted(async () => {
 	await data();
-	dataLoaded.value = true;
 });
+
 const update = async () => {
 	const valid = await v$.value.$validate();
 	if (parseInt(form.beneficiary_coverage) < 0) {
@@ -117,7 +136,7 @@ const update = async () => {
 				if (response?.status == 200 || response?.status == 201) {
 					Swal.fire('', 'Modificacion exitosa!', 'success');
 					setLoading(true);
-					router.push({name: 'technical_director.visits'}).finally(() => {
+					router.push({ name: 'technical_director.visits' }).finally(() => {
 						setLoading(false);
 					});
 				} else {
@@ -153,8 +172,8 @@ const disableElements = computed(() => {
 		</div>
 
 		<div class="grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
-			<CommonInput :disabled="disableElements" type="date" label="Fecha  *" name="date_visit" v-model="form.date_visit"
-				:validator="v$" />
+			<CommonInput :disabled="disableElements" type="date" label="Fecha  *" name="date_visit"
+				v-model="form.date_visit" :validator="v$" />
 			<CommonInput :disabled="disableElements" type="time" label="Hora  *" name="hour_visit" v-model="form.hour_visit"
 				:validator="v$" />
 			<CommonSelect :disabled="disableElements" label="Municipio *" name="municipality_id" class="cursor-pointer"
@@ -173,8 +192,8 @@ const disableElements = computed(() => {
 				:validator="v$" />
 			<CommonSelect :disabled="disableElements" label="Cumple con el desarrollo tecnico del mes *" name="technical"
 				class="cursor-pointer" v-model="form.technical" :validator="v$" :options="evaluationList" />
-			<CommonSelect :disabled="disableElements" label="Apoyo a eventos *" name="event_support"
-				class="cursor-pointer" v-model="form.event_support" :validator="v$" :options="event_supportList" />
+			<CommonSelect :disabled="disableElements" label="Apoyo a eventos *" name="event_support" class="cursor-pointer"
+				v-model="form.event_support" :validator="v$" :options="event_supportList" />
 		</div>
 		<div class="mt-6 intro-y">
 			<CommonTextarea :disabled="disableElements" label="Descripcion *" rows="5" placeholder="Ingrese las Descripcion"
@@ -188,14 +207,12 @@ const disableElements = computed(() => {
 			<FormLabel for="evidencia" class="flex flex-col w-full sm:flex-row">
 				Evidencia *
 			</FormLabel>
-			<img :alt="`Evidencia de la visita del director`" class="m-auto border rounded-lg" src="/semilleros.png"
-				width="400" />
+			<img :alt="`Evidencia de la visita del subdirector`" class="m-auto border rounded-lg"
+				:src="`${urlStorage}/${form.file}`" width="400" />
 		</div>
 		<div class="p-5 mt-6 intro-y">
 			<CommonFile v-if="form.status_id == '4'" v-model="form.file" name="file"
-				class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
-				@addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
-				@removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }" />
+				class="w-11/12 sm:w-8/12 m-auto cursor-pointer" @change="selectFile" />
 		</div>
 	</div>
 

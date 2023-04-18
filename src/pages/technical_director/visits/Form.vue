@@ -37,6 +37,23 @@ const form_rules = computed(() => ({
 	observations: { required },
 	file: { required },
 }));
+
+const formdataParser = (form: any) => {
+    console.log(form);
+    const formData = new FormData();
+    Object.keys(form).forEach((key) => {
+        formData.append(key, form[key]);
+    });
+    console.log(formData);
+    return formData;
+};
+
+
+const selectFile = (event: any) => {
+    console.log(form.file);
+    form.file = event.target.files[0];
+}
+
 const disciplinesList = ref([]);
 const monitorList = [
 	{ label: 'Joselito', value: 1 },
@@ -131,9 +148,7 @@ const onSubmit = async () => {
 				v-model="form.observations" :validator="v$" />
 		</div>
 		<div class="p-5 mt-6 intro-y">
-			<CommonFile :validator="v$" v-model="form.file" name="file" class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
-				@addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
-				@removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }" />
+			<CommonFile :validator="v$" v-model="form.file" name="file" class="w-11/12 sm:w-8/12 m-auto cursor-pointer" @change="selectFile" />
 		</div>
 	</div>
 
