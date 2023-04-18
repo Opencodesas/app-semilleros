@@ -38,6 +38,7 @@ const props = withDefaults(defineProps<Props>(), {
     placeholder: 'Seleccione una opción...'
 })
 
+
 // const attrs = useAttrs();
 
 // const computedClass = computed(() =>

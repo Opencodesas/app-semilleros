@@ -154,6 +154,17 @@ export const useSideMenuStore = defineStore("sideMenu", {
       // // },
       {
         icon: "User",
+        title: "Reportes",
+        subMenu: [
+          {
+            icon: "Activity",
+            pageName: "reports.index",
+            title: "Reportes",
+          },
+        ]
+      },
+      {
+        icon: "User",
         title: "Subdirector",
         subMenu: [
           {

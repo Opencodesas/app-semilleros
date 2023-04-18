@@ -6,25 +6,25 @@
         </div>
   </div>
   <!-- BEGIN: Page Layout -->
-  <form @submit="ingreso">
+  <form @submit="onIngreso($event, v3$, form)">
     <div class="p-5 mt-5 intro-y box">
-      <h1 class="my-4 text-xl bold text-left text-gray-800">
+      <h1 class="my-4 text-xl bold text-left text-gray-800 cursor-pointer" @click=" step != 1 ? next_step(1) : null ">
         Datos del beneficiario
       </h1>
-      <div v-show="accordion[0].shown">
+      <div v-show="step === 1">
         <CommonInput
           label="Fecha de inscripcion"
           name="fechaInscripcion"
-          v-model="fechaInscripcion"
+          v-model="form.fechaInscripcion"
           :validator="v$"
-          :required="true"
+          
           type="date"
         />
         <div class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-3 justify-evenly">
           <CommonSelect
             label="Municipio"
             name="municipio"
-            v-model="municipio"
+            v-model="form.municipio"
             :validator="v$"
             :allowEmpty="false"
             :options="municipalitiesList"
@@ -32,167 +32,157 @@
           <CommonSelect
             label="disciplinas"
             name="disciplinas"
-            v-model="disciplinas"
+            v-model="form.disciplinas"
             :validator="v$"
-            :required="true"
+            :allowEmpty="false"
             :options="diciplinesList"
           />
           <CommonInput
             label="nombres"
             name="nombres"
-            v-model="nombres"
+            v-model="form.nombres"
             :validator="v$"
-            :required="true"
           />
           <CommonInput
             label="Apellidos"
             name="apellidos"
-            v-model="apellidos"
+            v-model="form.apellidos"
             :validator="v$"
-            :required="true"
           />
           <CommonInput
             label="Fecha de nacimiento"
             name="fechaNacimiento"
             :max="maxDate"
             type="date"
-            v-model="fechaNacimiento"
+            v-model="form.fechaNacimiento"
             :validator="v$"
-            :required="true"
           />
           <CommonInput
             label="Lugar de nacimiento"
             name="lugarNacimiento"
-            v-model="lugarNacimiento"
+            v-model="form.lugarNacimiento"
             :validator="v$"
-            :required="true"
           />
           <CommonSelect
             label="identificacion"
             name="tipoIdentificacion"
-            v-model="tipoIdentificacion"
+            v-model="form.tipoIdentificacion"
             :validator="v$"
-            :required="true"
+            :allowEmpty="false"
             :options="optionsIdentificacion"
           />
           <CommonInput
             label="Numero de documento"
             name="numeroDocumento"
-            v-model="numeroDocumento"
+            v-model="form.numeroDocumento"
             type="number"
             min="0"
             :validator="v$"
-            :required="true"
           />
         </div>
         <div class="mt-5 grid grid-cols-1 md:grid md:grid-cols-3 gap-6 justify-evenly">
           <CommonInput
             label="Direccion de residencia"
             name="direccionResidencia"
-            v-model="direccionRes"
+            v-model="form.direccionResidencia"
             :validator="v$"
-            :required="true"
           />
           <CommonInput
             label="Numero de celular"
             name="numeroCel"
-            v-model="numeroCel"
+            v-model="form.numeroCel"
             :validator="v$"
-            :required="true"
           />
           <CommonSelect
             label="Estrato"
             name="estrato"
-            v-model="estrato"
+            v-model="form.estrato"
             :validator="v$"
-            :required="true"
+            :allowEmpty="false"
             :options="optionsEstrato"
           />
           <CommonSelect
             label="Zona"
             name="zona"
-            v-model="zona"
+            v-model="form.zona"
             :validator="v$"
-            :required="true"
+            :allowEmpty="false"
             :options="zonesList"
           />
           <CommonSelect
             label="Victima de conflicto"
             name="victimaConflicto"
-            v-model="victimaConf"
+            v-model="form.victimaConflicto"
             :validator="v$"
-            :required="true"
+            :allowEmpty="false"
             :options="optionsVictima"
           />
           <CommonInput
             label="Corregimiento/Barrio/Vereda"
             name="pueblo"
-            v-model="pueblo"
+            v-model="form.pueblo"
             :validator="v$"
-            :required="true"
           />
         </div>
         <div class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
           <CommonSelect
             label="Genero"
             name="genero"
-            v-model="genero"
+            v-model="form.genero"
             :validator="v$"
-            :required="true"
+            :allowEmpty="false"
             :options="optionsGenero"
           />
           <CommonSelect
             label="Etnia"
             name="etnia"
-            v-model="etnia"
+            v-model="form.etnia"
             :validator="v$"
-            :required="true"
+            :allowEmpty="false"
             :options="ethniacityList"
           />
           <CommonSelect
             label="Discapacidad"
             name="discapacidad"
-            v-model="discapacidad"
+            v-model="form.discapacidad"
             :validator="v$"
-            :required="true"
+            :allowEmpty="false"
             :options="optionsDiscapacidad"
           />
-          <CommonInput v-if="discapacidad === '1'"
+          <CommonInput v-if="form.discapacidad === '1'"
             label="¿Cual?"
             name="otroDisc"
-            v-model="otroDiscapacidad"
+            v-model="form.otroDisc"
             :validator="v$"
-            :required="true"
           />
           <CommonSelect
             label="Patologia"
             name="patologia"
-            v-model="patologia"
+            v-model="form.patologia"
             :validator="v$"
-            :required="true"
+            :allowEmpty="false"
             :options="optionsPatologia"
           />
-          <CommonInput v-if="patologia === '1'"
+          <CommonInput v-if="form.patologia === '1'"
             label="¿Cual?"
             name="otroPato"
-            v-model="otroPatologia"
+            v-model="form.otroPato"
             :validator="v$"
-            :required="true"
           />
           <CommonSelect
             label="Tipo de sangre"
             name="sangre"
-            v-model="sangre"
+            v-model="form.sangre"
             :validator="v$"
-            :required="true"
+            :allowEmpty="false"
             :options="optionsSangre"
           />
           <CommonSelect
             label="Vivo con"
             name="vivoCon"
-            v-model="vivoCon"
+            v-model="form.vivoCon"
             :validator="v$"
-              :required="true"
+            :allowEmpty="false"
             :options="optionsVivo"
           />
           
@@ -202,98 +192,190 @@
           class="mt-5"
           label="Escolaridad"
           name="escolaridad"
-          v-model="escolaridad"
+          v-model="form.escolaridad"
           :validator="v$"
-          :required="true"
+          :allowEmpty="false"
           :options="optionsEscolaridad"
         />
 
-        <div v-if="escolaridad === '1'" class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
+        <div v-if="form.escolaridad === '1'" class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
             
           <CommonSelect
               label="Nivel de Escolaridad"
               name="nivel_escolaridad"
-              v-model="nivel_escolaridad"
+              v-model="form.nivel_escolaridad"
               :validator="v$"
-              :required="true"
+              :allowEmpty="false"
               :options="optionsNivelEscolaridad"
             />
             
           <CommonInput
               label="Institución Educativa"
               name="institucion"
-              v-model="institucion"
+              v-model="form.institucion"
               :validator="v$"
-              :required="true"
             />
         </div>
 
-        <CommonSelect class="mt-5"
-          label="Tipo afiliacion(EPS)"
-          name="afiliacion"
-          v-model="afiliacion"
-          :validator="v$"
-            :required="true"
-          :options="optionsAfiliacion"
-        />
-        
-          <div class="m-4 text-center">
-            <Button type="button" @click="showV()">Continuar</Button>
-          </div>
+        <div class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
+
+          <CommonSelect
+            label="Tipo afiliacion(EPS)"
+            name="afiliacion"
+            v-model="form.afiliacion"
+            :validator="v$"
+            :allowEmpty="false"
+            :options="optionsAfiliacion"
+          />
+
+          <CommonSelect v-if="form.afiliacion && form.afiliacion !== 'NA'"
+            label="Entidad de Salud"
+            name="health_entity"
+            v-model="form.health_entity"
+            :validator="v$"
+            :allowEmpty="false"
+            :options="healthEntities"
+          />
+
+          
+        </div>
+
+        <div class="m-4 text-center">
+          <Button type="button" @click="onNext( v$ )">Continuar</Button>
+        </div>
         
       </div>
     </div>
+
+    <div class="p-5 mt-5 intro-y box">
+      <h1 class="my-4 text-xl bold text-left text-gray-800 cursor-pointer" @click=" step > 2 ? next_step(2) : null ">
+        Ficha de Tamizaje
+      </h1>
+      <div v-show="step === 2">
+        <div class="mt-6 divide-y divide-slate-200">
+          <div>
+            <h3 class="text-lg font-medium leading-6 text-gray-900">
+                Información Morfológica
+            </h3>
+            <ul role="list" class="divide-y pt-3">
+                <template v-for="(group, index) in form.morfologicas" :key="index">
+                    <li class="box border border-slate-200 px-4 py-4 sm:p-4 mb-3">
+                      <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-3">
+                          <CommonInput type="number" placeholder="Ingrese"
+                              label="Estatura (Cm) *"
+                              name="estatura" v-model="group.estatura"
+                              step='0.01'
+                              :collection_validator="{ index, name: 'morfologicas', v$: v2$ }"
+                          />
+
+                          <CommonInput type="text" placeholder="Ingrese"
+                              label="Envergadura (Cm) *"
+                              name="envergadura" v-model="group.envergadura"
+                              :collection_validator="{ index, name: 'morfologicas', v$: v2$ }"
+                          />
+
+                          <CommonInput type="text" placeholder="Ingrese"
+                              label="Masa Corporal (Kg)"
+                              name="masa" v-model="group.masa"
+                              :collection_validator="{ index, name: 'morfologicas', v$: v2$ }"
+                          />
+                      </div>
+
+                    </li>
+                </template>
+            </ul>
+
+            <h3 class="mt-8 text-lg font-medium leading-6 text-gray-900">
+                Información Físico Nutricional
+            </h3>
+            <ul role="list" class="divide-y pt-3">
+                <template v-for="(group, index) in form.nutricionales" :key="index">
+                    <li class="box border border-slate-200 px-4 py-4 sm:p-4 mb-3">
+                      <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-4">
+                          <CommonInput type="number" placeholder="Ingrese"
+                              label="Test Flexibilidad (Wells) *"
+                              name="flexibilidad" v-model="group.flexibilidad"
+                              :collection_validator="{ index, name: 'nutricionales', v$: v2$ }"
+                          />
+
+                          <CommonInput type="text" placeholder="Ingrese"
+                              label="Velocidad (20 Mts) *"
+                              name="velocidad" v-model="group.velocidad"
+                              :collection_validator="{ index, name: 'nutricionales', v$: v2$ }"
+                          />
+
+                          <CommonInput type="text" placeholder="Ingrese"
+                              label="Fuerza (Lanzamiento de Balón 2k) (Mts)"
+                              name="fuerza" v-model="group.fuerza"
+                              :collection_validator="{ index, name: 'nutricionales', v$: v2$ }"
+                          />
+                          
+                          <CommonInput type="text" placeholder="Ingrese"
+                              label="Oculomanual (Agarre)"
+                              name="oculomanual" v-model="group.oculomanual"
+                              :collection_validator="{ index, name: 'nutricionales', v$: v2$ }"
+                          />
+                      </div>
+
+                    </li>
+                </template>
+
+            </ul>
+          </div>
+        </div>
+
+        <div class="m-4 text-center">
+          <Button type="button" @click="onNext( v2$ )">Continuar</Button>
+        </div>
+
+      </div>
+    </div>
+
     <div class="p-5 mt-5 intro-y box">
       <h1 class="my-4 text-xl bold text-left text-gray-800">
         Datos del acudiente
       </h1>
-      <div v-show="accordion[1].shown">
+      <div  v-show="step === 3">
         <div class="mt-5 grid grid-cols-1 md:grid md:grid-cols-3 gap-6 justify-evenly">
           <CommonInput
             label="Nombres"
             name="nombresAcudiente"
-            v-model="nombresAcudiente"
-            :validator="v$"
-            :required="true"
+            v-model="form.nombresAcudiente"
+            :validator="v3$"
           />
           <CommonInput
             label="Apellidos"
             name="apellidosAcudiente"
-            v-model="apellidosAcudiente"
-            :validator="v$"
-            :required="true"
+            v-model="form.apellidosAcudiente"
+            :validator="v3$"
           />
           <CommonInput
             label="Numero de documento"
             name="nDocuAcudiente"
-            v-model="nDocuAcudiente"
+            v-model="form.nDocuAcudiente"
             type="number"
             min="0"
-            :validator="v$"
-            :required="true"
+            :validator="v3$"
           />
           <CommonInput
             label="Parentesco"
             name="parentesco"
-            v-model="parentesco"
-            :validator="v$"
-            :required="true"
+            v-model="form.parentesco"
+            :validator="v3$"
           />
           <CommonInput 
             label="Email"
             name="email"
-            v-model="email"
+            v-model="form.email"
             type="email"
-            :validator="v$"
-            :required="true"
+            :validator="v3$"
           />
           <!-- <FormCheckInput label="No tiene" name="checkEmail" v-model="checkEmail" type="checkbox" @click="check"/> -->
           <CommonInput
             label="Numero de celular"
             name="nCelularAcudiente"
-            v-model="nCelularAcudiente"
-            :validator="v$"
-            :required="true"
+            v-model="form.nCelularAcudiente"
+            :validator="v3$"
           />
           <!-- <FormCheck label="No tiene" name="checkNCel" v-model="form.checkNCel" />  -->
         </div>
@@ -301,19 +383,19 @@
           <CommonSelect
             label="Redes sociales"
             name="redesAcudiente"
-            v-model="redesAcudiente"
+            v-model="form.redesAcudiente"
             :multiple="true"
-            :validator="v$"
-            :required="true"
+            :validator="v3$"
+            :allowEmpty="false"
             :options="optionsRedes"
           />
           <CommonSelect
             label="¿Como se entero del proyecto?"
             name="enterado"
-            v-model="enterado"
+            v-model="form.enterado"
             :multiple="true"
-            :validator="v$"
-            :required="true"
+            :validator="v3$"
+            :allowEmpty="false"
             :options="optionsEnterado"
           />
         </div>
@@ -321,21 +403,42 @@
           <Button type="submit">Ingresar</Button>
         </div>
       </div>
-
     </div>
+
   </form>
 </template>
 
 <script setup lang="ts">
 // import interfaces from '../interfaces/beneficiary';
 import axios from "@/services/beneficiary/beneficiary";
-import useVuelidate from "@vuelidate/core";
+import { helpers } from '@vuelidate/validators'
+import useVuelidate, { Validation } from "@vuelidate/core";
 import { defineComponent } from "vue";
-import { required } from "@vuelidate/validators";
+import { required, nestedRequired, maxDecimalsLength } from '@/utils/validators'
 import FormCheckInput from "@/base-components/Form/FormCheck/FormCheckInput.vue";
 import { onboardingStore } from "@/stores/onboardingStore";
+import { getHealthentities }  from "@/composables/getHealthentities";
+
 import Swal from "sweetalert2";
 const store = onboardingStore();
+
+const healthEntities = computedAsync( async () => {
+  return await getHealthentities();
+}, null)
+
+const morfologica = {
+  estatura: '',
+  envergadura: '',
+  masa: '',
+}
+
+const nutricional = {
+  flexibilidad: '',
+  velocidad: '',
+  fuerza: '',
+  oculomanual: ''
+}
+
 const form = reactive({
   fechaInscripcion: "",
   municipio: "",
@@ -346,24 +449,25 @@ const form = reactive({
   lugarNacimiento: "",
   tipoIdentificacion: "",
   numeroDocumento: "",
-  direccionRes: "",
+  direccionResidencia: "",
   numeroCel: "",
   estrato: "",
   zona: "",
-  victimaConf: "",
+  victimaConflicto: "",
   pueblo: "",
   genero: "",
   etnia: "",
   discapacidad: "",
-  otroDiscapacidad: "",
+  otroDisc: "",
   patologia: "",
-  otroPatologia: "",
+  otroPato: "",
   sangre: "",
   escolaridad: "",
   nivel_escolaridad: "",
   institucion: "",
   vivoCon: "",
   afiliacion: "",
+  health_entity: "",
   nombresAcudiente: "",
   apellidosAcudiente: "",
   nDocuAcudiente: "",
@@ -372,51 +476,78 @@ const form = reactive({
   nCelularAcudiente: "",
   redesAcudiente: "",
   enterado: "",
+  
+  morfologicas: [ {...morfologica}, {...morfologica} ],
+  nutricionales: [ {...nutricional}, {...nutricional} ]
 });
 
 const form_rules = computed(() => ({
-  fechaInscripcion: { required },
-  municipio: { required },
-  disciplinas: { required },
-  nombres: { required },
-  apellidos: { required },
-  fechaNacimiento: { required },
-  lugarNacimiento: { required },
+  fechaInscripcion:   { required },
+  municipio:          { required },
+  disciplinas:        { required },
+  nombres:            { required },
+  apellidos:          { required },
+  fechaNacimiento:    { required },
+  lugarNacimiento:    { required },
   tipoIdentificacion: { required },
-  numeroDocumento: { required },
-  direccionResidencia: { required },
-  numeroCel: { required },
-  estrato: { required },
-  zona: { required },
-  victimaConflicto: { required },
-  pueblo: { required },
-  genero: { required },
-  etnia: { required },
-  discapacidad: { required },
-  otroDisc: { required },
-  patologia: { required },
-  otroPato: { required },
-  sangre: { required },
-  escolaridad: { required },
-  nivel_escolaridad: { required },
-  institucion:{required },
-  vivoCon: { required },
-  afiliacion: { required },
-  nombresAcudiente: { },
+  numeroDocumento:    { required },
+  direccionResidencia:{ required },
+  numeroCel:          { required },
+  estrato:            { required },
+  zona:               { required },
+  victimaConflicto:   { required },
+  pueblo:             { required },
+  genero:             { required },
+  etnia:              { required },
+  discapacidad:       { required },
+  otroDisc:           form.discapacidad === '0' ? {} : { required },
+  patologia:          { required },
+  otroPato:           form.patologia === '0' ? {} : { required },
+  sangre:             { required },
+  escolaridad:        { required },
+  nivel_escolaridad:  form.escolaridad === '0' ? {} : { required },
+  institucion:        form.escolaridad === '0' ? {} : { required },
+  vivoCon:            { required },
+  afiliacion:         { required },
+  health_entity:   form.afiliacion && form.afiliacion !== 'NA' ? { required } : {},
+}));
+
+const form_rules_tamizaje = computed(() => ({
+  morfologicas: {
+    $each: helpers.forEach({
+        estatura: { nestedRequired },
+        envergadura: { nestedRequired },
+        masa: { nestedRequired },
+    })
+  },
+  nutricionales: {
+    $each: helpers.forEach({
+        flexibilidad:  { nestedRequired },
+        velocidad:  { nestedRequired },
+        fuerza:  { nestedRequired },
+        oculomanual:  { nestedRequired },
+    })
+  }
+}));
+
+const form_rules_acudiente = computed(() => ({
+  nombresAcudiente:   { required },
   apellidosAcudiente: { required },
-  nDocuAcudiente: { required },
-  parentesco: { required },
-  email: { required },
-  // checkEmail: required{},
-  nCelularAcudiente: { required },
-  // checkNCel: required{},
-  redesAcudiente: { required },
-  enterado: { required },
+  nDocuAcudiente:     { required },
+  parentesco:         { required },
+  email:              { required },
+  // checkEmail:      { required },
+  nCelularAcudiente:  { required },
+  // checkNCel:       { required },
+  redesAcudiente:     { required },
+  enterado:           { required },
 }));
 
 const municipalitiesList = ref([]);
 const diciplinesList = ref([]);
 const ethniacityList = ref([]);
+const step = ref(1)
+
 //---------------------------//
 onMounted(async () => {
   //peticion a la api para las listas desplegables, by rick.
@@ -430,61 +561,37 @@ onMounted(async () => {
     }
   });
 });
-const v$ = useVuelidate(form_rules, form);
 
-const showV = () => {
-  console.log( v$.value.$invalid, v$.value );
+const v$ = useVuelidate(form_rules, form, { $lazy: true, $autoDirty: true });
+const v2$ = useVuelidate(form_rules_tamizaje, form, { $lazy: true, $autoDirty: true });
+const v3$ = useVuelidate(form_rules_acudiente, form, { $lazy: true, $autoDirty: true });
+
+const onNext = async ( validation: Validation ) => {
+
+  await validation.$validate()
+  .then((valid) => {
+      (valid) ? next_step() : alerts.validation()
+  })
 }
+
+const next_step = (step_to?: number) => {
+    if (step_to) {
+        step.value = step_to
+    }
+    else {
+        if (step.value < 6) {
+            step.value++
+        }
+    }
+};
 
 </script>
 
 <script lang="ts">
+
 export default defineComponent({
   data() {
     return {
-      accordion: [
-        {
-          shown: true
-        },
-        {
-          shown: true
-        }
-      ],
-      fechaInscripcion: "",
-      municipio: "",
-      disciplinas: "",
-      nombres: "",
-      apellidos: "",
-      fechaNacimiento: "",
-      lugarNacimiento: "",
-      tipoIdentificacion: "",
-      numeroDocumento: "",
-      direccionRes: "",
-      numeroCel: "",
-      estrato: "",
-      zona: "",
-      victimaConf: "",
-      pueblo: "",
-      genero: "",
-      etnia: "",
-      discapacidad: "",
-      otroDiscapacidad: "",
-      patologia: "",
-      otroPatologia: "",
-      sangre: "",
-      escolaridad: "",
-      nivel_escolaridad: "",
-      institucion: "",
-      vivoCon: "",
-      afiliacion: "",
-      nombresAcudiente: "",
-      apellidosAcudiente: "",
-      nDocuAcudiente: "",
-      parentesco: "",
-      email: "",
-      nCelularAcudiente: "",
-      redesAcudiente: "",
-      enterado: "",
       optionsMunicipio: [
         { label: "cali", value: "1" },
         { label: "caicedonia", value: "2" },
@@ -599,59 +706,91 @@ export default defineComponent({
     }
   },
   methods: {
-    toggleAccordion( pos: number ) {
-      this.accordion.map( item => item.shown = false )
-      this.accordion[ pos ].shown = !this.accordion[ pos ].shown
-    },
-    ingreso( evt: any ) {
+    checkMaxDecimals( evt: any ){
       evt.preventDefault();
-      
+      console.log( evt.target.value );
+      return false;
+    },
+    async onIngreso( evt: any, validation: any, form: any ) {
+      evt.preventDefault();
+
+      await validation.$validate()
+      .then((valid: boolean) => {
+          (valid) ? this.ingreso(form) : alerts.validation()
+      })
+
+    },
+    ingreso( form: any ) {
+
+      const morfologica: any = {}
+      form.morfologicas.forEach( (item: any) => {
+        Object.keys( item ).forEach( (key: string) => {
+          if ( !morfologica[key] || morfologica[key] < item[key]) {
+            morfologica[key] = item[key];
+          }
+        })
+      })
+
+      const nutricional: any = {}
+      form.nutricionales.forEach( (item: any) => {
+        Object.keys( item ).forEach( (key: string) => {
+          if ( !nutricional[key] || nutricional[key] < item[key]) {
+            nutricional[key] = item[key];
+          }
+        })
+      })
+
       const data = {
-        registration_date: this.fechaInscripcion,
-        municipalities_id: this.municipio,
-        disciplines_id: this.disciplinas,
+        registration_date: form.fechaInscripcion,
+        municipalities_id: form.municipio,
+        disciplines_id: form.disciplinas,
 
-        beneficiary_name: this.nombres,
-        beneficiary_last_name: this.apellidos,
-        full_name: `${this.nombres} ${this.apellidos}`,        
+        beneficiary_name: form.nombres,
+        beneficiary_last_name: form.apellidos,
+        full_name: `${form.nombres} ${form.apellidos}`,        
         
-        birth_date: this.fechaNacimiento,
-        origin_place: this.lugarNacimiento,
-        type_document: this.tipoIdentificacion,
-        document_number: this.numeroDocumento,
-        home_address: this.direccionRes,
-        phone: this.numeroCel,
-        stratum: this.estrato,
-        zone: this.zona,
-        conflict_victim: this.victimaConf,
-        distric: this.pueblo,
-        gender: this.genero,
-        ethnicities_id: this.etnia,
-        disability: this.discapacidad,
-        other_disability: this.otroDiscapacidad,
-        pathology: this.patologia,
-        what_pathology: this.otroPatologia,
-        blood_type: this.sangre,
-        live_with: this.vivoCon,
-        scholarship: this.escolaridad,
-        scholar_level: this.nivel_escolaridad,
-        institution: this.institucion,
-        affiliation_type: this.afiliacion,
+        birth_date: form.fechaNacimiento,
+        origin_place: form.lugarNacimiento,
+        type_document: form.tipoIdentificacion,
+        document_number: form.numeroDocumento,
+        home_address: form.direccionResidencia,
+        phone: form.numeroCel,
+        stratum: form.estrato,
+        zone: form.zona,
+        conflict_victim: form.victimaConflicto,
+        distric: form.pueblo,
+        gender: form.genero,
+        ethnicities_id: form.etnia,
+        disability: form.discapacidad,
+        other_disability: form.otroDisc,
+        pathology: form.patologia,
+        what_pathology: form.otroPato,
+        blood_type: form.sangre,
+        live_with: form.vivoCon,
+        scholarship: form.escolaridad,
+        scholar_level: form.nivel_escolaridad,
+        institution: form.institucion,
+        affiliation_type: form.afiliacion,
+        health_entity_id: form.health_entity,
 
+        // Tamizaje
+        morfologica: morfologica,
+        nutricional: nutricional,
+        
         // Datos del Acudiente
-        attendant_name: this.nombresAcudiente,
-        attendant_last_name: this.apellidosAcudiente,
-        attendant_number_document: this.nDocuAcudiente,
-        parentesco: this.parentesco,
-        email: this.email,
-        phone_number: this.nCelularAcudiente,
-        social_media: this.redesAcudiente,
-        find_out: this.enterado,
+        attendant_name: form.nombresAcudiente,
+        attendant_last_name: form.apellidosAcudiente,
+        attendant_number_document: form.nDocuAcudiente,
+        parentesco: form.parentesco,
+        email: form.email,
+        phone_number: form.nCelularAcudiente,
+        social_media: form.redesAcudiente,
+        find_out: form.enterado,
 
         // created_by: 1,
         accept: 1,
         linkage_project: 1,
-        status: "REC",
+        status_id: 2,
       };
       axios.addBeneficiary(data).then((res: any) => {
         if(res){
@@ -664,41 +803,7 @@ export default defineComponent({
       });
     },
     limpiar() {
-      this.fechaInscripcion = "";
-      this.municipio = "";
-      this.disciplinas = "";
-      this.nombres = "";
-      this.apellidos = "";
-      this.fechaNacimiento = "";
-      this.lugarNacimiento = "";
-      this.tipoIdentificacion = "";
-      this.numeroDocumento = "";
-      this.direccionRes = "";
-      this.numeroCel = "";
-      this.estrato = "";
-      this.zona = "";
-      this.victimaConf = "";
-      this.pueblo = "";
-      this.genero = "";
-      this.etnia = "";
-      this.discapacidad = "";
-      this.otroDiscapacidad = "";
-      this.patologia = "";
-      this.otroPatologia = "";
-      this.sangre = "";
-      this.nivel_escolaridad = "";
-      this.institucion = "";
-      this.escolaridad = "";
-      this.vivoCon = "";
-      this.afiliacion = "";
-      this.nombresAcudiente = "";
-      this.apellidosAcudiente = "";
-      this.nDocuAcudiente = "";
-      this.parentesco = "";
-      this.email = "";
-      this.nCelularAcudiente = "";
-      this.redesAcudiente = "";
-      this.enterado = "";
+      
     },
     regresar() {
       window.alert("Regresa");
