@@ -3,6 +3,9 @@ import Crud from '@/components/Crud.vue';
 import { Header, Item } from 'vue3-easy-data-table';
 
 import { chronogramServices } from '@/services/chronogramService';  // 1. Llamar el servicio
+
+const search = ref('');
+
 const router = useRouter()
 const route = useRoute()
 const routeName = computed(() => {
@@ -31,6 +34,22 @@ onBeforeMount(async () => {
     })
 })
 
+const searchData = (items: Item[], search: String) => {
+	if (items) {
+		const searchValue = search.toLowerCase();
+		return items.filter(
+			(item) =>
+				item.month?.toLowerCase().includes(searchValue) ||
+				item.municipio?.toLowerCase().includes(searchValue) ||
+				item.start_date?.toLowerCase().includes(searchValue) ||
+				item.status.name?.toLowerCase().includes(searchValue)
+		);
+	}
+	return items
+};
+
+const dataSearch = computed(() => searchData(items.value, search.value));
+
 </script>
 
 <template>
@@ -44,7 +63,13 @@ onBeforeMount(async () => {
     </div>
     <!-- BEGIN: Page Layout -->
     <div class="p-5 mt-5 intro-y box">
-        <Crud :headers="headers" :items="items" />
+        <CommonInput
+			type="search"
+			name="search"
+			v-model="search"
+			placeholder="Buscar" />
+		
+        <Crud :headers="headers" :items="dataSearch" />
     </div>
     <!-- END: Page Layout -->
 </template>
