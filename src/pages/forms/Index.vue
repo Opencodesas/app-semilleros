@@ -10,6 +10,8 @@ const routeName = computed(() => {
     return String(route.name).split('.')[0]
 })
 
+const search = ref('');
+
 const create = () => {
     setLoading(true)
     router.replace('create').finally(() => {
@@ -20,18 +22,34 @@ const create = () => {
 const headers: Header[] = [
     { text: 'ID', value: 'id' },
     { text: 'NOMBRE COMPLETO', value: 'full_name' },
-    { text: 'NUMERO DOCUMENTO', value: 'document_number' },
-    { text: 'TELEFONO', value: 'phone' },
-    { text: 'EMAIL', value: 'email' },
+    { text: 'MUNICIPIO', value: 'municipality.name' },
+    { text: 'ESTADO', value: 'status' },
     { text: 'FECHA CREADO', value: 'created_at' },
     { text: 'ACCIONES', value: 'actions' },
 ]
 const items = ref<Item[]>([])// 3. Definir una variable,para guardar los los datos que llega tipo  ref<Item[]>([])
+
 onBeforeMount(async () => {
     await beneficiary_Services.getAll().then((response) => {  //4 . Llamar el metodo a consumir
-        items.value = response?.data.items.map((all: any) => ({ ...all, status: 'ENREV' })) //5.  Asignar los a la variable los datos que llegan
+        items.value = response?.data.items
     })
 })
+
+const searchData = (items: Item[], search: String) => {
+	if (items) {
+		const searchValue = search.toLowerCase();
+		return items.filter(
+			(item) =>
+				item.full_name?.toLowerCase().includes(searchValue) ||
+				item.municipality?.toLowerCase().includes(searchValue) ||
+				item.status.name?.toLowerCase().includes(searchValue)
+		);
+	}
+	return items
+};
+
+const dataSearch = computed(() => searchData(items.value, search.value));
+
 
 </script>
 
@@ -46,7 +64,13 @@ onBeforeMount(async () => {
     </div>
     <!-- BEGIN: Page Layout -->
     <div class="p-5 mt-5 intro-y box">
-        <Crud :headers="headers" :items="items" />
+        <CommonInput
+			type="search"
+			name="search"
+			v-model="search"
+			placeholder="Buscar" />
+
+        <Crud :headers="headers" :items="dataSearch" />
     </div>
     <!-- END: Page Layout -->
 </template>
