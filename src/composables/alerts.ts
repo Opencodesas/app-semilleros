@@ -23,7 +23,7 @@ const Alerts = {
     Swal.fire('Error en Servidor', message, 'warning')
   },
   custom: (title: string, html: string, icon: SweetAlertIcon) => {
-    Swal.fire(title, html, icon)
+    return Swal.fire(title, html, icon)
   },
   general: (message: string) => {
     Swal.fire('Éxito', message, 'success')

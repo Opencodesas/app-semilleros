@@ -349,6 +349,7 @@ const routes = [
 			{
 				path: "beneficiaries",
 				name: "beneficiaries",
+				meta: { provider: 'fichaInscrip' },
 				children: [
 					{
 						path: "index",

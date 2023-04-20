@@ -17,7 +17,7 @@
           name="fechaInscripcion"
           v-model="form.fechaInscripcion"
           :validator="v$"
-          
+          :disabled="form.status.id !== 4"
           type="date"
         />
         <div class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-3 justify-evenly">
@@ -26,6 +26,7 @@
             name="municipio"
             v-model="form.municipio"
             :validator="v$"
+            :disabled="form.status.id !== 4"
             :allowEmpty="false"
             :options="municipalitiesList"
           />
@@ -34,6 +35,7 @@
             name="disciplinas"
             v-model="form.disciplinas"
             :validator="v$"
+            :disabled="form.status.id !== 4"
             :allowEmpty="false"
             :options="diciplinesList"
           />
@@ -42,12 +44,14 @@
             name="nombres"
             v-model="form.nombres"
             :validator="v$"
+            :disabled="form.status.id !== 4"
           />
           <CommonInput
             label="Apellidos"
             name="apellidos"
             v-model="form.apellidos"
             :validator="v$"
+            :disabled="form.status.id !== 4"
           />
           <CommonInput
             label="Fecha de nacimiento"
@@ -56,18 +60,21 @@
             type="date"
             v-model="form.fechaNacimiento"
             :validator="v$"
+            :disabled="form.status.id !== 4"
           />
           <CommonInput
             label="Lugar de nacimiento"
             name="lugarNacimiento"
             v-model="form.lugarNacimiento"
             :validator="v$"
+            :disabled="form.status.id !== 4"
           />
           <CommonSelect
             label="identificacion"
             name="tipoIdentificacion"
             v-model="form.tipoIdentificacion"
             :validator="v$"
+            :disabled="form.status.id !== 4"
             :allowEmpty="false"
             :options="optionsIdentificacion"
           />
@@ -78,6 +85,7 @@
             type="number"
             min="0"
             :validator="v$"
+            :disabled="form.status.id !== 4"
           />
         </div>
         <div class="mt-5 grid grid-cols-1 md:grid md:grid-cols-3 gap-6 justify-evenly">
@@ -86,18 +94,21 @@
             name="direccionResidencia"
             v-model="form.direccionResidencia"
             :validator="v$"
+            :disabled="form.status.id !== 4"
           />
           <CommonInput
             label="Numero de celular"
             name="numeroCel"
             v-model="form.numeroCel"
             :validator="v$"
+            :disabled="form.status.id !== 4"
           />
           <CommonSelect
             label="Estrato"
             name="estrato"
             v-model="form.estrato"
             :validator="v$"
+            :disabled="form.status.id !== 4"
             :allowEmpty="false"
             :options="optionsEstrato"
           />
@@ -106,6 +117,7 @@
             name="zona"
             v-model="form.zona"
             :validator="v$"
+            :disabled="form.status.id !== 4"
             :allowEmpty="false"
             :options="zonesList"
           />
@@ -114,6 +126,7 @@
             name="victimaConflicto"
             v-model="form.victimaConflicto"
             :validator="v$"
+            :disabled="form.status.id !== 4"
             :allowEmpty="false"
             :options="optionsVictima"
           />
@@ -122,6 +135,7 @@
             name="pueblo"
             v-model="form.pueblo"
             :validator="v$"
+            :disabled="form.status.id !== 4"
           />
         </div>
         <div class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
@@ -130,6 +144,7 @@
             name="genero"
             v-model="form.genero"
             :validator="v$"
+            :disabled="form.status.id !== 4"
             :allowEmpty="false"
             :options="optionsGenero"
           />
@@ -138,6 +153,7 @@
             name="etnia"
             v-model="form.etnia"
             :validator="v$"
+            :disabled="form.status.id !== 4"
             :allowEmpty="false"
             :options="ethniacityList"
           />
@@ -146,6 +162,7 @@
             name="discapacidad"
             v-model="form.discapacidad"
             :validator="v$"
+            :disabled="form.status.id !== 4"
             :allowEmpty="false"
             :options="optionsDiscapacidad"
           />
@@ -154,12 +171,14 @@
             name="otroDisc"
             v-model="form.otroDisc"
             :validator="v$"
+            :disabled="form.status.id !== 4"
           />
           <CommonSelect
             label="Patologia"
             name="patologia"
             v-model="form.patologia"
             :validator="v$"
+            :disabled="form.status.id !== 4"
             :allowEmpty="false"
             :options="optionsPatologia"
           />
@@ -168,12 +187,14 @@
             name="otroPato"
             v-model="form.otroPato"
             :validator="v$"
+            :disabled="form.status.id !== 4"
           />
           <CommonSelect
             label="Tipo de sangre"
             name="sangre"
             v-model="form.sangre"
             :validator="v$"
+            :disabled="form.status.id !== 4"
             :allowEmpty="false"
             :options="optionsSangre"
           />
@@ -182,6 +203,7 @@
             name="vivoCon"
             v-model="form.vivoCon"
             :validator="v$"
+            :disabled="form.status.id !== 4"
             :allowEmpty="false"
             :options="optionsVivo"
           />
@@ -194,6 +216,7 @@
           name="escolaridad"
           v-model="form.escolaridad"
           :validator="v$"
+          :disabled="form.status.id !== 4"
           :allowEmpty="false"
           :options="optionsEscolaridad"
         />
@@ -205,6 +228,7 @@
               name="nivel_escolaridad"
               v-model="form.nivel_escolaridad"
               :validator="v$"
+              :disabled="form.status.id !== 4"
               :allowEmpty="false"
               :options="optionsNivelEscolaridad"
             />
@@ -214,6 +238,7 @@
               name="institucion"
               v-model="form.institucion"
               :validator="v$"
+              :disabled="form.status.id !== 4"
             />
         </div>
 
@@ -224,6 +249,7 @@
             name="afiliacion"
             v-model="form.afiliacion"
             :validator="v$"
+            :disabled="form.status.id !== 4"
             :allowEmpty="false"
             :options="optionsAfiliacion"
           />
@@ -233,6 +259,7 @@
             name="health_entity"
             v-model="form.health_entity"
             :validator="v$"
+            :disabled="form.status.id !== 4"
             :allowEmpty="false"
             :options="healthEntities"
           />
@@ -258,67 +285,70 @@
                 Información Morfológica
             </h3>
             <ul role="list" class="divide-y pt-3">
-                <template v-for="(group, index) in form.morfologicas" :key="index">
-                    <li class="box border border-slate-200 px-4 py-4 sm:p-4 mb-3">
-                      <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-3">
-                          <CommonInput type="number" placeholder="Ingrese"
-                              label="Estatura (Cm) *"
-                              name="estatura" v-model="group.estatura"
-                              step='0.01'
-                              :collection_validator="{ index, name: 'morfologicas', v$: v2$ }"
-                          />
+                <li class="box border border-slate-200 px-4 py-4 sm:p-4 mb-3">
+                  <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-3">
+                      <CommonInput type="number" placeholder="Ingrese"
+                          label="Estatura (Cm) *"
+                          name="estatura" v-model="form.estatura"
+                          step='0.01'
+                          :validator="v2$"
+                          :disabled="form.status.id !== 4"
+                      />
 
-                          <CommonInput type="text" placeholder="Ingrese"
-                              label="Envergadura (Cm) *"
-                              name="envergadura" v-model="group.envergadura"
-                              :collection_validator="{ index, name: 'morfologicas', v$: v2$ }"
-                          />
+                      <CommonInput type="text" placeholder="Ingrese"
+                          label="Envergadura (Cm) *"
+                          name="envergadura" v-model="form.envergadura"
+                          :validator="v2$"
+                          :disabled="form.status.id !== 4"
+                      />
 
-                          <CommonInput type="text" placeholder="Ingrese"
-                              label="Masa Corporal (Kg)"
-                              name="masa" v-model="group.masa"
-                              :collection_validator="{ index, name: 'morfologicas', v$: v2$ }"
-                          />
-                      </div>
+                      <CommonInput type="text" placeholder="Ingrese"
+                          label="Masa Corporal (Kg)"
+                          name="masa" v-model="form.masa"
+                          :validator="v2$"
+                          :disabled="form.status.id !== 4"
+                      />
+                  </div>
 
-                    </li>
-                </template>
+                </li>
             </ul>
 
             <h3 class="mt-8 text-lg font-medium leading-6 text-gray-900">
                 Información Físico Nutricional
             </h3>
             <ul role="list" class="divide-y pt-3">
-                <template v-for="(group, index) in form.nutricionales" :key="index">
-                    <li class="box border border-slate-200 px-4 py-4 sm:p-4 mb-3">
-                      <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-4">
-                          <CommonInput type="number" placeholder="Ingrese"
-                              label="Test Flexibilidad (Wells) *"
-                              name="flexibilidad" v-model="group.flexibilidad"
-                              :collection_validator="{ index, name: 'nutricionales', v$: v2$ }"
-                          />
+                <li class="box border border-slate-200 px-4 py-4 sm:p-4 mb-3">
+                  <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-4">
+                      <CommonInput type="number" placeholder="Ingrese"
+                          label="Test Flexibilidad (Wells) *"
+                          name="flexibilidad" v-model="form.flexibilidad"
+                          :validator="v2$"
+                          :disabled="form.status.id !== 4"
+                      />
 
-                          <CommonInput type="text" placeholder="Ingrese"
-                              label="Velocidad (20 Mts) *"
-                              name="velocidad" v-model="group.velocidad"
-                              :collection_validator="{ index, name: 'nutricionales', v$: v2$ }"
-                          />
+                      <CommonInput type="text" placeholder="Ingrese"
+                          label="Velocidad (20 Mts) *"
+                          name="velocidad" v-model="form.velocidad"
+                          :validator="v2$"
+                          :disabled="form.status.id !== 4"
+                      />
 
-                          <CommonInput type="text" placeholder="Ingrese"
-                              label="Fuerza (Lanzamiento de Balón 2k) (Mts)"
-                              name="fuerza" v-model="group.fuerza"
-                              :collection_validator="{ index, name: 'nutricionales', v$: v2$ }"
-                          />
-                          
-                          <CommonInput type="text" placeholder="Ingrese"
-                              label="Oculomanual (Agarre)"
-                              name="oculomanual" v-model="group.oculomanual"
-                              :collection_validator="{ index, name: 'nutricionales', v$: v2$ }"
-                          />
-                      </div>
+                      <CommonInput type="text" placeholder="Ingrese"
+                          label="Fuerza (Lanzamiento de Balón 2k) (Mts)"
+                          name="fuerza" v-model="form.fuerza"
+                          :validator="v2$"
+                          :disabled="form.status.id !== 4"
+                      />
+                      
+                      <CommonInput type="text" placeholder="Ingrese"
+                          label="Oculomanual (Agarre)"
+                          name="oculomanual" v-model="form.oculomanual"
+                          :validator="v2$"
+                          :disabled="form.status.id !== 4"
+                      />
+                  </div>
 
-                    </li>
-                </template>
+                </li>
 
             </ul>
           </div>
@@ -342,12 +372,14 @@
             name="nombresAcudiente"
             v-model="form.nombresAcudiente"
             :validator="v3$"
+            :disabled="form.status.id !== 4"
           />
           <CommonInput
             label="Apellidos"
             name="apellidosAcudiente"
             v-model="form.apellidosAcudiente"
             :validator="v3$"
+            :disabled="form.status.id !== 4"
           />
           <CommonInput
             label="Numero de documento"
@@ -356,12 +388,14 @@
             type="number"
             min="0"
             :validator="v3$"
+            :disabled="form.status.id !== 4"
           />
           <CommonInput
             label="Parentesco"
             name="parentesco"
             v-model="form.parentesco"
             :validator="v3$"
+            :disabled="form.status.id !== 4"
           />
           <CommonInput 
             label="Email"
@@ -369,6 +403,7 @@
             v-model="form.email"
             type="email"
             :validator="v3$"
+            :disabled="form.status.id !== 4"
           />
           <!-- <FormCheckInput label="No tiene" name="checkEmail" v-model="checkEmail" type="checkbox" @click="check"/> -->
           <CommonInput
@@ -376,6 +411,7 @@
             name="nCelularAcudiente"
             v-model="form.nCelularAcudiente"
             :validator="v3$"
+            :disabled="form.status.id !== 4"
           />
           <!-- <FormCheck label="No tiene" name="checkNCel" v-model="form.checkNCel" />  -->
         </div>
@@ -386,6 +422,7 @@
             v-model="form.redesAcudiente"
             :multiple="true"
             :validator="v3$"
+            :disabled="form.status.id !== 4"
             :allowEmpty="false"
             :options="optionsRedes"
           />
@@ -395,11 +432,12 @@
             v-model="form.enterado"
             :multiple="true"
             :validator="v3$"
+            :disabled="form.status.id !== 4"
             :allowEmpty="false"
             :options="optionsEnterado"
           />
         </div>
-        <div class="m-4 text-center">
+        <div class="m-4 text-center" v-if="form.status.id === 4">
           <Button type="submit"> Modificar </Button>
         </div>
       </div>
@@ -425,19 +463,6 @@ const store = onboardingStore();
 const healthEntities = computedAsync( async () => {
   return await getHealthentities();
 }, null)
-
-const morfologica = {
-  estatura: '',
-  envergadura: '',
-  masa: '',
-}
-
-const nutricional = {
-  flexibilidad: '',
-  velocidad: '',
-  fuerza: '',
-  oculomanual: ''
-}
 
 const form = reactive({
   idx: "",
@@ -478,8 +503,18 @@ const form = reactive({
   redesAcudiente: "",
   enterado: "",
   
-  morfologicas: [ {...morfologica}, {...morfologica} ],
-  nutricionales: [ {...nutricional}, {...nutricional} ]
+  estatura: '',
+  envergadura: '',
+  masa: '',
+  flexibilidad: '',
+  velocidad: '',
+  fuerza: '',
+  oculomanual: '',
+  status: {
+    id: 0,
+    name: '',
+    slug: ''
+  }
 });
 
 const form_rules = computed(() => ({
@@ -514,21 +549,13 @@ const form_rules = computed(() => ({
 }));
 
 const form_rules_tamizaje = computed(() => ({
-  morfologicas: {
-    $each: helpers.forEach({
-        estatura: { nestedRequired },
-        envergadura: { nestedRequired },
-        masa: { nestedRequired },
-    })
-  },
-  nutricionales: {
-    $each: helpers.forEach({
-        flexibilidad:  { nestedRequired },
-        velocidad:  { nestedRequired },
-        fuerza:  { nestedRequired },
-        oculomanual:  { nestedRequired },
-    })
-  }
+  estatura: '',
+  envergadura: '',
+  masa: '',
+  flexibilidad: '',
+  velocidad: '',
+  fuerza: '',
+  oculomanual: ''
 }));
 
 const form_rules_acudiente = computed(() => ({
@@ -596,7 +623,9 @@ const fetch = async () => {
           form.idx = response.data.items.id;
           form.fechaInscripcion = response.data.items.registration_date;
           form.afiliacion = response.data.items.affiliation_type;
-          form.nombres = response.data.items.full_name;
+          const full_name = response.data.items.full_name.split('  ');
+          form.nombres = full_name[0];
+          form.apellidos = full_name[1];
           form.institucion = response.data.items.institution;
           form.tipoIdentificacion = response.data.items.type_document;
           form.numeroDocumento = response.data.items.document_number;
@@ -632,20 +661,15 @@ const fetch = async () => {
           form.redesAcudiente = JSON.parse(response.data.items.know_guardian.social_media)
           form.enterado = JSON.parse(response.data.items.know_guardian.find_out)
           
-          form.morfologicas = [
-            {
-              estatura: response.data.items.tamizaje.estatura,
-              envergadura: response.data.items.tamizaje.envergadura,
-              masa: response.data.items.tamizaje.masa
-            }, {...morfologica} ]
+          form.estatura = response.data.items.tamizaje.estatura,
+          form.envergadura = response.data.items.tamizaje.envergadura,
+          form.masa = response.data.items.tamizaje.masa
           
-          form.nutricionales = [ 
-            {
-              flexibilidad: response.data.items.tamizaje.flexibilidad,
-              velocidad: response.data.items.tamizaje.velocidad,
-              fuerza: response.data.items.tamizaje.fuerza,
-              oculomanual: response.data.items.tamizaje.oculomanual
-            }, {...nutricional} ]
+          form.flexibilidad = response.data.items.tamizaje.flexibilidad,
+          form.velocidad = response.data.items.tamizaje.velocidad,
+          form.fuerza = response.data.items.tamizaje.fuerza,
+          form.oculomanual = response.data.items.tamizaje.oculomanual
+          form.status = response.data.items.status
 
           alerts.custom('', response?.data.message, 'info');
         } else {
@@ -821,7 +845,7 @@ export default defineComponent({
 
         beneficiary_name: form.nombres,
         beneficiary_last_name: form.apellidos,
-        full_name: `${form.nombres} ${form.apellidos}`,        
+        full_name: `${form.nombres}  ${form.apellidos}`,        
         
         birth_date: form.fechaNacimiento,
         origin_place: form.lugarNacimiento,

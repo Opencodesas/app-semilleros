@@ -258,67 +258,64 @@
                 Información Morfológica
             </h3>
             <ul role="list" class="divide-y pt-3">
-                <template v-for="(group, index) in form.morfologicas" :key="index">
-                    <li class="box border border-slate-200 px-4 py-4 sm:p-4 mb-3">
-                      <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-3">
-                          <CommonInput type="number" placeholder="Ingrese"
-                              label="Estatura (Cm) *"
-                              name="estatura" v-model="group.estatura"
-                              step='0.01'
-                              :collection_validator="{ index, name: 'morfologicas', v$: v2$ }"
-                          />
+              <li class="box border border-slate-200 px-4 py-4 sm:p-4 mb-3">
+                <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-3">
+                    <CommonInput type="number" placeholder="Ingrese"
+                        label="Estatura (Cm) *"
+                        name="estatura" v-model="form.estatura"
+                        step='0.01'
+                        :validator="v2$"
+                    />
 
-                          <CommonInput type="text" placeholder="Ingrese"
-                              label="Envergadura (Cm) *"
-                              name="envergadura" v-model="group.envergadura"
-                              :collection_validator="{ index, name: 'morfologicas', v$: v2$ }"
-                          />
+                    <CommonInput type="text" placeholder="Ingrese"
+                        label="Envergadura (Cm) *"
+                        name="envergadura" v-model="form.envergadura"
+                        :validator="v2$"
+                    />
 
-                          <CommonInput type="text" placeholder="Ingrese"
-                              label="Masa Corporal (Kg)"
-                              name="masa" v-model="group.masa"
-                              :collection_validator="{ index, name: 'morfologicas', v$: v2$ }"
-                          />
-                      </div>
+                    <CommonInput type="text" placeholder="Ingrese"
+                        label="Masa Corporal (Kg)"
+                        name="masa" v-model="form.masa"
+                        :validator="v2$"
+                    />
+                </div>
 
-                    </li>
-                </template>
+              </li>
+
             </ul>
 
             <h3 class="mt-8 text-lg font-medium leading-6 text-gray-900">
                 Información Físico Nutricional
             </h3>
             <ul role="list" class="divide-y pt-3">
-                <template v-for="(group, index) in form.nutricionales" :key="index">
-                    <li class="box border border-slate-200 px-4 py-4 sm:p-4 mb-3">
-                      <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-4">
-                          <CommonInput type="number" placeholder="Ingrese"
-                              label="Test Flexibilidad (Wells) *"
-                              name="flexibilidad" v-model="group.flexibilidad"
-                              :collection_validator="{ index, name: 'nutricionales', v$: v2$ }"
-                          />
+              <li class="box border border-slate-200 px-4 py-4 sm:p-4 mb-3">
+                <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-4">
+                    <CommonInput type="number" placeholder="Ingrese"
+                        label="Test Flexibilidad (Wells) *"
+                        name="flexibilidad" v-model="form.flexibilidad"
+                        :validator="v2$"
+                    />
 
-                          <CommonInput type="text" placeholder="Ingrese"
-                              label="Velocidad (20 Mts) *"
-                              name="velocidad" v-model="group.velocidad"
-                              :collection_validator="{ index, name: 'nutricionales', v$: v2$ }"
-                          />
+                    <CommonInput type="text" placeholder="Ingrese"
+                        label="Velocidad (20 Mts) *"
+                        name="velocidad" v-model="form.velocidad"
+                        :validator="v2$"
+                    />
 
-                          <CommonInput type="text" placeholder="Ingrese"
-                              label="Fuerza (Lanzamiento de Balón 2k) (Mts)"
-                              name="fuerza" v-model="group.fuerza"
-                              :collection_validator="{ index, name: 'nutricionales', v$: v2$ }"
-                          />
-                          
-                          <CommonInput type="text" placeholder="Ingrese"
-                              label="Oculomanual (Agarre)"
-                              name="oculomanual" v-model="group.oculomanual"
-                              :collection_validator="{ index, name: 'nutricionales', v$: v2$ }"
-                          />
-                      </div>
+                    <CommonInput type="text" placeholder="Ingrese"
+                        label="Fuerza (Lanzamiento de Balón 2k) (Mts)"
+                        name="fuerza" v-model="form.fuerza"
+                        :validator="v2$"
+                    />
+                    
+                    <CommonInput type="text" placeholder="Ingrese"
+                        label="Oculomanual (Agarre)"
+                        name="oculomanual" v-model="form.oculomanual"
+                        :validator="v2$"
+                    />
+                </div>
 
-                    </li>
-                </template>
+              </li>
 
             </ul>
           </div>
@@ -426,19 +423,6 @@ const healthEntities = computedAsync( async () => {
   return await getHealthentities();
 }, null)
 
-const morfologica = {
-  estatura: '',
-  envergadura: '',
-  masa: '',
-}
-
-const nutricional = {
-  flexibilidad: '',
-  velocidad: '',
-  fuerza: '',
-  oculomanual: ''
-}
-
 const form = reactive({
   fechaInscripcion: "",
   municipio: "",
@@ -476,9 +460,15 @@ const form = reactive({
   nCelularAcudiente: "",
   redesAcudiente: "",
   enterado: "",
-  
-  morfologicas: [ {...morfologica}, {...morfologica} ],
-  nutricionales: [ {...nutricional}, {...nutricional} ]
+
+  estatura: '',
+  envergadura: '',
+  masa: '',
+
+  flexibilidad: '',
+  velocidad: '',
+  fuerza: '',
+  oculomanual: ''
 });
 
 const form_rules = computed(() => ({
@@ -513,21 +503,13 @@ const form_rules = computed(() => ({
 }));
 
 const form_rules_tamizaje = computed(() => ({
-  morfologicas: {
-    $each: helpers.forEach({
-        estatura: { nestedRequired },
-        envergadura: { nestedRequired },
-        masa: { nestedRequired },
-    })
-  },
-  nutricionales: {
-    $each: helpers.forEach({
-        flexibilidad:  { nestedRequired },
-        velocidad:  { nestedRequired },
-        fuerza:  { nestedRequired },
-        oculomanual:  { nestedRequired },
-    })
-  }
+  estatura: { nestedRequired },
+  envergadura: { nestedRequired },
+  masa: { nestedRequired },
+  flexibilidad:  { nestedRequired },
+  velocidad:  { nestedRequired },
+  fuerza:  { nestedRequired },
+  oculomanual:  { nestedRequired },
 }));
 
 const form_rules_acudiente = computed(() => ({
@@ -721,25 +703,6 @@ export default defineComponent({
 
     },
     ingreso( form: any ) {
-
-      const morfologica: any = {}
-      form.morfologicas.forEach( (item: any) => {
-        Object.keys( item ).forEach( (key: string) => {
-          if ( !morfologica[key] || morfologica[key] < item[key]) {
-            morfologica[key] = item[key];
-          }
-        })
-      })
-
-      const nutricional: any = {}
-      form.nutricionales.forEach( (item: any) => {
-        Object.keys( item ).forEach( (key: string) => {
-          if ( !nutricional[key] || nutricional[key] < item[key]) {
-            nutricional[key] = item[key];
-          }
-        })
-      })
-
       const data = {
         registration_date: form.fechaInscripcion,
         municipalities_id: form.municipio,
@@ -774,8 +737,13 @@ export default defineComponent({
         health_entity_id: form.health_entity,
 
         // Tamizaje
-        morfologica: morfologica,
-        nutricional: nutricional,
+        envergadura: form.envergadura,
+        estatura: form.estatura,
+        masa: form.masa,  
+        velocidad: form.velocidad,
+        flexibilidad: form.flexibilidad,
+        oculomanual: form.oculomanual,
+        fuerza: form.fuerza,
         
         // Datos del Acudiente
         attendant_name: form.nombresAcudiente,
@@ -796,14 +764,56 @@ export default defineComponent({
         if(res){
           Swal.fire('', res.data.message, 'success').finally(() => {
           })
-          this.limpiar();
+          this.limpiar( form );
         }
-
-        
       });
     },
-    limpiar() {
-      
+    limpiar( form: any ) {
+      /*
+        form.fechaInscripcion   =  "";
+        form.municipio          =  "";
+        form.disciplinas        =  "";
+        form.nombres            =  "";
+        form.apellidos          =  "";
+        form.fechaNacimiento    =  "";
+        form.lugarNacimiento    =  "";
+        form.tipoIdentificacion =  "";
+        form.numeroDocumento    =  "";
+        form.direccionResidencia=  "";
+        form.numeroCel          =  "";
+        form.estrato            =  "";
+        form.zona               =  "";
+        form.victimaConflicto   =  "";
+        form.pueblo             =  "";
+        form.genero             =  "";
+        form.etnia              =  "";
+        form.discapacidad       =  "";
+        form.otroDisc           =  "";
+        form.patologia          =  "";
+        form.otroPato           =  "";
+        form.sangre             =  "";
+        form.escolaridad        =  "";
+        form.nivel_escolaridad  =  "";
+        form.institucion        =  "";
+        form.vivoCon            =  "";
+        form.afiliacion         =  "";
+        form.health_entity      =  "";
+        form.nombresAcudiente   =  "";
+        form.apellidosAcudiente =  "";
+        form.nDocuAcudiente     =  "";
+        form.parentesco         =  "";
+        form.email              =  "";
+        form.nCelularAcudiente  =  "";
+        form.redesAcudiente     =  "";
+        form.enterado           =  "";
+        form.estatura           =  '';
+        form.envergadura        =  '';
+        form.masa               =  '';
+        form.flexibilidad       =  '';
+        form.velocidad          =  '';
+        form.fuerza             =  '';
+        form.oculomanual        =  '';
+        */
     },
     regresar() {
       window.alert("Regresa");
