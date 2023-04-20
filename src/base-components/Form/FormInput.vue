@@ -74,5 +74,7 @@ watch(localValue, () => {
     :required="props.required"
     v-bind="_.omit(attrs, 'class')"
     v-model="localValue"
+    
+    @change="$emit('change', localValue)" 
   />
 </template>

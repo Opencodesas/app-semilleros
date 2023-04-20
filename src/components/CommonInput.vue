@@ -57,7 +57,6 @@ const value = computed({
         emit('update:modelValue', value)
     }
 })
-
 </script>
 
 <script lang="ts">
@@ -93,6 +92,7 @@ export default {
                     ? 'this.showPicker()' : '' "
             v-model="value"
             v-bind="props"
+            @change="$emit('change', $event)"
         />
         <!-- Validator -->
         <div class="flex flex-row justify-between">
