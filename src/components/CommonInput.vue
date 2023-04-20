@@ -26,6 +26,7 @@ interface Props {
     min?: string | number
     max?: string | number
     tooltip?: string
+    tooltip_left?: string
     disabled?: boolean
     name: string
     validator?: Validation
@@ -98,6 +99,11 @@ export default {
             <template v-if="tooltip">
                 <span class="mt-1 text-xs sm:ml-auto sm:mt-0 text-slate-500">
                     {{ tooltip }}
+                </span>
+            </template>
+            <template v-else-if="tooltip_left">
+                <span class="mt-1 text-xs sm:mt-2 text-slate-500">
+                    {{ tooltip_left }}
                 </span>
             </template>
             <template v-else-if="validator">
