@@ -100,14 +100,12 @@ onMounted(() => {
  */
 
 const selectFile = (event: any) => {
-	console.log(file.value);
-	if (event.target.files.length < 0) {
-		form.file = file.value
-		console.log(form.file);
+	console.log(event);
+	if (event?.target.files.length > 0) {
+		form.file = event.target.files[0];
 		return 
 	};
-	console.log(form.file);
-	form.file = event.target.files[0];
+	form.file = file.value;
 }
 
 const formdataParser = (form: any) => {
@@ -275,6 +273,7 @@ const download = () => {};
 					v-model="form.file"
 					name="file"
 					@change="selectFile"
+					@removefile="selectFile"
 					class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
 					v-if="!disableElements" />
 			</div>
