@@ -3,7 +3,6 @@ export function useProvider() {
     const route = useRoute()
 
     function isProvider (provider: Providers) {
-        console.log( route.meta );
         return route.meta.provider == provider
     }
 

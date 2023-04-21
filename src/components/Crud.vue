@@ -6,6 +6,8 @@ import type { Header, Item } from 'vue3-easy-data-table';
 import CommonButtonLink from './CommonButtonLink.vue';
 import ContractCancellation from './ContractCancellation.vue';
 import Modal from './Modal.vue';
+import { FormLabel } from '@/base-components/Form';
+import { isRole } from '@/composables/isRole';
 
 const storagePath = import.meta.env.VITE_BASE_URL;
 
@@ -323,6 +325,14 @@ const documentsCount = (id: number) => {
 
 const _getStatus = (status: any) => getStatus(status);
 
+const getStage = (user: any) => {
+	if ( !user || isRole('metodologo', user.user) ) {
+		return 'METODOLOGO'
+	} else if ( isRole('coordinador_regional', user.user) ) {
+		return 'COORDINADOR'
+	}
+}
+
 /*
 |--------------------------------------------------------------------------
 | Headers example
@@ -513,6 +523,11 @@ const selectedTab = inject('selectedTab', ref(0))
 					{{ _getStatus(item.status) }}
 				</span>
 			</template>
+			<template #item-reviewed="item">
+				<span class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
+					{{ getStage(item.reviewed) }}
+				</span>
+			</template>
 			<template #item-actions="item">
 				<div class="flex gap-2 justify-end">
 					<template v-if="isProvider('assistants')">
@@ -654,7 +669,7 @@ const selectedTab = inject('selectedTab', ref(0))
 												<span class="text-sm"> Eliminar </span> 
 											</Button> -->
 					</template>
-					<template v-else>
+					<template v-else-if="isProvider('fichaInscrip')">
 						<Button v-if="item.status.slug === 'ENREV'" variant="outline-secondary"
 							@click="seeAction(item.id)">
 							<Lucide icon="Search" class="mr-2" />
