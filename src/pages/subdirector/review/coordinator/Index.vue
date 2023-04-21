@@ -24,7 +24,7 @@ const headers: Header[] = [
 	{ text: 'Nro.', value: 'id' },
 	{ text: 'Fecha', value: 'date_visit' },
 	{ text: 'Municipio', value: 'municipalitie.name' },
-	{ text: 'Coordinador', value: 'created_by.name' },
+	// { text: 'Coordinador', value: 'created_by.name' },
 	{ text: 'Escenario Deportivo', value: 'sports_scene' },
 	{ text: 'Estado', value: 'status' },
 	{ text: 'Acciones', value: 'actions' },

@@ -24,7 +24,7 @@ interface Props {
     files?: any
     acceptedFiles?: string
     acceptMultiple?: boolean
-    validator: Validation
+    validator?: Validation
 }
 
 const props = withDefaults(defineProps<Props>(), {
