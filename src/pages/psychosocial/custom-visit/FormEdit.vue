@@ -19,16 +19,16 @@ const store = onboardingStore();
 //Recibe datos para editar visita personalizada
 //QUITAR DATOS DE PRUEBA
 const form = reactive({
-    month: '1',
-    municipality: '2',
-    beneficiary: '2',
-    theme: 'Físico',
-    agreements: 'Se llegó al acuerdo de...',
-    concept: '4',
+    month: '',
+    municipality: '',
+    beneficiary: '',
+    theme: '',
+    agreements: '',
+    concept: '',
     guardian_knows_semilleros: true,
     file: [],
-    status_id: '4', //id:4 => Rechazado => REC cambiamos si queremos ver otra vista
-    rejection_message: 'Fue rechazado por...',
+    status_id: '', //id:4 => Rechazado => REC cambiamos si queremos ver otra vista
+    rejection_message: '',
 })
 
 
@@ -44,11 +44,11 @@ const form_rules = computed(() => ({
 }))
 
 const beneficiary_data = reactive({
-    grade: 'PRIMARIA',
-    health_entity: 'NUEVA EPS',
-    guardian_name: 'Liliana',
-    guardian_lastname: 'Garcia',
-    guardian_identification: '1074936855',
+    scholar_level: '',
+    health_entity: '',
+    guardian_name: '',
+    guardian_lastname: '',
+    guardian_identification: '',
 })
 
 const months = asyncComputed(async () => {
@@ -59,23 +59,21 @@ const municipalities = asyncComputed(async () => {
     return await getSelect(['municipalities'])
 }, null)
 
+const beneficiariesList = ref<selectOption[]>([]);
 
-const municipality_id = computed(() => form.municipality)
+const getBeneficiariesByMunicipaly = async () => {
+    await beneficiaryServices.getByDeparment(form.municipality as string).then((response) => {
+        if (response?.status == 200 || response?.status == 201) {
+            beneficiariesList.value = response?.data
+            console.log(response?.data)
+        }
+    })
+}
 
-//Usar para traer beneficiarios (nombre y id) por municipio
-// const beneficiaries = asyncComputed(async () => {
-//     return await getBeneficiariesByMunicipaly(municipality_id.value) : []
-// }, null)
-
-
-//Datos de prueba
-const beneficiaries = ref<selectOption[]>([
-    { label: 'Pedro', value: '1' },
-    { label: 'Juan', value: '2' },
-    { label: 'Maria', value: '3' },
-    { label: 'Jose', value: '4' },
-    { label: 'Luis', value: '5' },
-])
+watch(() => form.municipality, (newVal, oldVal) => {
+    console.log(newVal);
+    if (newVal != null) getBeneficiariesByMunicipaly();
+})
 
 const dataLoaded = ref(false)
 //Verificar si se puede hacer con asycComputed
@@ -101,21 +99,11 @@ const getData = async () => {
     })
 };
 
-
-onMounted(async () => {
-    console.log(route);
-    await getData();
-    dataLoaded.value = true;
-    //form.status = `${route.params.id}`
-    console.log(form.status_id)
-});
-
 const getBeneficiaryData = async () => {
-    //Verificar que traiga los datos necesarios
     await beneficiaryServices.get(form.beneficiary as string).then((response) => {
         console.log(response?.data.items);
         if (response?.status == 200 || response?.status == 201) {
-            beneficiary_data.grade = response.data.items.grade;
+            beneficiary_data.scholar_level = scholarLevels[response.data.items.scholar_level - 1].label;
             beneficiary_data.health_entity = response.data.items.health_entity;
             beneficiary_data.guardian_name = response.data.items.guardian_name;
             beneficiary_data.guardian_lastname = response.data.items.guardian_lastname;
@@ -127,11 +115,14 @@ const getBeneficiaryData = async () => {
     })
 }
 
-
-//Mirar si hago servicio
-// const beneficiary_data = asyncComputed(async () => {
-//     return form.beneficiary ? await getBeneficiaryData(form.beneficiary) : null
-// }, null)
+onMounted(async () => {
+    console.log(route);
+    await getData();
+    await getBeneficiaryData();
+    dataLoaded.value = true;
+    //form.status = `${route.params.id}`
+    console.log(form.status_id)
+});
 
 const v$ = useVuelidate(form_rules, form)
 
@@ -196,14 +187,14 @@ const positionRange = computed(() => {
                         <CommonSelect :disabled="disableElements" label="Municipio *" name="municipality"
                             v-model="form.municipality" :validator="v$" :options="municipalities" />
                         <CommonSelect @select="getBeneficiaryData" :disabled="disableElements" label="Beneficiario *"
-                            name="beneficiary" v-model="form.beneficiary" :validator="v$" :options="beneficiaries" />
+                            name="beneficiary" v-model="form.beneficiary" :validator="v$" :options="beneficiariesList" />
                     </div>
                     <!-- cambiar condicion por "beneficiary_data" cuando haya función para traer los datos -->
                     <div v-if="form.beneficiary">
                         <!-- These inputs don't use the validator since they have data from the DB   cambiar los v-model-->
                         <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
-                            <CommonInput disabled type="text" label="Grado de escolaridad" name="grade"
-                                v-model="beneficiary_data.grade" />
+                            <CommonInput disabled type="text" label="Grado de escolaridad" name="scholar_level"
+                                v-model="beneficiary_data.scholar_level" />
                             <CommonInput disabled type="text" label="Entidad de salud" name="health_entity"
                                 v-model="beneficiary_data.health_entity" />
                         </div>

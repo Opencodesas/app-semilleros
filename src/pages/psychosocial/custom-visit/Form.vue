@@ -2,16 +2,15 @@
 import useVuelidate from '@vuelidate/core'
 import { required } from '@/utils/validators'
 import FormSwitch from "@/base-components/Form/FormSwitch";
-import { filePondValue } from '@/composables/useFilepondEvents';
 import { onboardingStore } from "@/stores/onboardingStore";
 import { customVisitServices } from '@/services/psychosocial/customVisitServices';
-import { getBeneficiariesByDepartment } from '@/composables/getBeneficiariesByMunicipaly'
-import { Item } from 'vue3-easy-data-table';
+import { selectOption } from '@/components/CommonSelect.vue';
 
 const { multiple } = useFilepondEvents();
 
 const store = onboardingStore();
 //id:2 => En revisión => ENR
+
 
 //Se manda la siguiente información para crear visita personalizada
 const form = reactive({
@@ -61,57 +60,56 @@ const municipalities = asyncComputed(async () => {
     return await getSelect(['municipalities'])
 }, null)
 
-const municipality_id = computed(() => form.municipality)
+const beneficiariesList = ref<selectOption[]>([]);
 
-// const beneficiariesList = [
-//     { label: 'Beneficiario 1', value: '1' },
-//     { label: 'Beneficiario 2', value: '2' },
-// ]
-
-const beneficiaries = ref<Item[]>([]);
-
-const beneficiariesList = computed(() => {
-    // const beneficiaries = await getBeneficiariesByDepartment(form.municipality).data
-    // console.log(beneficiaries)
-    return beneficiaries.value.map((item: Item) => {
-        return {
-            label: item.full_name,
-            value: item.id
+const getBeneficiariesByMunicipaly = async () => {
+    await beneficiaryServices.getByDeparment(form.municipality as string).then((response) => {
+        if (response?.status == 200 || response?.status == 201) {
+            beneficiariesList.value = response?.data
+            console.log(response?.data)
         }
     })
+}
+
+watch(() => form.municipality, (newVal, oldVal) => {
+    console.log(newVal);
+    if (newVal != null) getBeneficiariesByMunicipaly();
 })
 
-onBeforeMount(async () => {
-     await beneficiaryServices.getAll().then((response) => {
-        beneficiaries.value = response?.data.items
-      })
-      console.log(beneficiaries.value)
- })
-//Se necesita traer la siguiente información del beneficiario por su id: (Adjuntar foto de lo visual)
 const beneficiary_data = reactive({
-    grade: '',
+    scholar_level: '',
     health_entity: '',
     guardian_name: '',
     guardian_lastname: '',
     guardian_identification: '',
 })
 
-//revisar este servicio para ver si trae lo que se necesita
+const beneficiaryLoaded = ref(false);
+
 const getBeneficiaryData = async () => {
+    //console.log(scholarLevels[0]);
     await beneficiaryServices.get(form.beneficiary as string).then((response) => {
         console.log(response?.data.items);
         if (response?.status == 200 || response?.status == 201) {
-            beneficiary_data.grade = response.data.items.grade;
+            beneficiary_data.scholar_level = scholarLevels[response.data.items.scholar_level - 1].label;
             beneficiary_data.health_entity = response.data.items.health_entity;
-            beneficiary_data.guardian_name = response.data.items.guardian_name;
-            beneficiary_data.guardian_lastname = response.data.items.guardian_lastname;
-            beneficiary_data.guardian_identification = response.data.items.guardian_identification;
+            beneficiary_data.guardian_name = response.data.items.acudiente.firts_name;
+            beneficiary_data.guardian_lastname = response.data.items.acudiente.last_name;
+            beneficiary_data.guardian_identification = response.data.items.acudiente.cedula;
+            beneficiaryLoaded.value = true;
         } else {
             alerts.custom("", "No se pudieron obtener los datos", "error");
         }
-        console.log(form);
+        //console.log(form);
     })
 }
+
+watch(() => form.beneficiary, (newVal, oldVal) => {
+    console.log(newVal);
+    if (newVal != null) getBeneficiaryData();
+
+})
+
 
 const v$ = useVuelidate(form_rules, form)
 
@@ -127,11 +125,10 @@ const onSubmit = async () => {
             if (response) {
                 if (response.status >= 200 && response.status <= 300) {
                     alerts.create()
-                    // setLoading(true)
-
-                    // router.push('/dashboard').finally(() => {
-                    //     setLoading(false)
-                    // })
+                    setLoading(true)
+                    router.push('/dashboard').finally(() => {
+                        setLoading(false)
+                    })
                 }
             }
         })
@@ -161,15 +158,15 @@ const positionRange = computed(() => {
                         <CommonSelect label="Mes *" name="month" v-model="form.month" :validator="v$" :options="months" />
                         <CommonSelect label="Municipio *" name="municipality" v-model="form.municipality" :validator="v$"
                             :options="municipalities" />
-                        <CommonSelect @select="getBeneficiaryData" label="Beneficiario *" name="beneficiary"
-                            v-model="form.beneficiary" :validator="v$" :options="beneficiariesList" />
+                        <CommonSelect label="Beneficiario *" name="beneficiary" v-model="form.beneficiary" :validator="v$"
+                            :options="beneficiariesList" />
                     </div>
                     <!-- cambiar condicion por "beneficiary_data" cuando haya función para traer los datos -->
-                    <div v-if="form.beneficiary">
+                    <div v-if="form.beneficiary && beneficiaryLoaded">
                         <!-- These inputs don't use the validator since they have data from the DB  -->
                         <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
-                            <CommonInput disabled type="text" label="Grado de escolaridad" name="grade"
-                                v-model="beneficiary_data.grade" />
+                            <CommonInput disabled type="text" label="Grado de escolaridad" name="scholar_level"
+                                v-model="beneficiary_data.scholar_level" />
                             <CommonInput disabled type="text" label="Entidad de salud" name="health_entity"
                                 v-model="beneficiary_data.health_entity" />
                         </div>
