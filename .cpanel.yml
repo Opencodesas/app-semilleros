@@ -1,5 +1,5 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/ssisetco/public_html/app-semilleros
-    - /bin/cp /home/ssisetco/repositories/app-semilleros $DEPLOYPATH
+    - export DEPLOYPATH=/home/ssisetco/public_html/app-semilleros/
+    - /bin/rsync -av * $DEPLOYPATH
