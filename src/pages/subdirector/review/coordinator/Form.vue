@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 const store = onboardingStore();
 
 const router = useRouter();
+const urlStorage = `${import.meta.env.VITE_BASE_URL}/storage/`;
 const dataLoaded = ref(false);
 
 const props = defineProps<{
@@ -70,6 +71,7 @@ onMounted(async () => {
 		.get(props.id_review.toString())
 		.then((response) => {
 			if (response?.status == 200 || response?.status == 201) {
+				console.log(response.data.items);
 				form.id = response.data.items.id;
 				form.beneficiary_coverage = response.data.items.beneficiary_coverage;
 				form.date_visit = response.data.items.date_visit;
@@ -82,6 +84,7 @@ onMounted(async () => {
 				form.user_id = response.data.items.user_id;
 				form.sidewalk = response.data.items.sidewalk;
 				form.coordinator_name = response.data.items.created_by.name;
+				form.file = response.data.items.file;
 				dataLoaded.value = true;
 			} else {
 				Swal.fire('', 'No se pudieron obtener los datos', 'error');
@@ -248,7 +251,7 @@ const onSubmit = async () => {
 				<img
 					:alt="`Evidencia del coordinador ${form.coordinator_id}`"
 					class="m-auto border rounded-lg"
-					src="/semilleros.png"
+					:src="`${urlStorage}${form.file}`"
 					width="400" />
 			</div>
 		</div>

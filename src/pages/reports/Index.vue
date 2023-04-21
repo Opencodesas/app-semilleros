@@ -52,7 +52,7 @@ const items = computed((): ReportItem[] => {
 				},
 				{
 					id: 2,
-					name: 'Informe de información Usuarios',
+					name: 'Informe de Información Usuarios',
 					type: 'infoUsers',
 					pdf: false,
 					excel: true,
@@ -60,7 +60,7 @@ const items = computed((): ReportItem[] => {
 				},
 				{
 					id: 3,
-					name: 'Informe visitas SubDirector',
+					name: 'Informe Visitas SubDirector',
 					type: 'visitSubDirector',
 					pdf: false,
 					excel: true,
@@ -68,7 +68,7 @@ const items = computed((): ReportItem[] => {
 				},
 				{
 					id: 4,
-					name: 'Informe actividades transversales',
+					name: 'Informe Actividades Transversales',
 					type: 'transversalActivity',
 					pdf: false,
 					excel: true,
@@ -76,7 +76,7 @@ const items = computed((): ReportItem[] => {
 				},
 				{
 					id: 5,
-					name: 'Informe visitas coordinador regional',
+					name: 'Informe Visitas Coordinador Regional',
 					type: 'coordinatorVisit',
 					pdf: false,
 					excel: true,
@@ -84,8 +84,16 @@ const items = computed((): ReportItem[] => {
 				},
 				{
 					id: 6,
-					name: 'Informe visitas personalizas psicosocial',
+					name: 'Informe Visitas Personalizas Psicosocial',
 					type: 'customVisit',
+					pdf: false,
+					excel: true,
+					zip: false,
+				},
+				{
+					id: 7,
+					name: 'Informe Fichas de Inscripción',
+					type: 'inscriptions',
 					pdf: false,
 					excel: true,
 					zip: false,
@@ -157,56 +165,6 @@ const cleanFilter = () => {
 	form.data = false;
 	v$.value.$reset();
 };
-
-const typeOptions = [
-	{
-		label: 'Pecs',
-		value: 'pecs',
-	},
-	{
-		label: 'Ficha pedagógicas',
-		value: 'pedagogicals',
-	},
-	{
-		label: 'Encuestas de deserción',
-		value: 'pollDesertions',
-	},
-
-	{
-		label: 'Mesa de dialogo',
-		value: 'dialogueTables',
-	},
-
-	{
-		label: 'Usuarios',
-		value: 'users',
-	},
-	{
-		label: 'Variables',
-		value: 'variables',
-	},
-	{
-		label: 'Sesión',
-		value: 'view',
-	},
-	{
-		label: 'Acudientes',
-		value: 'attendats',
-	},
-	{
-		label: 'Beneficiarios',
-		value: 'beneficiaries',
-	},
-
-	{
-		label: 'Escuela de Padres',
-		value: 'parentschools',
-	},
-	{
-		label: 'Bitácora Psicopedagógica',
-		value: 'psychopedagogicallogs',
-	},
-];
 
 const maxDate = computed(() => dayjs().format('YYYY-MM-DD'));
 

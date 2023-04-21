@@ -105,8 +105,6 @@ const onSubmit = async () => {
                 }
 
             });
-        } else {
-            alerts.custom('Validación', 'Por favor verifique los horarios cruzados.', 'error')
         }
     }
     else {
@@ -125,7 +123,7 @@ const checkChronogram = () => {
             const horario = schedules[j];
             if ( !horario ) continue
 
-            hayCruce = searchItem( schedules, horario );
+            hayCruce = searchItem( schedules, i+1, horario );
 
             if(hayCruce) break;
         }
@@ -136,7 +134,7 @@ const checkChronogram = () => {
     return hayCruce
 }
 
-const searchItem = ( schedules: any, horario: any ) => {
+const searchItem = ( schedules: any, grupo: number, horario: any ) => {
     let hayCruce = false; 
 
     for( let i = 0; i < form.groups.length; i++) {
@@ -156,6 +154,7 @@ const searchItem = ( schedules: any, horario: any ) => {
         })
 
         if ( hayCruce ){
+            alerts.custom('Validación', `Por favor verifique el horario cruzado ${horario.day} de ${horario.start_time} a ${horario.end_time} grupo ${grupo}.`, 'error')
             break;
         }
     }
@@ -164,7 +163,7 @@ const searchItem = ( schedules: any, horario: any ) => {
 }
 
 const onAddGrupo = () => {
-    if ( form.groups.length < 4 ) {
+    if ( form.groups.length <= 4 ) {
         form.groups.push({ ...groupBone })
     }
 }
@@ -288,11 +287,11 @@ const sports = [
                                             </Disclosure>
                                         </div>
                                         <div v-if="index >= 1" class="col-span-1 sm:col-span-2">
-                                            <Button :disabled="form.groups.length <= 1"
+                                            <Button
                                                 @click="form.groups.splice(index, 1)" type="button"
                                                 variant="outline-danger" size="sm">
                                                 <Lucide icon="ListMinus" class="mr-2" />
-                                                Eliminar grupo
+                                                {{ index === 4 ? 'Eliminar competencia' : 'Eliminar grupo' }}
                                             </Button>
                                         </div>
                                     </div>
@@ -303,10 +302,10 @@ const sports = [
                             <Button @click="onAddGrupo()" type="button"
                                 variant="outline-primary"
                                 size="sm"
-                                :disabled="form.groups.length === 4"
+                                :disabled="form.groups.length === 5"
                             >
                                 <Lucide icon="Plus" class="mr-2" />
-                                Agregar grupo
+                                {{ form.groups.length === 4 ? 'Agregar competencia' : 'Agregar grupo' }}
                             </Button>
                         </div>
                     </div>

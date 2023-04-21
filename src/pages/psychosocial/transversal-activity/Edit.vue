@@ -50,7 +50,7 @@ const municipalities = asyncComputed(async () => {
 
 onMounted(async () => {
 	await transversalActivityServices.get(router.currentRoute.value.params.id as string).then((response: any) => {
-		console.log(response.data.items.file);
+		console.log(response.data.items);
 		form.id = response.data.items.id;
 		form.status_id = response.data.items.status_id;
 		form.rejection_message = response.data.items.reject_message;
@@ -230,7 +230,7 @@ const download = () => {};
 			<img
 				:alt="`Evidencia de la visita del subdirector`"
 				class="m-auto border rounded-lg"
-				src="/semilleros.png"
+				src=""
 				width="400" />
 		</div>
 		<div class="p-5 intro-y" v-if="!disableElements">
