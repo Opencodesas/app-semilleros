@@ -6,7 +6,6 @@ import type { Header, Item } from 'vue3-easy-data-table';
 import CommonButtonLink from './CommonButtonLink.vue';
 import ContractCancellation from './ContractCancellation.vue';
 import Modal from './Modal.vue';
-import { FormLabel } from '@/base-components/Form';
 
 const storagePath = import.meta.env.VITE_BASE_URL;
 
@@ -555,9 +554,8 @@ const selectedTab = inject('selectedTab', ref(0))
 								</span>
 							</Button>
 						</template>
-						<template v-else-if="
-							item.status_id.value === '2' && route.name === 'review.index'
-						">
+						
+						<template v-else-if="item.status_id == '2' && route.name === 'review.index'">
 							<template v-if="props.Form!">
 								<Modal :Form="props.Form" :id_review="item.id" />
 							</template>

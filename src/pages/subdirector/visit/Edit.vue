@@ -46,6 +46,8 @@ const form_rules = computed(() => ({
 	file: {},
 }));
 
+const file = ref(null);
+
 const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
 }, null);
@@ -83,6 +85,7 @@ const fetch = async () => {
 			form.date_visit = response.data.items.date_visit;
 			form.description = response.data.items.description;
 			form.file = response.data.items.file;
+			file.value = response.data.items.file;
 			form.status_id = response.data.items.status_id;
 			form.reject_message = response.data.items.reject_message;
 			dataLoaded.value = true;
@@ -96,7 +99,11 @@ onMounted(() => {
 });
 
 const selectFile = (event: any) => {
-	form.file = event.target.files[0];
+	if (event?.target.files.length > 0) {
+		form.file = event.target.files[0];
+		return 
+	};
+	form.file = file.value;
 }
 
 const formdataParser = (form: any) => {
@@ -267,7 +274,7 @@ const download = () => {};
 			<img
 				:alt="`Evidencia de la visita del subdirector`"
 				class="m-auto border rounded-lg"
-				:src="`${urlStorage}/${form.file}`"
+				:src="`${urlStorage}/${file}`"
 				width="400" />
 		</div>
 		<div class="p-5 mt-6 intro-y">
@@ -278,6 +285,7 @@ const download = () => {};
 				class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
 				v-if="!disableElements"
 				@change="selectFile"
+				@removefile="selectFile"
 				/>
 		</div>
 	</div>

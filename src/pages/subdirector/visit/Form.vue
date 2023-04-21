@@ -213,7 +213,8 @@ const onSubmit = async () => {
 				v-model="form.file"
 				name="file"
 				class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
-				@change="selectFile" />
+				@change="selectFile"
+				@removefile="form.file = []" />
 		</div>
 	</div>
 

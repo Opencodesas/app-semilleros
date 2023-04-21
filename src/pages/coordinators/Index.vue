@@ -5,8 +5,8 @@ import { Header, Item } from 'vue3-easy-data-table';
 
 const items = ref<Item[]>([]);
 
-onBeforeMount(async () => {
-    await coordinatorVisitServices.getAll().then((response) => {
+onMounted(async () => {
+	await coordinatorVisitServices.getAll().then((response) => {
 		items.value = response?.data.items;
 	});
 });

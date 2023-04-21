@@ -100,7 +100,6 @@ onMounted(() => {
  */
 
 const selectFile = (event: any) => {
-	console.log(event);
 	if (event?.target.files.length > 0) {
 		form.file = event.target.files[0];
 		return 
