@@ -16,6 +16,7 @@ const translations: Translations = {
     coordinatorVisit: "Visitas coordinador regional",
     customVisit: "Visitas personalizas psicosocial",
     inscriptions: "Fichas de inscripción",
+    navigationHistory: "Historial de navegación",
 };
 
 const date = ref(dayjs().format("DD_MM_YYYY"));
