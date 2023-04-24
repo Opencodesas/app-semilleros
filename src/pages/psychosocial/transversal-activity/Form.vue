@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { filePondValue } from '@/composables/useFilepondEvents';
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
 
@@ -43,30 +42,38 @@ const municipalities = asyncComputed(async () => {
 }, null);
 
 const obtenerImagen = (e: any) => {
-	form.file = Array.from(e.target.files);
-	console.log(files._value);
-	console.log(Array.from(e.target.files));
-	console.log(form.file);
+	// console.log(files.value);
+	//console.log([e.target.files[0]]);
+	const file = e.target.files;
+	const files = [];
+	for (let i = 0; i < file['length']; i++) {
+		files.push(file[i]);
+	}
+	form.file.push(...files);
+
+	// Array.from(e.target.files).forEach((file: any) => {
+	// 	files.value.push({
+	// 		source: file.name,
+	// 		options: {
+	// 			type: 'local',
+	// 		},
+	// 	});
+	// });
+	//formdataParser(form);
+	// console.log(Array.from(e.target.files));
+	// console.log(form.file);
 };
 
 const formdataParser = (form: any) => {
 	const formData = new FormData();
-
-	// formData.append('municipality_id', form.municipality_id);
-	// formData.append('date_visit', form.date_visit);
-	// formData.append('nro_assistants', form.nro_assistants);
-	// formData.append('activity_name', form.activity_name);
-	// formData.append('objective_activity', form.objective_activity);
-	// formData.append('scene', form.scene);
-	// formData.append('meeting_planing', form.meeting_planing);
-	// formData.append('team_socialization', form.team_socialization);
-	// formData.append('development_activity', form.development_activity);
-	// formData.append('content_network', form.content_network);
-	// formData.append('file', [form.file]);
-	//console.log(Object.keys(formData));
 	Object.keys(form).forEach((key) => {
-		console.log(form[key]);
-		formData.append(key, form[key]);
+		if (key == 'file') {
+			form[key].forEach((file: any) => {
+				formData.append('file[]', file);
+			});
+		} else {			
+			formData.append(key, form[key]);
+		}
 	});
 	return formData;
 };
@@ -203,9 +210,7 @@ const onSubmit = async () => {
 					:accept-multiple="true"
 					v-model="form.file"
 					:validator="v$"
-					@change="obtenerImagen"
-					@addfile="(error: any, value: filePondValue) => { files = multiple.addfile({ error, value }, files) as never[] }"
-					@removefile="(error: any, value: filePondValue) => { files= multiple.removefile({ error, value }, files) as never[] }" />
+					@change="obtenerImagen" />
 			</div>
 		</div>
 		<div class="mt-6 flex justify-center col-span-1 md:col-span-2">
