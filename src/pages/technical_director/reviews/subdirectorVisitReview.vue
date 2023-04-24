@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { selectOption } from '@/components/CommonSelect.vue';
-import { onboardingStore } from '@/stores/onboardingStore';
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
 
@@ -42,8 +41,6 @@ const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
 }, null);
 
-const municipality_id = computed(() => form.municipality_id);
-
 //Traer todas las disciplinas
 const disciplines = asyncComputed(async () => {
 	return await getSelect(['disciplines']);
@@ -63,24 +60,6 @@ const monitorList = [
 	//  }
 ];
 
-//[ //No olvidar llamar las funciones cuando se selecciones con @select en el componente
-//async () => {
-//     return municipality_id.value ? await getDisciplinesByMonitor(form.moniror) : []
-//  }
-//]
-
-//Esta es la que está usando para traer disciplinas pero las trae todas
-// const fetch = async () => {
-//     await store.getListSelect().then((response) => {
-//         console.log(`data fetch: ${response?.data}`);
-//         if (response?.status == 200 || response?.status == 201) {
-//             disciplinesList.value = JSON.parse(JSON.stringify(response.data["diciplines"]));
-//         } else {
-//             Swal.fire("", "No se pudieron obtener los datos", "error");
-//         }
-//     });
-// };
-
 const yes_no_List = [
 	{ label: 'Si', value: 1 },
 	{ label: 'No', value: 2 },
@@ -91,10 +70,6 @@ const statusesList = ref<selectOption[]>([
 	{ label: 'Rechazado', value: '4' },
 ]);
 
-// const routeName = computed(() => {
-//     return String(route.name).split(".")[0];
-// });
-
 const dataLoaded = ref(false);
 //Verificar si se puede hacer con asycComputed
 const getData = async () => {
@@ -102,6 +77,7 @@ const getData = async () => {
 		.get(props.id_review as string)
 		.then((response: any) => {
 			if (response?.status == 200 || response?.status == 201) {
+				form.id = response.data.items.id;
 				form.date_visit = response.data.items.date_visit;
 				form.hour_visit = response.data.items.hour_visit;
 				form.municipality_id = response.data.items.municipality_id;
@@ -129,10 +105,6 @@ onMounted(async () => {
 	dataLoaded.value = true;
 });
 
-const selectFile = (event: any) => {
-	form.file = event.target.files[0];
-}
-
 const formdataParser = (form: any) => {
 	const formData = new FormData();
 	Object.keys(form).forEach((key) => {
@@ -148,9 +120,9 @@ const onSubmit = async () => {
 			.then((response) => {
 				if (response) {
 					if (response.status >= 200 && response.status <= 300) {
-						props.closeModal;
+						props.closeModal();
 						alerts.update();
-						setLoading(true);
+						setLoading(false);
 					}
 				}
 			});
@@ -213,9 +185,7 @@ const defineReason = () => {
 		v-if="dataLoaded"
 		class="p-5 pt-1 mt-5 intro-y box">
 		<div class="my-4">
-			<h3>
-				<span class="font-bold">Subdirector:</span> {{ form.createdBy }}
-			</h3>
+			<h3><span class="font-bold">Subdirector:</span> {{ form.createdBy }}</h3>
 		</div>
 		<div
 			class="grid grid-cols-2 md:grid md:grid-cols-2 gap-6 justify-evenly mt-4">
@@ -308,19 +278,10 @@ const defineReason = () => {
 			<h1 class="text-left font-bold">Evidencia</h1>
 			<!-- <img v-if="form.file" :src="form.file[0]" alt=""> -->
 			<img
-			class="justify-self-center"
-				:src="urlStorage + form.file"
-				width="200"
-				alt="" />
-				<div class="p-5 mt-6 intro-y">
-				<CommonFile
-					:validator="v$"
-					v-model="form.file"
-					name="file"
-					@change="selectFile"
-					class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
-					v-if="false" />
-			</div>
+				class="m-auto border rounded-lg"
+				:src="`${urlStorage}${form.file}`"
+				width="400" />
+			<div class="p-5 mt-6 intro-y"></div>
 		</div>
 	</div>
 </template>
