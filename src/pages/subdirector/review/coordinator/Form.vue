@@ -1,13 +1,9 @@
 <script setup lang="ts">
 import { coordinatorVisitServices } from '@/services/coordinatorVisitServices';
-import { onboardingStore } from '@/stores/onboardingStore';
 import { required } from '@/utils/validators';
 import useVuelidate from '@vuelidate/core';
 import Swal from 'sweetalert2';
 
-const store = onboardingStore();
-
-const router = useRouter();
 const urlStorage = `${import.meta.env.VITE_BASE_URL}/storage/`;
 const dataLoaded = ref(false);
 
@@ -49,29 +45,23 @@ const monitorList = [
 	{ label: 'Camilo Martinez', value: 1 },
 	{ label: 'Miguel Torres', value: 2 },
 ];
-const evaluationList = [
-	{ label: 'Aprobado', value: 1 },
-	{ label: 'Denegado', value: 2 },
-];
-const apoyoList = [
-	{ label: 'Si', value: 1 },
-	{ label: 'No', value: 2 },
-];
 const statusList = [
 	{ label: 'Aprobado', value: 1 },
 	{ label: 'Rechazado', value: 4 },
 ];
-const v$ = useVuelidate(form_rules, form);
 
 const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
 }, null);
+
+const v$ = useVuelidate(form_rules, form);
+
+// Obtiene los datos de la visita
 onMounted(async () => {
 	await coordinatorVisitServices
 		.get(props.id_review.toString())
 		.then((response) => {
 			if (response?.status == 200 || response?.status == 201) {
-				console.log(response.data.items);
 				form.id = response.data.items.id;
 				form.beneficiary_coverage = response.data.items.beneficiary_coverage;
 				form.date_visit = response.data.items.date_visit;
@@ -91,14 +81,13 @@ onMounted(async () => {
 			}
 		})
 		.catch((error) => {
-			console.log(error);
+			Swal.fire('', 'No se pudieron obtener los datos', 'error');
 		});
 });
 
+// Envia si la visita fue aprobada o rechazada
 const onSubmit = async () => {
 	const valid = await v$.value.$validate();
-	console.log(form.status_id);
-	console.log(form.rejection_message);
 	if (valid) {
 		await coordinatorVisitServices
 			.update(props.id_review.toString(), formdataParser(form))
@@ -107,8 +96,8 @@ const onSubmit = async () => {
 					if (response.status >= 200 && response.status <= 300) {
 						alerts.update();
 						setLoading(true);
-						props.closeModal()
-					setLoading(false);
+						props.closeModal();
+						setLoading(false);
 					}
 				}
 			});
@@ -158,7 +147,9 @@ const onSubmit = async () => {
 		</div>
 	</div>
 
-	<div v-if="dataLoaded" class="p-5 mt-5 intro-y box">
+	<div
+		v-if="dataLoaded"
+		class="p-5 mt-5 intro-y box">
 		<h3 class="text-lg font-medium leading-6 text-gray-900">Revision</h3>
 		<p class="mt-3">
 			<span class="font-bold">Coordinador regional: </span

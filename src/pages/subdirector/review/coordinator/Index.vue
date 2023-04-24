@@ -9,6 +9,7 @@ onMounted(async () => {
 	await coordinatorVisitServices
 		.getAll()
 		.then((response) => {
+			console.log(response?.data.items);
 			items.value = response?.data.items;
 			setLoading(false);
 		})

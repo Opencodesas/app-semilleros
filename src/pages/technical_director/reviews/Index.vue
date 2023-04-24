@@ -24,8 +24,6 @@ const items = ref<Item[]>([]);
 onMounted(async () => {
 	await subdirectorVisitServices.getAll().then((response) => {
 		items.value = response?.data.items;
-		console.log(items.value);
-		console.log(response?.data.items);
 	});
 });
 
