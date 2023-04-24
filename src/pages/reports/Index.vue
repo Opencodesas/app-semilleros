@@ -98,6 +98,14 @@ const items = computed((): ReportItem[] => {
 					excel: true,
 					zip: false,
 				},
+				{
+					id: 8,
+					name: 'Informe Historial Navegacion',
+					type: 'navigationHistory',
+					pdf: false,
+					excel: true,
+					zip: false,
+				},
 			];
 		default:
 			return [
