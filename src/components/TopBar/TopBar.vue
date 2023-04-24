@@ -57,7 +57,7 @@ const hideSearchDropdown = () => {
             props.layout == 'simple-menu' && 'hidden',
           ]"
         >
-          Contratación Semilleros
+          Semilleros
         </span>
       </RouterLink>
       <!-- END: Logo -->
