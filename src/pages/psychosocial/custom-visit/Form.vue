@@ -9,19 +9,16 @@ import { selectOption } from '@/components/CommonSelect.vue';
 const { multiple } = useFilepondEvents();
 
 const store = onboardingStore();
-//id:2 => En revisión => ENR
 
-
-//Se manda la siguiente información para crear visita personalizada
 const form = reactive({
-    month: '', //ID del mes
-    municipality: '', //ID del municipio
-    beneficiary: '', //ID del beneficiario
-    theme: '', //String
-    agreements: '', //String
-    concept: '1', //String
-    guardian_knows_semilleros: false, //Boolean
-    file: [], //Un archivo (foto)
+    month: '',
+    municipality: '',
+    beneficiary: '',
+    theme: '',
+    agreements: '',
+    concept: '1',
+    guardian_knows_semilleros: false,
+    file: [],
 })
 
 
@@ -74,6 +71,7 @@ const getBeneficiariesByMunicipaly = async () => {
 watch(() => form.municipality, (newVal, oldVal) => {
     console.log(newVal);
     if (newVal != null) getBeneficiariesByMunicipaly();
+    if (newVal == null) beneficiariesList.value = [];
 })
 
 const beneficiary_data = reactive({
@@ -84,19 +82,22 @@ const beneficiary_data = reactive({
     guardian_identification: '',
 })
 
-const beneficiaryLoaded = ref(false);
+
+//Quitar cuando se ponga la relación
+const healthEntities = computedAsync(async () => {
+    return await getHealthentities();
+}, null)
 
 const getBeneficiaryData = async () => {
-    //console.log(scholarLevels[0]);
+    //console.log(healthEntities.value)
     await beneficiaryServices.get(form.beneficiary as string).then((response) => {
         console.log(response?.data.items);
         if (response?.status == 200 || response?.status == 201) {
-            beneficiary_data.scholar_level = scholarLevels[response.data.items.scholar_level - 1].label;
-            beneficiary_data.health_entity = response.data.items.health_entity;
+            beneficiary_data.scholar_level = response.data.items.scholar_level ? scholarLevels[response.data.items.scholar_level - 1].label : 'No tiene';
+            beneficiary_data.health_entity = response.data.items.health_entity_id ? healthEntities.value[response.data.items.health_entity_id - 1].label : 'No tiene';
             beneficiary_data.guardian_name = response.data.items.acudiente.firts_name;
             beneficiary_data.guardian_lastname = response.data.items.acudiente.last_name;
             beneficiary_data.guardian_identification = response.data.items.acudiente.cedula;
-            beneficiaryLoaded.value = true;
         } else {
             alerts.custom("", "No se pudieron obtener los datos", "error");
         }
@@ -161,9 +162,7 @@ const positionRange = computed(() => {
                         <CommonSelect label="Beneficiario *" name="beneficiary" v-model="form.beneficiary" :validator="v$"
                             :options="beneficiariesList" />
                     </div>
-                    <!-- cambiar condicion por "beneficiary_data" cuando haya función para traer los datos -->
-                    <div v-if="form.beneficiary && beneficiaryLoaded">
-                        <!-- These inputs don't use the validator since they have data from the DB  -->
+                    <div v-if="form.beneficiary">
                         <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
                             <CommonInput disabled type="text" label="Grado de escolaridad" name="scholar_level"
                                 v-model="beneficiary_data.scholar_level" />

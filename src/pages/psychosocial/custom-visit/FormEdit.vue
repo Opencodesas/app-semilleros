@@ -5,19 +5,11 @@ import FormSwitch from "@/base-components/Form/FormSwitch";
 import { filePondValue } from '@/composables/useFilepondEvents';
 import { customVisitServices } from '@/services/psychosocial/customVisitServices';
 import { selectOption } from '@/components/CommonSelect.vue';
-import { onboardingStore } from "@/stores/onboardingStore";
 
 const { multiple } = useFilepondEvents();
-
 const route = useRoute();
-
-const { id } = route.params;
 const urlStorage = `${import.meta.env.VITE_BASE_URL}/storage/`;
 
-const store = onboardingStore();
-
-//Recibe datos para editar visita personalizada
-//QUITAR DATOS DE PRUEBA
 const form = reactive({
     month: '',
     municipality: '',
@@ -27,7 +19,7 @@ const form = reactive({
     concept: '',
     guardian_knows_semilleros: true,
     file: [],
-    status_id: '', //id:4 => Rechazado => REC cambiamos si queremos ver otra vista
+    status_id: '',
     rejection_message: '',
 })
 
@@ -76,7 +68,7 @@ watch(() => form.municipality, (newVal, oldVal) => {
 })
 
 const dataLoaded = ref(false)
-//Verificar si se puede hacer con asycComputed
+
 const getData = async () => {
 
     await customVisitServices.get(route.params.id as string).then((response) => {
@@ -99,29 +91,31 @@ const getData = async () => {
     })
 };
 
+
+//Quitar cuando se ponga la relación
+const healthEntities = computedAsync(async () => {
+    return await getHealthentities();
+}, null)
+
 const getBeneficiaryData = async () => {
     await beneficiaryServices.get(form.beneficiary as string).then((response) => {
         console.log(response?.data.items);
         if (response?.status == 200 || response?.status == 201) {
-            beneficiary_data.scholar_level = scholarLevels[response.data.items.scholar_level - 1].label;
-            beneficiary_data.health_entity = response.data.items.health_entity;
-            beneficiary_data.guardian_name = response.data.items.guardian_name;
-            beneficiary_data.guardian_lastname = response.data.items.guardian_lastname;
-            beneficiary_data.guardian_identification = response.data.items.guardian_identification;
+            beneficiary_data.scholar_level = response.data.items.scholar_level ? scholarLevels[response.data.items.scholar_level - 1].label : 'No tiene';
+            beneficiary_data.health_entity = response.data.items.health_entity_id ? healthEntities.value[response.data.items.health_entity_id - 1].label : 'No tiene';
+            beneficiary_data.guardian_name = response.data.items.acudiente.firts_name;
+            beneficiary_data.guardian_lastname = response.data.items.acudiente.last_name;
+            beneficiary_data.guardian_identification = response.data.items.acudiente.cedula;
         } else {
             alerts.custom("", "No se pudieron obtener los datos", "error");
         }
-        console.log(form);
     })
 }
 
 onMounted(async () => {
-    console.log(route);
     await getData();
     await getBeneficiaryData();
     dataLoaded.value = true;
-    //form.status = `${route.params.id}`
-    console.log(form.status_id)
 });
 
 const v$ = useVuelidate(form_rules, form)
