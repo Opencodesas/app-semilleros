@@ -282,15 +282,38 @@ export const useSideMenuStore = defineStore("sideMenu", {
       },
       {
         icon: "User",
-        title: "Fichas Inscripción Monitores",
+        title: "Asistente Administrativo",
         subMenu: [
           {
-            icon: "Pencil",
+            icon: "Activity",
             pageName: "fichas_inscripcion.index",
-            title: "Revisar",
+            title: "Revisiones",
           },
         ]
       },
+      {
+        icon: "User",
+        title: "Auxiliar Administrativo",
+        subMenu: [
+          {
+            icon: "Activity",
+            pageName: "fichas_inscripcion.index",
+            title: "Revisiones",
+          },
+        ]
+      },
+      {
+        icon: "User",
+        title: "Metodólogo",
+        subMenu: [
+          {
+            icon: "Activity",
+            pageName: "fichas_inscripcion.index",
+            title: "Revisiones",
+          },
+        ]
+      },
+
     ],
   }),
   getters: {
@@ -301,26 +324,14 @@ export const useSideMenuStore = defineStore("sideMenu", {
       else if (isRole('apoyo_juridico')) {
         return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'legal'))
       }
-      else if (isRole('metodologo')){
-        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) =>
-        //solo admite paginas ficha_inscripción
-        subMenuItem.pageName?.includes('fichas_inscripcion')
-        //&& para agregar
-        ))
-      }
       else if (isRole('asistente_administrativo')){
-        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) =>
-        //solo admite paginas ficha_inscripción
-        subMenuItem.pageName?.includes('fichas_inscripcion')
-        //&& para agregar
-        ))
+        return state.menu.filter( (menuItem) => menuItem == 'divider' ? 'divider' : menuItem.title == "Asistente Administrativo")
       }
       else if (isRole('auxiliar_administrativo_tecnico')){
-        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) =>
-        //solo admite paginas ficha_inscripción
-        subMenuItem.pageName?.includes('fichas_inscripcion')
-        //&& para agregar
-        ))
+        return state.menu.filter( (menuItem) => menuItem == 'divider' ? 'divider' : menuItem.title == "Auxiliar Administrativo")
+      }
+      else if (isRole('metodologo')){
+        return state.menu.filter( (menuItem) => menuItem == 'divider' ? 'divider' : menuItem.title == "Metodólogo")
       }
       else {
         return state.menu

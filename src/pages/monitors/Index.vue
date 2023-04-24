@@ -246,6 +246,9 @@ revertir=(id: any, user:any)=>{
     console.log(data.value)
 }
 const loadmethods = {"APR": aceptar, "REC": rechazar, "SIN": revertir, "DATA": getFichaData}
+
+const search = ref('');
+const cruddata = computed(() => searchData(items, search.value));
 //#endregion
 </script>
 <template>
@@ -254,55 +257,14 @@ const loadmethods = {"APR": aceptar, "REC": rechazar, "SIN": revertir, "DATA": g
         <h2 class="mr-auto text-lg font-medium">Fichas de Inscripción de tus Monitores</h2>
     </div>
     <div class="p-5 mt-5 intro-y box">
-        <Crud :headers="headers" :items="items" :Form="{...Form}" :payloadFunctions="loadmethods"/>
+        <CommonInput
+			type="search"
+			name="search"
+			v-model="search"
+			placeholder="Buscar" />
+
+        <Crud :headers="headers" :items="cruddata" :Form="{...Form}" :payloadFunctions="loadmethods"/>
     </div>
-
-    <!--<template v-else-if="(route.query.slug=='APR' || route.query.slug=='REC') && route.query.acc=='SIN'">
-        <div class="flex items-center mt-8 intro-y">
-            <CommonBackButton class="mr-4" :title="'Volver'" :to="route.hash"/>
-            <h2 class="mr-auto text-lg font-medium">Revertir el estado {{ currentMonitor()?.status.name }} de {{ currentMonitor()?.name }}</h2>
-        </div>
-
-        <div class="p-5 mt-5 intro-y box">
-            <div class="col-span-2 mb-3">
-                Esta acción no podrá revertirse. ¿Quiere continuar?
-            </div>
-            <Button :variant="'outline-success'" v-on:click="RevertFicha">Revertir</Button>
-            <CommonButtonLink class="ml-2" :to="route.hash" :variant="'outline-secondary'">Cancelar</CommonButtonLink>
-        </div>
-    </template>
-
-    <template v-else-if="route.query.slug=='SIN' && route.query.acc=='APR'">
-        <div class="flex items-center mt-8 intro-y">
-            <CommonBackButton class="mr-4" :title="'Volver'" :to="route.hash"/>
-            <h2 class="mr-auto text-lg font-medium">Aprobar la ficha de {{ currentMonitor()?.name }}</h2>
-        </div>
-
-        <div class="p-5 mt-5 intro-y box">
-            <div class="col-span-2 mb-3">
-                Se aceptará la ficha de este monitor.
-            </div>
-            <Button :variant="'outline-success'" v-on:click="AceptFicha">Aceptar</Button>
-            <CommonButtonLink class="ml-2" :to="route.hash" :variant="'outline-secondary'">Cancelar</CommonButtonLink>
-        </div>
-    </template>
-
-    <template v-else-if="route.query.slug=='SIN' && route.query.acc=='REC'">
-        <div class="flex items-center mt-8 intro-y">
-            <CommonBackButton class="mr-4" :title="'Volver'" :to="route.hash"/>
-            <h2 class="mr-auto text-lg font-medium">Rechazar la ficha de {{ currentMonitor()?.name }}</h2>
-        </div>
-
-        <div class="p-5 mt-5 intro-y box">
-            Se rechazará la ficha de este monitor.
-            <div class="col-span-2 mb-3 mt-3">
-                    <CommonTextarea :label="'Escribe el motivo del rechazo'" name="motive" v-model="motive"/>
-                    <span v-if="error" class="text-sm text-danger">Este campo es obligatorio</span>
-            </div>
-            <Button :variant="'outline-danger'" v-on:click="RejectFicha">Rechazar</Button>
-            <CommonButtonLink class="ml-2" :to="route.hash" :variant="'outline-secondary'">Cancelar</CommonButtonLink>
-        </div>
-    </template>-->
 
 </template>
 
