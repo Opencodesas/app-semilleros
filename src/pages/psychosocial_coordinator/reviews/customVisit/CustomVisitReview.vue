@@ -18,23 +18,23 @@ const props = defineProps<{
 
 //Quitar datos de prueba
 const form = reactive({
-    rejection_message: 'Fue rechazado por...',
+    reject_message: '',
     status_id: '',
-    month: '1',
-    municipality: '2',
-    beneficiary: '2',
-    topic: 'Físico',
-    agreements: 'Se llegó al acuerdo de...',
-    concept: '4',
+    month: '',
+    municipality: '',
+    beneficiary: '',
+    theme: '',
+    agreements: '',
+    concept: '',
     guardian_knows_semilleros: true,
     file: [],
-    created_by: { id: '', name: 'Gabriel' }, //Revisar si recibe un objeto
+    created_by: '', //Revisar si recibe un objeto
 })
 
 
 const form_rules = computed(() => ({
     status_id: { required },
-    rejection_message: { required: requiredIf(() => form.status_id == '4') },
+    reject_message: { required: requiredIf(() => form.status_id == '4') },
 
 }))
 
@@ -44,11 +44,11 @@ const status_idList = ref<selectOption[]>([
 ])
 
 const beneficiary_data = reactive({
-    grade: 'PRIMARIA',
-    health_entity: 'NUEVA EPS',
-    guardian_name: 'Liliana',
-    guardian_lastname: 'Garcia',
-    guardian_identification: '1074936855',
+    scholar_level: '',
+    health_entity: '',
+    guardian_name: '',
+    guardian_lastname: '',
+    guardian_identification: '',
 })
 
 const months = asyncComputed(async () => {
@@ -59,25 +59,29 @@ const cities = asyncComputed(async () => {
     return await getSelect(['municipalities'])
 }, null)
 
-const beneficiaries = ref<selectOption[]>([
-    { label: 'Pedro', value: '1' },
-    { label: 'Juan', value: '2' },
-    { label: 'Maria', value: '3' },
-    { label: 'Jose', value: '4' },
-    { label: 'Luis', value: '5' },
-])
-// Lo de arriba sale de esta funcion
-// const beneficiary_data = asyncComputed(async () => {
-//     return form.beneficiary ? await getBeneficiaryData(form.beneficiary) : null
-// }, null) 
+const municipalities = asyncComputed(async () => {
+    return await getSelect(['municipalities'])
+}, null)
 
-//Probar si se cambia el beneficiario cuando se llaman los datos
-//ya que se tiene que esperar a que traigan el municipio del form
-const municipality_id = computed(() => form.municipality)
+const beneficiariesList = ref<selectOption[]>([]);
 
-// const beneficiaries = asyncComputed(async () => {
-//     return municipality_id.value ? await getBeneficiariesByMunicipaly(municipality_id.value) : []
-//  }, null)
+const getBeneficiariesByMunicipaly = async () => {
+    await beneficiaryServices.getByDeparment(form.municipality as string).then((response) => {
+        if (response?.status == 200 || response?.status == 201) {
+            beneficiariesList.value = response?.data
+            console.log(response?.data)
+        }
+    })
+}
+
+watch(() => form.municipality, (newVal, oldVal) => {
+    console.log(newVal);
+    if (newVal != null) getBeneficiariesByMunicipaly();
+})
+
+const healthEntities = computedAsync(async () => {
+    return await getHealthentities();
+}, null)
 
 const dataLoaded = ref(false)
 //Verificar si se puede hacer con asycComputed
@@ -86,16 +90,16 @@ const getData = async () => {
     await customVisitServices.get(props.id_review as string).then((response) => {
         console.log(response?.data.items);
         if (response?.status == 200 || response?.status == 201) {
-            form.rejection_message = response.data.items.rejection_message;
-            form.month = response.data.items.month;
-            form.municipality = response.data.items.municipality;
-            form.beneficiary = response.data.items.beneficiary;
-            form.topic = response.data.items.topic;
+            form.reject_message = response.data.items.reject_message;
+            form.month = response.data.items.month_id;
+            form.municipality = response.data.items.municipality_id;
+            form.beneficiary = response.data.items.beneficiary_id;
+            form.theme = response.data.items.theme;
             form.agreements = response.data.items.agreements;
             form.concept = response.data.items.concept;
             form.guardian_knows_semilleros = response.data.items.guardian_knows_semilleros;
             form.file = response.data.items.file;
-            form.created_by = response.data.items.created_by;
+            form.created_by = response.data.items.createdBy.name;
             alerts.custom('', response?.data.message, 'info');
 
         } else {
@@ -106,11 +110,30 @@ const getData = async () => {
 };
 
 
+const getBeneficiaryData = async () => {
+    await beneficiaryServices.get(form.beneficiary as string).then((response) => {
+        console.log(response?.data.items);
+        if (response?.status == 200 || response?.status == 201) {
+            beneficiary_data.scholar_level = response.data.items.scholar_level ? scholarLevels[response.data.items.scholar_level - 1].label : 'No tiene';
+            beneficiary_data.health_entity = response.data.items.health_entity_id ? healthEntities.value[response.data.items.health_entity_id - 1].label : 'No tiene';
+            beneficiary_data.guardian_name = response.data.items.acudiente.firts_name;
+            beneficiary_data.guardian_lastname = response.data.items.acudiente.last_name;
+            beneficiary_data.guardian_identification = response.data.items.acudiente.cedula;
+        } else {
+            alerts.custom("", "No se pudieron obtener los datos", "error");
+        }
+    })
+}
+
+
+
 onMounted(async () => {
     console.log(route);
     await getData();
+    await getBeneficiaryData();
     dataLoaded.value = true;
 });
+
 
 
 //Mirar si hago servicio
@@ -149,9 +172,9 @@ const positionRange = computed(() => {
     return `calc(${positionTooltip * 100}% - ${(2 * (parseInt(form.concept) - 1) ** 2) / 5 + 2 * (parseInt(form.concept) - 1)}px)`;
 });
 
-//Manejo de rejection_message para no guardarla si el user selecciona rechazado y pone rejection_message y despues pone aprobado.
-const definerejection_message = () => {
-    if (form.status_id == '1') form.rejection_message = '';
+//Manejo de reject_message para no guardarla si el user selecciona rechazado y pone reject_message y despues pone aprobado.
+const definereject_message = () => {
+    if (form.status_id == '1') form.reject_message = '';
 }
 </script>
 
@@ -162,11 +185,11 @@ const definerejection_message = () => {
 
     <div class="space-y-2 box px-5 py-4">
         <h2 class="font-bold">Revisión</h2>
-        <CommonSelect @select="definerejection_message" label="Estado de la tarea *" name="status_id"
+        <CommonSelect @select="definereject_message" label="Estado de la tarea *" name="status_id"
             v-model="form.status_id" :validator="v$" :options="status_idList" />
         <div v-if="form.status_id == '4'" class="pt-4">
-            <CommonTextarea name="rejection_message" class="" label="Comentario *" placeholder="Escriba..." rows="5"
-                v-model="form.rejection_message" :validator="v$" />
+            <CommonTextarea name="reject_message" class="" label="Comentario *" placeholder="Escriba..." rows="5"
+                v-model="form.reject_message" :validator="v$" />
         </div>
         <div class="mt-6 flex justify-end col-span-1 md:col-span-2 border-none gap-1" tabindex="1">
             <Button variant="danger" @click="props.closeModal">Cerrar</Button>
@@ -178,7 +201,7 @@ const definerejection_message = () => {
 
     <div v-if="dataLoaded" class="p-5 pt-1 mt-5 intro-y box">
         <div class="my-4">
-            <h3><span class="font-bold">Psicologo:</span> {{ form.created_by.name }}</h3>
+            <h3><span class="font-bold">Psicologo:</span> {{ form.created_by }}</h3>
         </div>
 
         <div class="space-y-8 divide-y divide-slate-200 ">
@@ -186,16 +209,16 @@ const definerejection_message = () => {
             <div class="mt-3 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-3">
                 <CommonSelect disabled label="Mes *" name="month" v-model="form.month" :options="months" />
                 <CommonSelect disabled label="Municipio *" name="municipality" v-model="form.municipality"
-                    :options="cities" />
+                    :options="municipalities" />
                 <CommonSelect disabled label="Beneficiario *" name="beneficiary" v-model="form.beneficiary"
-                    :options="beneficiaries" />
+                    :options="beneficiariesList" />
             </div>
             <!-- cambiar condicion por "beneficiary_data" cuando haya función para traer los datos -->
             <div v-if="form.beneficiary">
                 <!-- These inputs don't use the validator since they have data from the DB   cambiar los v-model-->
                 <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
-                    <CommonInput disabled type="text" label="Grado de escolaridad" name="grade"
-                        v-model="beneficiary_data.grade" />
+                    <CommonInput disabled type="text" label="Grado de escolaridad" name="scholar_level"
+                        v-model="beneficiary_data.scholar_level" />
                     <CommonInput disabled type="text" label="Entidad de salud" name="health_entity"
                         v-model="beneficiary_data.health_entity" />
                 </div>
@@ -222,7 +245,7 @@ const definerejection_message = () => {
                 <div class="col-span-3 sm:grid-cols-3">
                     <CommonTextarea disabled
                         label="Temáticas durante la visita: físico, emocional, familiar, escolar, social, espiritual *"
-                        placeholder="Escriba..." name="topic" rows="5" v-model="form.topic" />
+                        placeholder="Escriba..." name="theme" rows="5" v-model="form.theme" />
 
                 </div>
                 <div class="col-span-3 sm:grid-cols-3">

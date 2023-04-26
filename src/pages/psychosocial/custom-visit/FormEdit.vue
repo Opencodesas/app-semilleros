@@ -2,7 +2,6 @@
 import useVuelidate from '@vuelidate/core'
 import { required } from '@/utils/validators'
 import FormSwitch from "@/base-components/Form/FormSwitch";
-import { filePondValue } from '@/composables/useFilepondEvents';
 import { customVisitServices } from '@/services/psychosocial/customVisitServices';
 import { selectOption } from '@/components/CommonSelect.vue';
 
@@ -43,6 +42,23 @@ const beneficiary_data = reactive({
     guardian_identification: '',
 })
 
+const file: any = ref(null);
+const formdataParser = (form: any) => {
+    console.log(form);
+    const formData = new FormData();
+    Object.keys(form).forEach((key) => {
+        formData.append(key, form[key]);
+    });
+    console.log(formData);
+    return formData;
+};
+const selectFile = (event: any) => {
+	console.log(form.file);
+	console.log(event.target.files);
+	form.file = event.target.files[0];
+	console.log(form.file);
+}
+
 const months = asyncComputed(async () => {
     return await getSelect(['months'])
 }, null)
@@ -65,6 +81,7 @@ const getBeneficiariesByMunicipaly = async () => {
 watch(() => form.municipality, (newVal, oldVal) => {
     console.log(newVal);
     if (newVal != null) getBeneficiariesByMunicipaly();
+    if (newVal == null) beneficiariesList.value = [];
 })
 
 const dataLoaded = ref(false)
@@ -73,8 +90,9 @@ const getData = async () => {
 
     await customVisitServices.get(route.params.id as string).then((response) => {
         console.log(response?.data.items);
+        console.log(response?.data.items)
         if (response?.status == 200 || response?.status == 201) {
-            form.rejection_message = response.data.items.rejection_message;
+            form.rejection_message = response.data.items.reject_message;
             form.month = response.data.items.month_id;
             form.municipality = response.data.items.municipality_id;
             form.beneficiary = response.data.items.beneficiary_id;
@@ -82,8 +100,8 @@ const getData = async () => {
             form.agreements = response.data.items.agreements;
             form.concept = response.data.items.concept;
             form.guardian_knows_semilleros = response.data.items.guardian_knows_semilleros;
-            form.file = response.data.items.file;
-            form.status_id = response.data.items.status;
+            file.value = response.data.items.file;
+            form.status_id = response.data.items.status_id;
         } else {
             alerts.custom("", "No se pudieron obtener los datos", "error");
         }
@@ -129,10 +147,10 @@ const onSubmit = async () => {
             if (response) {
                 if (response.status >= 200 && response.status <= 300) {
                     alerts.update()
-                    setLoading(true)
-                    router.push('psychosocial.visits').finally(() => {
-                        setLoading(false)
-                    })
+                    //setLoading(true)
+                    //router.push({ name: 'psychosocial.visits' }).finally(() => {
+                      //  setLoading(false)
+                    //})
                 }
             }
         })
@@ -240,14 +258,12 @@ const positionRange = computed(() => {
                         <div class="grid justify-center col-span-3 gap-10 p-5">
                             <h1 class="text-center font-bold">Evidencia</h1>
                             <img :alt="`Evidencia de la visita del subdirector`" class="m-auto border rounded-lg"
-                                :src="`${urlStorage}/${form.file}`" width="400" />
+                                :src="`${urlStorage}${file}`" width="400" />
                         </div>
 
                         <div v-if="form.status_id == '4'" class="col-span-3 p-5 mt-6 intro-y">
-                            <CommonFile :validator="v$" v-model="form.file" name="file"
-                                class="w-11/12 sm:w-8/12 m-auto cursor-pointer" :accept-multiple="false"
-                                @addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
-                                @removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }" />
+                            <CommonFile v-if="form.status_id == '4'" v-model="form.file" name="file"
+                                class="w-11/12 sm:w-8/12 m-auto cursor-pointer" @change="selectFile" />
                         </div>
                     </div>
                 </div>

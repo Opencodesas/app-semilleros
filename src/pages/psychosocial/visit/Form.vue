@@ -2,7 +2,7 @@
 import useVuelidate from '@vuelidate/core'
 import { required } from '@/utils/validators'
 import FormSwitch from "@/base-components/Form/FormSwitch";
-import { filePondValue } from '@/composables/useFilepondEvents';
+import { selectOption } from '@/components/CommonSelect.vue';
 import { visitServices } from '@/services/psychosocial/visitServices';
 
 const { multiple } = useFilepondEvents();
@@ -11,7 +11,7 @@ const form = reactive({
     date_visit: '',
     municipality_id: '',
     monitor_id: '',
-    discipline_id: '',
+    diciplines_id: '',
     numberBeneficiaries: '',
     sports_scene: '',
     objetive: '',
@@ -28,7 +28,7 @@ const form_rules = computed(() => ({
     date_visit: { required },
     municipality_id: { required },
     monitor_id: { required },
-    discipline_id: { required },
+    diciplines_id: { required },
     numberBeneficiaries: { required },
     sports_scene: { required },
     objetive: { required },
@@ -41,25 +41,48 @@ const form_rules = computed(() => ({
 }));
 
 const formdataParser = (form: any) => {
-        const formData = new FormData();
-        Object.keys(form).forEach((key) => {
-            formData.append(key, form[key]);
-        });
-        return formData;
-    };
+    const formData = new FormData();
+    Object.keys(form).forEach((key) => {
+        formData.append(key, form[key]);
+    });
+    return formData;
+};
 
-const formData = formdataParser(form)
+const selectFile = (event: any) => {
+    console.log(form.file);
+    form.file = event.target.files[0];
+}
 
 const municipalities = asyncComputed(async () => {
     return await getSelect(['municipalities'])
 }, null)
 
-const disciplinesList = ref([]);
+// const monitorList = ref<selectOption[]>([]);
+
+// const monitorsByMunicipality = async () => {
+//     monitorList.value = await getMonitorByMunicipality(form.municipality_id as string);
+//     console.log(monitorList.value)
+
+// }
+
+// watch(() => form.municipality_id, (newVal, oldVal) => {
+//     console.log(newVal);
+//     if (newVal != null) monitorsByMunicipality();
+//     if (newVal == null) monitorList.value = [];
+// })
+
+//const disciplinesList = ref([]);
 
 const monitorList = [
-    { label: "Joselito", value: 1 },
+    { label: "Joselito", value: 19 },
     { label: "Miguelito", value: 2 },
 ];
+
+const disciplinesList = [
+    { label: "Futbol", value: 1 },
+    { label: "Baloncesto", value: 8 },
+];
+
 const v$ = useVuelidate(form_rules, form)
 const router = useRouter()
 
@@ -67,14 +90,17 @@ const router = useRouter()
 const onSubmit = async () => {
     const valid = await v$.value.$validate()
     if (valid) {
-        await visitServices.create(formdataParser(formData)).then((response) => {
+        const formData = formdataParser(form);
+        console.log(formData)
+        await visitServices.create(formData).then((response) => {
             if (response) {
                 if (response.status >= 200 && response.status <= 300) {
                     alerts.create()
                     setLoading(true)
-                        router.push('').finally(() => {
-                            setLoading(false)
-                        })
+                    //router.push('/').finally(() => {
+                    //  setLoading(false)''
+                    //})
+                    setLoading(false)
                 }
             }
         })
@@ -100,7 +126,7 @@ const onSubmit = async () => {
                         :options="municipalities" />
                     <CommonSelect label="Monitor Deportivo *" name="monitor_id" v-model="form.monitor_id" :validator="v$"
                         :options="monitorList" />
-                    <CommonSelect label="Disciplinas *" name="discipline_id" v-model="form.discipline_id" :validator="v$"
+                    <CommonSelect label="Disciplinas *" name="diciplines_id" v-model="form.diciplines_id" :validator="v$"
                         :options="disciplinesList" />
                     <CommonInput type="number" min="0" label="No. Beneficiarios en el campo *" placeholder="Escriba..."
                         name="numberBeneficiaries" v-model="form.numberBeneficiaries" :validator="v$" />
@@ -149,13 +175,8 @@ const onSubmit = async () => {
                     </div>
 
                     <div class="col-span-2 p-5 mt-6 intro-y">
-                        <CommonDropzone name="file"
-                        class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
-                        :accept-multiple="false"
-                            v-model="form.file"
-                            @addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
-                            @removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }"
-                            :validator="v$" />
+                        <CommonFile :validator="v$" v-model="form.file" name="file"
+                            class="w-11/12 sm:w-8/12 m-auto cursor-pointer" :accept-multiple="false" @change="selectFile" />
                     </div>
                 </div>
 
