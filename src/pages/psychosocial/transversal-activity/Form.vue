@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { filePondValue } from '@/composables/useFilepondEvents';
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
 
@@ -36,33 +37,9 @@ const form_rules = computed(() => ({
 }));
 
 const v$ = useVuelidate(form_rules, form);
-const foto = ref(null);
 const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
 }, null);
-
-const obtenerImagen = (e: any) => {
-	// console.log(files.value);
-	//console.log([e.target.files[0]]);
-	const file = e.target.files;
-	const files = [];
-	for (let i = 0; i < file['length']; i++) {
-		files.push(file[i]);
-	}
-	form.file.push(...files);
-
-	// Array.from(e.target.files).forEach((file: any) => {
-	// 	files.value.push({
-	// 		source: file.name,
-	// 		options: {
-	// 			type: 'local',
-	// 		},
-	// 	});
-	// });
-	//formdataParser(form);
-	// console.log(Array.from(e.target.files));
-	// console.log(form.file);
-};
 
 const formdataParser = (form: any) => {
 	const formData = new FormData();
@@ -71,7 +48,7 @@ const formdataParser = (form: any) => {
 			form[key].forEach((file: any) => {
 				formData.append('file[]', file);
 			});
-		} else {			
+		} else {
 			formData.append(key, form[key]);
 		}
 	});
@@ -90,14 +67,14 @@ const onSubmit = async () => {
 			.then((response) => {
 				if (response?.status == 200 || response?.status == 201) {
 					alerts.create();
-					// setLoading(true);
-					// router
-					// 	.push({
-					// 		name: 'psychosocial.visits',
-					// 	})
-					// 	.finally(() => {
-					// 		setLoading(false);
-					// 	});
+					setLoading(true);
+					router
+						.push({
+							name: 'psychosocial.visits',
+						})
+						.finally(() => {
+							setLoading(false);
+						});
 				}
 			});
 	} else {
@@ -210,7 +187,8 @@ const onSubmit = async () => {
 					:accept-multiple="true"
 					v-model="form.file"
 					:validator="v$"
-					@change="obtenerImagen" />
+					@addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
+					@removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }" />
 			</div>
 		</div>
 		<div class="mt-6 flex justify-center col-span-1 md:col-span-2">
