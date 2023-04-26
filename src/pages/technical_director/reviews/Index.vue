@@ -11,7 +11,7 @@ const { multiple } = useFilepondEvents();
 
 
 const header: Header[] = [
-	{ text: 'No.', value: 'id', sortable: true },
+	// { text: 'No.', value: 'id', sortable: true },
 	{ text: 'Fecha', value: 'date_visit', sortable: true },
 	{ text: 'Subdirector', value: 'created_by.name' },
 	{ text: 'Municipio', value: 'municipality.name', sortable: true },

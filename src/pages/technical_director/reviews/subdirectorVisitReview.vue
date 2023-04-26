@@ -281,7 +281,6 @@ const defineReason = () => {
 				class="m-auto border rounded-lg"
 				:src="`${urlStorage}${form.file}`"
 				width="400" />
-			<div class="p-5 mt-6 intro-y"></div>
 		</div>
 	</div>
 </template>
