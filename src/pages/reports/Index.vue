@@ -85,7 +85,7 @@ const items = computed((): ReportItem[] => {
 				{
 					id: 6,
 					name: 'Informe Visitas Personalizas Psicosocial',
-					type: 'customVisit',
+					type: 'customPsychologicalVisits',
 					pdf: false,
 					excel: true,
 					zip: false,
