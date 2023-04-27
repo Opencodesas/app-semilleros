@@ -37,8 +37,17 @@ const form_rules = computed(() => ({
 	status_id: { required },
 	rejection_message: { required: parseInt(form.status_id) == 4 },
 }));
+// Consulta todos lo municipios	
+const municipalities = asyncComputed(async () => {
+	return await getSelect(['municipalities']);
+}, null);
+// Consulta todas las disciplinas
 const disciplines = asyncComputed(async () => {
 	return await getSelect(['disciplines']);
+}, null);
+// consulta los monitor por municipio
+const monitor = asyncComputed(async () => {
+	return await getMonitorByMunicipality(form.municipalitie_id);
 }, null);
 
 const monitorList = [
@@ -50,9 +59,6 @@ const statusList = [
 	{ label: 'Rechazado', value: 4 },
 ];
 
-const municipalities = asyncComputed(async () => {
-	return await getSelect(['municipalities']);
-}, null);
 
 const v$ = useVuelidate(form_rules, form);
 
@@ -188,7 +194,7 @@ const onSubmit = async () => {
 				label="Monitor Deportivo *"
 				name="user_id"
 				v-model="form.user_id"
-				:options="monitorList"
+				:options="monitor"
 				disabled />
 			<CommonSelect
 				label="Disciplinas *"

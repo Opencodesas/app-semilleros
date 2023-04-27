@@ -46,13 +46,17 @@ const monitorList = [
 	{ label: 'Miguelito', value: 2 },
 ];
 const v$ = useVuelidate(form_rules, form);
-
+// Consulta todos lo municipios 
 const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
 }, null);
-
+// Consulta todas las disciplinas
 const disciplines = asyncComputed(async () => {
 	return await getSelect(['disciplines']);
+}, null);
+// Consulta todos los monitores por municipio
+const monitor = asyncComputed(async () => {
+	return await getMonitorByMunicipality(form.municipalitie_id)
 }, null);
 
 const file = ref([]);
@@ -205,7 +209,7 @@ const download = () => {};
 					class="cursor-pointer"
 					v-model="form.user_id"
 					:validator="v$"
-					:options="monitorList"
+					:options="monitor"
 					:disabled="disableElements" />
 				<CommonSelect
 					label="Disciplinas *"

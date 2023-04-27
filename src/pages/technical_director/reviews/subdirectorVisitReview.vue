@@ -36,14 +36,18 @@ const form_rules = computed(() => ({
 }));
 
 const v$ = useVuelidate(form_rules, form);
-
+// Consulta todos lo municipios
 const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
 }, null);
 
-//Traer todas las disciplinas
+// Consulta todas las disciplinas
 const disciplines = asyncComputed(async () => {
 	return await getSelect(['disciplines']);
+}, null);
+// Consulta los monitores en revision
+const monitor = asyncComputed(async () => {
+	return await getMonitorByMunicipality(form.municipality_id)
 }, null);
 
 const evaluationList = [
@@ -220,7 +224,7 @@ const defineReason = () => {
 				label="Monitor *"
 				name="monitor_id"
 				v-model="form.monitor_id"
-				:options="monitorList" />
+				:options="monitor" />
 			<CommonSelect
 				disabled
 				label="Diciplinas *"
