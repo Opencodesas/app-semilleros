@@ -11,24 +11,24 @@ import { FormattedMenu } from "../../layouts/SideMenu/side-menu";
 import { linkTo } from "./mobile-menu";
 
 interface MenuProps {
-  menu: FormattedMenu;
-  formattedMenuState: [
+  menu?: FormattedMenu;
+  formattedMenuState?: [
     (FormattedMenu | "divider")[],
     (computedFormattedMenu: Array<FormattedMenu | "divider">) => void
   ];
-  level: "first" | "second" | "third";
-  setActiveMobileMenu: (active: boolean) => void;
+  level?: "first" | "second" | "third";
+  setActiveMobileMenu?: (active: boolean) => void;
 }
 
 const router = useRouter();
 const props = defineProps<MenuProps>();
-const [formattedMenu, setFormattedMenu] = props.formattedMenuState;
+const [formattedMenu, setFormattedMenu] = props.formattedMenuState || [];
 </script>
 
 <template>
   <a
     :href="
-      props.menu.subMenu 
+      props.menu?.subMenu 
         ? '#' 
         : ((pageName: string | undefined) => {
             try {
@@ -38,7 +38,7 @@ const [formattedMenu, setFormattedMenu] = props.formattedMenuState;
             } catch (err) {
               return '';
             }
-          })(props.menu.pageName)
+          })(props.menu?.pageName)
     "
     :class="[
       'h-[50px] flex items-center text-white',
@@ -48,18 +48,19 @@ const [formattedMenu, setFormattedMenu] = props.formattedMenuState;
     @click="
       (event) => {
         event.preventDefault();
-        linkTo(props.menu, router, props.setActiveMobileMenu);
-        setFormattedMenu([...formattedMenu]);
+        linkTo(props.menu || null, router, props.setActiveMobileMenu);
+        if ( setFormattedMenu )
+          setFormattedMenu([...formattedMenu || []]);
       }
     "
   >
     <div>
-      <Lucide :icon="props.menu.icon" />
+      <Lucide :icon="props.menu?.icon || 'Eye'" />
     </div>
     <div class="flex items-center w-full ml-3">
-      {{ props.menu.title }}
+      {{ props.menu?.title }}
       <div
-        v-if="props.menu.subMenu"
+        v-if="props.menu?.subMenu"
         :class="[
           'transition ease-in duration-100 ml-auto',
           props.menu.activeDropdown && 'transform rotate-180',

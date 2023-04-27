@@ -21,7 +21,7 @@ const checkTime = () => {
     const hours = parseToHours(end - start);
 
     if ( start && end && hours < '02:00:00') {
-        alerts.custom('Validación', 'Por favor verifique la hora mínima.', 'error')
+        alerts.custom('Validación', 'La hora final debe ser mínimo dos horas adelante.', 'error')
         .then( () => {
             document.getElementById('end_time')?.focus()
         })

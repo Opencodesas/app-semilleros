@@ -49,7 +49,7 @@ export default {
             </FormLabel>
         </template>
         <!-- Component -->
-        <FormTextarea :id="name" :rows="rows" :cols="rows" :disabled="props.disabled" v-model="value" v-bind="props">
+        <FormTextarea :id="name" :rows="rows" :cols="rows" v-model="value" v-bind="props">
         </FormTextarea>
         <!-- Validator -->
         <template v-if="tooltip">

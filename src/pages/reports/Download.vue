@@ -8,17 +8,17 @@ onMounted(async () => {
 
 	switch (format) {
 		case 'excel':
-			await reportServices.exportExcel(type, restQuery).finally(() => {
+			await reportServices.exportExcel(type as string, restQuery as any).finally(() => {
 				window.close();
 			});
 			break;
 		case 'pdf':
-			await reportServices.exportPdf(type as string, restQuery).finally(() => {
+			await reportServices.exportPdf(type as string, restQuery as any).finally(() => {
 				window.close();
 			});
 			break;
 		case 'zip':
-			await reportServices.exportZIP(type as string, restQuery).finally(() => {
+			await reportServices.exportZIP(type as string, restQuery as any).finally(() => {
 				window.close();
 			});
 			break;

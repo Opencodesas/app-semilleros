@@ -30,8 +30,8 @@ const file_ = ref([])
             <CommonInput label="Nombre" name="name" v-model="form.name" :validator="v$" />
             <CommonSelect label="Persona" name="persona" v-model="form.persona" :validator="v$" :options="[ { value: 'dsadsa', label: 'dasdsa'} ]" />
             <CommonFile label="Documento 1" name="file" v-model="form.file" :validator="v$" :files="file_"
-            @addfile="(err, val) => form.file = val.file"
-            @removefile="() => form.file = null"
+            @addfile="(err: any, val: any) => form.file = val.file"
+            @removefile="() => form.file = ''"
             />
         </div>
         <pre>

@@ -7,16 +7,16 @@ import { isDataView } from 'util/types';
 const props = defineProps<{
 	id_review: number;
 	closeModal: Function;
-  payloadFunctions?: Object;
+  payloadFunctions?: any;
 }>();
 const store = onboardingStore();
 const route = useRoute();
 const router = useRouter();
 
-const data = ref(props.payloadFunctions.DATA());
+const data = ref(props?.payloadFunctions?.DATA());
 
 //buscar y traer solo la ficha correspondiente al props.id_review
-const currentFicha = data.value.filter((ficha) => {return ficha.id.toString()==props.id_review?.toString()})[0];
+const currentFicha = data.value.filter((ficha: any) => {return ficha.id.toString()==props.id_review?.toString()})[0];
 const currentmotive = ref(currentFicha.calif.reject_motive.toString());
 const error = ref(false);
 const form = reactive(

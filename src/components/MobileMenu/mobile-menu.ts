@@ -3,18 +3,20 @@ import { slideUp, slideDown } from "../../utils/helper";
 import { FormattedMenu } from "../../layouts/SideMenu/side-menu";
 
 const linkTo = (
-  menu: FormattedMenu,
+  menu: FormattedMenu | null ,
   router: Router,
-  setActiveMobileMenu: (active: boolean) => void
+  setActiveMobileMenu?: (active: boolean) => void | undefined
 ) => {
-  if (menu.subMenu) {
+  if (menu?.subMenu) {
     menu.activeDropdown = !menu.activeDropdown;
   } else {
-    if (menu.pageName !== undefined) {
-      setActiveMobileMenu(false);
-      router.push({
-        name: menu.pageName,
-      });
+    if (menu?.pageName !== undefined) {
+      if ( setActiveMobileMenu ) {
+        setActiveMobileMenu(false);
+        router.push({
+          name: menu.pageName,
+        });
+      }
     }
   }
 };
