@@ -14,7 +14,6 @@ const props = defineProps<{
 
 const form = reactive({
 	id: '',
-	coordinator_id: '',
 	date_visit: '',
 	hour_visit: '',
 	sidewalk: '',
@@ -104,6 +103,7 @@ const onSubmit = async () => {
 						setLoading(true);
 						props.closeModal();
 						setLoading(false);
+						window.location.reload();
 					}
 				}
 			});
@@ -246,7 +246,7 @@ const onSubmit = async () => {
 					Evidencia *
 				</FormLabel>
 				<img
-					:alt="`Evidencia del coordinador ${form.coordinator_id}`"
+					:alt="`Evidencia del coordinador ${form.coordinator_name}`"
 					class="m-auto border rounded-lg"
 					:src="`${urlStorage}${form.file}`"
 					width="400" />

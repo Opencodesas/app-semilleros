@@ -80,6 +80,7 @@ const fetch = async () => {
 				form.status_id = response.data.items.status_id;
 				form.reject_message = response.data.items.reject_message;
 				form.file = response.data.items.file;
+				form.created_by = response.data.items.created_by.name;
 				file.value = response.data.items.file;
 				dataLoaded.value = true;
 			} else {
@@ -265,7 +266,7 @@ const download = () => {};
 					Evidencia *
 				</FormLabel>
 				<img
-					:alt="`Evidencia de la visita del subdirector`"
+					:alt="`Evidencia de la visita del coordinador ${form.created_by}`"
 					class="m-auto border rounded-lg"
 					:src="`${urlStorage}${file}`"
 					width="400" />

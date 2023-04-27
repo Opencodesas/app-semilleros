@@ -127,6 +127,7 @@ const onSubmit = async () => {
 						props.closeModal();
 						alerts.update();
 						setLoading(false);
+						window.location.reload();
 					}
 				}
 			});
@@ -282,6 +283,7 @@ const defineReason = () => {
 			<h1 class="text-left font-bold">Evidencia</h1>
 			<!-- <img v-if="form.file" :src="form.file[0]" alt=""> -->
 			<img
+				:alt="`Evidencia de la visita del subdirector ${form.createdBy}`"
 				class="m-auto border rounded-lg"
 				:src="`${urlStorage}${form.file}`"
 				width="400" />

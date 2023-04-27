@@ -245,7 +245,7 @@ const download = () => {};
 			</FormLabel>
 			<div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3">
 				<img v-for="file in files"
-					:alt="`Evidencia del coordinador ${form.create_by}`"
+					:alt="`Evidencia del psicosocial ${form.create_by}`"
 					class="m-auto border rounded-lg h-80 w-80 xl:h-96 xl:w-96"
 					:src="`${urlStorage}${file.path}`"
 					/>

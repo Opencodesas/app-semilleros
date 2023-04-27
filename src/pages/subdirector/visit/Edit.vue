@@ -25,6 +25,7 @@ const form = reactive({
 	beneficiary_coverage: '',
 	technical: '',
 	description: '',
+	created_by: '',
 	file: [],
 });
 
@@ -94,6 +95,7 @@ const fetch = async () => {
 			file.value = response.data.items.file;
 			form.status_id = response.data.items.status_id;
 			form.reject_message = response.data.items.reject_message;
+			form.created_by = response.data.items.created_by.name;
 			dataLoaded.value = true;
 		} else {
 			Swal.fire('', 'No se pudieron obtener los datos', 'error');
@@ -278,7 +280,7 @@ const download = () => {};
 				Evidencia *
 			</FormLabel>
 			<img
-				:alt="`Evidencia de la visita del subdirector`"
+				:alt="`Evidencia de la visita del subdirector ${form.created_by}`"
 				class="m-auto border rounded-lg"
 				:src="`${urlStorage}/${file}`"
 				width="400" />
