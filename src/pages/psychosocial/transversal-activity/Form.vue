@@ -44,7 +44,7 @@ const municipalities = asyncComputed(async () => {
 
 const obtenerImagen = (e: any) => {
 	form.file = Array.from(e.target.files);
-	console.log(files._value);
+	console.log(files.value);
 	console.log(Array.from(e.target.files));
 	console.log(form.file);
 };

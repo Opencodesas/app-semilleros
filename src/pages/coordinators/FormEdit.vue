@@ -55,7 +55,7 @@ const disciplines = asyncComputed(async () => {
 	return await getSelect(['disciplines']);
 }, null);
 
-const file = ref(null);
+const file = ref([]);
 
 const fetch = async () => {
 	await coordinatorVisitServices

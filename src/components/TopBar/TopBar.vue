@@ -241,7 +241,7 @@ const hideSearchDropdown = () => {
           <Menu.Header class="font-normal">
             <div class="font-medium">{{ storeOnboarding.get_user.name }}</div>
             <div class="text-xs text-white/70 mt-0.5 dark:text-slate-500">
-              {{ storeOnboarding.get_user_role.name }}
+              {{ storeOnboarding?.get_user_role?.name }}
             </div>
           </Menu.Header>
           <Menu.Divider class="bg-white/[0.08]" />

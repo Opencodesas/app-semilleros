@@ -7,8 +7,8 @@ import { createRouter, createWebHistory, NavigationGuardNext, RouteLocationNorma
 
 const authGuard = async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
 	const { isAuth } = storeToRefs(onboardingStore())
-	const storeAccess = accessStore()
-	const canAccess = await storeAccess.canUserAccess(to.name as string)
+	// const storeAccess = accessStore()
+	// const canAccess = await storeAccess.canUserAccess(to.name as string)
 
 	if (!isAuth && to.name != 'login')
 		next({ name: 'login' })

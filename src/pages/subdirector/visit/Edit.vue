@@ -46,7 +46,7 @@ const form_rules = computed(() => ({
 	file: {},
 }));
 
-const file = ref(null);
+const file = ref([]);
 
 const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
