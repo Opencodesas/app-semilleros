@@ -148,6 +148,7 @@
             :validator="v$"
             :allowEmpty="false"
             :options="optionsDiscapacidad"
+            :onSelect="($event: any) => setOtro($event, 'discapacidad')"
           />
           <CommonInput v-if="form.discapacidad === '1'"
             label="¿Cual?"
@@ -162,6 +163,7 @@
             :validator="v$"
             :allowEmpty="false"
             :options="optionsPatologia"
+            :onSelect="($event: any) => setOtro($event, 'patologia')"
           />
           <CommonInput v-if="form.patologia === '1'"
             label="¿Cual?"
@@ -196,6 +198,7 @@
           :validator="v$"
           :allowEmpty="false"
           :options="optionsEscolaridad"
+          :onSelect="($event: any) => setOtro($event, 'escolaridad')"
         />
 
         <div v-if="form.escolaridad === '1'" class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
@@ -226,6 +229,7 @@
             :validator="v$"
             :allowEmpty="false"
             :options="optionsAfiliacion"
+            :onSelect="($event: any) => setOtro($event, 'afiliacion')"
           />
 
           <CommonSelect v-if="form.afiliacion && form.afiliacion !== 'NA'"
@@ -567,6 +571,29 @@ const next_step = (step_to?: number) => {
     }
 };
 
+const setOtro = ( val: number | string, key: string ) => {
+  if ( val == 0 ) {
+    switch( key ) {
+      case 'discapacidad' : 
+        form.otroDisc = ''
+        break;
+      case 'patologia' : 
+        form.otroPato = ''
+        break;
+      case 'escolaridad' : 
+        form.nivel_escolaridad = ''
+        form.institucion = ''
+        break;
+    }
+  } else if ( val == 'NA') {
+    switch( key ) {
+      case 'afiliacion' : 
+        form.health_entity = ''
+        break;
+    }
+  }
+}
+
 </script>
 
 <script lang="ts">
@@ -710,7 +737,7 @@ export default defineComponent({
 
         beneficiary_name: form.nombres,
         beneficiary_last_name: form.apellidos,
-        full_name: `${form.nombres} ${form.apellidos}`,        
+        full_name: `${form.nombres}  ${form.apellidos}`,        
         
         birth_date: form.fechaNacimiento,
         origin_place: form.lugarNacimiento,
@@ -769,7 +796,7 @@ export default defineComponent({
       });
     },
     limpiar( form: any ) {
-      /*
+      
         form.fechaInscripcion   =  "";
         form.municipio          =  "";
         form.disciplinas        =  "";
@@ -813,7 +840,6 @@ export default defineComponent({
         form.velocidad          =  '';
         form.fuerza             =  '';
         form.oculomanual        =  '';
-        */
     },
     regresar() {
       window.alert("Regresa");
