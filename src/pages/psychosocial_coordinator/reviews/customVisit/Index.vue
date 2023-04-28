@@ -6,48 +6,6 @@ import { customVisitServices } from '@/services/psychosocial/customVisitServices
 import { onboardingStore } from '@/stores/onboardingStore';
 
 
-
-//Traer visitas personalizadas en revisión
-
-const items = ref<Item[]>([
-    {
-        id: '1',
-        month: 'Enero',
-        created_by: 'Pedro', //Nombre del usuario (Psicologo) que creo la visita
-        municipality: 'Cartago',
-        beneficiary: 'Juan Perez',//Nombre del beneficiario
-        status: {
-            id: 2,
-            name: 'En Revisión',
-            slug: 'ENR'
-        },
-    },
-    {
-        id: '2',
-        month: 'Enero',
-        created_by: 'Pedro', //Nombre del usuario (Psicologo) que creo la visita
-        municipality: 'Cartago',
-        beneficiary: 'Juan Perez',//Nombre del beneficiario
-        status: {
-            id: 2,
-            name: 'En Revisión',
-            slug: 'ENR'
-        },
-    },
-    {
-        id: '3',
-        month: 'Enero',
-        created_by: 'Pedro', //Nombre del usuario (Psicologo) que creo la visita
-        municipality: 'Cartago',
-        beneficiary: 'Juan Perez',//Nombre del beneficiario
-        status: {
-            id: 2,
-            name: 'En Revisión',
-            slug: 'ENR'
-        },
-    },
-])
-
 const headerCustomVisits: Header[] = [
     { text: 'Mes', value: 'months.name', sortable: true },
     { text: 'Usuario', value: 'createdBy.name', sortable: true },
@@ -59,13 +17,17 @@ const headerCustomVisits: Header[] = [
 
 const customVisits = ref<Item[]>([]);
 
+
 onBeforeMount(async () => {
     console.log(onboardingStore().user)
      await customVisitServices.getAll().then((response) => {
           customVisits.value = response?.data.items
           console.log(response?.data.items)
       })
+      console.log(customVisits.value)
  })
+
+
 
 const search = ref('');
 const dataSearch = computed(() => searchData(customVisits.value, search.value));

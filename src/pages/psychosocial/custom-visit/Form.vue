@@ -57,21 +57,23 @@ const municipalities = asyncComputed(async () => {
     return await getSelect(['municipalities'])
 }, null)
 
-const beneficiariesList = ref<selectOption[]>([]);
+//const beneficiariesList = ref<selectOption[]>([]);
 
-const getBeneficiariesByMunicipaly = async () => {
-    await beneficiaryServices.getByDeparment(form.municipality as string).then((response) => {
-        if (response?.status == 200 || response?.status == 201) {
-            beneficiariesList.value = response?.data
-            console.log(response?.data)
-        }
-    })
-}
+const beneficiariesList = asyncComputed(async () => {
+    return await getBeneficiariesByDepartment(form.municipality as string)
+}, null)
 
 watch(() => form.municipality, (newVal, oldVal) => {
-    console.log(newVal);
-    if (newVal != null) getBeneficiariesByMunicipaly();
-    if (newVal == null) beneficiariesList.value = [];
+    form.beneficiary = '';
+})
+
+watch(() => form.beneficiary, (newVal, oldVal) => {
+    beneficiary_data.scholar_level = '';
+    beneficiary_data.health_entity = '';
+    beneficiary_data.guardian_name = '';
+    beneficiary_data.guardian_lastname = '';
+    beneficiary_data.guardian_identification = '';
+    newVal && getBeneficiaryData();
 })
 
 const beneficiary_data = reactive({
@@ -105,11 +107,7 @@ const getBeneficiaryData = async () => {
     })
 }
 
-watch(() => form.beneficiary, (newVal, oldVal) => {
-    console.log(newVal);
-    if (newVal != null) getBeneficiaryData();
 
-})
 
 
 const v$ = useVuelidate(form_rules, form)

@@ -53,10 +53,10 @@ const formdataParser = (form: any) => {
     return formData;
 };
 const selectFile = (event: any) => {
-	console.log(form.file);
-	console.log(event.target.files);
-	form.file = event.target.files[0];
-	console.log(form.file);
+    console.log(form.file);
+    console.log(event.target.files);
+    form.file = event.target.files[0];
+    console.log(form.file);
 }
 
 const months = asyncComputed(async () => {
@@ -67,21 +67,25 @@ const municipalities = asyncComputed(async () => {
     return await getSelect(['municipalities'])
 }, null)
 
-const beneficiariesList = ref<selectOption[]>([]);
-
-const getBeneficiariesByMunicipaly = async () => {
-    await beneficiaryServices.getByDeparment(form.municipality as string).then((response) => {
-        if (response?.status == 200 || response?.status == 201) {
-            beneficiariesList.value = response?.data
-            console.log(response?.data)
-        }
-    })
-}
+const beneficiariesList = asyncComputed(async () => {
+    return await getBeneficiariesByDepartment(form.municipality as string)
+}, null)
 
 watch(() => form.municipality, (newVal, oldVal) => {
-    console.log(newVal);
-    if (newVal != null) getBeneficiariesByMunicipaly();
-    if (newVal == null) beneficiariesList.value = [];
+    if (dataLoaded.value) {
+        console.log(newVal);
+        form.beneficiary = '';
+    }
+})
+
+watch(() => form.beneficiary, (newVal, oldVal) => {
+    beneficiary_data.scholar_level = '';
+    beneficiary_data.health_entity = '';
+    beneficiary_data.guardian_name = '';
+    beneficiary_data.guardian_lastname = '';
+    beneficiary_data.guardian_identification = '';
+    //console.log(newVal);
+    newVal && getBeneficiaryData();
 })
 
 const dataLoaded = ref(false)
@@ -132,7 +136,6 @@ const getBeneficiaryData = async () => {
 
 onMounted(async () => {
     await getData();
-    await getBeneficiaryData();
     dataLoaded.value = true;
 });
 
@@ -147,10 +150,10 @@ const onSubmit = async () => {
             if (response) {
                 if (response.status >= 200 && response.status <= 300) {
                     alerts.update()
-                    //setLoading(true)
-                    //router.push({ name: 'psychosocial.visits' }).finally(() => {
-                      //  setLoading(false)
-                    //})
+                    setLoading(true)
+                    router.push({ name: 'psychosocial.visits' }).finally(() => {
+                        setLoading(false)
+                    })
                 }
             }
         })
@@ -198,8 +201,8 @@ const positionRange = computed(() => {
                             :validator="v$" :options="months" />
                         <CommonSelect :disabled="disableElements" label="Municipio *" name="municipality"
                             v-model="form.municipality" :validator="v$" :options="municipalities" />
-                        <CommonSelect @select="getBeneficiaryData" :disabled="disableElements" label="Beneficiario *"
-                            name="beneficiary" v-model="form.beneficiary" :validator="v$" :options="beneficiariesList" />
+                        <CommonSelect :disabled="disableElements" label="Beneficiario *" name="beneficiary"
+                            v-model="form.beneficiary" :validator="v$" :options="beneficiariesList" />
                     </div>
                     <!-- cambiar condicion por "beneficiary_data" cuando haya función para traer los datos -->
                     <div v-if="form.beneficiary">

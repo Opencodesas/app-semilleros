@@ -1,9 +1,11 @@
 import qs from 'qs'
 
-export const getBeneficiariesByDepartment = async (department_id: string | number) => {
-    const department = qs.stringify({ department: department_id })
-    const response = await api.get(`/api/v1/getBeneficiariesMunicipality/${department}`)
-    console.log(response.data)
+export const getBeneficiariesByDepartment = async (municipality_id: string | number) => {
+    if (municipality_id) {
+        const response = await api.get(`/api/v1/getBeneficiariesMunicipality/${municipality_id}`)
+        console.log(response.data)
 
-    return response.data as Array<{ label: string, value: string | number }>
+        return response.data as Array<{ label: string, value: string | number }>
+    }
+    return []
 }
