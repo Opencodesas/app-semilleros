@@ -46,13 +46,17 @@ const monitorList = [
 	{ label: 'Miguelito', value: 2 },
 ];
 const v$ = useVuelidate(form_rules, form);
-
+// Consulta todos lo municipios 
 const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
 }, null);
-
+// Consulta todas las disciplinas
 const disciplines = asyncComputed(async () => {
 	return await getSelect(['disciplines']);
+}, null);
+// Consulta todos los monitores por municipio
+const monitor = asyncComputed(async () => {
+	return await getMonitorByMunicipality(form.municipalitie_id)
 }, null);
 
 const file = ref([]);
@@ -76,6 +80,7 @@ const fetch = async () => {
 				form.status_id = response.data.items.status_id;
 				form.reject_message = response.data.items.reject_message;
 				form.file = response.data.items.file;
+				form.created_by = response.data.items.created_by.name;
 				file.value = response.data.items.file;
 				dataLoaded.value = true;
 			} else {
@@ -205,7 +210,7 @@ const download = () => {};
 					class="cursor-pointer"
 					v-model="form.user_id"
 					:validator="v$"
-					:options="monitorList"
+					:options="monitor"
 					:disabled="disableElements" />
 				<CommonSelect
 					label="Disciplinas *"
@@ -261,7 +266,7 @@ const download = () => {};
 					Evidencia *
 				</FormLabel>
 				<img
-					:alt="`Evidencia de la visita del subdirector`"
+					:alt="`Evidencia de la visita del coordinador ${form.created_by}`"
 					class="m-auto border rounded-lg"
 					:src="`${urlStorage}${file}`"
 					width="400" />

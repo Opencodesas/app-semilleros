@@ -37,36 +37,20 @@ const form_rules = computed(() => ({
 }));
 
 const v$ = useVuelidate(form_rules, form);
-const foto = ref(null);
 const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
 }, null);
 
-const obtenerImagen = (e: any) => {
-	form.file = Array.from(e.target.files);
-	console.log(files.value);
-	console.log(Array.from(e.target.files));
-	console.log(form.file);
-};
-
 const formdataParser = (form: any) => {
 	const formData = new FormData();
-
-	// formData.append('municipality_id', form.municipality_id);
-	// formData.append('date_visit', form.date_visit);
-	// formData.append('nro_assistants', form.nro_assistants);
-	// formData.append('activity_name', form.activity_name);
-	// formData.append('objective_activity', form.objective_activity);
-	// formData.append('scene', form.scene);
-	// formData.append('meeting_planing', form.meeting_planing);
-	// formData.append('team_socialization', form.team_socialization);
-	// formData.append('development_activity', form.development_activity);
-	// formData.append('content_network', form.content_network);
-	// formData.append('file', [form.file]);
-	//console.log(Object.keys(formData));
 	Object.keys(form).forEach((key) => {
-		console.log(form[key]);
-		formData.append(key, form[key]);
+		if (key == 'file') {
+			form[key].forEach((file: any) => {
+				formData.append('file[]', file);
+			});
+		} else {
+			formData.append(key, form[key]);
+		}
 	});
 	return formData;
 };
@@ -83,14 +67,14 @@ const onSubmit = async () => {
 			.then((response) => {
 				if (response?.status == 200 || response?.status == 201) {
 					alerts.create();
-					// setLoading(true);
-					// router
-					// 	.push({
-					// 		name: 'psychosocial.visits',
-					// 	})
-					// 	.finally(() => {
-					// 		setLoading(false);
-					// 	});
+					setLoading(true);
+					router
+						.push({
+							name: 'psychosocial.visits',
+						})
+						.finally(() => {
+							setLoading(false);
+						});
 				}
 			});
 	} else {
@@ -203,9 +187,8 @@ const onSubmit = async () => {
 					:accept-multiple="true"
 					v-model="form.file"
 					:validator="v$"
-					@change="obtenerImagen"
-					@addfile="(error: any, value: filePondValue) => { files = multiple.addfile({ error, value }, files) as never[] }"
-					@removefile="(error: any, value: filePondValue) => { files= multiple.removefile({ error, value }, files) as never[] }" />
+					@addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
+					@removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }" />
 			</div>
 		</div>
 		<div class="mt-6 flex justify-center col-span-1 md:col-span-2">
