@@ -2,13 +2,16 @@
 import CommonFile from '@/components/CommonFile.vue';
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
+import { onboardingStore } from '@/stores/onboardingStore';
 import Swal from 'sweetalert2';
 
 
+const store = onboardingStore();
+const { multiple } = useFilepondEvents();
+const urlStorage = `${import.meta.env.VITE_BASE_URL}/storage/`;
 const router = useRouter();
 const route = useRoute();
 const { id } = route.params;
-const urlStorage = `${import.meta.env.VITE_BASE_URL}/storage/`;
 
 const form = reactive({
 	status_id: '',
@@ -46,21 +49,6 @@ const form_rules = computed(() => ({
 	created_by: { required },
 }));
 
-const formdataParser = (form: any) => {
-	console.log(form);
-	const formData = new FormData();
-	Object.keys(form).forEach((key) => {
-		formData.append(key, form[key]);
-	});
-	console.log(formData);
-	return formData;
-};
-
-
-const selectFile = (event: any) => {
-	console.log(form.file);
-	form.file = event.target.files[0];
-}
 
 const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
@@ -82,6 +70,23 @@ const evaluationList = [
 	{ label: 'Aceptada', value: 1 },
 	{ label: 'Rechazada', value: 2 },
 ];
+// Convierte el objeto a FormData
+const formdataParser = (form: any) => {
+	const formData = new FormData();
+	Object.keys(form).forEach((key) => {
+		formData.append(key, form[key]);
+	});
+	return formData;
+};
+// Guarda la imagen en variable form.file
+const selectFile = (e: any) => {
+	form.file = e.target.files[0]
+};
+// Consulta el monitor por municipio
+const monitor = asyncComputed(async () => {
+	return await getMonitorByMunicipality(form.municipality_id);
+}, null);
+
 
 const v$ = useVuelidate(form_rules, form);
 
@@ -91,7 +96,6 @@ let file;
 const data = async () => {
 	await subdirectorVisitServices.get(id as string).then((response) => {
 		if (response?.status == 200) {
-			console.log(response.data.items)
 			form.created_by = response.data.items.created_by.name;
 			form.rejection_message = response.data.items.reject_message;
 			form.status_id = response.data.items.status_id;
@@ -108,9 +112,6 @@ const data = async () => {
 			form.observations = response.data.items.observations;
 			form.description = response.data.items.description;
 			form.file = response.data.items.file;
-			file = `http://localhost:8000/storage/${form.file}`;
-			dataLoaded.value = true;
-			console.log(form)
 			setLoading(false);
 		} else {
 			setLoading(false);
@@ -180,7 +181,7 @@ const disableElements = computed(() => {
 			<CommonInput :disabled="disableElements" type="text" placeholder="Ingrese" label="Corregimiento / Vereda *"
 				name="sidewalk" v-model="form.sidewalk" :validator="v$" />
 			<CommonSelect :disabled="disableElements" label="Monitor *" name="monitor_id" class="cursor-pointer"
-				v-model="form.monitor_id" :validator="v$" :options="monitorList" />
+				v-model="form.monitor_id" :validator="v$" :options="monitor" />
 			<CommonSelect :disabled="disableElements" label="Disciplinas *" name="discipline_id" class="cursor-pointer"
 				v-model="form.discipline_id" :validator="v$" :options="disciplines" />
 			<CommonInput :disabled="disableElements" type="text" placeholder="Ingrese" label="Escenario deportivo *"
@@ -205,12 +206,17 @@ const disableElements = computed(() => {
 			<FormLabel for="evidencia" class="flex flex-col w-full sm:flex-row">
 				Evidencia *
 			</FormLabel>
-			<img :alt="`Evidencia de la visita del subdirector`" class="m-auto border rounded-lg"
-				:src="`${urlStorage}/${form.file}`" width="400" />
+			<img :alt="`Evidencia de la visita del director`" class="m-auto border rounded-lg" :src="`${urlStorage}/${form.file}`"
+				width="400" />
 		</div>
 		<div class="p-5 mt-6 intro-y">
-			<CommonFile v-if="form.status_id == '4'" v-model="form.file" name="file"
-				class="w-11/12 sm:w-8/12 m-auto cursor-pointer" @change="selectFile" />
+			<CommonFile v-if="form.status_id == '4'"
+				:validator="v$"
+				v-model="form.file"
+				name="file"
+				class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
+				@change="selectFile"
+				@removefile="form.file = []" />
 		</div>
 	</div>
 

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useRoute } from "vue-router";
 import MenuLink from "./MenuLink.vue";
-import DarkModeSwitcher from "../../components/DarkModeSwitcher";
-import MainColorSwitcher from "../../components/MainColorSwitcher";
+// import DarkModeSwitcher from "../../components/DarkModeSwitcher";
+// import MainColorSwitcher from "../../components/MainColorSwitcher";
 import MobileMenu from "../../components/MobileMenu";
 import TopBar from "../../components/TopBar";
 import _ from "lodash";

@@ -3,6 +3,7 @@ import { RadioGroup, RadioGroupLabel, RadioGroupOption } from '@headlessui/vue';
 import useVuelidate from '@vuelidate/core';
 import dayjs from 'dayjs';
 import { Header } from 'vue3-easy-data-table';
+import { reportServices } from '@/services/reportServices';
 
 interface ReportItem {
 	id: number;
@@ -85,7 +86,7 @@ const items = computed((): ReportItem[] => {
 				{
 					id: 6,
 					name: 'Informe Visitas Personalizas Psicosocial',
-					type: 'customVisit',
+					type: 'customPsychologicalVisits',
 					pdf: false,
 					excel: true,
 					zip: false,
@@ -94,6 +95,14 @@ const items = computed((): ReportItem[] => {
 					id: 7,
 					name: 'Informe Fichas de Inscripción',
 					type: 'inscriptions',
+					pdf: false,
+					excel: true,
+					zip: false,
+				},
+				{
+					id: 8,
+					name: 'Informe Historial Navegacion',
+					type: 'navigationHistory',
 					pdf: false,
 					excel: true,
 					zip: false,

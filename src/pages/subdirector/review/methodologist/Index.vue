@@ -20,11 +20,11 @@ const headers: Header[] = [
 const items = ref<Item[]>([]);
 
 onMounted(async () => {
-	await methodologistVisitServices
-		.getAll()
-		.then((response) => {
-			items.value = response?.data.items;
-		});
+	// await methodologistVisitServices
+	// 	.getAll()
+	// 	.then((response) => {
+	// 		items.value = response?.data.items;
+	// 	});
 });
 
 const dataSearch = computed(() => searchData(items.value, search.value));

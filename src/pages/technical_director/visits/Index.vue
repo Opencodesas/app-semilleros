@@ -12,12 +12,11 @@ const items = ref<Item[]>([]);
 onBeforeMount(async () => {
 	await subdirectorVisitServices.getAll().then((response) => {
 		items.value = response?.data.items
-		console.log(items.value)
 	});
 });
 
 const headers: Header[] = [
-	{ text: 'No', value: 'id' },
+	// { text: 'No', value: 'id' },
 	{ text: 'Fecha', value: 'date_visit' },
 	{ text: 'Municipio', value: 'municipality.name' },
 	{ text: 'Monitor', value: 'monitor.name' },
@@ -25,46 +24,6 @@ const headers: Header[] = [
 	{ text: 'Estado', value: 'status' },
 	{ text: 'Acciones', value: 'actions' },
 ];
-
-// const items = ref<Item[]>([
-// 	{
-// 		id: '1',
-// 		date_visit: '2023-02-15',
-// 		municipality: 'Jamundi',
-// 		monitor_name: 'Oscar Martinez',
-// 		sport_scene: 'Cancha Marcella',
-// 		status: {
-// 			id: 2,
-// 			name: 'En Revisión',
-// 			slug: 'ENR',
-// 		},
-// 	},
-// 	{
-// 		id: '2',
-// 		date_visit: '2023-02-20',
-// 		municipality: 'Jamundi',
-// 		monitor_name: 'Oscar Martinez',
-// 		sport_scene: 'Cancha Marcella',
-// 		status: {
-// 			id: 2,
-// 			name: 'En Revisión',
-// 			slug: 'ENR',
-// 		},
-// 	},
-// 	{
-// 		id: '3',
-// 		date_visit: '2023-02-27',
-// 		municipality: 'Jamundi',
-// 		monitor_name: 'Oscar Martinez',
-// 		sport_scene: 'Cancha Marcella',
-// 		status: {
-// 			id: 2,
-// 			name: 'Rechazado',
-// 			slug: 'REC',
-// 		},
-// 	},
-// ]);
-
 
 const search = ref('');
 const data = computed(() => searchData(items.value, search.value));

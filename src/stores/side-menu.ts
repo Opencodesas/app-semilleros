@@ -44,21 +44,22 @@ export const useSideMenuStore = defineStore("sideMenu", {
             icon: "Activity",
             pageName: "users.index",
             title: "Usuarios",
-          }, {
+          }, 
+          /* {
             icon: "Activity",
             pageName: "users_of_zones.index",
             title: "Usuarios por Region"
-          },
-          {
+          }, */
+          /* {
             icon: "Activity",
             pageName: "methodologist_visits.index",
             title: "Visita Metodólogo"
-          },
-          {
+          }, */
+          /* {
             icon: "Activity",
             pageName: "subdirector_visit.index",
             title: "Visita Subdirectora"
-          },
+          }, */
           {
             icon: "Activity",
             pageName: "beneficiaries.index",

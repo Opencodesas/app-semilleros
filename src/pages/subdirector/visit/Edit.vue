@@ -25,6 +25,7 @@ const form = reactive({
 	beneficiary_coverage: '',
 	technical: '',
 	description: '',
+	created_by: '',
 	file: [],
 });
 
@@ -46,15 +47,21 @@ const form_rules = computed(() => ({
 	file: {},
 }));
 
-const file = ref(null);
+const file = ref([]);
 
+// Consulta todos lo municipios
 const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
 }, null);
-
+// Consulta todas las disciplinas
 const disciplines = asyncComputed(async () => {
 	return await getSelect(['disciplines']);
 }, null);
+// Consulta todos los monitores por municipio
+const monitor = asyncComputed(async () => {
+	return await getMonitorByMunicipality(form.municipality_id)
+}, null);
+
 const monitorList = [
 	{ label: 'Joselito', value: 1 },
 	{ label: 'Miguel Torres', value: 2 },
@@ -88,6 +95,7 @@ const fetch = async () => {
 			file.value = response.data.items.file;
 			form.status_id = response.data.items.status_id;
 			form.reject_message = response.data.items.reject_message;
+			form.created_by = response.data.items.created_by.name;
 			dataLoaded.value = true;
 		} else {
 			Swal.fire('', 'No se pudieron obtener los datos', 'error');
@@ -201,7 +209,7 @@ const download = () => {};
 				class="cursor-pointer"
 				v-model="form.monitor_id"
 				:validator="v$"
-				:options="monitorList"
+				:options="monitor"
 				:disabled="disableElements" />
 			<CommonSelect
 				label="Disciplinas *"
@@ -272,7 +280,7 @@ const download = () => {};
 				Evidencia *
 			</FormLabel>
 			<img
-				:alt="`Evidencia de la visita del subdirector`"
+				:alt="`Evidencia de la visita del subdirector ${form.created_by}`"
 				class="m-auto border rounded-lg"
 				:src="`${urlStorage}/${file}`"
 				width="400" />

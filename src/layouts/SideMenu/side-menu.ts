@@ -70,11 +70,11 @@ const nestedMenu = (menu: Array<Menu | "divider">, route: Route) => {
   return formattedMenu;
 };
 
-const linkTo = (menu: FormattedMenu, router: Router) => {
-  if (menu.subMenu) {
+const linkTo = (menu: FormattedMenu | null , router: Router) => {
+  if (menu?.subMenu) {
     menu.activeDropdown = !menu.activeDropdown;
   } else {
-    if (menu.pageName !== undefined) {
+    if (menu?.pageName !== undefined) {
       router.push({
         name: menu.pageName,
       });

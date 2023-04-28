@@ -38,21 +38,6 @@ const form_rules = computed(() => ({
 	file: { required },
 }));
 
-const formdataParser = (form: any) => {
-    console.log(form);
-    const formData = new FormData();
-    Object.keys(form).forEach((key) => {
-        formData.append(key, form[key]);
-    });
-    console.log(formData);
-    return formData;
-};
-
-
-const selectFile = (event: any) => {
-    console.log(form.file);
-    form.file = event.target.files[0];
-}
 
 const disciplinesList = ref([]);
 const monitorList = [
@@ -69,9 +54,9 @@ const evaluationList = [
 ];
 const v$ = useVuelidate(form_rules, form);
 
-// const monitorList = asyncComputed(async () => {
-// 	return await getMonitorByMunicipality(form.municipality_id);
-// }, null);
+const monitor = asyncComputed(async () => {
+	return await getMonitorByMunicipality(form.municipality_id);
+}, null);
 
 const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
@@ -79,6 +64,18 @@ const municipalities = asyncComputed(async () => {
 const disciplines = asyncComputed(async () => {
 	return await getSelect(['disciplines']);
 }, null);
+
+const formdataParser = (form: any) => {
+	const formData = new FormData();
+	Object.keys(form).forEach((key) => {
+		formData.append(key, form[key]);
+	});
+	return formData;
+};
+
+const selectFile = (e: any) => {
+	form.file = e.target.files[0]
+};
 
 const onSubmit = async () => {
 	const valid = await v$.value.$validate();
@@ -108,7 +105,6 @@ const onSubmit = async () => {
 			});
 	}
 };
-
 </script>
 
 <template>
@@ -118,42 +114,111 @@ const onSubmit = async () => {
 
 	<div class="p-5 mt-5 intro-y box">
 		<div class="grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
-			<CommonInput type="date" label="Fecha  *" name="date_visit" v-model="form.date_visit" :validator="v$" />
-			<CommonInput type="time" label="Hora  *" name="hour_visit" v-model="form.hour_visit" :validator="v$" />
-			<CommonSelect label="Municipio *"  name="municipality_id" class="cursor-pointer"
-				v-model="form.municipality_id" :validator="v$" :options="municipalities" />
-
-			<CommonInput type="text" placeholder="Ingrese el corregimiento o vereda" label="Corregimiento / Vereda *"
-				name="sidewalk" v-model="form.sidewalk" :validator="v$" />
-			<CommonSelect label="Monitor *" name="monitor_id" class="cursor-pointer"
-				v-model="form.monitor_id" :validator="v$" :options="monitorList" />
-			<CommonSelect label="Disciplinas *" name="discipline_id" class="cursor-pointer"
-				v-model="form.discipline_id" :validator="v$" :options="disciplines" />
-			<CommonInput type="text" placeholder="Ingrese el escenario deportivo" label="Escenario deportivo *"
-				name="sports_scene" v-model="form.sports_scene" :validator="v$" />
-			<CommonInput type="number" min="0" placeholder="Ingrese un numero de beneficiarios"
-				label="Cobertura de benificiario *" name="beneficiary_coverage" v-model="form.beneficiary_coverage"
+			<CommonInput
+				type="date"
+				label="Fecha  *"
+				name="date_visit"
+				v-model="form.date_visit"
 				:validator="v$" />
-			<CommonSelect label="Cumple con el desarrollo tecnico del mes *" name="technical"
-				class="cursor-pointer" v-model="form.technical" :validator="v$" :options="evaluationList" />
-			<CommonSelect label="Apoyo a eventos *" name="event_support" class="cursor-pointer"
-				v-model="form.event_support" :validator="v$" :options="event_supportList" />
+			<CommonInput
+				type="time"
+				label="Hora  *"
+				name="hour_visit"
+				v-model="form.hour_visit"
+				:validator="v$" />
+			<CommonSelect
+				label="Municipio *"
+				name="municipality_id"
+				class="cursor-pointer"
+				v-model="form.municipality_id"
+				:validator="v$"
+				:options="municipalities" />
+
+			<CommonInput
+				type="text"
+				placeholder="Ingrese el corregimiento o vereda"
+				label="Corregimiento / Vereda *"
+				name="sidewalk"
+				v-model="form.sidewalk"
+				:validator="v$" />
+			<CommonSelect
+				label="Monitor *"
+				name="monitor_id"
+				class="cursor-pointer"
+				v-model="form.monitor_id"
+				:validator="v$"
+				:options="monitor" />
+			<CommonSelect
+				label="Disciplinas *"
+				name="discipline_id"
+				class="cursor-pointer"
+				v-model="form.discipline_id"
+				:validator="v$"
+				:options="disciplines" />
+			<CommonInput
+				type="text"
+				placeholder="Ingrese el escenario deportivo"
+				label="Escenario deportivo *"
+				name="sports_scene"
+				v-model="form.sports_scene"
+				:validator="v$" />
+			<CommonInput
+				type="number"
+				min="0"
+				placeholder="Ingrese un numero de beneficiarios"
+				label="Cobertura de benificiario *"
+				name="beneficiary_coverage"
+				v-model="form.beneficiary_coverage"
+				:validator="v$" />
+			<CommonSelect
+				label="Cumple con el desarrollo tecnico del mes *"
+				name="technical"
+				class="cursor-pointer"
+				v-model="form.technical"
+				:validator="v$"
+				:options="evaluationList" />
+			<CommonSelect
+				label="Apoyo a eventos *"
+				name="event_support"
+				class="cursor-pointer"
+				v-model="form.event_support"
+				:validator="v$"
+				:options="event_supportList" />
 		</div>
 		<div class="mt-6 intro-y">
-			<CommonTextarea label="Descripcion *" rows="5" placeholder="Ingrese las Descripcion" name="description"
-				v-model="form.description" :validator="v$" />
+			<CommonTextarea
+				label="Descripcion *"
+				rows="5"
+				placeholder="Ingrese las Descripcion"
+				name="description"
+				v-model="form.description"
+				:validator="v$" />
 		</div>
 		<div class="mt-6 intro-y">
-			<CommonTextarea label="Observaciones *" rows="5" placeholder="Ingrese las observaciones" name="observations"
-				v-model="form.observations" :validator="v$" />
+			<CommonTextarea
+				label="Observaciones *"
+				rows="5"
+				placeholder="Ingrese las observaciones"
+				name="observations"
+				v-model="form.observations"
+				:validator="v$" />
 		</div>
 		<div class="p-5 mt-6 intro-y">
-			<CommonFile :validator="v$" v-model="form.file" name="file" class="w-11/12 sm:w-8/12 m-auto cursor-pointer" @change="selectFile" />
+			<CommonFile
+				:validator="v$"
+				v-model="form.file"
+				name="file"
+				class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
+				@change="selectFile"
+				@removefile="form.file = []" />
 		</div>
 	</div>
 
 	<div class="mt-6 flex justify-center col-span-1 md:col-span-2">
-		<Button variant="primary" class="btn btn-primary" @click="onSubmit">
+		<Button
+			variant="primary"
+			class="btn btn-primary"
+			@click="onSubmit">
 			Registrar
 		</Button>
 	</div>
