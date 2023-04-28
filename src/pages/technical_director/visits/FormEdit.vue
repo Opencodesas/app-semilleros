@@ -96,6 +96,7 @@ let file;
 const data = async () => {
 	await subdirectorVisitServices.get(id as string).then((response) => {
 		if (response?.status == 200) {
+			console.log(response.data.items)
 			form.created_by = response.data.items.created_by.name;
 			form.rejection_message = response.data.items.reject_message;
 			form.status_id = response.data.items.status_id;
@@ -120,6 +121,7 @@ const data = async () => {
 };
 onMounted(async () => {
 	await data();
+	dataLoaded.value = true;
 });
 
 const update = async () => {
@@ -175,8 +177,8 @@ const disableElements = computed(() => {
 				v-model="form.date_visit" :validator="v$" />
 			<CommonInput :disabled="disableElements" type="time" label="Hora  *" name="hour_visit" v-model="form.hour_visit"
 				:validator="v$" />
-			<CommonSelect :disabled="disableElements" label="Municipio *" name="municipality_id" class="cursor-pointer"
-				v-model="form.municipality_id" :validator="v$" :options="municipalities" />
+			<CommonInput :disabled="disableElements" label="Municipio *" name="municipality_id" class="cursor-pointer"
+				v-model="form.municipality_id" :validator="v$" />
 
 			<CommonInput :disabled="disableElements" type="text" placeholder="Ingrese" label="Corregimiento / Vereda *"
 				name="sidewalk" v-model="form.sidewalk" :validator="v$" />
@@ -206,17 +208,12 @@ const disableElements = computed(() => {
 			<FormLabel for="evidencia" class="flex flex-col w-full sm:flex-row">
 				Evidencia *
 			</FormLabel>
-			<img :alt="`Evidencia de la visita del director`" class="m-auto border rounded-lg" :src="`${urlStorage}/${form.file}`"
-				width="400" />
+			<img :alt="`Evidencia de la visita del director`" class="m-auto border rounded-lg"
+				:src="`${urlStorage}/${form.file}`" width="400" />
 		</div>
 		<div class="p-5 mt-6 intro-y">
-			<CommonFile v-if="form.status_id == '4'"
-				:validator="v$"
-				v-model="form.file"
-				name="file"
-				class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
-				@change="selectFile"
-				@removefile="form.file = []" />
+			<CommonFile v-if="form.status_id == '4'" :validator="v$" v-model="form.file" name="file"
+				class="w-11/12 sm:w-8/12 m-auto cursor-pointer" @change="selectFile" @removefile="form.file = []" />
 		</div>
 	</div>
 

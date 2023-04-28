@@ -260,7 +260,7 @@ const positionRange = computed(() => {
                         <!-- Comprobar qué es lo que se está enviando -->
                         <div class="grid justify-center col-span-3 gap-10 p-5">
                             <h1 class="text-center font-bold">Evidencia</h1>
-                            <img :alt="`Evidencia de la visita del subdirector`" class="m-auto border rounded-lg"
+                            <img :alt="`Evidencia de la visita personalizada`" class="m-auto border rounded-lg"
                                 :src="`${urlStorage}${file}`" width="400" />
                         </div>
 
