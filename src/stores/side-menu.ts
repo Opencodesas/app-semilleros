@@ -323,6 +323,13 @@ export const useSideMenuStore = defineStore("sideMenu", {
         //&& para agregar
         ))
       }
+      else if (isRole('subdirector_tecnico')){
+        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) =>
+        //solo admite paginas ficha_inscripción
+        subMenuItem.pageName?.includes('subdirector_visit')
+        //&& para agregar
+        ))
+      }
       else {
         return state.menu
       }
