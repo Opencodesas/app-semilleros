@@ -2,16 +2,15 @@
 import useVuelidate from '@vuelidate/core'
 import { required } from '@/utils/validators'
 import FormSwitch from "@/base-components/Form/FormSwitch";
-import { selectOption } from '@/components/CommonSelect.vue';
 import { visitServices } from '@/services/psychosocial/visitServices';
 
 const { multiple } = useFilepondEvents();
 
 const form = reactive({
     date_visit: '',
-    municipality: '',
+    municipalities_id: '',
     monitor: '',
-    dicipline: '',
+    diciplines_id: '',
     number_beneficiaries: '',
     scenery: '',
     objetive: '',
@@ -22,13 +21,13 @@ const form = reactive({
     observations: '',
     file: [],
 });
-//status_id: '2',
-//created_by: store.user.id,
+
+
 const form_rules = computed(() => ({
     date_visit: { required },
-    municipality: { required },
+    municipalities_id: { required },
     monitor: { required },
-    dicipline: { required },
+    diciplines_id: { required },
     number_beneficiaries: { required },
     scenery: { required },
     objetive: { required },
@@ -57,31 +56,30 @@ const municipalities = asyncComputed(async () => {
     return await getSelect(['municipalities'])
 }, null)
 
-// const monitorList = ref<selectOption[]>([]);
 
-// const monitorsByMunicipality = async () => {
-//     monitorList.value = await getMonitorByMunicipality(form.municipality as string);
-//     console.log(monitorList.value)
-
-// }
-
-// watch(() => form.municipality, (newVal, oldVal) => {
+// watch(() => form.municipalities_id, (newVal, oldVal) => {
 //     console.log(newVal);
-//     if (newVal != null) monitorsByMunicipality();
+//     if (newVal != null) monitorsByMunicipalities_id();
 //     if (newVal == null) monitorList.value = [];
 // })
 
 //const disciplinesList = ref([]);
 
-const monitorList = [
-    { label: "Joselito", value: 12 },
-    { label: "Miguelito", value: 2 },
-];
+const monitorList = asyncComputed(async () => {
+    return await getMonitorByMunicipality(form.municipalities_id);
+}, null);
 
-const disciplinesList = [
-    { label: "Futbol", value: 1 },
-    { label: "Baloncesto", value: 8 },
-];
+const disciplinesList = asyncComputed(async () => {
+    return await getDisciplinesByMonitor(form.monitor)
+}, null)
+
+watch(() => form.municipalities_id, (newVal, oldVal) => {
+    form.monitor = '';
+})
+
+watch(() => form.monitor, (newVal, oldVal) => {
+    form.diciplines_id = '';
+})
 
 const v$ = useVuelidate(form_rules, form)
 const router = useRouter()
@@ -95,12 +93,12 @@ const onSubmit = async () => {
         await visitServices.create(formData).then((response) => {
             if (response) {
                 if (response.status >= 200 && response.status <= 300) {
-                    alerts.create()
                     setLoading(true)
-                    //router.push('/').finally(() => {
-                    //  setLoading(false)''
-                    //})
-                    setLoading(false)
+                    router.push({ name: 'psychosocial.visits' }).finally(() => {
+                        setLoading(false)
+                        alerts.create()
+                    })
+
                 }
             }
         })
@@ -122,11 +120,11 @@ const onSubmit = async () => {
 
                 <div class="grid grid-cols-2 gap-y-6 gap-x-4">
                     <CommonInput type="date" label="Fecha *" name="date_visit" v-model="form.date_visit" :validator="v$" />
-                    <CommonSelect label="Municipio *" name="municipality" v-model="form.municipality" :validator="v$"
-                        :options="municipalities" />
+                    <CommonSelect label="Municipio *" name="municipalities_id" v-model="form.municipalities_id"
+                        :validator="v$" :options="municipalities" />
                     <CommonSelect label="Monitor Deportivo *" name="monitor" v-model="form.monitor" :validator="v$"
                         :options="monitorList" />
-                    <CommonSelect label="Disciplinas *" name="dicipline" v-model="form.dicipline" :validator="v$"
+                    <CommonSelect label="Disciplinas *" name="diciplines_id" v-model="form.diciplines_id" :validator="v$"
                         :options="disciplinesList" />
                     <CommonInput type="number" min="0" label="No. Beneficiarios en el campo *" placeholder="Escriba..."
                         name="number_beneficiaries" v-model="form.number_beneficiaries" :validator="v$" />
@@ -148,18 +146,16 @@ const onSubmit = async () => {
                         </div>
                         <div class="">
 
-                            <FormSwitch.Input name="beneficiary_recognize_value"
-                                id="beneficiary_recognize_value" type="checkbox"
-                                v-model="form.beneficiary_recognize_value" :validator="v$" />
+                            <FormSwitch.Input name="beneficiary_recognize_value" id="beneficiary_recognize_value"
+                                type="checkbox" v-model="form.beneficiary_recognize_value" :validator="v$" />
                             <FormSwitch.Label htmlFor="beneficiary_recognize_value"> ¿LOS BENEFICIARIOS RECONOCEN EL
                                 VALOR DESARROLLADO
                                 EN EL MES? </FormSwitch.Label>
                         </div>
                         <div class="">
 
-                            <FormSwitch.Input name="all_ok"
-                                id="all_ok" type="checkbox"
-                                v-model="form.all_ok" :validator="v$" />
+                            <FormSwitch.Input name="all_ok" id="all_ok" type="checkbox" v-model="form.all_ok"
+                                :validator="v$" />
                             <FormSwitch.Label htmlFor="all_ok"> ¿SE OBSERVA
                                 ORGANIZACIÓN, DISCIPLINA Y BUEN MANEJO
                                 DE GRUPO DURANTE LAS SESIONES DE CLASE DEL MONITOR? </FormSwitch.Label>

@@ -13,11 +13,10 @@ onBeforeMount(async () => {
 })
 
 const headerVisits: Header[] = [
-	{ text: 'No.', value: 'id', sortable: true },
-	{ text: 'Fecha', value: 'date', sortable: true },
-	{ text: 'Monitor', value: 'monitor' },
-	{ text: 'Municipio', value: 'municipality', sortable: true },
-	{ text: 'Escenario Deportivo', value: 'sport_arena' },
+	{ text: 'Fecha', value: 'date_visit', sortable: true },
+	{ text: 'Monitor', value: 'monitor.name' },
+	{ text: 'Municipio', value: 'municipality.name' },
+	{ text: 'Escenario Deportivo', value: 'scenery' },
 	{ text: 'Estado', value: 'status' },
 	{ text: 'Acciones', value: 'actions' },
 ];

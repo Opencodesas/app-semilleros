@@ -39,13 +39,11 @@ const formdataParser = (form: any) => {
     Object.keys(form).forEach((key) => {
         formData.append(key, form[key]);
     });
-    console.log(formData);
     return formData;
 };
 
 
 const selectFile = (event: any) => {
-    console.log(form.file);
     form.file = event.target.files[0];
 }
 
@@ -125,7 +123,7 @@ const onSubmit = async () => {
                 if (response.status >= 200 && response.status <= 300) {
                     alerts.create()
                     setLoading(true)
-                    router.push('/dashboard').finally(() => {
+                    router.push({ name: 'psychosocial.visits' }).finally(() => {
                         setLoading(false)
                     })
                 }

@@ -49,9 +49,6 @@ const form_rules = computed(() => ({
 const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
 }, null);
-const disciplines = asyncComputed(async () => {
-	return await getSelect(['disciplines']);
-}, null);
 
 const event_supportList = [
 	{ label: 'Si', value: 1 },
@@ -78,6 +75,10 @@ const selectFile = (e: any) => {
 const monitor = asyncComputed(async () => {
 	return await getMonitorByMunicipality(form.municipality_id);
 }, null);
+
+const disciplines = asyncComputed(async () => {
+    return await getDisciplinesByMonitor(form.monitor_id)
+}, null)
 
 
 const v$ = useVuelidate(form_rules, form);
@@ -110,6 +111,19 @@ const data = async () => {
 		}
 	});
 };
+
+watch(() => form.municipality_id, (newVal, oldVal) => {
+    if (dataLoaded.value) {
+        form.monitor_id = '';
+    }
+})
+
+watch(() => form.monitor_id, (newVal, oldVal) => {
+    if (dataLoaded.value) {
+        form.discipline_id = '';
+    }
+})
+
 onMounted(async () => {
 	await data();
 	dataLoaded.value = true;

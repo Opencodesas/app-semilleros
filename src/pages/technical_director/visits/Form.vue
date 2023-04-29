@@ -61,9 +61,18 @@ const monitor = asyncComputed(async () => {
 const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
 }, null);
+
 const disciplines = asyncComputed(async () => {
-	return await getSelect(['disciplines']);
-}, null);
+    return await getDisciplinesByMonitor(form.monitor_id)
+}, null)
+
+watch(() => form.municipality_id, (newVal, oldVal) => {
+    form.monitor_id = '';  
+})
+
+watch(() => form.monitor_id, (newVal, oldVal) => {
+    form.discipline_id = '';
+})
 
 const formdataParser = (form: any) => {
 	const formData = new FormData();
