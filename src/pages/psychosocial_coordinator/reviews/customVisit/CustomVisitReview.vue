@@ -51,20 +51,8 @@ const beneficiary_data = reactive({
     guardian_identification: '',
 })
 
-const months = asyncComputed(async () => {
-    return await getSelect(['months'])
-}, null)
 
-const cities = asyncComputed(async () => {
-    return await getSelect(['municipalities'])
-}, null)
-
-const municipalities = asyncComputed(async () => {
-    return await getSelect(['municipalities'])
-}, null)
-
-const beneficiariesList = ref<selectOption[]>([]);
-
+const healthEntities = ref()
 
 
 const dataLoaded = ref(false)
@@ -79,6 +67,12 @@ const getData = () => {
     form.concept = props.id_review.concept;
     form.guardian_knows_semilleros = props.id_review.guardian_knows_semilleros;
     form.file = props.id_review.file;
+
+    beneficiary_data.scholar_level = props.id_review.beneficiaries.scholar_level ? scholarLevels[props.id_review.beneficiaries.scholar_level - 1].label : 'No tiene';
+    beneficiary_data.health_entity = props.id_review.beneficiaries.health_entity_id ? healthEntities.value[props.id_review.beneficiaries.health_entity_id - 1].label : 'No tiene';
+    beneficiary_data.guardian_name = props.id_review.guardian.firts_name;
+    beneficiary_data.guardian_lastname = props.id_review.guardian.last_name;
+    beneficiary_data.guardian_identification = props.id_review.guardian.cedula;
     //form.created_by = props.id_review.createdBy.name;
     // await customVisitServices.get(props.id_review as string).then((response) => {
     //     console.log(response?.data.items);
@@ -109,7 +103,8 @@ const getData = () => {
 
 
 onMounted(async () => {
-    console.log(route.params.id);
+    healthEntities.value = await getHealthentities();
+    console.log(healthEntities.value);
     getData();
     //await getBeneficiaryData();
     dataLoaded.value = true;

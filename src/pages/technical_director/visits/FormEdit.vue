@@ -29,11 +29,8 @@ const form = reactive({
 	technical: '',
 	description: '',
 	file: [],
-	created_by: '',
 });
 const form_rules = computed(() => ({
-	status_id: { required },
-	rejection_message: { required: parseInt(form.status_id) == 2 },
 	date_visit: { required },
 	hour_visit: { required },
 	municipality_id: { required },
@@ -46,7 +43,6 @@ const form_rules = computed(() => ({
 	technical: { required },
 	observations: { required },
 	description: { required },
-	created_by: { required },
 }));
 
 
@@ -56,10 +52,6 @@ const municipalities = asyncComputed(async () => {
 const disciplines = asyncComputed(async () => {
 	return await getSelect(['disciplines']);
 }, null);
-const monitorList = [
-	{ label: 'Joselito', value: 1 },
-	{ label: 'Miguel Torres', value: 2 },
-];
 
 const event_supportList = [
 	{ label: 'Si', value: 1 },
@@ -97,8 +89,7 @@ const data = async () => {
 	await subdirectorVisitServices.get(id as string).then((response) => {
 		if (response?.status == 200) {
 			console.log(response.data.items)
-			form.created_by = response.data.items.created_by.name;
-			form.rejection_message = response.data.items.reject_message;
+			console.log(response.data.items.status_id)
 			form.status_id = response.data.items.status_id;
 			form.date_visit = response.data.items.date_visit;
 			form.hour_visit = response.data.items.hour_visit;
@@ -106,7 +97,7 @@ const data = async () => {
 			form.sidewalk = response.data.items.sidewalk;
 			form.monitor_id = response.data.items.monitor_id;
 			form.discipline_id = response.data.items.discipline_id;
-			form.sports_scene = response.data.items.sports_scene;
+			form.sports_scene = response.data.items.sport_scene;
 			form.beneficiary_coverage = response.data.items.beneficiary_coverage;
 			form.event_support = response.data.items.event_support;
 			form.technical = response.data.items.technical;
@@ -177,8 +168,8 @@ const disableElements = computed(() => {
 				v-model="form.date_visit" :validator="v$" />
 			<CommonInput :disabled="disableElements" type="time" label="Hora  *" name="hour_visit" v-model="form.hour_visit"
 				:validator="v$" />
-			<CommonInput :disabled="disableElements" label="Municipio *" name="municipality_id" class="cursor-pointer"
-				v-model="form.municipality_id" :validator="v$" />
+			<CommonSelect :disabled="disableElements" label="Municipio *" name="municipality_id" class="cursor-pointer"
+				v-model="form.municipality_id" :validator="v$" :options="municipalities" />
 
 			<CommonInput :disabled="disableElements" type="text" placeholder="Ingrese" label="Corregimiento / Vereda *"
 				name="sidewalk" v-model="form.sidewalk" :validator="v$" />
@@ -208,12 +199,16 @@ const disableElements = computed(() => {
 			<FormLabel for="evidencia" class="flex flex-col w-full sm:flex-row">
 				Evidencia *
 			</FormLabel>
-			<img :alt="`Evidencia de la visita del director`" class="m-auto border rounded-lg"
-				:src="`${urlStorage}/${form.file}`" width="400" />
+			<img :alt="`Evidencia de la visita del director`" class="m-auto border rounded-lg" :src="`${urlStorage}/${form.file}`"
+				width="400" />
 		</div>
 		<div class="p-5 mt-6 intro-y">
-			<CommonFile v-if="form.status_id == '4'" :validator="v$" v-model="form.file" name="file"
-				class="w-11/12 sm:w-8/12 m-auto cursor-pointer" @change="selectFile" @removefile="form.file = []" />
+			<CommonFile v-if="form.status_id == '4'"
+				v-model="form.file"
+				name="file"
+				class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
+				@change="selectFile"
+				@removefile="form.file = []" />
 		</div>
 	</div>
 

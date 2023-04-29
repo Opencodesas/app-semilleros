@@ -3,9 +3,7 @@ import useVuelidate from '@vuelidate/core'
 import { required } from '@/utils/validators'
 import FormSwitch from "@/base-components/Form/FormSwitch";
 import { customVisitServices } from '@/services/psychosocial/customVisitServices';
-import { selectOption } from '@/components/CommonSelect.vue';
 
-const { multiple } = useFilepondEvents();
 const route = useRoute();
 const urlStorage = `${import.meta.env.VITE_BASE_URL}/storage/`;
 
