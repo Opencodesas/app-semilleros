@@ -2,74 +2,35 @@
 import { Header, Item } from 'vue3-easy-data-table';
 import { searchData } from '@/composables/search';
 import customVisitReview from './CustomVisitReview.vue'
+import { customVisitServices } from '@/services/psychosocial/customVisitServices';
+import { onboardingStore } from '@/stores/onboardingStore';
 
-
-//Traer visitas personalizadas en revisión
-
-const items = ref<Item[]>([
-    {
-        id: '1',
-        month: 'Enero',
-        created_by: 'Pedro', //Nombre del usuario (Psicologo) que creo la visita
-        municipality: 'Cartago',
-        beneficiary: 'Juan Perez',//Nombre del beneficiario
-        status: {
-            id: 2,
-            name: 'En Revisión',
-            slug: 'ENR'
-        },
-    },
-    {
-        id: '2',
-        month: 'Enero',
-        created_by: 'Pedro', //Nombre del usuario (Psicologo) que creo la visita
-        municipality: 'Cartago',
-        beneficiary: 'Juan Perez',//Nombre del beneficiario
-        status: {
-            id: 2,
-            name: 'En Revisión',
-            slug: 'ENR'
-        },
-    },
-    {
-        id: '3',
-        month: 'Enero',
-        created_by: 'Pedro', //Nombre del usuario (Psicologo) que creo la visita
-        municipality: 'Cartago',
-        beneficiary: 'Juan Perez',//Nombre del beneficiario
-        status: {
-            id: 2,
-            name: 'En Revisión',
-            slug: 'ENR'
-        },
-    },
-])
 
 const headerCustomVisits: Header[] = [
-    { text: 'No', value: 'id', sortable: true },
-    { text: 'Mes', value: 'month', sortable: true },
-    { text: 'Usuario', value: 'created_by', sortable: true },
-    { text: 'Municipio', value: 'municipality', sortable: true },
-    { text: 'Beneficiario', value: 'beneficiary' },
+    { text: 'Mes', value: 'months.name', sortable: true },
+    { text: 'Usuario', value: 'createdBy.name', sortable: true },
+    { text: 'Municipio', value: 'municipalities.name', sortable: true },
+    { text: 'Beneficiario', value: 'beneficiaries.full_name' },
     { text: 'Estado', value: 'status' },
     { text: 'Acciones', value: 'actions' },
 ]
 
-//const v$ = useVuelidate(form_rules, form)
+const customVisits = ref<Item[]>([]);
 
 
-//Funciones para modal aun en desrrollo
-// const isOpen = ref(false)
+onBeforeMount(async () => {
+    console.log(onboardingStore().user)
+     await customVisitServices.getAll().then((response) => {
+          customVisits.value = response?.data.items
+          console.log(response?.data.items)
+      })
+      console.log(customVisits.value)
+ })
 
-// function closeModal() {
-//     isOpen.value = false
-// }
-// function openModal() {
-//     isOpen.value = true
-// }
+
 
 const search = ref('');
-const dataSearch = computed(() => searchData(items.value, search.value));
+const dataSearch = computed(() => searchData(customVisits.value, search.value));
 
 </script>
 

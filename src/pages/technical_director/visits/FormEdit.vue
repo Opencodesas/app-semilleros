@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import CommonFile from '@/components/CommonFile.vue';
-import { filePondValue } from '@/composables/useFilepondEvents';
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
 import { onboardingStore } from '@/stores/onboardingStore';
@@ -30,11 +29,8 @@ const form = reactive({
 	technical: '',
 	description: '',
 	file: [],
-	created_by: '',
 });
 const form_rules = computed(() => ({
-	status_id: { required },
-	rejection_message: { required: parseInt(form.status_id) == 2 },
 	date_visit: { required },
 	hour_visit: { required },
 	municipality_id: { required },
@@ -47,18 +43,12 @@ const form_rules = computed(() => ({
 	technical: { required },
 	observations: { required },
 	description: { required },
-	created_by: { required },
 }));
+
+
 const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
 }, null);
-const disciplines = asyncComputed(async () => {
-	return await getSelect(['disciplines']);
-}, null);
-const monitorList = [
-	{ label: 'Joselito', value: 1 },
-	{ label: 'Miguel Torres', value: 2 },
-];
 
 const event_supportList = [
 	{ label: 'Si', value: 1 },
@@ -86,16 +76,21 @@ const monitor = asyncComputed(async () => {
 	return await getMonitorByMunicipality(form.municipality_id);
 }, null);
 
+const disciplines = asyncComputed(async () => {
+    return await getDisciplinesByMonitor(form.monitor_id)
+}, null)
+
 
 const v$ = useVuelidate(form_rules, form);
 
 const dataLoaded = ref(false);
 
+let file;
 const data = async () => {
 	await subdirectorVisitServices.get(id as string).then((response) => {
 		if (response?.status == 200) {
-			form.created_by = response.data.items.created_by.name;
-			form.rejection_message = response.data.items.reject_message;
+			console.log(response.data.items)
+			console.log(response.data.items.status_id)
 			form.status_id = response.data.items.status_id;
 			form.date_visit = response.data.items.date_visit;
 			form.hour_visit = response.data.items.hour_visit;
@@ -103,7 +98,7 @@ const data = async () => {
 			form.sidewalk = response.data.items.sidewalk;
 			form.monitor_id = response.data.items.monitor_id;
 			form.discipline_id = response.data.items.discipline_id;
-			form.sports_scene = response.data.items.sports_scene;
+			form.sports_scene = response.data.items.sport_scene;
 			form.beneficiary_coverage = response.data.items.beneficiary_coverage;
 			form.event_support = response.data.items.event_support;
 			form.technical = response.data.items.technical;
@@ -116,10 +111,24 @@ const data = async () => {
 		}
 	});
 };
+
+watch(() => form.municipality_id, (newVal, oldVal) => {
+    if (dataLoaded.value) {
+        form.monitor_id = '';
+    }
+})
+
+watch(() => form.monitor_id, (newVal, oldVal) => {
+    if (dataLoaded.value) {
+        form.discipline_id = '';
+    }
+})
+
 onMounted(async () => {
 	await data();
 	dataLoaded.value = true;
 });
+
 const update = async () => {
 	const valid = await v$.value.$validate();
 	if (parseInt(form.beneficiary_coverage) < 0) {
@@ -133,7 +142,7 @@ const update = async () => {
 				if (response?.status == 200 || response?.status == 201) {
 					Swal.fire('', 'Modificacion exitosa!', 'success');
 					setLoading(true);
-					router.push({name: 'technical_director.visits'}).finally(() => {
+					router.push({ name: 'technical_director.visits' }).finally(() => {
 						setLoading(false);
 					});
 				} else {
@@ -169,8 +178,8 @@ const disableElements = computed(() => {
 		</div>
 
 		<div class="grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
-			<CommonInput :disabled="disableElements" type="date" label="Fecha  *" name="date_visit" v-model="form.date_visit"
-				:validator="v$" />
+			<CommonInput :disabled="disableElements" type="date" label="Fecha  *" name="date_visit"
+				v-model="form.date_visit" :validator="v$" />
 			<CommonInput :disabled="disableElements" type="time" label="Hora  *" name="hour_visit" v-model="form.hour_visit"
 				:validator="v$" />
 			<CommonSelect :disabled="disableElements" label="Municipio *" name="municipality_id" class="cursor-pointer"
@@ -189,8 +198,8 @@ const disableElements = computed(() => {
 				:validator="v$" />
 			<CommonSelect :disabled="disableElements" label="Cumple con el desarrollo tecnico del mes *" name="technical"
 				class="cursor-pointer" v-model="form.technical" :validator="v$" :options="evaluationList" />
-			<CommonSelect :disabled="disableElements" label="Apoyo a eventos *" name="event_support"
-				class="cursor-pointer" v-model="form.event_support" :validator="v$" :options="event_supportList" />
+			<CommonSelect :disabled="disableElements" label="Apoyo a eventos *" name="event_support" class="cursor-pointer"
+				v-model="form.event_support" :validator="v$" :options="event_supportList" />
 		</div>
 		<div class="mt-6 intro-y">
 			<CommonTextarea :disabled="disableElements" label="Descripcion *" rows="5" placeholder="Ingrese las Descripcion"
@@ -209,7 +218,6 @@ const disableElements = computed(() => {
 		</div>
 		<div class="p-5 mt-6 intro-y">
 			<CommonFile v-if="form.status_id == '4'"
-				:validator="v$"
 				v-model="form.file"
 				name="file"
 				class="w-11/12 sm:w-8/12 m-auto cursor-pointer"

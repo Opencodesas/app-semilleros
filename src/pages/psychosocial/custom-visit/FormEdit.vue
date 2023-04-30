@@ -2,32 +2,22 @@
 import useVuelidate from '@vuelidate/core'
 import { required } from '@/utils/validators'
 import FormSwitch from "@/base-components/Form/FormSwitch";
-import { filePondValue } from '@/composables/useFilepondEvents';
 import { customVisitServices } from '@/services/psychosocial/customVisitServices';
-import { selectOption } from '@/components/CommonSelect.vue';
-import { onboardingStore } from "@/stores/onboardingStore";
-
-const { multiple } = useFilepondEvents();
 
 const route = useRoute();
+const urlStorage = `${import.meta.env.VITE_BASE_URL}/storage/`;
 
-const { isProvider } = useProvider()
-
-const store = onboardingStore();
-
-//Recibe datos para editar visita personalizada
-//QUITAR DATOS DE PRUEBA
 const form = reactive({
-    month: '1',
-    municipality: '2',
-    beneficiary: '2',
-    topic: 'Físico',
-    agreements: 'Se llegó al acuerdo de...',
-    concept: '4',
+    month: '',
+    municipality: '',
+    beneficiary: '',
+    theme: '',
+    agreements: '',
+    concept: '',
     guardian_knows_semilleros: true,
     file: [],
-    status_id: '4', //id:4 => Rechazado => REC cambiamos si queremos ver otra vista
-    rejection_message: 'Fue rechazado por...',
+    status_id: '',
+    rejection_message: '',
 })
 
 
@@ -35,12 +25,37 @@ const form_rules = computed(() => ({
     month: { required },
     municipality: { required },
     beneficiary: { required },
-    topic: { required },
+    theme: { required },
     agreements: { required },
     concept: {},
     guardian_knows_semilleros: { required },
     file: [],
 }))
+
+const beneficiary_data = reactive({
+    scholar_level: '',
+    health_entity: '',
+    guardian_name: '',
+    guardian_lastname: '',
+    guardian_identification: '',
+})
+
+const file: any = ref(null);
+const formdataParser = (form: any) => {
+    console.log(form);
+    const formData = new FormData();
+    Object.keys(form).forEach((key) => {
+        formData.append(key, form[key]);
+    });
+    console.log(formData);
+    return formData;
+};
+const selectFile = (event: any) => {
+    console.log(form.file);
+    console.log(event.target.files);
+    form.file = event.target.files[0];
+    console.log(form.file);
+}
 
 const months = asyncComputed(async () => {
     return await getSelect(['months'])
@@ -50,47 +65,45 @@ const municipalities = asyncComputed(async () => {
     return await getSelect(['municipalities'])
 }, null)
 
+const beneficiariesList = asyncComputed(async () => {
+    return await getBeneficiariesByDepartment(form.municipality as string)
+}, null)
 
-const municipality_id = computed(() => form.municipality)
-
-const beneficiary_data = reactive({
-    grade: 'PRIMARIA',
-    health_entity: 'NUEVA EPS',
-    guardian_name: 'Liliana',
-    guardian_lastname: 'Garcia',
-    guardian_identification: '1074936855',
+watch(() => form.municipality, (newVal, oldVal) => {
+    if (dataLoaded.value) {
+        console.log(newVal);
+        form.beneficiary = '';
+    }
 })
 
-//Datos de prueba
-const beneficiaries = ref<selectOption[]>([
-    { label: 'Pedro', value: '1' },
-    { label: 'Juan', value: '2' },
-    { label: 'Maria', value: '3' },
-    { label: 'Jose', value: '4' },
-    { label: 'Luis', value: '5' },
-])
-//Usar para traer beneficiarios (nombre y id) por municipio
-// const beneficiaries = asyncComputed(async () => {
-//     return municipality_id.value ? await getBeneficiariesByMunicipaly(municipality_id.value) : []
-//  }, null)
+watch(() => form.beneficiary, (newVal, oldVal) => {
+    beneficiary_data.scholar_level = '';
+    beneficiary_data.health_entity = '';
+    beneficiary_data.guardian_name = '';
+    beneficiary_data.guardian_lastname = '';
+    beneficiary_data.guardian_identification = '';
+    //console.log(newVal);
+    newVal && getBeneficiaryData();
+})
 
 const dataLoaded = ref(false)
-//Verificar si se puede hacer con asycComputed
+
 const getData = async () => {
 
     await customVisitServices.get(route.params.id as string).then((response) => {
         console.log(response?.data.items);
+        console.log(response?.data.items)
         if (response?.status == 200 || response?.status == 201) {
-            form.rejection_message = response.data.items.rejection_message;
-            form.month = response.data.items.month;
-            form.municipality = response.data.items.municipality;
-            form.beneficiary = response.data.items.beneficiary;
-            form.topic = response.data.items.topic;
+            form.rejection_message = response.data.items.reject_message;
+            form.month = response.data.items.month_id;
+            form.municipality = response.data.items.municipality_id;
+            form.beneficiary = response.data.items.beneficiary_id;
+            form.theme = response.data.items.theme;
             form.agreements = response.data.items.agreements;
             form.concept = response.data.items.concept;
             form.guardian_knows_semilleros = response.data.items.guardian_knows_semilleros;
-            form.file = response.data.items.file;
-            form.status_id = response.data.items.status;
+            file.value = response.data.items.file;
+            form.status_id = response.data.items.status_id;
         } else {
             alerts.custom("", "No se pudieron obtener los datos", "error");
         }
@@ -99,36 +112,30 @@ const getData = async () => {
 };
 
 
-onMounted(async () => {
-    console.log(route);
-    await getData();
-    dataLoaded.value = true;
-    //form.status = `${route.params.id}`
-    console.log(form.status_id)
-});
+//Quitar cuando se ponga la relación
+const healthEntities = computedAsync(async () => {
+    return await getHealthentities();
+}, null)
 
 const getBeneficiaryData = async () => {
-    //Verificar que traiga los datos necesarios
     await beneficiaryServices.get(form.beneficiary as string).then((response) => {
         console.log(response?.data.items);
         if (response?.status == 200 || response?.status == 201) {
-            beneficiary_data.grade = response.data.items.grade;
-            beneficiary_data.health_entity = response.data.items.health_entity;
-            beneficiary_data.guardian_name = response.data.items.guardian_name;
-            beneficiary_data.guardian_lastname = response.data.items.guardian_lastname;
-            beneficiary_data.guardian_identification = response.data.items.guardian_identification;
+            beneficiary_data.scholar_level = response.data.items.scholar_level ? scholarLevels[response.data.items.scholar_level - 1].label : 'No tiene';
+            beneficiary_data.health_entity = response.data.items.health_entity_id ? healthEntities.value[response.data.items.health_entity_id - 1].label : 'No tiene';
+            beneficiary_data.guardian_name = response.data.items.acudiente.firts_name;
+            beneficiary_data.guardian_lastname = response.data.items.acudiente.last_name;
+            beneficiary_data.guardian_identification = response.data.items.acudiente.cedula;
         } else {
             alerts.custom("", "No se pudieron obtener los datos", "error");
         }
-        console.log(form);
     })
 }
 
-
-//Mirar si hago servicio
-// const beneficiary_data = asyncComputed(async () => {
-//     return form.beneficiary ? await getBeneficiaryData(form.beneficiary) : null
-// }, null)
+onMounted(async () => {
+    await getData();
+    dataLoaded.value = true;
+});
 
 const v$ = useVuelidate(form_rules, form)
 
@@ -142,7 +149,7 @@ const onSubmit = async () => {
                 if (response.status >= 200 && response.status <= 300) {
                     alerts.update()
                     setLoading(true)
-                    router.push('psychosocial.visits').finally(() => {
+                    router.push({ name: 'psychosocial.visits' }).finally(() => {
                         setLoading(false)
                     })
                 }
@@ -192,15 +199,15 @@ const positionRange = computed(() => {
                             :validator="v$" :options="months" />
                         <CommonSelect :disabled="disableElements" label="Municipio *" name="municipality"
                             v-model="form.municipality" :validator="v$" :options="municipalities" />
-                        <CommonSelect @select="getBeneficiaryData" :disabled="disableElements" label="Beneficiario *"
-                            name="beneficiary" v-model="form.beneficiary" :validator="v$" :options="beneficiaries" />
+                        <CommonSelect :disabled="disableElements" label="Beneficiario *" name="beneficiary"
+                            v-model="form.beneficiary" :validator="v$" :options="beneficiariesList" />
                     </div>
                     <!-- cambiar condicion por "beneficiary_data" cuando haya función para traer los datos -->
                     <div v-if="form.beneficiary">
                         <!-- These inputs don't use the validator since they have data from the DB   cambiar los v-model-->
                         <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
-                            <CommonInput disabled type="text" label="Grado de escolaridad" name="grade"
-                                v-model="beneficiary_data.grade" />
+                            <CommonInput disabled type="text" label="Grado de escolaridad" name="scholar_level"
+                                v-model="beneficiary_data.scholar_level" />
                             <CommonInput disabled type="text" label="Entidad de salud" name="health_entity"
                                 v-model="beneficiary_data.health_entity" />
                         </div>
@@ -227,7 +234,7 @@ const positionRange = computed(() => {
                         <div class="col-span-3 sm:grid-cols-3 space-y-6 pt-5">
                             <CommonTextarea :disabled="disableElements"
                                 label="Temáticas durante la visita: físico, emocional, familiar, escolar, social, espiritual *"
-                                placeholder="Escriba..." name="topic" rows="5" v-model="form.topic" :validator="v$" />
+                                placeholder="Escriba..." name="theme" rows="5" v-model="form.theme" :validator="v$" />
 
                             <CommonTextarea :disabled="disableElements" label="Acuerdos y recomendaciones *"
                                 placeholder="Escriba..." name="agreements" rows="5" v-model="form.agreements"
@@ -251,15 +258,13 @@ const positionRange = computed(() => {
                         <!-- Comprobar qué es lo que se está enviando -->
                         <div class="grid justify-center col-span-3 gap-10 p-5">
                             <h1 class="text-center font-bold">Evidencia</h1>
-                            <!-- <img v-if="form.file" :src="form.file[0]" alt=""> -->
-                            <img src="/semilleros.png" width="200" alt="">
+                            <img :alt="`Evidencia de la visita personalizada`" class="m-auto border rounded-lg"
+                                :src="`${urlStorage}${file}`" width="400" />
                         </div>
 
                         <div v-if="form.status_id == '4'" class="col-span-3 p-5 mt-6 intro-y">
-                            <CommonFile :validator="v$" v-model="form.file" name="file"
-                                class="w-11/12 sm:w-8/12 m-auto cursor-pointer" :accept-multiple="false"
-                                @addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
-                                @removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }" />
+                            <CommonFile v-if="form.status_id == '4'" v-model="form.file" name="file"
+                                class="w-11/12 sm:w-8/12 m-auto cursor-pointer" @change="selectFile" />
                         </div>
                     </div>
                 </div>

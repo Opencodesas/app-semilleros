@@ -602,9 +602,7 @@ const selectedTab = inject('selectedTab', ref(0));
 								item.status.id == '2' && route.name === 'review.index'
 							">
 							<template v-if="props.Form!">
-								<Modal
-									:Form="props.Form"
-									:id_review="item.id" />
+								<Modal :Form="props.Form" :id_review="item" />
 							</template>
 						</template>
 					</template>
@@ -662,9 +660,7 @@ const selectedTab = inject('selectedTab', ref(0));
 					<template v-else-if="isProvider('psychosocial-coordinator')">
 						<template v-if="route.name == 'psychosocial-coordinator.reviews'">
 							<template v-if="props.Form!">
-								<Modal
-									:Form="props.Form"
-									:id_review="item.id" />
+								<Modal :Form="props.Form" :id_review="item" />
 							</template>
 						</template>
 					</template>

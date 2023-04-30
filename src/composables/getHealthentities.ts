@@ -9,7 +9,7 @@ export const getHealthentities = async () => {
             }
         })
 
-        return data
+        return data.sort((a: any, b: any) => a.value - b.value)
 
     } catch (error: any) {
         alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
