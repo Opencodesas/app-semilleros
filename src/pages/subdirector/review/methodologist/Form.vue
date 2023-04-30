@@ -12,7 +12,7 @@ const route = useRoute();
 
 const props = defineProps<{
 	closeModal: Function;
-	id_review: number;
+	item: any;
 }>();
 
 const form = reactive({
@@ -72,69 +72,61 @@ const monitorList = asyncComputed(async () => {
 }, null);
 const statusList = [
 	{ label: 'Aprobado', value: 1 },
-	{ label: 'Rechazado', value: 2 },
+	{ label: 'Rechazado', value: 4 },
 ];
 const v$ = useVuelidate(form_rules, form);
-
-const getData = async () => {
-	await methodologistVisitServices.get(props.id_review).then((res) => {
-		if (res) {
-			if (res?.status == 200 || res?.status == 201) {
-				form.id = res.data.items.id;
-				form.observations = res.data.items.observations;
-				form.user_id = res.data.items.monitor?.id;
-				form.municipalitie_id = res.data.items.municipalities.id;
-				form.event_support_id = res.data.items.event_supports.id;
-				form.hour_visit = res.data.items.hour_visit;
-				form.discipline_id = res.data.items.disciplines.id;
-				form.sidewalk = res.data.items.sidewalk;
-				form.sports_scene = res.data.items.sports_scene;
-				form.beneficiary_coverage = res.data.items.beneficiary_coverage;
-				form.evaluation_id = res.data.items.evaluations.id;
-				form.date_visit = res.data.items.date_visit;
+const getData = () => {
+	console.log(props.item);
+				form.id = props.item.id;
+				form.observations = props.item.observations;
+				form.user_id = props.item.monitor?.id;
+				form.municipalitie_id = props.item.municipalities.id;
+				form.event_support_id = props.item.event_supports.id;
+				form.hour_visit = props.item.hour_visit;
+				form.discipline_id = props.item.disciplines.id;
+				form.sidewalk = props.item.sidewalk;
+				form.sports_scene = props.item.sports_scene;
+				form.beneficiary_coverage = props.item.beneficiary_coverage;
+				form.evaluation_id = props.item.evaluations.id;
+				form.date_visit = props.item.date_visit;
 				form.created_by =
-					res.data.items.creator.name + ' ' + res.data.items.creator.lastname;
-				form.file = res.data.items.file;
+					props.item.creator.name + ' ' + props.item.creator.lastname;
+				form.file = props.item.file;
 				form.swich_plans_r =
-					res.data.items?.swich_plans_r == '0' ? false : true;
+					props.item?.swich_plans_r == '0' ? false : true;
 				form.swich_plans_gm_1 =
-					res.data.items?.swich_plans_gm_1 == '0' ? false : true;
+					props.item?.swich_plans_gm_1 == '0' ? false : true;
 				form.swich_plans_gm_2 =
-					res.data.items?.swich_plans_gm_2 == '0' ? false : true;
+					props.item?.swich_plans_gm_2 == '0' ? false : true;
 				form.swich_plans_gm_3 =
-					res.data.items?.swich_plans_gm_3 == '0' ? false : true;
+					props.item?.swich_plans_gm_3 == '0' ? false : true;
 				form.swich_plans_gm_4 =
-					res.data.items?.swich_plans_gm_4 == '0' ? false : true;
+					props.item?.swich_plans_gm_4 == '0' ? false : true;
 				form.swich_plans_gm_5 =
-					res.data.items?.swich_plans_gm_5 == '0' ? false : true;
+					props.item?.swich_plans_gm_5 == '0' ? false : true;
 				form.swich_plans_gm_6 =
-					res.data.items?.swich_plans_gm_6 == '0' ? false : true;
+					props.item?.swich_plans_gm_6 == '0' ? false : true;
 				form.swich_plans_sc_1 =
-					res.data.items?.swich_plans_sc_1 == '0' ? false : true;
+					props.item?.swich_plans_sc_1 == '0' ? false : true;
 				form.swich_plans_sc_2 =
-					res.data.items?.swich_plans_sc_2 == '0' ? false : true;
+					props.item?.swich_plans_sc_2 == '0' ? false : true;
 				form.swich_plans_sc_3 =
-					res.data.items?.swich_plans_sc_3 == '0' ? false : true;
+					props.item?.swich_plans_sc_3 == '0' ? false : true;
 				form.swich_plans_sc_4 =
-					res.data.items?.swich_plans_sc_4 == '0' ? false : true;
+					props.item?.swich_plans_sc_4 == '0' ? false : true;
 				form.swich_plans_mp_1 =
-					res.data.items?.swich_plans_mp_1 == '0' ? false : true;
+					props.item?.swich_plans_mp_1 == '0' ? false : true;
 				form.swich_plans_mp_2 =
-					res.data.items?.swich_plans_mp_2 == '0' ? false : true;
+					props.item?.swich_plans_mp_2 == '0' ? false : true;
 				form.swich_plans_mp_3 =
-					res.data.items?.swich_plans_mp_3 == '0' ? false : true;
+					props.item?.swich_plans_mp_3 == '0' ? false : true;
 				form.swich_plans_mp_4 =
-					res.data.items?.swich_plans_mp_4 == '0' ? false : true;
+					props.item?.swich_plans_mp_4 == '0' ? false : true;
 				form.swich_plans_mp_5 =
-					res.data.items?.swich_plans_mp_5 == '0' ? false : true;
-				file.value = res.data.items.file;
-
-				dataLoaded.value = true;
-			} else {
-				Swal.fire('', 'No se pudieron obtener los datos', 'error');
-			}
-		}
-	});
+					props.item?.swich_plans_mp_5 == '0' ? false : true;
+				file.value = props.item.file;
+	dataLoaded.value = true;
+				console.log(dataLoaded.value);
 };
 
 onMounted(async () => {
@@ -147,16 +139,15 @@ const event_supportList = [
 ];
 const onSubmit = async () => {
 	const valid = await v$.value.$validate();
-
+	console.log(form.status_id);
 	if (valid) {
 		await methodologistVisitServices
-			.update(props.id_review.toString(), formdataParser(form))
+			.update(form.id.toString(), formdataParser(form))
 			.then((response) => {
 				if (response) {
 					if (response.status >= 200 && response.status <= 300) {
 						alerts.update();
 						setLoading(true);
-
 						props.closeModal();
 						setLoading(false);
 						window.location.reload();
@@ -192,7 +183,7 @@ const disableElements = true;
 			v-model="form.reject_message"
 			:validator="v$"
 			rows="4"
-			v-if="parseInt(form.status_id) == 2" />
+			v-if="parseInt(form.status_id) == 4" />
 		<div
 			class="mt-6 flex justify-end col-span-1 md:col-span-2 border-none gap-1"
 			tabindex="1">
