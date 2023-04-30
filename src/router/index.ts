@@ -460,11 +460,11 @@ const routes = [
 						component: () => import('@/pages/psychosocial/visit/Form.vue'),
 					},
 					{
-						path: "update/:id",
-						name: "psychosocial.update",
-						component: () => import('@/pages/psychosocial/visit/FormEdit.vue'),
-					},
-					{
+						// {
+						// 	path: "update/:id",
+						// 	name: "psychosocial.update",
+						// 	component: () => import('@/pages/...'),
+						// },
 						path: "custom-visit",
 						name: "psychosocial.custom-visit",
 						component: () => import('@/pages/psychosocial/custom-visit/Form.vue'),
@@ -505,7 +505,7 @@ const routes = [
 					{
 						path: "reviews",
 						name: "psychosocial-coordinator.reviews",
-						component: () => import('@/pages/psychosocial_coordinator/reviews/index.vue'),
+						component: () => import('@/pages/psychosocial_coordinator/reviews/Index.vue'),
 					},
 				],
 			},
@@ -575,7 +575,6 @@ const routes = [
 					}
 				]
 			},
-			
 			{
 				path: "administrative_director",
 				name: "administrative_director",
@@ -588,6 +587,34 @@ const routes = [
 					},
 				],
 			},
+			{
+				path: "subdirector",
+				name: "subdirector",
+				meta: { provider: 'subdirector' },
+				children: [
+					{
+						path: "",
+						name: "subdirector_visit.index",
+						component: () => import('@/pages/subdirector/visit/Index.vue')
+					},
+					{
+						path: "visit",
+						name: "subdirector_visit.create",
+						component: () => import('@/pages/subdirector/visit/Form.vue')
+					},
+					{
+						path: "edit/:id",
+						name: "subdirector_visit.edit",
+						component: () => import('@/pages/subdirector/visit/Edit.vue')
+					},
+					{
+						path: 'review',
+						name: 'review.index',
+						component: () => import('@/pages/subdirector/review/Index.vue')
+					}
+				]
+			},
+
 			{
 				path: "users_of_zones",
 				name: "users_of_zones",
@@ -624,27 +651,6 @@ const routes = [
 						component: () => import('@/pages/user/FormEdit.vue')
 					},
 				]
-			},
-			{
-				path: "coordinator",
-				name: "coordinator",
-				meta: { provider: 'coordinator' },
-				children: [
-					{
-						path: "",
-						name: "coordinator.index",
-						component: () => import('@/pages/coordinators/Index.vue'),
-					},{
-						path: "create",
-						name: "coordinator.create",
-						component: () => import('@/pages/coordinators/Form.vue')
-					},
-					{
-						path: ":id",
-						name: "coordinator.edit",
-						component: () => import('@/pages/coordinators/FormEdit.vue')
-					},
-				],
 			},
 		],
 	},

@@ -7,7 +7,7 @@ export const subdirectorVisitServices = {
         try {
             setLoading(true)
 
-            const response = await api.get(`/${apiPath}/${module}/${id}`).finally(() => {
+            const response = await api.get(`/${apiPath}/${module}?id=${id}`).finally(() => {
                 setLoading(false)
             })
 
@@ -47,7 +47,7 @@ export const subdirectorVisitServices = {
         try {
             setLoading(true)
 
-            const response = await api.post(`/${apiPath}/${module}/${id}`, payload).finally(() => {
+            const response = await api.post(`/${apiPath}/${module}?_method=PUT&id=${id}`, payload).finally(() => {
                 setLoading(false)
             })
 

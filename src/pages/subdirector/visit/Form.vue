@@ -10,7 +10,7 @@ const router = useRouter();
 const route = useRoute();
 
 const form = reactive({
-	status_id: '',
+	status_id: '2',
 	rejection_message: '',
 	date_visit: '',
 	hour_visit: '',
@@ -28,7 +28,7 @@ const form = reactive({
 });
 
 const form_rules = computed(() => ({
-	status_id: {},
+	status_id: { required },
 	rejection_message: {},
 	date_visit: { required },
 	hour_visit: { required },
@@ -44,6 +44,7 @@ const form_rules = computed(() => ({
 	observations: { required },
 	file: { required },
 }));
+
 const disciplinesList = ref([]);
 const monitorList = [
 	{ label: 'Joselito', value: 1 },

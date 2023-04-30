@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import CommonFile from '@/components/CommonFile.vue';
 import { filePondValue } from '@/composables/useFilepondEvents';
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
@@ -7,8 +8,9 @@ const { multiple } = useFilepondEvents();
 const router = useRouter();
 
 const form = reactive({
+	id: '',
 	status: '',
-	rejection_message: '',
+	reason: '',
 	municipality_id: '',
 	date_visit: '',
 	nro_assistants: 0,
@@ -19,10 +21,12 @@ const form = reactive({
 	team_socialization: '',
 	development_activity: '',
 	content_network: '',
-	file: [],
+	files: [],
+	create_by: '',
 });
 
 const form_rules = computed(() => ({
+	status: { required },
 	municipality_id: { required },
 	date_visit: { required },
 	nro_assistants: { required },
@@ -33,7 +37,8 @@ const form_rules = computed(() => ({
 	team_socialization: { required },
 	development_activity: { required },
 	content_network: { required },
-	file: { required },
+	files: { required },
+	create_by: { required },
 }));
 
 const v$ = useVuelidate(form_rules, form);
@@ -48,37 +53,16 @@ const obtenerImagen = (e: any) => {
 	console.log(file);
 };
 const onSubmit = async () => {
-	// console.log(form.file[0]);
-	// file = form.file[0] as never[];
-	console.log(form.file);
-	const formData = new FormData();
-	formData.append('municipality_id', form.municipality_id);
-	formData.append('date_visit', form.date_visit);
-	formData.append('nro_assistants', form.nro_assistants);
-	formData.append('activity_name', form.activity_name);
-	formData.append('objective_activity', form.objective_activity);
-	formData.append('scene', form.scene);
-	formData.append('meeting_planing', form.meeting_planing);
-	formData.append('team_socialization', form.team_socialization);
-	formData.append('development_activity', form.development_activity);
-	formData.append('content_network', form.content_network);
-	formData.append('file', form.file);
-	console.log(formData);
-	// console.log(form);
-
-
-
-	const valid = await v$.value.$validate()
+	const valid = await v$.value.$validate();
 	if (form.nro_assistants < 0) {
 		alerts.error('El numero de asistentes no puede ser negativo');
 		return;
 	}
 	if (valid) {
 		await transversalActivityServices
-			.create(formData)
-			.then((response) => {
-				console.log(response);
-				if (response?.status == 200 || response?.status == 201) {
+			.create(formdataParser(form))
+			.then((response: any) => {
+				if (response.status == 200 || response.status == 201) {
 					alerts.create();
 					setLoading(true);
 					router

@@ -7,11 +7,11 @@ export const searchData = (items: Item[], search: String) => {
 		return items.filter(
 			(item) =>
 				item.date_visit?.includes(searchValue) ||
-				item.municipality?.name?.toLowerCase().includes(searchValue) ||
+				item.municipality?.toLowerCase().includes(searchValue) ||
 				item.coordinator_name?.toLowerCase().includes(searchValue) ||
 				item.sport_scene?.toLowerCase().includes(searchValue) ||
 				item.evaluation?.toLowerCase().includes(searchValue) ||
-				item.status?.name?.toLowerCase().includes(searchValue) ||
+				item.status.name?.toLowerCase().includes(searchValue) ||
 				item.methodologist_name?.toLowerCase().includes(searchValue) ||
 				item.monitor_name?.toLowerCase().includes(searchValue) ||
 

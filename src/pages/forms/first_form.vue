@@ -149,11 +149,13 @@
             :allowEmpty="false"
             :options="optionsDiscapacidad"
           />
-          <CommonInput v-if="form.discapacidad === '1'"
+          <CommonInput
             label="¿Cual?"
             name="otroDisc"
             v-model="form.otroDisc"
             :validator="v$"
+            :required="discapacidad === '1'"
+            :disabled="discapacidad !== '1'"
           />
           <CommonSelect
             label="Patologia"
@@ -163,11 +165,13 @@
             :allowEmpty="false"
             :options="optionsPatologia"
           />
-          <CommonInput v-if="form.patologia === '1'"
+          <CommonInput
             label="¿Cual?"
             name="otroPato"
             v-model="form.otroPato"
             :validator="v$"
+            :required="patologia === '1'"
+            :disabled="patologia !== '1'"
           />
           <CommonSelect
             label="Tipo de sangre"
@@ -178,72 +182,36 @@
             :options="optionsSangre"
           />
           <CommonSelect
-            label="Vivo con"
-            name="vivoCon"
-            v-model="form.vivoCon"
+            label="Escolaridad"
+            name="escolaridad"
+            v-model="escolaridad"
             :validator="v$"
-            :allowEmpty="false"
-            :options="optionsVivo"
+            :required="true"
+            :options="optionsEscolaridad"
           />
-          
         </div>
-        
         <CommonSelect
           class="mt-5"
-          label="Escolaridad"
-          name="escolaridad"
-          v-model="form.escolaridad"
+          label="Vivo con"
+          name="vivoCon"
+          v-model="vivoCon"
           :validator="v$"
-          :allowEmpty="false"
-          :options="optionsEscolaridad"
+            :required="true"
+          :options="optionsVivo"
         />
-
-        <div v-if="form.escolaridad === '1'" class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
-            
-          <CommonSelect
-              label="Nivel de Escolaridad"
-              name="nivel_escolaridad"
-              v-model="form.nivel_escolaridad"
-              :validator="v$"
-              :allowEmpty="false"
-              :options="optionsNivelEscolaridad"
-            />
-            
-          <CommonInput
-              label="Institución Educativa"
-              name="institucion"
-              v-model="form.institucion"
-              :validator="v$"
-            />
-        </div>
-
-        <div class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
-
-          <CommonSelect
-            label="Tipo afiliacion(EPS)"
-            name="afiliacion"
-            v-model="form.afiliacion"
-            :validator="v$"
-            :allowEmpty="false"
-            :options="optionsAfiliacion"
-          />
-
-          <CommonSelect v-if="form.afiliacion && form.afiliacion !== 'NA'"
-            label="Entidad de Salud"
-            name="health_entity"
-            v-model="form.health_entity"
-            :validator="v$"
-            :allowEmpty="false"
-            :options="healthEntities"
-          />
-
-          
-        </div>
-
-        <div class="m-4 text-center">
-          <Button type="button" @click="onNext( v$ )">Continuar</Button>
-        </div>
-        
+        <CommonSelect class="mt-5"
+          label="Tipo afiliacion(EPS)"
+          name="afiliacion"
+          v-model="afiliacion"
+          :validator="v$"
+            :required="true"
+          :options="optionsAfiliacion"
+        />
+        <!--
+          <div class="m-4 text-center">
+            <Button type="submit" >Continuar</Button>
+          </div>
+        -->
       </div>
     </div>
 
@@ -463,8 +431,6 @@ const form = reactive({
   otroPato: "",
   sangre: "",
   escolaridad: "",
-  nivel_escolaridad: "",
-  institucion: "",
   vivoCon: "",
   afiliacion: "",
   health_entity: "",
@@ -482,109 +448,62 @@ const form = reactive({
 });
 
 const form_rules = computed(() => ({
-  fechaInscripcion:   { required },
-  municipio:          { required },
-  disciplinas:        { required },
-  nombres:            { required },
-  apellidos:          { required },
-  fechaNacimiento:    { required },
-  lugarNacimiento:    { required },
-  tipoIdentificacion: { required },
-  numeroDocumento:    { required },
-  direccionResidencia:{ required },
-  numeroCel:          { required },
-  estrato:            { required },
-  zona:               { required },
-  victimaConflicto:   { required },
-  pueblo:             { required },
-  genero:             { required },
-  etnia:              { required },
-  discapacidad:       { required },
-  otroDisc:           form.discapacidad === '0' ? {} : { required },
-  patologia:          { required },
-  otroPato:           form.patologia === '0' ? {} : { required },
-  sangre:             { required },
-  escolaridad:        { required },
-  nivel_escolaridad:  form.escolaridad === '0' ? {} : { required },
-  institucion:        form.escolaridad === '0' ? {} : { required },
-  vivoCon:            { required },
-  afiliacion:         { required },
-  health_entity:   form.afiliacion && form.afiliacion !== 'NA' ? { required } : {},
-}));
-
-const form_rules_tamizaje = computed(() => ({
-  morfologicas: {
-    $each: helpers.forEach({
-        estatura: { nestedRequired },
-        envergadura: { nestedRequired },
-        masa: { nestedRequired },
-    })
-  },
-  nutricionales: {
-    $each: helpers.forEach({
-        flexibilidad:  { nestedRequired },
-        velocidad:  { nestedRequired },
-        fuerza:  { nestedRequired },
-        oculomanual:  { nestedRequired },
-    })
-  }
-}));
-
-const form_rules_acudiente = computed(() => ({
-  nombresAcudiente:   { required },
-  apellidosAcudiente: { required },
-  nDocuAcudiente:     { required },
-  parentesco:         { required },
-  email:              { required },
-  // checkEmail:      { required },
-  nCelularAcudiente:  { required },
-  // checkNCel:       { required },
-  redesAcudiente:     { required },
-  enterado:           { required },
+  fechaInscripcion: {  },
+  municipio: {  },
+  disciplinas: {  },
+  nombres: {  },
+  apellidos: {  },
+  fechaNacimiento: {  },
+  lugarNacimiento: {  },
+  tipoIdentificacion: {  },
+  numeroDocumento: {  },
+  direccionResidencia: {  },
+  numeroCel: {  },
+  estrato: {  },
+  zona: {  },
+  victimaConflicto: {  },
+  pueblo: {  },
+  genero: {  },
+  etnia: {  },
+  discapacidad: {  },
+  otroDisc: {  },
+  patologia: {  },
+  otroPato: {  },
+  sangre: {  },
+  escolaridad: {  },
+  vivoCon: {  },
+  afiliacion: {  },
+  nombresAcudiente: {  },
+  apellidosAcudiente: {  },
+  nDocuAcudiente: {  },
+  parentesco: {  },
+  email: {  },
+  // checkEmail: {},
+  nCelularAcudiente: {  },
+  // checkNCel: {},
+  redesAcudiente: {  },
+  enterado: {  },
 }));
 
 const municipalitiesList = ref([]);
 const diciplinesList = ref([]);
 const ethniacityList = ref([]);
-const step = ref(1)
-
+const zonesList = ref([]);
 //---------------------------//
 onMounted(async () => {
   //peticion a la api para las listas desplegables, by rick.
   store.getListSelect().then((response) => {
     if (response?.status == 200) {
-      municipalitiesList.value = JSON.parse(JSON.stringify(response.data['my_municipalities']));
+      municipalitiesList.value = JSON.parse(JSON.stringify(response.data['municipalities']));
       diciplinesList.value = JSON.parse(JSON.stringify(response.data['diciplines']));
       ethniacityList.value = JSON.parse(JSON.stringify(response.data['ethniacity']));
+      zonesList.value = JSON.parse(JSON.stringify(response.data["zones"]));
     } else {
       Swal.fire("", "No se pudieron obtener los datos", "error");
     }
   });
 });
-
-const v$ = useVuelidate(form_rules, form, { $lazy: true, $autoDirty: true });
-const v2$ = useVuelidate(form_rules_tamizaje, form, { $lazy: true, $autoDirty: true });
-const v3$ = useVuelidate(form_rules_acudiente, form, { $lazy: true, $autoDirty: true });
-
-const onNext = async ( validation: Validation ) => {
-
-  await validation.$validate()
-  .then((valid) => {
-      (valid) ? next_step() : alerts.validation()
-  })
-}
-
-const next_step = (step_to?: number) => {
-    if (step_to) {
-        step.value = step_to
-    }
-    else {
-        if (step.value < 6) {
-            step.value++
-        }
-    }
-};
-
+const v$ = useVuelidate(form_rules, form);
 </script>
 
 <script lang="ts">
@@ -592,6 +511,47 @@ const next_step = (step_to?: number) => {
 export default defineComponent({
   data() {
     return {
+      accordion: [
+        {
+          shown: true
+        },
+        {
+          shown: true
+        }
+      ],
+      fechaInscripcion: "",
+      municipio: "",
+      disciplinas: "",
+      nombres: "",
+      apellidos: "",
+      fechaNacimiento: "",
+      lugarNacimiento: "",
+      tipoIdentificacion: "",
+      numeroDocumento: "",
+      direccionRes: "",
+      numeroCel: "",
+      estrato: "",
+      zona: "",
+      victimaConf: "",
+      pueblo: "",
+      genero: "",
+      etnia: "",
+      discapacidad: "",
+      otroDiscapacidad: "",
+      patologia: "",
+      otroPatologia: "",
+      sangre: "",
+      escolaridad: "",
+      vivoCon: "",
+      afiliacion: "",
+      nombresAcudiente: "",
+      apellidosAcudiente: "",
+      nDocuAcudiente: "",
+      parentesco: "",
+      email: "",
+      nCelularAcudiente: "",
+      redesAcudiente: "",
+      enterado: "",
       optionsMunicipio: [
         { label: "cali", value: "1" },
         { label: "caicedonia", value: "2" },
@@ -611,30 +571,34 @@ export default defineComponent({
         { label: "hapkido", value: "7" },
       ],
       optionsIdentificacion: [
-        { label: "cedula", value: "CC" },
-        { label: "nit", value: "NIT" },
-        { label: "tarjeta de identidad", value: "TI" },
-        { label: "pasaporte", value: "PP" },
+        { label: "cedula", value: "1" },
+        { label: "nit", value: "2" },
+        { label: "tarjeta de identidad", value: "3" },
+        { label: "pasaporte", value: "4" },
       ],
       optionsEstrato: [
         { label: "1", value: "1" },
         { label: "2", value: "2" },
         { label: "3", value: "3" },
         { label: "4", value: "4" },
-        { label: "5", value: "5" },
-        { label: "6", value: "6" },
       ],
-      zonesList: [
-        { label: "RURAL", value: "R" },
-        { label: "URBANA", value: "U" },
+      optionsZona: [
+        { label: "REGION 1", value: "1" },
+        { label: "REGION 2", value: "2" },
+        { label: "REGION 3", value: "3" },
+        { label: "REGION 4", value: "4" },
+        { label: "REGION 5", value: "5" },
+        { label: "REGION 6", value: "6" },
+        { label: "REGION 7", value: "7" },
+        { label: "REGION 8", value: "8" },
       ],
       optionsVictima: [
         { label: "SI", value: "1" },
         { label: "NO", value: "0" },
       ],
       optionsGenero: [
-        { label: "Masculino", value: "M" },
-        { label: "Femenino", value: "F" },
+        { label: "Masculino", value: "Masculino" },
+        { label: "Femenino", value: "Femenino" },
       ],
       optionsEtnia: [
         { label: "Indigena", value: "1" },
@@ -663,11 +627,6 @@ export default defineComponent({
         { label: "Si", value: "1" },
         { label: "No", value: "0" },
       ],
-      optionsNivelEscolaridad: [
-        { label: "Primaria", value: "1" },
-        { label: "Secundaria", value: "2" },
-        { label: "Graduado", value: "3" },
-      ],
       optionsVivo: [
         { label: "Padre", value: "Padre" },
         { label: "Madre", value: "Madre" },
@@ -677,15 +636,14 @@ export default defineComponent({
         { label: "Otros", value: "Otros" },
       ],
       optionsAfiliacion: [
-        { label: "Subsidiado", value: "SUB" },
-        { label: "Contributivo", value: "CON" },
-        { label: "No tiene", value: "NA" },
+        { label: "Subsidiado", value: "Subsidiado" },
+        { label: "Contributivo", value: "Contributivo" },
+        { label: "No tiene", value: "No tiene" },
       ],
       optionsRedes: [
         { label: "Facebook", value: "Facebook" },
         { label: "Instagram", value: "Instagram" },
         { label: "Telegram", value: "Telegram" },
-        { label: "Twitter", value: "Twitter" },
       ],
       optionsEnterado: [
         { label: "Ente municipal", value: "Ente municipal" },
@@ -741,56 +699,52 @@ export default defineComponent({
       })
 
       const data = {
-        registration_date: form.fechaInscripcion,
-        municipalities_id: form.municipio,
-        disciplines_id: form.disciplinas,
+        registration_date: this.fechaInscripcion,
+        beneficiary_name: this.nombres,
+        beneficiary_last_name: this.apellidos,
+        birth_date: this.fechaNacimiento,
+        origin_place: this.lugarNacimiento,
+        identification_type: this.tipoIdentificacion,
+        number_document: this.numeroDocumento,
+        home_address: this.direccionRes,
+        beneficiary_phone: this.numeroCel,
+        stratum: this.estrato,
+        conflict_victim: this.victimaConf,
+        distric: this.pueblo,
+        gender: this.genero,
+        disability: this.discapacidad,
+        pathology: this.patologia,
+        scholarship: this.escolaridad,
+        live_with: this.vivoCon,
+        affiliation_type: this.afiliacion,
+        attendant_name: this.nombresAcudiente,
+        attendant_last_name: this.apellidosAcudiente,
+        attendant_number_document: this.nDocuAcudiente,
+        parentesco: this.parentesco,
+        email: this.email,
+        phone_number: this.numeroCel,
+        social_media: this.redesAcudiente,
+        find_out: this.enterado,
+        municipalities_id: this.municipio,
+        disciplines_id: this.disciplinas,
+        zones_id: this.zona,
+        ethnicities_id: this.etnia,
+        blood_types_id: this.sangre,
 
-        beneficiary_name: form.nombres,
-        beneficiary_last_name: form.apellidos,
-        full_name: `${form.nombres} ${form.apellidos}`,        
-        
-        birth_date: form.fechaNacimiento,
-        origin_place: form.lugarNacimiento,
-        type_document: form.tipoIdentificacion,
-        document_number: form.numeroDocumento,
-        home_address: form.direccionResidencia,
-        phone: form.numeroCel,
-        stratum: form.estrato,
-        zone: form.zona,
-        conflict_victim: form.victimaConflicto,
-        distric: form.pueblo,
-        gender: form.genero,
-        ethnicities_id: form.etnia,
-        disability: form.discapacidad,
-        other_disability: form.otroDisc,
-        pathology: form.patologia,
-        what_pathology: form.otroPato,
-        blood_type: form.sangre,
-        live_with: form.vivoCon,
-        scholarship: form.escolaridad,
-        scholar_level: form.nivel_escolaridad,
-        institution: form.institucion,
-        affiliation_type: form.afiliacion,
-        health_entity_id: form.health_entity,
-
-        // Tamizaje
-        morfologica: morfologica,
-        nutricional: nutricional,
-        
-        // Datos del Acudiente
-        attendant_name: form.nombresAcudiente,
-        attendant_last_name: form.apellidosAcudiente,
-        attendant_number_document: form.nDocuAcudiente,
-        parentesco: form.parentesco,
-        email: form.email,
-        phone_number: form.nCelularAcudiente,
-        social_media: form.redesAcudiente,
-        find_out: form.enterado,
-
-        // created_by: 1,
+        // datos prueba para la base de datos que no pueden ser null
+        created_by: 1,
+        full_name: `${this.nombres} ${this.apellidos}`,
         accept: 1,
-        linkage_project: 1,
-        status_id: 2,
+        linkage_project:1,
+       
+        document_number: this.numeroDocumento,
+        phone:this.numeroCel,
+        status: "REC",
+       
+        
+
+
+
       };
       axios.addBeneficiary(data).then((res: any) => {
         if(res){
@@ -803,7 +757,39 @@ export default defineComponent({
       });
     },
     limpiar() {
-      
+      this.fechaInscripcion = "";
+      this.municipio = "";
+      this.disciplinas = "";
+      this.nombres = "";
+      this.apellidos = "";
+      this.fechaNacimiento = "";
+      this.lugarNacimiento = "";
+      this.tipoIdentificacion = "";
+      this.numeroDocumento = "";
+      this.direccionRes = "";
+      this.numeroCel = "";
+      this.estrato = "";
+      this.zona = "";
+      this.victimaConf = "";
+      this.pueblo = "";
+      this.genero = "";
+      this.etnia = "";
+      this.discapacidad = "";
+      this.otroDiscapacidad = "";
+      this.patologia = "";
+      this.otroPatologia = "";
+      this.sangre = "";
+      this.escolaridad = "";
+      this.vivoCon = "";
+      this.afiliacion = "";
+      this.nombresAcudiente = "";
+      this.apellidosAcudiente = "";
+      this.nDocuAcudiente = "";
+      this.parentesco = "";
+      this.email = "";
+      this.nCelularAcudiente = "";
+      this.redesAcudiente = "";
+      this.enterado = "";
     },
     regresar() {
       window.alert("Regresa");
