@@ -7,9 +7,7 @@ import { selectOption } from '@/components/CommonSelect.vue';
 import { filePondValue } from '@/composables/useFilepondEvents';
 import { requiredIf } from "@vuelidate/validators";
 
-const { multiple } = useFilepondEvents();
-
-const route = useRoute();
+const urlStorage = `${import.meta.env.VITE_BASE_URL}/storage/`;
 
 const props = defineProps<{
     closeModal: Function;
@@ -59,6 +57,7 @@ const dataLoaded = ref(false)
 //Verificar si se puede hacer con asycComputed
 const getData = () => {
     console.log(props.id_review);
+    form.created_by = props.id_review.createdBy.name
     form.month = props.id_review.months.name;
     form.municipality = props.id_review.municipalities.name;
     form.beneficiary = props.id_review.beneficiaries.full_name;
@@ -243,8 +242,7 @@ const definereject_message = () => {
                 <!-- Comprobar qué es lo que se está enviando -->
                 <div class="grid justify-center col-span-3 gap-10 p-5">
                     <h1 class="text-center font-bold">Evidencia</h1>
-                    <!-- <img :src="form.file[0]" alt=""> -->
-                    <img src="/semilleros.png" width="200" alt="">
+                    <img :src="`${urlStorage}${form.file}`" width="400" alt="Evidencia visita personalizada">
                 </div>
             </div>
 
