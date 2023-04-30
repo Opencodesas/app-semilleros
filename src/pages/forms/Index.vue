@@ -32,7 +32,7 @@ const items = ref<Item[]>([])// 3. Definir una variable,para guardar los los dat
 onBeforeMount(async () => {
     await beneficiary_Services.getAll().then((response) => {  //4 . Llamar el metodo a consumir
         items.value = response?.data.items
-    })
+    }).catch()
 })
 
 const searchData = (items: Item[], search: String) => {
