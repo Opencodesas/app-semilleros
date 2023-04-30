@@ -36,41 +36,42 @@ export const useSideMenuStore = defineStore("sideMenu", {
       //   pageName: "example.index",
       //   title: "Listado de Ejemplo",
       // },*/
-      // {
-      //   icon: "Activity",
-      //   title: "Semilleros",
-      //   subMenu: [
-      //     {
-      //       icon: "Activity",
-      //       pageName: "users.index",
-      //       title: "Usuarios",
-      //     }, {
-      //       icon: "Activity",
-      //       pageName: "users_of_zones.index",
-      //       title: "Usuarios por Region"
-      //     },
-      //     {
-      //       icon: "Activity",
-      //       pageName: "methodologist_visits.index",
-      //       title: "Visita Metodólogo"
-      //     },
-      //     {
-      //       icon: "Activity",
-      //       pageName: "subdirector_visit.index",
-      //       title: "Visita Subdirectora"
-      //     },
-      //     {
-      //       icon: "Activity",
-      //       pageName: "beneficiaries.index",
-      //       title: "Beneficiarios"
-      //     },
-      //     {
-      //       icon: "Activity",
-      //       pageName: "chronograms.index",
-      //       title: "Cronograma"
-      //     },
-      //   ]
-      // },
+      {
+        icon: "Activity",
+        title: "Semilleros",
+        subMenu: [
+          {
+            icon: "Activity",
+            pageName: "users.index",
+            title: "Usuarios",
+          }, 
+          /* {
+            icon: "Activity",
+            pageName: "users_of_zones.index",
+            title: "Usuarios por Region"
+          }, */
+          /* {
+            icon: "Activity",
+            pageName: "methodologist_visits.index",
+            title: "Visita Metodólogo"
+          }, */
+          /* {
+            icon: "Activity",
+            pageName: "subdirector_visit.index",
+            title: "Visita Subdirectora"
+          }, */
+          {
+            icon: "Activity",
+            pageName: "beneficiaries.index",
+            title: "Beneficiarios"
+          },
+          {
+            icon: "Activity",
+            pageName: "chronograms.index",
+            title: "Cronograma"
+          },
+        ]
+      },
       // {
       //   icon: "User",
       //   title: "Auxiliar",
@@ -201,12 +202,28 @@ export const useSideMenuStore = defineStore("sideMenu", {
           {
             icon: "Activity",
             pageName: "psychosocial.transversal-activity.create",
-            title: "Actividades transversales",
+            title: "Crear actividades transversales",
           },
           {
             icon: "Activity",
             pageName: "psychosocial.visits",
             title: "Formatos",
+          },
+        ]
+      },
+      {
+        icon: "User",
+        title: "Coordinador",
+        subMenu: [
+          {
+            icon: "Activity",
+            pageName: "coordinator.create",
+            title: "Crear visita",
+          },
+          {
+            icon: "Activity",
+            pageName: "coordinator.index",
+            title: "Visitas",
           },
         ]
       },
@@ -295,9 +312,18 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: "fichas_inscripcion.index",
             title: "Revisiones",
           },
+          {
+            icon: "Activity",
+            pageName: "methodologist_visits.create",
+            title: "Crear visita",
+          },
+          {
+            icon: "Activity",
+            pageName: "methodologist_visits.index",
+            title: "Visitas"
+          },
         ]
       },
-
     ],
   }),
   getters: {
@@ -316,6 +342,13 @@ export const useSideMenuStore = defineStore("sideMenu", {
       }
       else if (isRole('metodologo')){
         return state.menu.filter( (menuItem) => menuItem == 'divider' ? 'divider' : menuItem.title == "Metodólogo")
+      }
+      else if (isRole('subdirector_tecnico')){
+        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) =>
+        //solo admite paginas ficha_inscripción
+        subMenuItem.pageName?.includes('subdirector_visit')
+        //&& para agregar
+        ))
       }
       else {
         return state.menu

@@ -9,6 +9,9 @@ import {
 } from '@headlessui/vue';
 import { useVuelidate } from '@vuelidate/core';
 import { computed, reactive, ref } from 'vue';
+import * as lucideIcons from "lucide-vue-next";
+
+export type Icon = keyof typeof lucideIcons;
 
 const isOpen = ref(false);
 
@@ -24,7 +27,7 @@ const props = defineProps<{
 	id_review: number;
 	payloadFunctions?: Object;
 	label?: string;
-	icon?: string;
+	icon?: Icon;
 }>();
 
 const form = reactive({
@@ -47,7 +50,7 @@ const formRules = computed(() => ({
 			outline-secondary
 			@click="openModal()">
 			<Lucide
-				:icon="props.icon?props.icon.toString():'Eye'"
+				:icon="props.icon ? props.icon : 'Eye'"
 				class="mr-2" />
 			<span class="text-sm">{{ props.label?props.label:'Revisar' }}</span>
 		</Button>
@@ -87,7 +90,8 @@ const formRules = computed(() => ({
 						leave-from="opacity-100 scale-100"
 						leave-to="opacity-0 scale-95">
 						<DialogPanel
-							class="transform overflow-hidden rounded-md bg-white p-6 text-left align-middle shadow-xl transition-all">
+							class="transform overflow-hidden rounded-md bg-white p-6 pt-2 text-left align-middle shadow-xl transition-all"
+							scrollClass="dialogPanel">
 							<!-- <Form /> -->
 							<props.Form :closeModal="closeModal" :id_review="props.id_review" :payloadFunctions="payloadFunctions"/>
 						</DialogPanel>

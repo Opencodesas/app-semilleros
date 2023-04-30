@@ -7,8 +7,8 @@ import { createRouter, createWebHistory, NavigationGuardNext, RouteLocationNorma
 
 const authGuard = async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
 	const { isAuth } = storeToRefs(onboardingStore())
-	const storeAccess = accessStore()
-	const canAccess = await storeAccess.canUserAccess(to.name as string)
+	// const storeAccess = accessStore()
+	// const canAccess = await storeAccess.canUserAccess(to.name as string)
 
 	if (!isAuth && to.name != 'login')
 		next({ name: 'login' })
@@ -366,6 +366,7 @@ const routes = [
 			{
 				path: "beneficiaries",
 				name: "beneficiaries",
+				meta: { provider: 'fichaInscrip' },
 				children: [
 					{
 						path: "index",
@@ -406,23 +407,24 @@ const routes = [
 				]
 			},
 			{
-				path: "methodologist_visits",
+				path: "methodologist",
 				name: "methodologist_visits",
+				
 				children: [
 					{
 						path: "",
 						name: "methodologist_visits.index",
-						component: () => import('@/pages/views/Index.vue')
+						component: () => import('@/pages/methodologist/Index.vue')
 					},
 					{
 						path: "create",
 						name: "methodologist_visits.create",
-						component: () => import('@/pages/views/Form.vue')
+						component: () => import('@/pages/methodologist/Form.vue')
 					},
 					{
-						path: "edit",
-						name: "methodologist_visits.update",
-						// component: () => import('@/pages/contractors/Form.vue')
+						path: "edit/:id",
+						name: "methodologist_visits.edit",
+						component: () => import('@/pages/methodologist/Edit.vue')
 					},
 				]
 			},
@@ -460,11 +462,11 @@ const routes = [
 						component: () => import('@/pages/psychosocial/visit/Form.vue'),
 					},
 					{
-						// {
-						// 	path: "update/:id",
-						// 	name: "psychosocial.update",
-						// 	component: () => import('@/pages/...'),
-						// },
+						path: "update/:id",
+						name: "psychosocial.update",
+						component: () => import('@/pages/psychosocial/visit/FormEdit.vue'),
+					},
+					{
 						path: "custom-visit",
 						name: "psychosocial.custom-visit",
 						component: () => import('@/pages/psychosocial/custom-visit/Form.vue'),
@@ -505,7 +507,7 @@ const routes = [
 					{
 						path: "reviews",
 						name: "psychosocial-coordinator.reviews",
-						component: () => import('@/pages/psychosocial_coordinator/reviews/Index.vue'),
+						component: () => import('@/pages/psychosocial_coordinator/reviews/index.vue'),
 					},
 				],
 			},
@@ -575,6 +577,7 @@ const routes = [
 					}
 				]
 			},
+			
 			{
 				path: "administrative_director",
 				name: "administrative_director",
@@ -587,34 +590,6 @@ const routes = [
 					},
 				],
 			},
-			{
-				path: "subdirector",
-				name: "subdirector",
-				meta: { provider: 'subdirector' },
-				children: [
-					{
-						path: "",
-						name: "subdirector_visit.index",
-						component: () => import('@/pages/subdirector/visit/Index.vue')
-					},
-					{
-						path: "visit",
-						name: "subdirector_visit.create",
-						component: () => import('@/pages/subdirector/visit/Form.vue')
-					},
-					{
-						path: "edit/:id",
-						name: "subdirector_visit.edit",
-						component: () => import('@/pages/subdirector/visit/Edit.vue')
-					},
-					{
-						path: 'review',
-						name: 'review.index',
-						component: () => import('@/pages/subdirector/review/Index.vue')
-					}
-				]
-			},
-
 			{
 				path: "users_of_zones",
 				name: "users_of_zones",
@@ -651,6 +626,27 @@ const routes = [
 						component: () => import('@/pages/user/FormEdit.vue')
 					},
 				]
+			},
+			{
+				path: "coordinator",
+				name: "coordinator",
+				meta: { provider: 'coordinator' },
+				children: [
+					{
+						path: "",
+						name: "coordinator.index",
+						component: () => import('@/pages/coordinators/Index.vue'),
+					},{
+						path: "create",
+						name: "coordinator.create",
+						component: () => import('@/pages/coordinators/Form.vue')
+					},
+					{
+						path: ":id",
+						name: "coordinator.edit",
+						component: () => import('@/pages/coordinators/FormEdit.vue')
+					},
+				],
 			},
 		],
 	},

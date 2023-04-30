@@ -1,9 +1,5 @@
 <script setup lang="ts">
-import { searchData } from '@/composables/search';
-import { onboardingStore } from '@/stores/onboardingStore';
 import { Header, Item } from 'vue3-easy-data-table';
-
-const store = onboardingStore();
 
 const router = useRouter();
 
@@ -13,64 +9,24 @@ const create = () => {
 		setLoading(false);
 	});
 };
-
-// onBeforeMount(async () => {
-// 	await subdirectorVisitServices.getAll(id = store.user.id).then((response) => {
-// 		items.value = response?.data.items
-// 	});
-// });
+const items = ref<Item[]>([]);
 
 const headers: Header[] = [
-	{ text: 'No', value: 'id' },
-	{ text: 'Fecha', value: 'date_visit' },
-	{ text: 'Municipio', value: 'municipality' },
-	{ text: 'Monitor', value: 'monitor_name' },
+	//{ text: 'No', value: 'id', sortable: true },
+	{ text: 'Fecha', value: 'date_visit', sortable: true },
+	{ text: 'Municipio', value: 'municipality.name', sortable: true },
+	{ text: 'Monitor', value: 'monitor.name', sortable: true },
 	{ text: 'Escenario Deportivo', value: 'sport_scene' },
 	{ text: 'Estado', value: 'status', sortable: true },
 	{ text: 'Acciones', value: 'actions' },
 ];
 
-// const items = ref<Item[]>([]);
-const search = ref('');
-const items = ref<Item[]>([
-	{
-		id: '1',
-		date_visit: '2023-02-15',
-		municipality: 'Jamundi',
-		monitor_name: 'Oscar Martinez',
-		sport_scene: 'Cancha Marcella',
-		status: {
-			id: 2,
-			name: 'En Revisión',
-			slug: 'ENR',
-		},
-	},
-	{
-		id: '2',
-		date_visit: '2023-02-20',
-		municipality: 'Jamundi',
-		monitor_name: 'Oscar Martinez',
-		sport_scene: 'Cancha Marcella',
-		status: {
-			id: 2,
-			name: 'En Revisión',
-			slug: 'ENR',
-		},
-	},
-	{
-		id: '3',
-		date_visit: '2023-02-27',
-		municipality: 'Jamundi',
-		monitor_name: 'Oscar Martinez',
-		sport_scene: 'Cancha Marcella',
-		status: {
-			id: 2,
-			name: 'Rechazado',
-			slug: 'REC',
-		},
-	},
-]);
+onMounted(async () => {
+	const res = await subdirectorVisitServices.getAll();
+	items.value = await res?.data.items;
+});
 
+const search = ref('');
 const data = computed(() => searchData(items.value, search.value));
 </script>
 

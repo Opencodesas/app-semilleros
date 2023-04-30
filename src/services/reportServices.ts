@@ -14,7 +14,9 @@ const translations: Translations = {
     visitSubDirector: "Visitas subdirector",
     transversalActivity: "Actividades transversales",
     coordinatorVisit: "Visitas coordinador regional",
-    customVisit: "Visitas personalizas psicosocial",
+    customPsychologicalVisits: "Visitas personalizas psicosocial",
+    inscriptions: "Fichas de inscripción",
+    navigationHistory: "Historial de navegación",
 };
 
 const date = ref(dayjs().format("DD_MM_YYYY"));

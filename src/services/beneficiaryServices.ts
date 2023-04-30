@@ -65,5 +65,5 @@ export const beneficiaryServices = {
         } catch (error: any) {
             alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
         }
-    }
+    },
 }

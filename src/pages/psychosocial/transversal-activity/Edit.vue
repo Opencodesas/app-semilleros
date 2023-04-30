@@ -5,6 +5,7 @@ import { required } from '@vuelidate/validators';
 
 const { multiple } = useFilepondEvents();
 const router = useRouter();
+const urlStorage = `${import.meta.env.VITE_BASE_URL}/storage/`;
 const dataLoaded = ref(false);
 
 
@@ -42,6 +43,8 @@ const form_rules = computed(() => ({
 	create_by: { required },
 }));
 
+const files: any = ref([]);
+
 const v$ = useVuelidate(form_rules, form);
 
 const municipalities = asyncComputed(async () => {
@@ -50,7 +53,6 @@ const municipalities = asyncComputed(async () => {
 
 onMounted(async () => {
 	await transversalActivityServices.get(router.currentRoute.value.params.id as string).then((response: any) => {
-		console.log(response.data.items.file);
 		form.id = response.data.items.id;
 		form.status_id = response.data.items.status_id;
 		form.rejection_message = response.data.items.reject_message;
@@ -64,14 +66,28 @@ onMounted(async () => {
 		form.team_socialization = response.data.items.team_socialization;
 		form.development_activity = response.data.items.development_activity;
 		form.content_network = response.data.items.content_network;
-		form.file = response.data.items.file;
-		form.create_by = response.data.items.create_by;
+		files.value = response.data.items.files;
+		form.create_by = response.data.items.creator.name;
 		dataLoaded.value = true;
 	});
 })
 
+const formdataParser = (form: any) => {
+	const formData = new FormData();
+	Object.keys(form).forEach((key) => {
+		if (key == 'file') {
+			form[key].forEach((file: any) => {
+				formData.append('file[]', file);
+			});
+		} else {
+			formData.append(key, form[key]);
+		}
+	});
+	return formData;
+};
+
 const onSubmit = async () => {
-	console.log(form.file);
+	form.file = files.value.length == form.file.length ? files.value : form.file;
 	const valid = await v$.value.$validate();
 	if (form.nro_assistants < 0) {
 		alerts.error('El numero de asistentes no puede ser negativo');
@@ -79,7 +95,7 @@ const onSubmit = async () => {
 	}
 	if (valid) {
 		await transversalActivityServices
-			.create(formdataParser(form))
+			.update(form.id, formdataParser(form))
 			.then((response: any) => {
 				if (response.status == 200 || response.status == 201) {
 					alerts.create();
@@ -221,17 +237,19 @@ const download = () => {};
 				:validator="v$" 
 				:disabled="disableElements"/>
 		</div>
-		<div class="p-5 mt-6 intro-y">
+		<div class="p-5 mt-6 intro-y" >
 			<FormLabel
 				for="evidencia"
 				class="flex flex-col w-full sm:flex-row">
 				Evidencia *
 			</FormLabel>
-			<img
-				:alt="`Evidencia de la visita del subdirector`"
-				class="m-auto border rounded-lg"
-				src="/semilleros.png"
-				width="400" />
+			<div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3">
+				<img v-for="file in files"
+					:alt="`Evidencia del psicosocial ${form.create_by}`"
+					class="m-auto border rounded-lg h-80 w-80 xl:h-96 xl:w-96"
+					:src="`${urlStorage}${file.path}`"
+					/>
+			</div>
 		</div>
 		<div class="p-5 intro-y" v-if="!disableElements">
 			<CommonDropzone

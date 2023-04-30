@@ -1,18 +1,13 @@
 <script setup lang="ts">
 import CommonFile from '@/components/CommonFile.vue';
 import { filePondValue } from '@/composables/useFilepondEvents';
-import { onboardingStore } from '@/stores/onboardingStore';
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
 import Swal from 'sweetalert2';
 const { multiple } = useFilepondEvents();
-const store = onboardingStore();
 const router = useRouter();
-const route = useRoute();
 
 const form = reactive({
-	status_id: '3',
-	rejection_message: '',
 	date_visit: '',
 	hour_visit: '',
 	municipality_id: '',
@@ -26,11 +21,8 @@ const form = reactive({
 	description: '',
 	observations: '',
 	file: [],
-	created_by: store.user.id,
 });
 const form_rules = computed(() => ({
-	status_id: { required },
-	rejection_message: {},
 	date_visit: { required },
 	hour_visit: { required },
 	municipality_id: { required },
@@ -44,8 +36,9 @@ const form_rules = computed(() => ({
 	description: { required },
 	observations: { required },
 	file: { required },
-	created_by: { required },
 }));
+
+
 const disciplinesList = ref([]);
 const monitorList = [
 	{ label: 'Joselito', value: 1 },
@@ -60,37 +53,71 @@ const evaluationList = [
 	{ label: 'Rechazada', value: 2 },
 ];
 const v$ = useVuelidate(form_rules, form);
+
+const monitor = asyncComputed(async () => {
+	return await getMonitorByMunicipality(form.municipality_id);
+}, null);
+
 const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
 }, null);
+
 const disciplines = asyncComputed(async () => {
-	return await getSelect(['disciplines']);
-}, null);
+    return await getDisciplinesByMonitor(form.monitor_id)
+}, null)
+
+watch(() => form.municipality_id, (newVal, oldVal) => {
+    form.monitor_id = '';  
+})
+
+watch(() => form.monitor_id, (newVal, oldVal) => {
+    form.discipline_id = '';
+})
+
+const formdataParser = (form: any) => {
+	const formData = new FormData();
+	Object.keys(form).forEach((key) => {
+		formData.append(key, form[key]);
+	});
+	return formData;
+};
+
+const selectFile = (e: any) => {
+	form.file = e.target.files[0]
+};
+
 const onSubmit = async () => {
 	const valid = await v$.value.$validate();
+	if (parseInt(form.beneficiary_coverage) < 0) {
+		alerts.error('El numero de asistentes no puede ser negativo');
+		return;
+	}
 	if (valid) {
-		await technicalDirectorVisitServices
+		await subdirectorVisitServices
 			.create(formdataParser(form))
 			.then((response) => {
-				if (response?.status == 200 || response?.status == 201) {
-					Swal.fire('', 'Creación exitosa!', 'success');
-					setLoading(true);
-					router
-						.push({
-							name: 'technical_director.visits',
-						})
-						.finally(() => {
-							setLoading(false);
-						});
-				} else {
-					Swal.fire('', 'No se pudo crear', 'error');
+				if (response) {
+					if (response.status >= 200 && response.status <= 300) {
+						Swal.fire('', 'Creación exitosa!', 'success');
+						setLoading(true);
+						router
+							.push({
+								name: 'technical_director.visits',
+							})
+							.finally(() => {
+								setLoading(false);
+							});
+					} else {
+						Swal.fire('', 'No se pudo crear', 'error');
+					}
 				}
 			});
-}};
+	}
+};
 </script>
 
 <template>
-	<div class="flex items-center mt-8 intro-y">		
+	<div class="flex items-center mt-8 intro-y">
 		<h2 class="mr-auto text-lg font-medium">Registrar visita</h2>
 	</div>
 
@@ -110,7 +137,6 @@ const onSubmit = async () => {
 				:validator="v$" />
 			<CommonSelect
 				label="Municipio *"
-				placeholder="Seleccione"
 				name="municipality_id"
 				class="cursor-pointer"
 				v-model="form.municipality_id"
@@ -127,14 +153,12 @@ const onSubmit = async () => {
 			<CommonSelect
 				label="Monitor *"
 				name="monitor_id"
-				placeholder="Seleccione"
 				class="cursor-pointer"
 				v-model="form.monitor_id"
 				:validator="v$"
-				:options="monitorList" />
+				:options="monitor" />
 			<CommonSelect
 				label="Disciplinas *"
-				placeholder="Seleccione"
 				name="discipline_id"
 				class="cursor-pointer"
 				v-model="form.discipline_id"
@@ -158,7 +182,6 @@ const onSubmit = async () => {
 			<CommonSelect
 				label="Cumple con el desarrollo tecnico del mes *"
 				name="technical"
-				placeholder="Seleccione"
 				class="cursor-pointer"
 				v-model="form.technical"
 				:validator="v$"
@@ -166,7 +189,6 @@ const onSubmit = async () => {
 			<CommonSelect
 				label="Apoyo a eventos *"
 				name="event_support"
-				placeholder="Seleccione"
 				class="cursor-pointer"
 				v-model="form.event_support"
 				:validator="v$"
@@ -196,12 +218,12 @@ const onSubmit = async () => {
 				v-model="form.file"
 				name="file"
 				class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
-				@addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
-				@removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }" />
+				@change="selectFile"
+				@removefile="form.file = []" />
 		</div>
 	</div>
 
-	<div class="mt-6 flex justify-end col-span-1 md:col-span-2">
+	<div class="mt-6 flex justify-center col-span-1 md:col-span-2">
 		<Button
 			variant="primary"
 			class="btn btn-primary"

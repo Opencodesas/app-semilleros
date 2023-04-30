@@ -23,7 +23,7 @@ const headers: Header[] = [
     { text: 'ID', value: 'id' },
     { text: 'MES', value: 'month' },
     { text: 'MUNICIPIO', value: 'municipio' },
-    { text: 'ETAPA', value: 'start_date' },
+    { text: 'ETAPA', value: 'reviewed' },
     { text: 'ESTADO', value: 'status' },
     { text: 'ACCIONES', value: 'actions' },
 ]
