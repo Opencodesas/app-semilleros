@@ -7,12 +7,12 @@ import Form from './Form.vue';
 const search = ref('');
 
 const headers: Header[] = [
-	{ text: 'Nro.', value: 'id' },
+	//{ text: 'Nro.', value: 'id' },
 	{ text: 'Fecha', value: 'date_visit' },
-	{ text: 'Municipio', value: 'municipality' },
-	{ text: 'Metodologo', value: 'methodologist_name' },
-	{ text: 'Escenario Deportivo', value: 'sport_scene' },
-	{ text: 'Evaluacion', value: 'evaluation' },
+	{ text: 'Municipio', value: 'municipalities.name' },
+	{ text: 'Metodologo', value: 'creator.name' },
+	{ text: 'Escenario Deportivo', value: 'sports_scene' },
+	{ text: 'Evaluacion', value: 'evaluations' },
 	{ text: 'Estado', value: 'status' },
 	{ text: 'Acciones', value: 'actions' },
 ];
@@ -20,11 +20,11 @@ const headers: Header[] = [
 const items = ref<Item[]>([]);
 
 onMounted(async () => {
-	// await methodologistVisitServices
-	// 	.getAll()
-	// 	.then((response) => {
-	// 		items.value = response?.data.items;
-	// 	});
+	const res = await methodologistVisitServices.getAll()
+	items.value = await res?.data.items
+	for (let i = 0; i < items.value.length; i++) {
+		items.value[i].evaluations = await items.value[i].evaluations.id == '1' ? 'Aprobado' : 'Rechazado';
+	}
 });
 
 const dataSearch = computed(() => searchData(items.value, search.value));

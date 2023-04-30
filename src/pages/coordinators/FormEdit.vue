@@ -41,10 +41,6 @@ const form_rules = computed(() => ({
 	file: { required },
 }));
 
-const monitorList = [
-	{ label: 'Joselito', value: 1 },
-	{ label: 'Miguelito', value: 2 },
-];
 const v$ = useVuelidate(form_rules, form);
 // Consulta todos lo municipios 
 const municipalities = asyncComputed(async () => {

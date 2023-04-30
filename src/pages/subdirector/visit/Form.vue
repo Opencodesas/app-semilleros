@@ -42,10 +42,6 @@ const form_rules = computed(() => ({
 	file: { required },
 }));
 
-const monitorList = [
-	{ label: 'Joselito', value: 1 },
-	{ label: 'Miguelito', value: 2 },
-];
 const event_supportList = [
 	{ label: 'Si', value: 1 },
 	{ label: 'No', value: 2 },
@@ -222,7 +218,7 @@ const onSubmit = async () => {
 		</div>
 	</div>
 
-	<div class="mt-6 flex justify-end col-span-1 md:col-span-2">
+	<div class="mt-6 flex justify-center	 col-span-1 md:col-span-2">
 		<Button
 			variant="primary"
 			class="btn btn-primary"

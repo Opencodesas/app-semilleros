@@ -292,6 +292,22 @@ export const useSideMenuStore = defineStore("sideMenu", {
           },
         ]
       },
+      {
+        icon: "User",
+        title: "Metodólogo",
+        subMenu: [
+          {
+            icon: "Activity",
+            pageName: "methodologist_visits.create",
+            title: "Crear visita",
+          },
+          {
+            icon: "Activity",
+            pageName: "methodologist_visits.index",
+            title: "Visitas"
+          },
+        ]
+      },
     ],
   }),
   getters: {
@@ -305,7 +321,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
       else if (isRole('metodologo')){
         return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) =>
         //solo admite paginas ficha_inscripción
-        subMenuItem.pageName?.includes('fichas_inscripcion')
+        subMenuItem.pageName?.includes('methodologist_visits')
         //&& para agregar
         ))
       }
@@ -320,6 +336,13 @@ export const useSideMenuStore = defineStore("sideMenu", {
         return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) =>
         //solo admite paginas ficha_inscripción
         subMenuItem.pageName?.includes('fichas_inscripcion')
+        //&& para agregar
+        ))
+      }
+      else if (isRole('subdirector_tecnico')){
+        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) =>
+        //solo admite paginas ficha_inscripción
+        subMenuItem.pageName?.includes('subdirector_visit')
         //&& para agregar
         ))
       }
