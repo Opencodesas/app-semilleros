@@ -5,9 +5,6 @@ import { required } from '@vuelidate/validators';
 import { onboardingStore } from '@/stores/onboardingStore';
 import Swal from 'sweetalert2';
 
-
-const store = onboardingStore();
-const { multiple } = useFilepondEvents();
 const urlStorage = `${import.meta.env.VITE_BASE_URL}/storage/`;
 const router = useRouter();
 const route = useRoute();
@@ -45,6 +42,7 @@ const form_rules = computed(() => ({
 	description: { required },
 }));
 
+const file: any = ref(null);
 
 const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
@@ -85,7 +83,6 @@ const v$ = useVuelidate(form_rules, form);
 
 const dataLoaded = ref(false);
 
-let file;
 const data = async () => {
 	await subdirectorVisitServices.get(id as string).then((response) => {
 		if (response?.status == 200) {
@@ -104,7 +101,7 @@ const data = async () => {
 			form.technical = response.data.items.technical;
 			form.observations = response.data.items.observations;
 			form.description = response.data.items.description;
-			form.file = response.data.items.file;
+			file.value = response.data.items.file;
 			setLoading(false);
 		} else {
 			setLoading(false);
@@ -213,7 +210,7 @@ const disableElements = computed(() => {
 			<FormLabel for="evidencia" class="flex flex-col w-full sm:flex-row">
 				Evidencia *
 			</FormLabel>
-			<img :alt="`Evidencia de la visita del director`" class="m-auto border rounded-lg" :src="`${urlStorage}/${form.file}`"
+			<img :alt="`Evidencia de la visita del director`" class="m-auto border rounded-lg" :src="`${urlStorage}/${file}`"
 				width="400" />
 		</div>
 		<div class="p-5 mt-6 intro-y">

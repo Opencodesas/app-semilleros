@@ -6,51 +6,10 @@ import { onboardingStore } from '@/stores/onboardingStore';
 
 //Traer visitas del director tecnico en revisión
 
-// const items = ref<Item[]>([
-//     {
-//         id: '1',
-//         date_visit: '2023-02-15',
-//         municipality: 'Jamundi',
-//         director_name: 'Oscar Martinez',
-//         sport_scene: 'Cancha Marcella',
-//         status: {
-//             id: 2,
-//             name: 'En Revisión',
-//             slug: 'ENR',
-//         },
-//     },
-//     {
-//         id: '2',
-//         date_visit: '2023-02-20',
-//         municipality: 'Jamundi',
-//         director_name: 'Oscar Martinez',
-//         sport_scene: 'Cancha Marcella',
-//         status: {
-//             id: 2,
-//             name: 'En Revisión',
-//             slug: 'ENR',
-//         },
-//     },
-//     {
-//         id: '3',
-//         date_visit: '2023-02-27',
-//         municipality: 'Jamundi',
-//         director_name: 'Oscar Martinez',
-//         sport_scene: 'Cancha Marcella',
-//         status: {
-//             id: 2,
-//             name: 'En Revisión',
-//             slug: 'ENR',
-//         },
-//     },
-// ]);
-
-const store = onboardingStore();
 
 const items = ref<Item[]>([]);
 
 onBeforeMount(async () => {
-    console.log(store.get_user_role);
 
 	await subdirectorVisitServices.getAll().then((response) => {
 		items.value = response?.data.items;
