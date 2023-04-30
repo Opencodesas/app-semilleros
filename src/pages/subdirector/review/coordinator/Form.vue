@@ -9,7 +9,7 @@ const dataLoaded = ref(false);
 
 const props = defineProps<{
 	closeModal: Function;
-	id_review: number;
+	item: any;
 }>();
 
 const form = reactive({
@@ -62,32 +62,21 @@ const statusList = [
 const v$ = useVuelidate(form_rules, form);
 
 // Obtiene los datos de la visita
-onMounted(async () => {
-	await coordinatorVisitServices
-		.get(props.id_review.toString())
-		.then((response) => {
-			if (response?.status == 200 || response?.status == 201) {
-				form.id = response.data.items.id;
-				form.beneficiary_coverage = response.data.items.beneficiary_coverage;
-				form.date_visit = response.data.items.date_visit;
-				form.hour_visit = response.data.items.hour_visit;
-				form.sports_scene = response.data.items.sports_scene;
-				form.observations = response.data.items.observations;
-				form.description = response.data.items.description;
-				form.discipline_id = response.data.items.discipline_id;
-				form.municipalitie_id = response.data.items.municipalitie.id;
-				form.user_id = response.data.items.user_id;
-				form.sidewalk = response.data.items.sidewalk;
-				form.coordinator_name = response.data.items.created_by.name;
-				form.file = response.data.items.file;
+onMounted(() =>{ 
+				form.id = props.item.id;
+				form.beneficiary_coverage = props.item.beneficiary_coverage;
+				form.date_visit = props.item.date_visit;
+				form.hour_visit = props.item.hour_visit;
+				form.sports_scene = props.item.sports_scene;
+				form.observations = props.item.observations;
+				form.description = props.item.description;
+				form.discipline_id = props.item.discipline_id;
+				form.municipalitie_id = props.item.municipalitie.id;
+				form.user_id = props.item.user_id;
+				form.sidewalk = props.item.sidewalk;
+				form.coordinator_name = props.item.created_by.name;
+				form.file = props.item.file;
 				dataLoaded.value = true;
-			} else {
-				Swal.fire('', 'No se pudieron obtener los datos', 'error');
-			}
-		})
-		.catch((error) => {
-			Swal.fire('', 'No se pudieron obtener los datos', 'error');
-		});
 });
 
 // Envia si la visita fue aprobada o rechazada
@@ -95,7 +84,7 @@ const onSubmit = async () => {
 	const valid = await v$.value.$validate();
 	if (valid) {
 		await coordinatorVisitServices
-			.update(props.id_review.toString(), formdataParser(form))
+			.update(form.id, formdataParser(form))
 			.then((response) => {
 				if (response) {
 					if (response.status >= 200 && response.status <= 300) {

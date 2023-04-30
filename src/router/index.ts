@@ -1,5 +1,6 @@
 import { accessStore } from "@/stores/accessStore";
 import { onboardingStore } from "@/stores/onboardingStore";
+import roles from "@/types/roles";
 import { storeToRefs } from "pinia";
 import { createRouter, createWebHistory, NavigationGuardNext, RouteLocationNormalized, RouteMeta, RouteRecordRaw } from "vue-router";
 // import SimpleMenu from "../layouts/SimpleMenu/SimpleMenu.vue";
@@ -25,6 +26,15 @@ const authGuard = async (to: RouteLocationNormalized, from: RouteLocationNormali
 		// else {
 		// 	next()
 		// }
+	}
+}
+
+const roleGuard = async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
+	if (isRole(to.meta.role as roles) || isRole("super.root")) {
+		next()
+	}
+	else {
+		next({ name: '403' })
 	}
 }
 
@@ -408,8 +418,8 @@ const routes = [
 			},
 			{
 				path: "methodologist",
-				name: "methodologist_visits",
-				
+				name: "methodologist",
+				meta: { role: 'metodologo' },
 				children: [
 					{
 						path: "",
@@ -428,33 +438,10 @@ const routes = [
 					},
 				]
 			},
-
-
-			{
-				path: "subdirector_visit",
-				name: "subdirector_visit",
-				children: [
-					{
-						path: "index",
-						name: "subdirector_visit.index",
-						component: () => import('@/pages/visit/Index.vue')
-					},
-					{
-						path: "create",
-						name: "subdirector_visit.create",
-						component: () => import('@/pages/subdirector/visit/Form.vue')
-					},
-					{
-						path: "edit",
-						name: "subdirector_visit.update",
-						// component: () => import('@/pages/contractors/Form.vue')
-					},
-				]
-			},	
 			{
 				path: "psychosocial",
 				name: "psychosocial",
-				meta: { provider: 'psychosocial' },
+				meta: { provider: 'psychosocial', role: 'psicologo' },
 				children: [
 					{
 						path: "visit",
@@ -502,7 +489,7 @@ const routes = [
 			{
 				path: "psychosocial-coordinator",
 				name: "psychosocial-coordinator",
-				meta: { provider: 'psychosocial-coordinator' },
+				meta: { provider: 'psychosocial-coordinator', role: 'coordinador_psicosocial' },
 				children: [
 					{
 						path: "reviews",
@@ -514,7 +501,7 @@ const routes = [
 			{
 				path: "technical_director",
 				name: "technical_director",
-				meta: { provider: 'technical_director' },
+				meta: { provider: 'technical_director', role: 'director_tecnico' },
 				children: [
 					{
 						path: "visit",
@@ -541,7 +528,7 @@ const routes = [
 			{
 				path: "transversal_programs_director",
 				name: "transversal_programs_director",
-				meta: { provider: 'transversal_programs_director' },
+				meta: { provider: 'transversal_programs_director', role: 'director_programa' },
 				children: [
 					{
 						path: "reviews",
@@ -553,7 +540,7 @@ const routes = [
 			{
 				path: "subdirector",
 				name: "subdirector",
-				meta: { provider: 'subdirector' },
+				meta: { provider: 'subdirector', role: 'subdirector_tecnico'  },
 				children: [
 					{
 						path: "",
@@ -630,7 +617,7 @@ const routes = [
 			{
 				path: "coordinator",
 				name: "coordinator",
-				meta: { provider: 'coordinator' },
+				meta: { provider: 'coordinator', role: 'coordinador_regional' },
 				children: [
 					{
 						path: "",
@@ -666,6 +653,14 @@ const router = createRouter({
 	scrollBehavior(to, from, savedPosition) {
 		return savedPosition || { left: 0, top: 0 };
 	},
+});
+
+router.beforeEach((to, from, next) => {
+	if (to.meta.role != undefined ) {
+		roleGuard(to, from, next);
+	} else {
+		next();
+	}
 });
 
 export default router;

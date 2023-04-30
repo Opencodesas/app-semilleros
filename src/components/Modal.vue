@@ -24,7 +24,8 @@ function openModal() {
 
 const props = defineProps<{
 	Form: Object;
-	id_review: number;
+	id_review?: number;
+	item?: any;
 	payloadFunctions?: Object;
 	label?: string;
 	icon?: Icon;
@@ -93,7 +94,7 @@ const formRules = computed(() => ({
 							class="transform overflow-hidden rounded-md bg-white p-6 pt-2 text-left align-middle shadow-xl transition-all"
 							scrollClass="dialogPanel">
 							<!-- <Form /> -->
-							<props.Form :closeModal="closeModal" :id_review="props.id_review" :payloadFunctions="payloadFunctions"/>
+							<props.Form :closeModal="closeModal" :id_review="props.id_review" :item="props.item" :payloadFunctions="payloadFunctions"/>
 						</DialogPanel>
 					</TransitionChild>
 				</div>

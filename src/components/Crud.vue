@@ -602,7 +602,7 @@ const selectedTab = inject('selectedTab', ref(0));
 								item.status.id == '2' && route.name === 'review.index'
 							">
 							<template v-if="props.Form!">
-								<Modal :Form="props.Form" :id_review="item" />
+								<Modal :Form="props.Form" :item="item" />
 							</template>
 						</template>
 					</template>
