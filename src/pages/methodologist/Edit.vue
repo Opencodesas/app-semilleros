@@ -1,26 +1,21 @@
 <script setup lang="ts">
 import FormSwitch from '@/base-components/Form/FormSwitch';
-import { required } from '@/utils/validators';
+
 import useVuelidate from '@vuelidate/core';
+import { required } from '@vuelidate/validators';
 import Swal from 'sweetalert2';
 
 const urlStorage = `${import.meta.env.VITE_BASE_URL}/storage/`;
 const file = ref([]);
 const dataLoaded = ref(false);
-const router = useRouter();
 const route = useRoute();
-
-const props = defineProps<{
-	closeModal: Function;
-	id_review: number;
-}>();
 
 const form = reactive({
 	id: '',
-	status_id: '',
-	reject_message: '',
+	status: '',
+	rejection_message: '',
 	observations: '',
-	user_id: '',
+	monitor_id: '',
 	municipalitie_id: '',
 	event_support_id: '',
 	hour_visit: '',
@@ -51,15 +46,59 @@ const form = reactive({
 	swich_plans_mp_4: false,
 	swich_plans_mp_5: false,
 });
-const form_rules = computed(() => ({
-	status_id: { required },
-	reject_message: { required: parseInt(form.status_id) == 2 },
-}));
 
-const evaluationList = [
-	{ label: 'Aprobado', value: 1 },
-	{ label: 'Denegado', value: 2 },
+const form_rules = computed(() => ({
+	observations: { required },
+	monitor_id: { required },
+	municipalitie_id: { required },
+	event_support_id: { required },
+	hour_visit: { required },
+	discipline_id: { required },
+	sidewalk: { required },
+	sports_scene: { required },
+	beneficiary_coverage: { required },
+	evaluation_id: { required },
+	date_visit: { required },
+
+	file: [],
+
+	swich_plans_r: { required },
+	swich_plans_sc_1: { required },
+	swich_plans_sc_2: { required },
+	swich_plans_sc_3: { required },
+	swich_plans_sc_4: { required },
+	swich_plans_gm_1: { required },
+	swich_plans_gm_2: { required },
+	swich_plans_gm_3: { required },
+	swich_plans_gm_4: { required },
+	swich_plans_gm_5: { required },
+	swich_plans_gm_6: { required },
+	swich_plans_mp_1: { required },
+	swich_plans_mp_2: { required },
+	swich_plans_mp_3: { required },
+	swich_plans_mp_4: { required },
+	swich_plans_mp_5: { required },
+}));
+const event_supportList = [
+	{ label: 'Si', value: 1 },
+	{ label: 'No', value: 2 },
 ];
+const evaluationList = [
+	{ label: 'Aceptada', value: 1 },
+	{ label: 'Rechazada', value: 2 },
+];
+const v$ = useVuelidate(form_rules, form);
+
+const router = useRouter();
+
+const selectFile = (event: any) => {
+	if (event?.target.files.length > 0) {
+		form.file = event.target.files[0];
+		return;
+	}
+	form.file = file.value;
+};
+// Consulta todos los municipios
 const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
 }, null);
@@ -70,96 +109,107 @@ const disciplines = asyncComputed(async () => {
 const monitorList = asyncComputed(async () => {
 	return await getMonitorByMunicipality(form.municipalitie_id);
 }, null);
-const statusList = [
-	{ label: 'Aprobado', value: 1 },
-	{ label: 'Rechazado', value: 2 },
-];
-const v$ = useVuelidate(form_rules, form);
-
-const getData = async () => {
-	await methodologistVisitServices.get(props.id_review).then((res) => {
-		if (res) {
-			if (res?.status == 200 || res?.status == 201) {
-				form.id = res.data.items.id;
-				form.observations = res.data.items.observations;
-				form.user_id = res.data.items.monitor?.id;
-				form.municipalitie_id = res.data.items.municipalities.id;
-				form.event_support_id = res.data.items.event_supports.id;
-				form.hour_visit = res.data.items.hour_visit;
-				form.discipline_id = res.data.items.disciplines.id;
-				form.sidewalk = res.data.items.sidewalk;
-				form.sports_scene = res.data.items.sports_scene;
-				form.beneficiary_coverage = res.data.items.beneficiary_coverage;
-				form.evaluation_id = res.data.items.evaluations.id;
-				form.date_visit = res.data.items.date_visit;
-				form.created_by =
-					res.data.items.creator.name + ' ' + res.data.items.creator.lastname;
-				form.file = res.data.items.file;
-				form.swich_plans_r =
-					res.data.items?.swich_plans_r == '0' ? false : true;
-				form.swich_plans_gm_1 =
-					res.data.items?.swich_plans_gm_1 == '0' ? false : true;
-				form.swich_plans_gm_2 =
-					res.data.items?.swich_plans_gm_2 == '0' ? false : true;
-				form.swich_plans_gm_3 =
-					res.data.items?.swich_plans_gm_3 == '0' ? false : true;
-				form.swich_plans_gm_4 =
-					res.data.items?.swich_plans_gm_4 == '0' ? false : true;
-				form.swich_plans_gm_5 =
-					res.data.items?.swich_plans_gm_5 == '0' ? false : true;
-				form.swich_plans_gm_6 =
-					res.data.items?.swich_plans_gm_6 == '0' ? false : true;
-				form.swich_plans_sc_1 =
-					res.data.items?.swich_plans_sc_1 == '0' ? false : true;
-				form.swich_plans_sc_2 =
-					res.data.items?.swich_plans_sc_2 == '0' ? false : true;
-				form.swich_plans_sc_3 =
-					res.data.items?.swich_plans_sc_3 == '0' ? false : true;
-				form.swich_plans_sc_4 =
-					res.data.items?.swich_plans_sc_4 == '0' ? false : true;
-				form.swich_plans_mp_1 =
-					res.data.items?.swich_plans_mp_1 == '0' ? false : true;
-				form.swich_plans_mp_2 =
-					res.data.items?.swich_plans_mp_2 == '0' ? false : true;
-				form.swich_plans_mp_3 =
-					res.data.items?.swich_plans_mp_3 == '0' ? false : true;
-				form.swich_plans_mp_4 =
-					res.data.items?.swich_plans_mp_4 == '0' ? false : true;
-				form.swich_plans_mp_5 =
-					res.data.items?.swich_plans_mp_5 == '0' ? false : true;
-				file.value = res.data.items.file;
-
-				dataLoaded.value = true;
-			} else {
-				Swal.fire('', 'No se pudieron obtener los datos', 'error');
-			}
-		}
+const formdataParser = (form: any) => {
+	const formData = new FormData();
+	Object.keys(form).forEach((key) => {
+		formData.append(key, form[key]);
 	});
+	return formData;
 };
+/**
+ * Para los archivos, vas a desestructurar el objeto form
+ *      { file, ...rest } = form
+ *      let fd = formdataParser(rest)
+ *
+ *      for (let i = 0; i < file.length; i++) {
+ *          fd.append('file[]', file[i])
+ *      }
+ *
+ *      servicios.create(fd)
+ */
+const getData = async () => {
+	await methodologistVisitServices
+		.get(route.params.id as string)
+		.then((res) => {
+			if (res) {
+				if (res?.status == 200 || res?.status == 201) {
+					console.log(res.data.items);
+					form.id = res.data.items.id;
+					form.status = res.data.items.status.id;
+					form.rejection_message = res.data.items.rejection_message;
+					form.observations = res.data.items.observations;
+					form.monitor_id = res.data.items.monitor?.id;
+					form.municipalitie_id = res.data.items.municipalities.id;
+					form.event_support_id = res.data.items.event_supports.id;
+					form.hour_visit = res.data.items.hour_visit;
+					form.discipline_id = res.data.items.disciplines.id;
+					form.sidewalk = res.data.items.sidewalk;
+					form.sports_scene = res.data.items.sports_scene;
+					form.beneficiary_coverage = res.data.items.beneficiary_coverage;
+					form.evaluation_id = res.data.items.evaluations.id;
+					form.date_visit = res.data.items.date_visit;
+					form.created_by = res.data.items.creator.name;
+					form.file = res.data.items.file;
+					form.swich_plans_r =
+						res.data.items?.swich_plans_r == '0' ? false : true;
+					form.swich_plans_gm_1 =
+						res.data.items?.swich_plans_gm_1 == '0' ? false : true;
+					form.swich_plans_gm_2 =
+						res.data.items?.swich_plans_gm_2 == '0' ? false : true;
+					form.swich_plans_gm_3 =
+						res.data.items?.swich_plans_gm_3 == '0' ? false : true;
+					form.swich_plans_gm_4 =
+						res.data.items?.swich_plans_gm_4 == '0' ? false : true;
+					form.swich_plans_gm_5 =
+						res.data.items?.swich_plans_gm_5 == '0' ? false : true;
+					form.swich_plans_gm_6 =
+						res.data.items?.swich_plans_gm_6 == '0' ? false : true;
+					form.swich_plans_sc_1 =
+						res.data.items?.swich_plans_sc_1 == '0' ? false : true;
+					form.swich_plans_sc_2 =
+						res.data.items?.swich_plans_sc_2 == '0' ? false : true;
+					form.swich_plans_sc_3 =
+						res.data.items?.swich_plans_sc_3 == '0' ? false : true;
+					form.swich_plans_sc_4 =
+						res.data.items?.swich_plans_sc_4 == '0' ? false : true;
+					form.swich_plans_mp_1 =
+						res.data.items?.swich_plans_mp_1 == '0' ? false : true;
+					form.swich_plans_mp_2 =
+						res.data.items?.swich_plans_mp_2 == '0' ? false : true;
+					form.swich_plans_mp_3 =
+						res.data.items?.swich_plans_mp_3 == '0' ? false : true;
+					form.swich_plans_mp_4 =
+						res.data.items?.swich_plans_mp_4 == '0' ? false : true;
+					form.swich_plans_mp_5 =
+						res.data.items?.swich_plans_mp_5 == '0' ? false : true;
+					file.value = res.data.items.file;
 
-onMounted(async () => {
-	await getData();
+					dataLoaded.value = true;
+				} else {
+					Swal.fire('', 'No se pudieron obtener los datos', 'error');
+				}
+			}
+		});
+};
+onBeforeMount(() => {
+	getData();
 });
 
-const event_supportList = [
-	{ label: 'Si', value: 1 },
-	{ label: 'No', value: 2 },
-];
 const onSubmit = async () => {
 	const valid = await v$.value.$validate();
 
 	if (valid) {
+		console.log(form);
 		await methodologistVisitServices
-			.update(props.id_review.toString(), formdataParser(form))
+			.update(form.id, formdataParser(form))
 			.then((response) => {
 				if (response) {
 					if (response.status >= 200 && response.status <= 300) {
-						alerts.update();
+						alerts.create();
 						setLoading(true);
-
-						props.closeModal();
-						setLoading(false);
-						window.location.reload();
+						router.push({name: 'methodologist_visits.index'}).finally(() => {
+							setLoading(false);
+						});
 					}
 				}
 			});
@@ -167,56 +217,30 @@ const onSubmit = async () => {
 		alerts.validation();
 	}
 };
-const disableElements = true;
+const disableElements = computed(() => {
+	return form.status == '4' ? false : true; //id: 4 => Rechazado => REC
+});
 </script>
 
 <template>
-	<div class="flex items-center justify-between intro-y">
+	<div class="flex items-center mt-8 intro-y">
 		<div class="flex items-center space-x-4">
-			<h2 class="mr-auto text-lg font-medium">Revisar Visita Metodologo</h2>
+			<CommonBackButton
+				to="methodologist_visits.index"
+				title="Listado" />
+			<h2 class="mr-auto text-lg font-medium">Registrar visita</h2>
 		</div>
 	</div>
 
-	<div class="p-5 mt-3 intro-y box space-y-5 divide-y">
-		<h3 class="text-lg font-medium text-gray-900">Estado *</h3>
-		<CommonSelect
-			placeholder="Estado *"
-			name="status_id"
-			v-model="form.status_id"
-			:validator="v$"
-			:options="statusList" />
-		<CommonTextarea
-			placeholder="Motivo del rechazo*"
-			name="reject_message"
-			class="intro-x box"
-			v-model="form.reject_message"
-			:validator="v$"
-			rows="4"
-			v-if="parseInt(form.status_id) == 2" />
+	<div
+		class="content"
+		v-if="dataLoaded">
 		<div
-			class="mt-6 flex justify-end col-span-1 md:col-span-2 border-none gap-1"
-			tabindex="1">
-			<Button
-				variant="danger"
-				@click="props.closeModal"
-				>Cerrar</Button
-			>
-			<Button
-				variant="primary"
-				class="btn btn-primary"
-				@click="onSubmit">
-				Enviar
-			</Button>
-		</div>
-	</div>
-
-	<div class="content" v-if="dataLoaded">
-		<div class="p-5 mt-5 intro-y box">
-		<h3 class="text-lg font-medium leading-6 text-gray-900">Revision</h3>
-		<p class="mt-3">
-			<span class="font-bold">Metodologo: </span>
-			{{ form.created_by }}
-		</p>
+				class="my-6"
+				v-if="form.status == '4'">
+				<p class="text-danger font-bold">Razon de rechazo</p>
+				<p>{{ form.rejection_message }}</p>
+			</div>
 		<div class="p-5 mt-5 intro-y box">
 			<div class="grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
 				<CommonInput
@@ -224,17 +248,20 @@ const disableElements = true;
 					label="Fecha  *"
 					name="date_visit"
 					v-model="form.date_visit"
+					:validator="v$"
 					:disabled="disableElements" />
 				<CommonInput
 					type="time"
 					label="Hora  *"
 					name="hour_visit"
 					v-model="form.hour_visit"
+					:validator="v$"
 					:disabled="disableElements" />
 				<CommonSelect
 					label="Municipio *"
 					name="municipalitie_id"
 					v-model="form.municipalitie_id"
+					:validator="v$"
 					:options="municipalities"
 					:disabled="disableElements" />
 
@@ -243,18 +270,21 @@ const disableElements = true;
 					name="sidewalk"
 					placeholder="Ingrese el corregimiento o vereda"
 					v-model="form.sidewalk"
+					:validator="v$"
 					:disabled="disableElements" />
 
 				<CommonSelect
 					label="Monitor *"
-					name="user_id"
-					v-model="form.user_id"
+					name="monitor_id"
+					v-model="form.monitor_id"
+					:validator="v$"
 					:options="monitorList"
 					:disabled="disableElements" />
 				<CommonSelect
 					label="Diciplinas *"
 					name="discipline_id"
 					v-model="form.discipline_id"
+					:validator="v$"
 					:options="disciplines"
 					:disabled="disableElements" />
 				<CommonInput
@@ -263,6 +293,7 @@ const disableElements = true;
 					label="Escenario deportivo *"
 					name="sports_scene"
 					v-model="form.sports_scene"
+					:validator="v$"
 					:disabled="disableElements" />
 				<CommonInput
 					type="number"
@@ -271,17 +302,20 @@ const disableElements = true;
 					label="Cobertura de benificiario *"
 					name="beneficiary_coverage"
 					v-model="form.beneficiary_coverage"
+					:validator="v$"
 					:disabled="disableElements" />
 				<CommonSelect
 					label="Evaluacion *"
 					name="evaluation_id"
 					v-model="form.evaluation_id"
+					:validator="v$"
 					:options="evaluationList"
 					:disabled="disableElements" />
 				<CommonSelect
 					label="Apoyo a eventos *"
 					name="event_support_id"
 					v-model="form.event_support_id"
+					:validator="v$"
 					:options="event_supportList"
 					:disabled="disableElements" />
 			</div>
@@ -299,6 +333,7 @@ const disableElements = true;
 				type="checkbox"
 				v-model="form.swich_plans_r"
 				:checked="form.swich_plans_r"
+				:validator="v$"
 				:disabled="disableElements" />
 			<FormSwitch.Label htmlFor="swich_plans">
 				Plan de clases
@@ -527,6 +562,7 @@ const disableElements = true;
 				placeholder="Ingrese las observaciones"
 				name="observations"
 				v-model="form.observations"
+				:validator="v$"
 				:disabled="disableElements" />
 		</div>
 		<div class="p-5 mt-6 intro-y">
@@ -541,6 +577,30 @@ const disableElements = true;
 				:src="`${urlStorage}${file}`"
 				width="400" />
 		</div>
-	</div>
+		<div class="p-5 mt-6 intro-y">
+			<CommonFile
+				:validator="v$"
+				v-model="form.file"
+				name="file"
+				@change="selectFile"
+				@removefile="selectFile"
+				class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
+				v-if="!disableElements" />
+		</div>
+		<div class="mt-6 flex justify-center col-span-1 md:col-span-2">
+			<Button
+				v-if="!disableElements"
+				@click="onSubmit"
+				variant="primary">
+				Guardar
+			</Button>
+
+			<Button
+				v-else-if="form.status == '1'"
+				type="button"
+				variant="primary">
+				Descargar visita
+			</Button>
+		</div>
 	</div>
 </template>
