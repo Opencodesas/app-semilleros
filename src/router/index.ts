@@ -166,7 +166,7 @@ const routes = [
 					},
 				]
 			},
-			{
+			/*{
 				path: "monitors",
 				name: "monitors",
 				children: [
@@ -177,7 +177,7 @@ const routes = [
 						component: () => import('@/pages/monitors/Index.vue')
 					},
 				]
-			},
+			},*/
 			{
 				path: "chronograms",
 				name: "chronograms",

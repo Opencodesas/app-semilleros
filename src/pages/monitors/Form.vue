@@ -23,7 +23,7 @@ const form = reactive(
   {...currentFicha,
     currentmotive: currentmotive.value,
     tempDesc: currentFicha.calif.reject_motive,
-		selectid: (currentFicha.status.slug==='SIN'?1:
+		selectid: (currentFicha.status.slug==='ENR'?1:
 		currentFicha.status.slug==='APR'?2:3),
 		motive: currentFicha.calif.reject_motive||'',
 
@@ -117,7 +117,7 @@ const onSubmit = async (evt: any) => {
   setLoading(true);
 
   //verifica algun cambio de estado
-	if((currentFicha.status.slug === 'SIN' && form.selectid==1)||
+	if((currentFicha.status.slug === 'ENR' && form.selectid==1)||
 	   (currentFicha.status.slug === 'APR' && form.selectid==2)||
 	   (currentFicha.status.slug === 'REC' && form.selectid==3)){
     //si conserva el slug y la intención, verificar que no sea una actualización
@@ -135,7 +135,7 @@ const onSubmit = async (evt: any) => {
     props.closeModal();
   }else{
     if(form.selectid===1){        
-        props.payloadFunctions?.SIN(props.id_review, currentUser);
+        props.payloadFunctions?.ENR(props.id_review, currentUser);
         data.value = props.payloadFunctions?.DATA();
     }
     if(form.selectid===2){
