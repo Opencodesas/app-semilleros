@@ -61,6 +61,8 @@ const groupBone = {
     }]
 }
 
+const groupBonetemplate = {...groupBone, schedules: {...groupBone.schedules}};
+
 const scheduleBone = {
     idx: 0,
     day: '',
@@ -163,9 +165,13 @@ const searchItem = ( schedules: any, horario: any ) => {
     return hayCruce;
 }
 
+const temp = { ...groupBonetemplate, schedules: {...groupBonetemplate.schedules} };
 const onAddGrupo = () => {
     if ( form.groups.length < 4 ) {
-        form.groups.push({ ...groupBone })
+        
+        console.log(JSON.stringify(temp));
+        form.groups.push({ ...groupBonetemplate });
+        
     }
 }
 

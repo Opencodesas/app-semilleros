@@ -10,7 +10,7 @@ const router = useRouter();
 const store = onboardingStore();
 //ver el provider - usado en CRUD para definir los botones de actions, leyendo status. fichasViewer si es único para esta tabla
 //console.log(route.meta.provider)
-console.log();
+//console.log();
 
 const headers: Header[] =
 store.get_user_role?.slug==="metodologo"?
@@ -76,14 +76,14 @@ const fiicha = {
 
 //traer el listado de fichas de inscripción de monitores 
 //filtrado para este rol
-//ordenado con status.slug = 'SIN' primero
+//ordenado con status.slug = 'ENR' primero
 const data = ref([
     {
         //datos de ficha
         id: 1,
         status: {
-			name: 'En revisión',
-			slug: 'SIN',
+			name: 'En revision',
+			slug: 'ENR',
 		},
         //datos usuario calificador
         calif: {
@@ -161,7 +161,7 @@ const data = ref([
         id: 4,
         status: {
 			name: 'En revisión',
-			slug: 'SIN',
+			slug: 'ENR',
 		},
         //datos usuario calificador
         calif: {
@@ -237,7 +237,7 @@ revertir=(id: any, user:any)=>{
         ficha.calif.resp_id=user.id;
         ficha.calif.resp_name=user.name;
         ficha.status.name="En revisión";
-        ficha.status.slug="SIN";        
+        ficha.status.slug="ENR";        
     }
     else{
         return {status: false, msj: "no se encontró un objeto con este id"}
@@ -245,7 +245,7 @@ revertir=(id: any, user:any)=>{
     console.log(ficha)
     console.log(data.value)
 }
-const loadmethods = {"APR": aceptar, "REC": rechazar, "SIN": revertir, "DATA": getFichaData}
+const loadmethods = {"APR": aceptar, "REC": rechazar, "ENR": revertir, "DATA": getFichaData}
 
 const search = ref('');
 const cruddata = computed(() => searchData(items, search.value));
