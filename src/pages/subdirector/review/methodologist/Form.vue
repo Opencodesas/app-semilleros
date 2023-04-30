@@ -2,9 +2,11 @@
 import FormSwitch from '@/base-components/Form/FormSwitch';
 import { required } from '@/utils/validators';
 import useVuelidate from '@vuelidate/core';
+import Swal from 'sweetalert2';
 
-
-
+const urlStorage = `${import.meta.env.VITE_BASE_URL}/storage/`;
+const file = ref([]);
+const dataLoaded = ref(false);
 const router = useRouter();
 const route = useRoute();
 
@@ -15,117 +17,134 @@ const props = defineProps<{
 
 const form = reactive({
 	id: '',
-	methodologist_id: '',
-	date_visit: '2023-03-15',
-	hour_visit: '10:00',
-	sidewalk: 'El Aguila',
-	monitor_id: '1',
-	discipline_id: '7',
-	sports_scene: 'Cancha Principal Punta Brava',
-	municipality_id: '5',
-	beneficiary_coverage: '9',
-	evaluation: '1',
-	event_support_id: '1',
-	methologist_name: 'Camilo Martinez',
 	status_id: '',
-	rejection_message: '',
+	reject_message: '',
+	observations: '',
+	user_id: '',
+	municipalitie_id: '',
+	event_support_id: '',
+	hour_visit: '',
+	discipline_id: '',
+	sidewalk: '',
+	sports_scene: '',
+	beneficiary_coverage: '',
+	evaluation_id: '',
+	date_visit: '',
+	created_by: '',
 
 	file: [],
 
-	lesson_plan: true,
-	congruent_activity: true,
-	develop_technical_sports_component_month: false,
-	functional_component_month: false,
-	management_development_activities: true,
-	puntuality: false,
-	personal_presentation: false,
-	patient: true,
-	discipline: false,
-	parent_child_communication: true,
-	verbalization: true,
-	traditional: false,
-	behavioral: false,
-	romantic: false,
-	constructivist: false,
-	globalizer: true,
-	observations: 'Mejorar dominio de grupo',
+	swich_plans_r: false,
+	swich_plans_sc_1: false,
+	swich_plans_sc_2: false,
+	swich_plans_sc_3: false,
+	swich_plans_sc_4: false,
+	swich_plans_gm_1: false,
+	swich_plans_gm_2: false,
+	swich_plans_gm_3: false,
+	swich_plans_gm_4: false,
+	swich_plans_gm_5: false,
+	swich_plans_gm_6: false,
+	swich_plans_mp_1: false,
+	swich_plans_mp_2: false,
+	swich_plans_mp_3: false,
+	swich_plans_mp_4: false,
+	swich_plans_mp_5: false,
 });
 const form_rules = computed(() => ({
 	status_id: { required },
-	rejection_message: { required: parseInt(form.status_id) == 2 },
+	reject_message: { required: parseInt(form.status_id) == 2 },
 }));
-const disciplines = asyncComputed(async () => {
-	return await getSelect(['disciplines']);
-}, null);
 
-const monitorList = [
-	{ label: 'Camilo Martinez', value: 1 },
-	{ label: 'Miguel Torres', value: 2 },
-];
 const evaluationList = [
 	{ label: 'Aprobado', value: 1 },
 	{ label: 'Denegado', value: 2 },
 ];
-const apoyoList = [
-	{ label: 'Si', value: 1 },
-	{ label: 'No', value: 2 },
-];
+const municipalities = asyncComputed(async () => {
+	return await getSelect(['municipalities']);
+}, null);
+// Consulta todas las disciplinas
+const disciplines = asyncComputed(async () => {
+	return await getSelect(['disciplines']);
+}, null);
+const monitorList = asyncComputed(async () => {
+	return await getMonitorByMunicipality(form.municipalitie_id);
+}, null);
 const statusList = [
 	{ label: 'Aprobado', value: 1 },
 	{ label: 'Rechazado', value: 2 },
 ];
 const v$ = useVuelidate(form_rules, form);
 
-const municipalities = asyncComputed(async () => {
-	return await getSelect(['municipalities']);
-}, null);
+const getData = async () => {
+	await methodologistVisitServices.get(props.id_review).then((res) => {
+		if (res) {
+			if (res?.status == 200 || res?.status == 201) {
+				form.id = res.data.items.id;
+				form.observations = res.data.items.observations;
+				form.user_id = res.data.items.monitor?.id;
+				form.municipalitie_id = res.data.items.municipalities.id;
+				form.event_support_id = res.data.items.event_supports.id;
+				form.hour_visit = res.data.items.hour_visit;
+				form.discipline_id = res.data.items.disciplines.id;
+				form.sidewalk = res.data.items.sidewalk;
+				form.sports_scene = res.data.items.sports_scene;
+				form.beneficiary_coverage = res.data.items.beneficiary_coverage;
+				form.evaluation_id = res.data.items.evaluations.id;
+				form.date_visit = res.data.items.date_visit;
+				form.created_by =
+					res.data.items.creator.name + ' ' + res.data.items.creator.lastname;
+				form.file = res.data.items.file;
+				form.swich_plans_r =
+					res.data.items?.swich_plans_r == '0' ? false : true;
+				form.swich_plans_gm_1 =
+					res.data.items?.swich_plans_gm_1 == '0' ? false : true;
+				form.swich_plans_gm_2 =
+					res.data.items?.swich_plans_gm_2 == '0' ? false : true;
+				form.swich_plans_gm_3 =
+					res.data.items?.swich_plans_gm_3 == '0' ? false : true;
+				form.swich_plans_gm_4 =
+					res.data.items?.swich_plans_gm_4 == '0' ? false : true;
+				form.swich_plans_gm_5 =
+					res.data.items?.swich_plans_gm_5 == '0' ? false : true;
+				form.swich_plans_gm_6 =
+					res.data.items?.swich_plans_gm_6 == '0' ? false : true;
+				form.swich_plans_sc_1 =
+					res.data.items?.swich_plans_sc_1 == '0' ? false : true;
+				form.swich_plans_sc_2 =
+					res.data.items?.swich_plans_sc_2 == '0' ? false : true;
+				form.swich_plans_sc_3 =
+					res.data.items?.swich_plans_sc_3 == '0' ? false : true;
+				form.swich_plans_sc_4 =
+					res.data.items?.swich_plans_sc_4 == '0' ? false : true;
+				form.swich_plans_mp_1 =
+					res.data.items?.swich_plans_mp_1 == '0' ? false : true;
+				form.swich_plans_mp_2 =
+					res.data.items?.swich_plans_mp_2 == '0' ? false : true;
+				form.swich_plans_mp_3 =
+					res.data.items?.swich_plans_mp_3 == '0' ? false : true;
+				form.swich_plans_mp_4 =
+					res.data.items?.swich_plans_mp_4 == '0' ? false : true;
+				form.swich_plans_mp_5 =
+					res.data.items?.swich_plans_mp_5 == '0' ? false : true;
+				file.value = res.data.items.file;
 
-// onMounted(async() => {
-// 	await methodologistVisitServices
-// 		.get(props.id_review.toString())
-// 		.then((response) => {
-// 			if (response) {
-// 				if (response.status >= 200 && response.status <= 300) {
-// 					form.id = response.data.id;
-// 					form.methodologist_id = response.data.methodologist_id;
-// 					form.date_visit = response.data.date_visit;
-// 					form.hour_visit = response.data.hour_visit;
-// 					form.sidewalk = response.data.sidewalk;
-// 					form.monitor_id = response.data.monitor_id;
-// 					form.discipline_id = response.data.discipline_id;
-// 					form.sports_scene = response.data.sports_scene;
-// 					form.municipality_id = response.data.municipality_id;
-// 					form.beneficiary_coverage = response.data.beneficiary_coverage;
-// 					form.evaluation = response.data.evaluation;
-// 					form.event_support_id = response.data.event_support_id;
-// 					form.methologist_name = response.data.methologist_name;
-// 					form.file = response.data.file;
-// 					form.lesson_plan = response.data.lesson_plan;
-// 					form.congruent_activity = response.data.congruent_activity;
-// 					form.develop_technical_sports_component_month =
-// 						response.data.develop_technical_sports_component_month;
-// 					form.functional_component_month =
-// 						response.data.functional_component_month;
-// 					form.management_development_activities =
-// 						response.data.management_development_activities;
-// 					form.puntuality = response.data.puntuality;
-// 					form.personal_presentation = response.data.personal_presentation;
-// 					form.patient = response.data.patient;
-// 					form.discipline = response.data.discipline;
-// 					form.parent_child_communication =
-// 						response.data.parent_child_communication;
-// 					form.verbalization = response.data.verbalization;
-// 					form.traditional = response.data.traditional;
-// 					form.behavioral = response.data.behavioral;
-// 					form.romantic = response.data.romantic;
-// 					form.constructivist = response.data.constructivist;
-// 					form.globalizer = response.data.globalizer;
-// 					form.observations = response.data.observations;
-// 				}
-// 			}
-// 		});
-// })
+				dataLoaded.value = true;
+			} else {
+				Swal.fire('', 'No se pudieron obtener los datos', 'error');
+			}
+		}
+	});
+};
 
+onMounted(async () => {
+	await getData();
+});
+
+const event_supportList = [
+	{ label: 'Si', value: 1 },
+	{ label: 'No', value: 2 },
+];
 const onSubmit = async () => {
 	const valid = await v$.value.$validate();
 
@@ -138,13 +157,9 @@ const onSubmit = async () => {
 						alerts.update();
 						setLoading(true);
 
-						router
-							.push({
-								name: 'subdirector_methodologist.list',
-							})
-							.finally(() => {
-								setLoading(false);
-							});
+						props.closeModal();
+						setLoading(false);
+						window.location.reload();
 					}
 				}
 			});
@@ -152,6 +167,7 @@ const onSubmit = async () => {
 		alerts.validation();
 	}
 };
+const disableElements = true;
 </script>
 
 <template>
@@ -171,9 +187,9 @@ const onSubmit = async () => {
 			:options="statusList" />
 		<CommonTextarea
 			placeholder="Motivo del rechazo*"
-			name="rejection_message"
+			name="reject_message"
 			class="intro-x box"
-			v-model="form.rejection_message"
+			v-model="form.reject_message"
 			:validator="v$"
 			rows="4"
 			v-if="parseInt(form.status_id) == 2" />
@@ -194,79 +210,81 @@ const onSubmit = async () => {
 		</div>
 	</div>
 
-	<div class="p-5 mt-5 intro-y box">
+	<div class="content" v-if="dataLoaded">
+		<div class="p-5 mt-5 intro-y box">
 		<h3 class="text-lg font-medium leading-6 text-gray-900">Revision</h3>
 		<p class="mt-3">
-			<span class="font-bold">Metodologo: </span
-			>{{ form.methologist_name }}
+			<span class="font-bold">Metodologo: </span>
+			{{ form.created_by }}
 		</p>
-		<div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
-			<CommonInput
-				type="date"
-				placeholder="Fecha "
-				label="Fecha *"
-				name="activityDate"
-				v-model="form.date_visit"
-				disabled />
-			<CommonInput
-				type="time"
-				placeholder="Hora"
-				label="Hora *"
-				name="activityTime"
-				v-model="form.hour_visit"
-				disabled />
-			<CommonSelect
-				label="Municipios *"
-				name="municipality_id"
-				v-model="form.municipality_id"
-				:options="municipalities"
-				disabled />
-			<CommonInput
-				type="text"
-				placeholder="Corregimiento / Vereda"
-				class="disabled:bg-red-700"
-				label="Corregimiento / Vereda *"
-				name="village"
-				v-model="form.sidewalk"
-				disabled />
-			<CommonSelect
-				label="Monitor Deportivo *"
-				name="monitor"
-				v-model="form.monitor_id"
-				:options="monitorList"
-				disabled />
-			<CommonSelect
-				label="Disciplinas *"
-				name="disciplines"
-				v-model="form.discipline_id"
-				:options="disciplines"
-				disabled />
-			<CommonInput
-				type="text"
-				placeholder="Escenario Deportivo"
-				label="Escenario Deportivo *"
-				name="sportsArena"
-				v-model="form.sports_scene"
-				disabled />
-			<CommonInput
-				type="number"
-				placeholder="Cobertura de beneficiario"
-				label="Cobertura de beneficiario *"
-				name="beneficiary"
-				v-model="form.beneficiary_coverage"
-				disabled />
-			<CommonSelect
-				label="Evaluacion *"
-				name="evaluation"
-				v-model="form.evaluation"
-				:options="evaluationList"
-				disabled />
-			<CommonSelect
-				label="Apoyo a evento *"
-				name="evaluation"
-				v-model="form.event_support_id"
-				:options="apoyoList"
-				disabled />
+		<div class="p-5 mt-5 intro-y box">
+			<div class="grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
+				<CommonInput
+					type="date"
+					label="Fecha  *"
+					name="date_visit"
+					v-model="form.date_visit"
+					:disabled="disableElements" />
+				<CommonInput
+					type="time"
+					label="Hora  *"
+					name="hour_visit"
+					v-model="form.hour_visit"
+					:disabled="disableElements" />
+				<CommonSelect
+					label="Municipio *"
+					name="municipalitie_id"
+					v-model="form.municipalitie_id"
+					:options="municipalities"
+					:disabled="disableElements" />
+
+				<CommonInput
+					label="Corregimiento / Vereda *"
+					name="sidewalk"
+					placeholder="Ingrese el corregimiento o vereda"
+					v-model="form.sidewalk"
+					:disabled="disableElements" />
+
+				<CommonSelect
+					label="Monitor *"
+					name="user_id"
+					v-model="form.user_id"
+					:options="monitorList"
+					:disabled="disableElements" />
+				<CommonSelect
+					label="Diciplinas *"
+					name="discipline_id"
+					v-model="form.discipline_id"
+					:options="disciplines"
+					:disabled="disableElements" />
+				<CommonInput
+					type="text"
+					placeholder="Ingrese el escenario deportivo"
+					label="Escenario deportivo *"
+					name="sports_scene"
+					v-model="form.sports_scene"
+					:disabled="disableElements" />
+				<CommonInput
+					type="number"
+					min="0"
+					placeholder="Ingrese un numero de beneficiarios"
+					label="Cobertura de benificiario *"
+					name="beneficiary_coverage"
+					v-model="form.beneficiary_coverage"
+					:disabled="disableElements" />
+				<CommonSelect
+					label="Evaluacion *"
+					name="evaluation_id"
+					v-model="form.evaluation_id"
+					:options="evaluationList"
+					:disabled="disableElements" />
+				<CommonSelect
+					label="Apoyo a eventos *"
+					name="event_support_id"
+					v-model="form.event_support_id"
+					:options="event_supportList"
+					:disabled="disableElements" />
+			</div>
 		</div>
 		<div class="w-full py-6 mx-auto">
 			<h2 class="text-center mr-auto text-lg font-medium">Requerimientos</h2>
@@ -276,12 +294,13 @@ const onSubmit = async () => {
 				class="grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly"></div>
 
 			<FormSwitch.Input
-				name="lesson_plan"
-				id="lesson_plan"
+				name="swich_plans"
+				id="swich_plans"
 				type="checkbox"
-				v-model="form.lesson_plan"
-				disabled />
-			<FormSwitch.Label htmlFor="lesson_plan">
+				v-model="form.swich_plans_r"
+				:checked="form.swich_plans_r"
+				:disabled="disableElements" />
+			<FormSwitch.Label htmlFor="swich_plans">
 				Plan de clases
 			</FormSwitch.Label>
 		</div>
@@ -292,12 +311,13 @@ const onSubmit = async () => {
 			<div class="grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
 				<FormSwitch>
 					<FormSwitch.Input
-						name="congruent_activity"
-						id="congruent_activity"
+						name="swich_plans_sc_1"
+						id="swich_plans_sc_1"
 						type="checkbox"
-						v-model="form.congruent_activity"
-						disabled />
-					<FormSwitch.Label htmlFor="congruent_activity">
+						v-model="form.swich_plans_sc_1"
+						:checked="form.swich_plans_sc_1"
+						:disabled="disableElements" />
+					<FormSwitch.Label htmlFor="swich_plans_sc_1">
 						Plantea actividades congruentes para el cumplimiento de los
 						objetivos de la sesión de clase
 					</FormSwitch.Label>
@@ -305,35 +325,40 @@ const onSubmit = async () => {
 
 				<FormSwitch>
 					<FormSwitch.Input
-						name="develop_technical_sports_component_month"
-						id="develop_technical_sports_component_month"
+						name="swich_plans_sc_2"
+						id="swich_plans_sc_2"
 						type="checkbox"
-						v-model="form.develop_technical_sports_component_month"
-						disabled />
-					<FormSwitch.Label htmlFor="develop_technical_sports_component_month">
+						v-model="form.swich_plans_sc_2"
+						:checked="form.swich_plans_sc_2"
+						:disabled="disableElements" />
+					<FormSwitch.Label htmlFor="swich_plans_sc_2">
 						Desarrolla el componente técnico deportivo del mes
 					</FormSwitch.Label>
 				</FormSwitch>
+
 				<FormSwitch>
 					<FormSwitch.Input
-						name="functional_component_month"
-						id="functional_component_month"
+						name="swich_plans_sc_3"
+						id="swich_plans_sc_3"
 						type="checkbox"
-						v-model="form.functional_component_month"
-						disabled />
-					<FormSwitch.Label htmlFor="functional_component_month">
-						Desarrolla el componente funcional del mes
+						v-model="form.swich_plans_sc_3"
+						:checked="form.swich_plans_sc_3"
+						:disabled="disableElements" />
+					<FormSwitch.Label htmlFor="swich_plans_sc_3">
+						Tiene buen manejo de grupo en el desarrollo de las actividades
 					</FormSwitch.Label>
 				</FormSwitch>
+
 				<FormSwitch>
 					<FormSwitch.Input
-						name="management_development_activities"
-						id="management_development_activities"
+						name="swich_plans_sc_4"
+						id="swich_plans_sc_4"
 						type="checkbox"
-						v-model="form.management_development_activities"
-						disabled />
-					<FormSwitch.Label htmlFor="management_development_activities">
-						Tiene buen manejo de grupo en el desarrollo de las actividades
+						v-model="form.swich_plans_sc_4"
+						:checked="form.swich_plans_sc_4"
+						:disabled="disableElements" />
+					<FormSwitch.Label htmlFor="swich_plans_sc_4">
+						Desarrolla el componente funcional del mes
 					</FormSwitch.Label>
 				</FormSwitch>
 			</div>
@@ -347,66 +372,76 @@ const onSubmit = async () => {
 			<div class="grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
 				<FormSwitch>
 					<FormSwitch.Input
-						name="puntuality"
-						id="puntuality"
+						name="swich_plans_gm_1"
+						id="swich_plans_gm_1"
 						type="checkbox"
-						v-model="form.puntuality"
-						disabled />
-					<FormSwitch.Label htmlFor="puntuality">
+						v-model="form.swich_plans_gm_1"
+						:checked="form.swich_plans_gm_1"
+						:disabled="disableElements" />
+					<FormSwitch.Label htmlFor="swich_plans_gm_1">
 						Puntualidad
 					</FormSwitch.Label>
 				</FormSwitch>
 
 				<FormSwitch>
 					<FormSwitch.Input
-						name="personal_presentation"
-						id="personal_presentation"
+						name="swich_plans_gm_2"
+						id="swich_plans_gm_2"
 						type="checkbox"
-						v-model="form.personal_presentation"
-						disabled />
-					<FormSwitch.Label htmlFor="personal_presentation">
+						v-model="form.swich_plans_gm_2"
+						:checked="form.swich_plans_gm_2"
+						:disabled="disableElements" />
+					<FormSwitch.Label htmlFor="swich_plans_gm_2">
 						Presentacion personal - uniforme del Proyecto
 					</FormSwitch.Label>
 				</FormSwitch>
 
 				<FormSwitch>
 					<FormSwitch.Input
-						name="patient"
-						id="patient"
+						name="swich_plans_gm_3"
+						id="swich_plans_gm_3"
 						type="checkbox"
-						v-model="form.patient"
-						disabled />
-					<FormSwitch.Label htmlFor="patient"> Paciente </FormSwitch.Label>
+						v-model="form.swich_plans_gm_3"
+						:checked="form.swich_plans_gm_3"
+						:disabled="disableElements" />
+					<FormSwitch.Label htmlFor="swich_plans_gm_3">
+						Paciente
+					</FormSwitch.Label>
 				</FormSwitch>
 
 				<FormSwitch>
 					<FormSwitch.Input
-						name="discipline"
-						id="discipline"
+						name="swich_plans_gm_4"
+						id="swich_plans_gm_4"
 						type="checkbox"
-						v-model="form.discipline"
-						disabled />
-					<FormSwitch.Label htmlFor="discipline"> Disciplina </FormSwitch.Label>
+						v-model="form.swich_plans_gm_4"
+						:checked="form.swich_plans_gm_4"
+						:disabled="disableElements" />
+					<FormSwitch.Label htmlFor="swich_plans_gm_4">
+						Disciplina
+					</FormSwitch.Label>
 				</FormSwitch>
 				<FormSwitch>
 					<FormSwitch.Input
-						name="parent_child_communication"
-						id="parent_child_communication"
+						name="swich_plans_gm_5"
+						id="swich_plans_gm_5"
 						type="checkbox"
-						v-model="form.parent_child_communication"
-						disabled />
-					<FormSwitch.Label htmlFor="parent_child_communication">
+						v-model="form.swich_plans_gm_5"
+						:checked="form.swich_plans_gm_5"
+						:disabled="disableElements" />
+					<FormSwitch.Label htmlFor="swich_plans_gm_5">
 						Comunicación alumnos y padres
 					</FormSwitch.Label>
 				</FormSwitch>
 				<FormSwitch>
 					<FormSwitch.Input
-						name="verbalization"
-						id="verbalization"
+						name="swich_plans_gm_6"
+						id="swich_plans_gm_6"
 						type="checkbox"
-						v-model="form.verbalization"
-						disabled />
-					<FormSwitch.Label htmlFor="verbalization">
+						v-model="form.swich_plans_gm_6"
+						:checked="form.swich_plans_gm_6"
+						:disabled="disableElements" />
+					<FormSwitch.Label htmlFor="swich_plans_gm_6">
 						Verbalización clara y simple
 					</FormSwitch.Label>
 				</FormSwitch>
@@ -421,69 +456,78 @@ const onSubmit = async () => {
 			<div class="grid grid-cols-3 md:grid md:grid-cols-3 gap-6 justify-evenly">
 				<FormSwitch>
 					<FormSwitch.Input
-						name="traditional"
-						id="traditional"
+						name="swich_plans_mp_1"
+						id="swich_plans_mp_1"
 						type="checkbox"
-						v-model="form.traditional"
-						disabled />
-					<FormSwitch.Label htmlFor="traditional">
+						v-model="form.swich_plans_mp_1"
+						:checked="form.swich_plans_mp_1"
+						:disabled="disableElements" />
+					<FormSwitch.Label htmlFor="swich_plans_mp_1">
 						Modelo pedagógico del monitor
 					</FormSwitch.Label>
 				</FormSwitch>
 
 				<FormSwitch>
 					<FormSwitch.Input
-						name="behavioral"
-						id="behavioral"
+						name="swich_plans_mp_2"
+						id="swich_plans_mp_2"
 						type="checkbox"
-						v-model="form.behavioral"
-						disabled />
-					<FormSwitch.Label htmlFor="behavioral"> Conductual </FormSwitch.Label>
+						v-model="form.swich_plans_mp_2"
+						:checked="form.swich_plans_mp_2"
+						:disabled="disableElements" />
+					<FormSwitch.Label htmlFor="swich_plans_mp_2">
+						Conductual
+					</FormSwitch.Label>
 				</FormSwitch>
 
 				<FormSwitch>
 					<FormSwitch.Input
-						name="romantic"
-						id="romantic"
+						name="swich_plans_mp_3"
+						id="swich_plans_mp_3"
 						type="checkbox"
-						v-model="form.romantic"
-						disabled />
-					<FormSwitch.Label htmlFor="romantic"> Romantico </FormSwitch.Label>
+						v-model="form.swich_plans_mp_3"
+						:checked="form.swich_plans_mp_3"
+						:disabled="disableElements" />
+					<FormSwitch.Label htmlFor="swich_plans_mp_3">
+						Romantico
+					</FormSwitch.Label>
 				</FormSwitch>
 
 				<FormSwitch>
 					<FormSwitch.Input
-						name="constructivist"
-						id="constructivist"
+						name="swich_plans_mp_4"
+						id="swich_plans_mp_4"
 						type="checkbox"
-						v-model="form.constructivist"
-						disabled />
-					<FormSwitch.Label htmlFor="constructivist">
+						v-model="form.swich_plans_mp_4"
+						:checked="form.swich_plans_mp_4"
+						:disabled="disableElements" />
+					<FormSwitch.Label htmlFor="swich_plans_mp_4">
 						Constructivista
 					</FormSwitch.Label>
 				</FormSwitch>
 
 				<FormSwitch>
 					<FormSwitch.Input
-						name="globalizer"
-						id="globalizer"
+						name="swich_plans_mp_5"
+						id="swich_plans_mp_5"
 						type="checkbox"
-						v-model="form.globalizer"
-						disabled />
-					<FormSwitch.Label htmlFor="globalizer">
+						v-model="form.swich_plans_mp_5"
+						:checked="form.swich_plans_mp_5"
+						:disabled="disableElements" />
+					<FormSwitch.Label htmlFor="swich_plans_mp_5">
 						Integrador – globalizador
 					</FormSwitch.Label>
 				</FormSwitch>
 			</div>
 		</div>
-		<div class="p-5 mt-6 intro-y">
+		<div class="p-5 mt-6 intro-y box">
 			<CommonTextarea
 				label="Observaciones *"
+				rows="5"
 				placeholder="Ingrese las observaciones"
 				name="observations"
 				v-model="form.observations"
-				rows="5"
-				disabled />
+				:disabled="disableElements" />
 		</div>
 		<div class="p-5 mt-6 intro-y">
 			<FormLabel
@@ -492,10 +536,11 @@ const onSubmit = async () => {
 				Evidencia *
 			</FormLabel>
 			<img
-				:alt="`Evidencia del metodologo ${form.methodologist_id}`"
+				:alt="`Evidencia de la visita del metodologo ${form.created_by}`"
 				class="m-auto border rounded-lg"
-				src="/semilleros.png"
+				:src="`${urlStorage}${file}`"
 				width="400" />
 		</div>
+	</div>
 	</div>
 </template>

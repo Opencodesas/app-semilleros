@@ -42,10 +42,6 @@ const form_rules = computed(() => ({
 	file: { required },
 }));
 
-const monitorList = [
-	{ label: 'Joselito', value: 1 },
-	{ label: 'Miguelito', value: 2 },
-];
 const event_supportList = [
 	{ label: 'Si', value: 1 },
 	{ label: 'No', value: 2 },
