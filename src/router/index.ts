@@ -407,23 +407,24 @@ const routes = [
 				]
 			},
 			{
-				path: "methodologist_visits",
+				path: "methodologist",
 				name: "methodologist_visits",
+				
 				children: [
 					{
 						path: "",
 						name: "methodologist_visits.index",
-						component: () => import('@/pages/views/Index.vue')
+						component: () => import('@/pages/methodologist/Index.vue')
 					},
 					{
 						path: "create",
 						name: "methodologist_visits.create",
-						component: () => import('@/pages/views/Form.vue')
+						component: () => import('@/pages/methodologist/Form.vue')
 					},
 					{
-						path: "edit",
-						name: "methodologist_visits.update",
-						// component: () => import('@/pages/contractors/Form.vue')
+						path: "edit/:id",
+						name: "methodologist_visits.edit",
+						component: () => import('@/pages/methodologist/Edit.vue')
 					},
 				]
 			},
