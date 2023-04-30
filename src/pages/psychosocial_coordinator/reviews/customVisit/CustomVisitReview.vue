@@ -11,7 +11,7 @@ const urlStorage = `${import.meta.env.VITE_BASE_URL}/storage/`;
 
 const props = defineProps<{
     closeModal: Function;
-    id_review: any;
+    item: any;
 }>();
 
 //Quitar datos de prueba
@@ -56,24 +56,24 @@ const healthEntities = ref()
 const dataLoaded = ref(false)
 //Verificar si se puede hacer con asycComputed
 const getData = () => {
-    console.log(props.id_review);
-    form.created_by = props.id_review.createdBy.name
-    form.month = props.id_review.months.name;
-    form.municipality = props.id_review.municipalities.name;
-    form.beneficiary = props.id_review.beneficiaries.full_name;
-    form.theme = props.id_review.theme;
-    form.agreements = props.id_review.agreements;
-    form.concept = props.id_review.concept;
-    form.guardian_knows_semilleros = props.id_review.guardian_knows_semilleros;
-    form.file = props.id_review.file;
+    console.log(props.item);
+    form.created_by = props.item.createdBy.name
+    form.month = props.item.months.name;
+    form.municipality = props.item.municipalities.name;
+    form.beneficiary = props.item.beneficiaries.full_name;
+    form.theme = props.item.theme;
+    form.agreements = props.item.agreements;
+    form.concept = props.item.concept;
+    form.guardian_knows_semilleros = props.item.guardian_knows_semilleros;
+    form.file = props.item.file;
 
-    beneficiary_data.scholar_level = props.id_review.beneficiaries.scholar_level ? scholarLevels[props.id_review.beneficiaries.scholar_level - 1].label : 'No tiene';
-    beneficiary_data.health_entity = props.id_review.beneficiaries.health_entity_id ? healthEntities.value[props.id_review.beneficiaries.health_entity_id - 1].label : 'No tiene';
-    beneficiary_data.guardian_name = props.id_review.guardian.firts_name;
-    beneficiary_data.guardian_lastname = props.id_review.guardian.last_name;
-    beneficiary_data.guardian_identification = props.id_review.guardian.cedula;
-    //form.created_by = props.id_review.createdBy.name;
-    // await customVisitServices.get(props.id_review as string).then((response) => {
+    beneficiary_data.scholar_level = props.item.beneficiaries.scholar_level ? scholarLevels[props.item.beneficiaries.scholar_level - 1].label : 'No tiene';
+    beneficiary_data.health_entity = props.item.beneficiaries.health_entity_id ? healthEntities.value[props.item.beneficiaries.health_entity_id - 1].label : 'No tiene';
+    beneficiary_data.guardian_name = props.item.guardian.firts_name;
+    beneficiary_data.guardian_lastname = props.item.guardian.last_name;
+    beneficiary_data.guardian_identification = props.item.guardian.cedula;
+    //form.created_by = props.item.createdBy.name;
+    // await customVisitServices.get(props.item as string).then((response) => {
     //     console.log(response?.data.items);
     //     if (response?.status == 200 || response?.status == 201) {
     //         form.month = response.data.items.month_id;
@@ -123,7 +123,7 @@ const router = useRouter()
 const onSubmit = async () => {
     const valid = await v$.value.$validate()
     if (valid) {
-        await customVisitServices.update(props.id_review.id as string, formdataParser(form)).then((response) => {
+        await customVisitServices.update(props.item.id as string, formdataParser(form)).then((response) => {
             if (response) {
                 if (response.status >= 200 && response.status <= 300) {
                     setLoading(true)

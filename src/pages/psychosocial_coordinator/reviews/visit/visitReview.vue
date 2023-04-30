@@ -10,7 +10,7 @@ const urlStorage = `${import.meta.env.VITE_BASE_URL}/storage/`;
 
 const props = defineProps<{
     closeModal: Function;
-    id_review: any;
+    item: any;
 }>();
 
 
@@ -59,24 +59,24 @@ const v$ = useVuelidate(form_rules, form)
 const dataLoaded = ref(false)
 
 const getData = async () => {
-    console.log(props.id_review)
-    form.date_visit = props.id_review.date_visit;
-    form.municipalities_id = props.id_review.municipality.name;
-    form.monitor = props.id_review.monitor.name;
-    form.diciplines_id = props.id_review.discipline.name;
-    form.number_beneficiaries = props.id_review.number_beneficiaries;
-    form.scenery = props.id_review.scenery;
-    form.objetive = props.id_review.objetive;
-    form.beneficiaries_recognize_name = props.id_review.beneficiaries_knows_project;
-    form.beneficiary_recognize_value = props.id_review.beneficiaries_knows_monthly_value;
-    form.all_ok = props.id_review.monitor_organization_discipline_management;
-    form.description = props.id_review.description;
-    form.observations = props.id_review.observations;
-    form.file = props.id_review.file;
-    form.created_by = props.id_review.createdBY.name;
+    console.log(props.item)
+    form.date_visit = props.item.date_visit;
+    form.municipalities_id = props.item.municipality.name;
+    form.monitor = props.item.monitor.name;
+    form.diciplines_id = props.item.discipline.name;
+    form.number_beneficiaries = props.item.number_beneficiaries;
+    form.scenery = props.item.scenery;
+    form.objetive = props.item.objetive;
+    form.beneficiaries_recognize_name = props.item.beneficiaries_knows_project;
+    form.beneficiary_recognize_value = props.item.beneficiaries_knows_monthly_value;
+    form.all_ok = props.item.monitor_organization_discipline_management;
+    form.description = props.item.description;
+    form.observations = props.item.observations;
+    form.file = props.item.file;
+    form.created_by = props.item.createdBY.name;
 
 
-    // await visitServices.get(props.id_review as string).then((response) => {
+    // await visitServices.get(props.item as string).then((response) => {
     //     console.log(response?.data.items);
     //     if (response?.status == 200 || response?.status == 201) {
     //         form.rejection_message = response.data.items.rejection_message;
@@ -110,7 +110,7 @@ onMounted(async () => {
 const onSubmit = async () => {
     const valid = await v$.value.$validate()
     if (valid) {
-        await visitServices.update(props.id_review.id as string, formdataParser(form)).then((response) => {
+        await visitServices.update(props.item.id as string, formdataParser(form)).then((response) => {
             if (response) {
                 if (response.status >= 200 && response.status <= 300) {
                     setLoading(true)

@@ -8,7 +8,7 @@ const urlStorage = `${import.meta.env.VITE_BASE_URL}/storage/`;
 
 const props = defineProps<{
 	closeModal: Function;
-	id_review: any;
+	item: any;
 }>();
 
 const form = reactive({
@@ -54,25 +54,25 @@ const dataLoaded = ref(false)
 const v$ = useVuelidate(form_rules, form);
 
 const data = async () => {
-	console.log(props.id_review)
-	form.date_visit = props.id_review.date_visit;
-	form.hour_visit = props.id_review.hour_visit;
-	form.municipality_id = props.id_review.municipality.name;
-	form.sidewalk = props.id_review.sidewalk;
-	form.monitor_id = props.id_review.monitor.name;
-	form.discipline_id = props.id_review.discipline.name;
-	form.sports_scene = props.id_review.sports_scene;
-	form.beneficiary_coverage = props.id_review.beneficiary_coverage;
-	form.technical = props.id_review.technical;
-	form.event_support = props.id_review.event_support;
-	form.description = props.id_review.description;
-	form.observations = props.id_review.observations;
-	form.file = props.id_review.file;
-	form.rejection_message = props.id_review.rejection_message;
-	form.created_by = props.id_review.created_by.name;
+	console.log(props.item)
+	form.date_visit = props.item.date_visit;
+	form.hour_visit = props.item.hour_visit;
+	form.municipality_id = props.item.municipality.name;
+	form.sidewalk = props.item.sidewalk;
+	form.monitor_id = props.item.monitor.name;
+	form.discipline_id = props.item.discipline.name;
+	form.sports_scene = props.item.sports_scene;
+	form.beneficiary_coverage = props.item.beneficiary_coverage;
+	form.technical = props.item.technical;
+	form.event_support = props.item.event_support;
+	form.description = props.item.description;
+	form.observations = props.item.observations;
+	form.file = props.item.file;
+	form.rejection_message = props.item.rejection_message;
+	form.created_by = props.item.created_by.name;
 
 	// setLoading(true);
-	// await technicalDirectorVisitServices.get(props.id_review as string).then((response) => {
+	// await technicalDirectorVisitServices.get(props.item as string).then((response) => {
 	// 	if (response?.status == 200) {
 	// 		form.observations = response.data.observations;
 	// 		form.monitor = response.data.monitor;
@@ -107,15 +107,16 @@ onMounted(async () => {
 const onSubmit = async () => {
 	const valid = await v$.value.$validate();
 	if (valid) {
-		await subdirectorVisitServices.update(props.id_review.id as string, formdataParser(form))
+		await subdirectorVisitServices.update(props.item.id as string, formdataParser(form))
 			.then((response) => {
 				if (response?.status == 200 || response?.status == 201) {
-					props.closeModal
+					props.closeModal()
 					alerts.custom('', 'Revisión exitosa!', 'success');
 					// setLoading(true);
 					// router.push('').finally(() => {
 					// 	setLoading(false);
 					// });
+					window.location.reload()
 				} else {
 					alerts.custom('', 'Error al revisar!', 'error')
 				}
