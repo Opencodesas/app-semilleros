@@ -1,4 +1,4 @@
-let module = "psychosocial/visits"
+let module = "psychologistVisits"
 
 export const visitServices = {
     get: async (id: string) => {
@@ -44,7 +44,7 @@ export const visitServices = {
         try {
             setLoading(true)
 
-            const response = await api.post(`/${apiPath}/${module}/${id}?_method=PUT`, payload).finally(() => {
+            const response = await api.post(`/${apiPath}/${module}/${id}`, payload).finally(() => {
                 setLoading(false)
             })
 

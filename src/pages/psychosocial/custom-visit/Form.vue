@@ -2,25 +2,23 @@
 import useVuelidate from '@vuelidate/core'
 import { required } from '@/utils/validators'
 import FormSwitch from "@/base-components/Form/FormSwitch";
-import { filePondValue } from '@/composables/useFilepondEvents';
 import { onboardingStore } from "@/stores/onboardingStore";
 import { customVisitServices } from '@/services/psychosocial/customVisitServices';
+import { selectOption } from '@/components/CommonSelect.vue';
 
 const { multiple } = useFilepondEvents();
 
 const store = onboardingStore();
-//id:2 => En revisión => ENR
 
-//Se manda la siguiente información para crear visita personalizada
 const form = reactive({
-    month: '', //ID del mes
-    municipality: '', //ID del municipio
-    beneficiary: '', //ID del beneficiario
-    theme: '', //String
-    agreements: '', //String
-    concept: '1', //String
-    guardian_knows_semilleros: false, //Boolean
-    file: [], //Un archivo (foto)
+    month: '',
+    municipality: '',
+    beneficiary: '',
+    theme: '',
+    agreements: '',
+    concept: '1',
+    guardian_knows_semilleros: false,
+    file: [],
 })
 
 
@@ -32,8 +30,22 @@ const form_rules = computed(() => ({
     agreements: { required },
     concept: {},
     guardian_knows_semilleros: { required },
-    file: [{ required }],
+    file: { required },
 }))
+
+const formdataParser = (form: any) => {
+    console.log(form);
+    const formData = new FormData();
+    Object.keys(form).forEach((key) => {
+        formData.append(key, form[key]);
+    });
+    return formData;
+};
+
+
+const selectFile = (event: any) => {
+    form.file = event.target.files[0];
+}
 
 const months = asyncComputed(async () => {
     return await getSelect(['months'])
@@ -43,43 +55,58 @@ const municipalities = asyncComputed(async () => {
     return await getSelect(['municipalities'])
 }, null)
 
-const municipality_id = computed(() => form.municipality)
+//const beneficiariesList = ref<selectOption[]>([]);
 
-//Usar para traer beneficiarios (nombre y id) por municipio
-// const beneficiaries = asyncComputed(async () => {
-//     return municipality_id.value ? await getBeneficiariesByMunicipaly(municipality_id.value) : []
-//  }, null)
+const beneficiariesList = asyncComputed(async () => {
+    return await getBeneficiariesByDepartment(form.municipality as string)
+}, null)
 
-const beneficiaries = [
-    {label: 'Beneficiario 1', value: '1'},
-    {label: 'Beneficiario 2', value: '2'},
-]
+watch(() => form.municipality, (newVal, oldVal) => {
+    form.beneficiary = '';
+})
 
-//Se necesita traer la siguiente información del beneficiario por su id: (Adjuntar foto de lo visual)
+watch(() => form.beneficiary, (newVal, oldVal) => {
+    beneficiary_data.scholar_level = '';
+    beneficiary_data.health_entity = '';
+    beneficiary_data.guardian_name = '';
+    beneficiary_data.guardian_lastname = '';
+    beneficiary_data.guardian_identification = '';
+    newVal && getBeneficiaryData();
+})
+
 const beneficiary_data = reactive({
-    grade: '',
+    scholar_level: '',
     health_entity: '',
     guardian_name: '',
     guardian_lastname: '',
     guardian_identification: '',
 })
 
-//revisar este servicio para ver si trae lo que se necesita
+
+//Quitar cuando se ponga la relación
+const healthEntities = computedAsync(async () => {
+    return await getHealthentities();
+}, null)
+
 const getBeneficiaryData = async () => {
+    //console.log(healthEntities.value)
     await beneficiaryServices.get(form.beneficiary as string).then((response) => {
         console.log(response?.data.items);
         if (response?.status == 200 || response?.status == 201) {
-            beneficiary_data.grade = response.data.items.grade;
-            beneficiary_data.health_entity = response.data.items.health_entity;
-            beneficiary_data.guardian_name = response.data.items.guardian_name;
-            beneficiary_data.guardian_lastname = response.data.items.guardian_lastname;
-            beneficiary_data.guardian_identification = response.data.items.guardian_identification;
+            beneficiary_data.scholar_level = response.data.items.scholar_level ? scholarLevels[response.data.items.scholar_level - 1].label : 'No tiene';
+            beneficiary_data.health_entity = response.data.items.health_entity_id ? healthEntities.value[response.data.items.health_entity_id - 1].label : 'No tiene';
+            beneficiary_data.guardian_name = response.data.items.acudiente.firts_name;
+            beneficiary_data.guardian_lastname = response.data.items.acudiente.last_name;
+            beneficiary_data.guardian_identification = response.data.items.acudiente.cedula;
         } else {
             alerts.custom("", "No se pudieron obtener los datos", "error");
         }
-        console.log(form);
+        //console.log(form);
     })
 }
+
+
+
 
 const v$ = useVuelidate(form_rules, form)
 
@@ -87,17 +114,18 @@ const router = useRouter()
 
 const onSubmit = async () => {
     const valid = await v$.value.$validate()
-
+    const formData = formdataParser(form)
+    console.log(form);
+    console.log(formData);
     if (valid) {
-        await customVisitServices.create(formdataParser(form)).then((response) => {
+        await customVisitServices.create(formData).then((response) => {
             if (response) {
                 if (response.status >= 200 && response.status <= 300) {
                     alerts.create()
-                    // setLoading(true)
-
-                    // router.push('/dashboard').finally(() => {
-                    //     setLoading(false)
-                    // })
+                    setLoading(true)
+                    router.push({ name: 'psychosocial.visits' }).finally(() => {
+                        setLoading(false)
+                    })
                 }
             }
         })
@@ -127,15 +155,13 @@ const positionRange = computed(() => {
                         <CommonSelect label="Mes *" name="month" v-model="form.month" :validator="v$" :options="months" />
                         <CommonSelect label="Municipio *" name="municipality" v-model="form.municipality" :validator="v$"
                             :options="municipalities" />
-                        <CommonSelect @select="getBeneficiaryData" label="Beneficiario *" name="beneficiary"
-                            v-model="form.beneficiary" :validator="v$" :options="beneficiaries" />
+                        <CommonSelect label="Beneficiario *" name="beneficiary" v-model="form.beneficiary" :validator="v$"
+                            :options="beneficiariesList" />
                     </div>
-                    <!-- cambiar condicion por "beneficiary_data" cuando haya función para traer los datos -->
                     <div v-if="form.beneficiary">
-                        <!-- These inputs don't use the validator since they have data from the DB  -->
                         <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
-                            <CommonInput disabled type="text" label="Grado de escolaridad" name="grade"
-                                v-model="beneficiary_data.grade" />
+                            <CommonInput disabled type="text" label="Grado de escolaridad" name="scholar_level"
+                                v-model="beneficiary_data.scholar_level" />
                             <CommonInput disabled type="text" label="Entidad de salud" name="health_entity"
                                 v-model="beneficiary_data.health_entity" />
                         </div>
@@ -187,10 +213,8 @@ const positionRange = computed(() => {
 
                         <div class="col-span-3 p-5 mt-6 intro-y">
                             <CommonFile :validator="v$" v-model="form.file" name="file"
-                                class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
-                                :accept-multiple="false"
-                                @addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
-                                @removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }" />
+                                class="w-11/12 sm:w-8/12 m-auto cursor-pointer" :accept-multiple="false"
+                                @change="selectFile" />
                         </div>
 
                     </div>

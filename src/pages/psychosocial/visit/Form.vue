@@ -2,64 +2,85 @@
 import useVuelidate from '@vuelidate/core'
 import { required } from '@/utils/validators'
 import FormSwitch from "@/base-components/Form/FormSwitch";
-import { filePondValue } from '@/composables/useFilepondEvents';
 import { visitServices } from '@/services/psychosocial/visitServices';
 
 const { multiple } = useFilepondEvents();
 
 const form = reactive({
     date_visit: '',
-    municipality_id: '',
-    monitor_id: '',
-    discipline_id: '',
-    numberBeneficiaries: '',
-    sports_scene: '',
+    municipalities_id: '',
+    monitor: '',
+    diciplines_id: '',
+    number_beneficiaries: '',
+    scenery: '',
     objetive: '',
-    beneficiaries_knows_project: false,
-    beneficiaries_knows_monthly_value: false,
-    monitor_organization_discipline_management: false,
+    beneficiaries_recognize_name: false,
+    beneficiary_recognize_value: false,
+    all_ok: false,
     description: '',
     observations: '',
     file: [],
 });
-//status_id: '2',
-//created_by: store.user.id,
+
+
 const form_rules = computed(() => ({
     date_visit: { required },
-    municipality_id: { required },
-    monitor_id: { required },
-    discipline_id: { required },
-    numberBeneficiaries: { required },
-    sports_scene: { required },
+    municipalities_id: { required },
+    monitor: { required },
+    diciplines_id: { required },
+    number_beneficiaries: { required },
+    scenery: { required },
     objetive: { required },
-    beneficiaries_knows_project: { required },
-    beneficiaries_knows_monthly_value: { required },
-    monitor_organization_discipline_management: { required },
+    beneficiaries_recognize_name: { required },
+    beneficiary_recognize_value: { required },
+    all_ok: { required },
     description: { required },
     observations: { required },
     file: { required },
 }));
 
 const formdataParser = (form: any) => {
-        const formData = new FormData();
-        Object.keys(form).forEach((key) => {
-            formData.append(key, form[key]);
-        });
-        return formData;
-    };
+    const formData = new FormData();
+    Object.keys(form).forEach((key) => {
+        formData.append(key, form[key]);
+    });
+    return formData;
+};
 
-const formData = formdataParser(form)
+const selectFile = (event: any) => {
+    console.log(form.file);
+    form.file = event.target.files[0];
+}
 
 const municipalities = asyncComputed(async () => {
     return await getSelect(['municipalities'])
 }, null)
 
-const disciplinesList = ref([]);
 
-const monitorList = [
-    { label: "Joselito", value: 1 },
-    { label: "Miguelito", value: 2 },
-];
+// watch(() => form.municipalities_id, (newVal, oldVal) => {
+//     console.log(newVal);
+//     if (newVal != null) monitorsByMunicipalities_id();
+//     if (newVal == null) monitorList.value = [];
+// })
+
+//const disciplinesList = ref([]);
+
+const monitorList = asyncComputed(async () => {
+    return await getMonitorByMunicipality(form.municipalities_id);
+}, null);
+
+const disciplinesList = asyncComputed(async () => {
+    return await getDisciplinesByMonitor(form.monitor)
+}, null)
+
+watch(() => form.municipalities_id, (newVal, oldVal) => {
+    form.monitor = '';
+})
+
+watch(() => form.monitor, (newVal, oldVal) => {
+    form.diciplines_id = '';
+})
+
 const v$ = useVuelidate(form_rules, form)
 const router = useRouter()
 
@@ -67,14 +88,17 @@ const router = useRouter()
 const onSubmit = async () => {
     const valid = await v$.value.$validate()
     if (valid) {
-        await visitServices.create(formdataParser(formData)).then((response) => {
+        const formData = formdataParser(form);
+        console.log(form)
+        await visitServices.create(formData).then((response) => {
             if (response) {
                 if (response.status >= 200 && response.status <= 300) {
-                    alerts.create()
                     setLoading(true)
-                        router.push('').finally(() => {
-                            setLoading(false)
-                        })
+                    router.push({ name: 'psychosocial.visits' }).finally(() => {
+                        setLoading(false)
+                        alerts.create()
+                    })
+
                 }
             }
         })
@@ -96,16 +120,16 @@ const onSubmit = async () => {
 
                 <div class="grid grid-cols-2 gap-y-6 gap-x-4">
                     <CommonInput type="date" label="Fecha *" name="date_visit" v-model="form.date_visit" :validator="v$" />
-                    <CommonSelect label="Municipio *" name="municipality_id" v-model="form.municipality_id" :validator="v$"
-                        :options="municipalities" />
-                    <CommonSelect label="Monitor Deportivo *" name="monitor_id" v-model="form.monitor_id" :validator="v$"
+                    <CommonSelect label="Municipio *" name="municipalities_id" v-model="form.municipalities_id"
+                        :validator="v$" :options="municipalities" />
+                    <CommonSelect label="Monitor Deportivo *" name="monitor" v-model="form.monitor" :validator="v$"
                         :options="monitorList" />
-                    <CommonSelect label="Disciplinas *" name="discipline_id" v-model="form.discipline_id" :validator="v$"
+                    <CommonSelect label="Disciplinas *" name="diciplines_id" v-model="form.diciplines_id" :validator="v$"
                         :options="disciplinesList" />
                     <CommonInput type="number" min="0" label="No. Beneficiarios en el campo *" placeholder="Escriba..."
-                        name="numberBeneficiaries" v-model="form.numberBeneficiaries" :validator="v$" />
-                    <CommonInput type="text" label="Escenario Deportivo *" placeholder="Escriba..." name="sports_scene"
-                        v-model="form.sports_scene" :validator="v$" />
+                        name="number_beneficiaries" v-model="form.number_beneficiaries" :validator="v$" />
+                    <CommonInput type="text" label="Escenario Deportivo *" placeholder="Escriba..." name="scenery"
+                        v-model="form.scenery" :validator="v$" />
                     <div class="col-span-2">
                         <CommonInput label="Objetivo del acompañamiento *" placeholder="Escriba..." name="objetive"
                             v-model="form.objetive" :validator="v$" />
@@ -113,28 +137,26 @@ const onSubmit = async () => {
                     <div class="p-5 intro-y box col-span-2 bg-gray-200 flex flex-col gap-3">
                         <div class="">
 
-                            <FormSwitch.Input name="beneficiaries_knows_project" id="beneficiaries_knows_project"
-                                type="checkbox" v-model="form.beneficiaries_knows_project" :validator="v$" />
-                            <FormSwitch.Label class="text-sm" htmlFor="beneficiaries_knows_project"> ¿LOS BENEFICIARIOS
+                            <FormSwitch.Input name="beneficiaries_recognize_name" id="beneficiaries_recognize_name"
+                                type="checkbox" v-model="form.beneficiaries_recognize_name" :validator="v$" />
+                            <FormSwitch.Label class="text-sm" htmlFor="beneficiaries_recognize_name"> ¿LOS BENEFICIARIOS
                                 RECONOCEN EL NOMBRE
                                 DEL
                                 PROYECTO? </FormSwitch.Label>
                         </div>
                         <div class="">
 
-                            <FormSwitch.Input name="beneficiaries_knows_monthly_value"
-                                id="beneficiaries_knows_monthly_value" type="checkbox"
-                                v-model="form.beneficiaries_knows_monthly_value" :validator="v$" />
-                            <FormSwitch.Label htmlFor="beneficiaries_knows_monthly_value"> ¿LOS BENEFICIARIOS RECONOCEN EL
+                            <FormSwitch.Input name="beneficiary_recognize_value" id="beneficiary_recognize_value"
+                                type="checkbox" v-model="form.beneficiary_recognize_value" :validator="v$" />
+                            <FormSwitch.Label htmlFor="beneficiary_recognize_value"> ¿LOS BENEFICIARIOS RECONOCEN EL
                                 VALOR DESARROLLADO
                                 EN EL MES? </FormSwitch.Label>
                         </div>
                         <div class="">
 
-                            <FormSwitch.Input name="monitor_organization_discipline_management"
-                                id="monitor_organization_discipline_management" type="checkbox"
-                                v-model="form.monitor_organization_discipline_management" :validator="v$" />
-                            <FormSwitch.Label htmlFor="monitor_organization_discipline_management"> ¿SE OBSERVA
+                            <FormSwitch.Input name="all_ok" id="all_ok" type="checkbox" v-model="form.all_ok"
+                                :validator="v$" />
+                            <FormSwitch.Label htmlFor="all_ok"> ¿SE OBSERVA
                                 ORGANIZACIÓN, DISCIPLINA Y BUEN MANEJO
                                 DE GRUPO DURANTE LAS SESIONES DE CLASE DEL MONITOR? </FormSwitch.Label>
                         </div>
@@ -149,13 +171,8 @@ const onSubmit = async () => {
                     </div>
 
                     <div class="col-span-2 p-5 mt-6 intro-y">
-                        <CommonDropzone name="file"
-                        class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
-                        :accept-multiple="false"
-                            v-model="form.file"
-                            @addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
-                            @removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }"
-                            :validator="v$" />
+                        <CommonFile :validator="v$" v-model="form.file" name="file"
+                            class="w-11/12 sm:w-8/12 m-auto cursor-pointer" :accept-multiple="false" @change="selectFile" />
                     </div>
                 </div>
 
