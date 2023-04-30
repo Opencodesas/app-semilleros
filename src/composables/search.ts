@@ -22,7 +22,10 @@ export const searchData = (items: Item[], search: String) => {
 				//Para actividades transversales
 				item.municipalities?.name?.toLowerCase().includes(searchValue) ||
 				item.creator?.name?.toLowerCase().includes(searchValue) ||
-				item.scene?.toLowerCase().includes(searchValue)
+				item.scene?.toLowerCase().includes(searchValue) ||
+
+				//para fichas de monitores
+				item.mon?.name?.toLowerCase().includes(searchValue)
 		);
 	}
 	return items
