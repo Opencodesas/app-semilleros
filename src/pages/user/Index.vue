@@ -25,7 +25,6 @@ const create = () => {
 onBeforeMount(async () => {
     await userServices.getAll().then((response) => {
         items.value = response?.data.items
-
     })
 })
 

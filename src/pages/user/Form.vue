@@ -255,7 +255,6 @@ onMounted(async () => {
 
 const onSubmit = async () => {
     const valid = await v$.value.$validate()
-    console.log(form);
     if (valid) {
         await userServices.create(formdataParser(form)).then((response) => {
             if (response) {
