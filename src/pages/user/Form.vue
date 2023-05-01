@@ -46,7 +46,18 @@ const form_rules = computed(() => ({
 const formdataParser = (form: any) => {
 	const formData = new FormData();
 	Object.keys(form).forEach((key) => {
-		formData.append(key, form[key]);
+		if (key == 'municipalities') {
+			form[key].forEach((file: any) => {
+				formData.append('municipalities[]', file);
+			});
+        } else if (key == 'disciplines') {
+            form[key].forEach((file: any) => {
+                formData.append('disciplines[]', file);
+            });
+        }
+        else {
+			formData.append(key, form[key]);
+		}
 	});
 	return formData;
 };
