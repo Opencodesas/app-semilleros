@@ -462,7 +462,7 @@ const onSubmit = async () => {
 			@change="selectFile"
 			@removefile="form.file = []" />
 	</div>
-	<div class="mt-6 flex justify-end col-span-1 md:col-span-2">
+	<div class="mt-6 flex justify-center col-span-1 md:col-span-2">
 		<Button
 			variant="primary"
 			class="btn btn-primary"
