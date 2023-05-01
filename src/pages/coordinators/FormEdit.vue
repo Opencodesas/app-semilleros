@@ -42,17 +42,18 @@ const form_rules = computed(() => ({
 }));
 
 const v$ = useVuelidate(form_rules, form);
-// Consulta todos lo municipios 
+// Consulta todos lo municipios
 const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
 }, null);
-// Consulta todas las disciplinas
-const disciplines = asyncComputed(async () => {
-	return await getSelect(['disciplines']);
-}, null);
+
 // Consulta todos los monitores por municipio
 const monitor = asyncComputed(async () => {
-	return await getMonitorByMunicipality(form.municipalitie_id)
+	return await getMonitorByMunicipality(form.municipalitie_id);
+}, null);
+// Consulta todas las disciplinas
+const disciplines = asyncComputed(async () => {
+	return await getDisciplinesByMonitor(form.user_id);
 }, null);
 
 const file = ref([]);
@@ -69,23 +70,39 @@ const fetch = async () => {
 				form.sports_scene = response.data.items.sports_scene;
 				form.observations = response.data.items.observations;
 				form.description = response.data.items.description;
-				form.discipline_id = response.data.items.discipline_id;
 				form.municipalitie_id = response.data.items.municipalitie.id;
-				form.user_id = response.data.items.user_id;
+				form.user_id = response.data.items.monitor.id;
+				form.discipline_id = response.data.items.discipline_id;
 				form.sidewalk = response.data.items.sidewalk;
 				form.status_id = response.data.items.status_id;
 				form.reject_message = response.data.items.reject_message;
 				form.file = response.data.items.file;
 				form.created_by = response.data.items.created_by.name;
 				file.value = response.data.items.file;
-				dataLoaded.value = true;
 			} else {
 				Swal.fire('', 'No se pudieron obtener los datos', 'error');
 			}
 		});
 };
-onMounted(() => {
-	fetch();
+watch(
+	() => form.municipalitie_id,
+	() => {
+		if (dataLoaded.value) {
+			form.user_id = '';
+		}
+	}
+);
+watch(
+	() => form.user_id,
+	() => {
+		if (dataLoaded.value) {
+			form.discipline_id = '';
+		}
+	}
+);
+onMounted(async () => {
+	await fetch();
+	dataLoaded.value = true;
 });
 
 /**
@@ -103,10 +120,10 @@ onMounted(() => {
 const selectFile = (event: any) => {
 	if (event?.target.files.length > 0) {
 		form.file = event.target.files[0];
-		return 
-	};
+		return;
+	}
 	form.file = file.value;
-}
+};
 
 const formdataParser = (form: any) => {
 	const formData = new FormData();

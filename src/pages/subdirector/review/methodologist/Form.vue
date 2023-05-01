@@ -65,8 +65,9 @@ const municipalities = asyncComputed(async () => {
 }, null);
 // Consulta todas las disciplinas
 const disciplines = asyncComputed(async () => {
-	return await getSelect(['disciplines']);
-}, null);
+    return await getDisciplinesByMonitor(form.user_id)
+}, null)
+
 const monitorList = asyncComputed(async () => {
 	return await getMonitorByMunicipality(form.municipalitie_id);
 }, null);
@@ -79,8 +80,8 @@ const getData = () => {
 	console.log(props.item);
 				form.id = props.item.id;
 				form.observations = props.item.observations;
-				form.user_id = props.item.monitor?.id;
 				form.municipalitie_id = props.item.municipalities.id;
+				form.user_id = props.item.monitor?.id;
 				form.event_support_id = props.item.event_supports.id;
 				form.hour_visit = props.item.hour_visit;
 				form.discipline_id = props.item.disciplines.id;

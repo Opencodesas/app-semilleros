@@ -7,7 +7,7 @@ const urlStorage = `${import.meta.env.VITE_BASE_URL}/storage/`;
 
 const props = defineProps<{
 	closeModal: Function;
-	id_review: String | number;
+	item: any;
 }>();
 
 const form = reactive({
@@ -27,11 +27,11 @@ const form = reactive({
 	file: [],
 	createdBy: {},
 	status_id: '', //id:2 => En revisión => ENR
-	rejection_message: 'Rechazado ya que...',
+	reject_message: '',
 });
 
 const form_rules = computed(() => ({
-	rejection_message: { required: parseInt(form.status_id) == 2 },
+	reject_message: { required: parseInt(form.status_id) == 2 },
 	status_id: { required },
 }));
 
@@ -43,11 +43,11 @@ const municipalities = asyncComputed(async () => {
 
 // Consulta todas las disciplinas
 const disciplines = asyncComputed(async () => {
-	return await getSelect(['disciplines']);
+	return await getDisciplinesByMonitor(form.monitor_id);
 }, null);
 // Consulta los monitores en revision
 const monitor = asyncComputed(async () => {
-	return await getMonitorByMunicipality(form.municipality_id)
+	return await getMonitorByMunicipality(form.municipality_id);
 }, null);
 
 const evaluationList = [
@@ -55,14 +55,6 @@ const evaluationList = [
 	{ label: 'Rechazada', value: 2 },
 ];
 //Usar para traer monitores por municipio cuando haya funcion
-const monitorList = [
-	//No olvidar llamar las funciones cuando se selecciones con @select en el componente
-	{ label: 'Joselito', value: 1 },
-	{ label: 'Miguelito', value: 2 },
-	//async () => {
-	//     return municipality_id.value ? await getMonitorsByMunicipaly(municipality_id.value) : []
-	//  }
-];
 
 const yes_no_List = [
 	{ label: 'Si', value: 1 },
@@ -76,36 +68,26 @@ const statusesList = ref<selectOption[]>([
 
 const dataLoaded = ref(false);
 //Verificar si se puede hacer con asycComputed
-const getData = async () => {
-	await subdirectorVisitServices
-		.get(props.id_review as string)
-		.then((response: any) => {
-			if (response?.status == 200 || response?.status == 201) {
-				form.id = response.data.items.id;
-				form.date_visit = response.data.items.date_visit;
-				form.hour_visit = response.data.items.hour_visit;
-				form.municipality_id = response.data.items.municipality_id;
-				form.sidewalk = response.data.items.sidewalk;
-				form.monitor_id = response.data.items.monitor_id;
-				form.discipline_id = response.data.items.discipline_id;
-				form.sports_scene = response.data.items.sports_scene;
-				form.beneficiary_coverage = response.data.items.beneficiary_coverage;
-				form.technical = response.data.items.technical;
-				form.event_support = response.data.items.event_support;
-				form.description = response.data.items.description;
-				form.observations = response.data.items.observations;
-				form.status_id = response.data.items.status_id;
-				form.rejection_message = response.data.items.rejection_message;
-				form.file = response.data.items.file;
-				form.createdBy = response.data.items.created_by.name;
-			} else {
-				alerts.custom('', 'No se pudieron obtener los datos', 'error');
-			}
-		});
+const getData = () => {
+	form.id = props.item.id;
+	form.date_visit = props.item.date_visit;
+	form.hour_visit = props.item.hour_visit;
+	form.municipality_id = props.item.municipality_id;
+	form.sidewalk = props.item.sidewalk;
+	form.monitor_id = props.item.monitor_id;
+	form.discipline_id = props.item.discipline_id;
+	form.sports_scene = props.item.sports_scene;
+	form.beneficiary_coverage = props.item.beneficiary_coverage;
+	form.technical = props.item.technical;
+	form.event_support = props.item.event_support;
+	form.description = props.item.description;
+	form.observations = props.item.observations;
+	form.file = props.item.file;
+	form.createdBy = props.item.created_by.name;
 };
 
-onMounted(async () => {
-	await getData();
+onMounted(() => {
+	getData();
 	dataLoaded.value = true;
 });
 
@@ -137,7 +119,7 @@ const onSubmit = async () => {
 };
 
 const defineReason = () => {
-	if (form.status_id == '1') form.rejection_message = '';
+	if (form.status_id == '1') form.reject_message = '';
 };
 </script>
 
@@ -161,12 +143,12 @@ const defineReason = () => {
 			v-if="form.status_id == '4'"
 			class="pt-4">
 			<CommonTextarea
-				name="rejection_message"
+				name="reject_message"
 				class=""
 				label="Comentario *"
 				placeholder="Escriba..."
 				rows="5"
-				v-model="form.rejection_message"
+				v-model="form.reject_message"
 				:validator="v$" />
 		</div>
 		<div

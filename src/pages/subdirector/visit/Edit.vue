@@ -55,17 +55,30 @@ const municipalities = asyncComputed(async () => {
 }, null);
 // Consulta todas las disciplinas
 const disciplines = asyncComputed(async () => {
-	return await getSelect(['disciplines']);
-}, null);
-// Consulta todos los monitores por municipio
-const monitor = asyncComputed(async () => {
-	return await getMonitorByMunicipality(form.municipality_id)
+	return await getDisciplinesByMonitor(form.monitor_id);
 }, null);
 
-const monitorList = [
-	{ label: 'Joselito', value: 1 },
-	{ label: 'Miguel Torres', value: 2 },
-];
+watch(
+	() => form.municipality_id,
+	() => {
+		if (dataLoaded.value) {
+			form.monitor_id = '';
+		}
+	}
+);
+
+watch(
+	() => form.monitor_id,
+	() => {
+		if (dataLoaded.value) {
+			form.discipline_id = '';
+		}
+	}
+);
+// Consulta todos los monitores por municipio
+const monitor = asyncComputed(async () => {
+	return await getMonitorByMunicipality(form.municipality_id);
+}, null);
 const event_supportList = [
 	{ label: 'Si', value: 1 },
 	{ label: 'No', value: 2 },
@@ -79,6 +92,7 @@ const v$ = useVuelidate(form_rules, form);
 const fetch = async () => {
 	await subdirectorVisitServices.get(id as string).then((response) => {
 		if (response?.status == 200 || response?.status == 201) {
+			console.log(response.data.items);
 			form.observations = response.data.items.observations;
 			form.monitor_id = response.data.items.monitor_id;
 			form.municipality_id = response.data.items.municipality_id;
@@ -96,23 +110,23 @@ const fetch = async () => {
 			form.status_id = response.data.items.status_id;
 			form.reject_message = response.data.items.reject_message;
 			form.created_by = response.data.items.created_by.name;
-			dataLoaded.value = true;
 		} else {
 			Swal.fire('', 'No se pudieron obtener los datos', 'error');
 		}
 	});
 };
-onMounted(() => {
-	fetch();
+onMounted(async () => {
+	await fetch();
+	dataLoaded.value = true;
 });
 
 const selectFile = (event: any) => {
 	if (event?.target.files.length > 0) {
 		form.file = event.target.files[0];
-		return 
-	};
+		return;
+	}
 	form.file = file.value;
-}
+};
 
 const formdataParser = (form: any) => {
 	const formData = new FormData();
@@ -293,8 +307,7 @@ const download = () => {};
 				class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
 				v-if="!disableElements"
 				@change="selectFile"
-				@removefile="selectFile"
-				/>
+				@removefile="selectFile" />
 		</div>
 	</div>
 

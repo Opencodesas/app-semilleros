@@ -9,7 +9,6 @@ onMounted(async () => {
 	await coordinatorVisitServices
 		.getAll()
 		.then((response) => {
-			console.log(response?.data.items);
 			items.value = response?.data.items;
 			setLoading(false);
 		})
@@ -23,10 +22,10 @@ const search = ref('');
 
 const headers: Header[] = [
 	// { text: 'Nro.', value: 'id' },
-	{ text: 'Fecha', value: 'date_visit' },
-	{ text: 'Municipio', value: 'municipalitie.name' },
-	//{ text: 'Coordinador', value: 'created_by.name' },
-	{ text: 'Escenario Deportivo', value: 'sports_scene' },
+	{ text: 'Fecha', value: 'date_visit', sortable: true },
+	{ text: 'Municipio', value: 'municipalitie.name', sortable: true },
+	{ text: 'Coordinador', value: 'created_by.name', sortable: true },
+	{ text: 'Escenario Deportivo', value: 'sports_scene', sortable: true },
 	{ text: 'Estado', value: 'status' },
 	{ text: 'Acciones', value: 'actions' },
 ];

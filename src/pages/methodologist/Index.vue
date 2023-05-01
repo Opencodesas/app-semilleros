@@ -24,13 +24,13 @@ onMounted(async () => {
 
 const headers: Header[] = [
 	//{ text: 'Nro.', value: 'id' },
-	{ text: 'Fecha', value: 'date_visit' },
-	{ text: 'Municipio', value: 'municipalities.name' },
-	{ text: 'Metodologo', value: 'creator.name' },
-	{ text: 'Escenario Deportivo', value: 'sports_scene' },
-	{ text: 'Evaluacion', value: 'evaluations' },
+	{ text: 'Fecha', value: 'date_visit', sortable: true },
+	{ text: 'Municipio', value: 'municipalities.name', sortable: true },
+	{ text: 'Metodologo', value: 'creator.name', sortable: true },
+	{ text: 'Escenario Deportivo', value: 'sports_scene', sortable: true },
+	{ text: 'Evaluacion', value: 'evaluations', sortable: true },
 	{ text: 'Estado', value: 'status' },
-	{ text: 'Acciones', value: 'actions' },
+	{ text: 'Acciones', value: 'actions'},
 ];
 const dataSearch = computed(() => searchData(items.value, search.value));
 
@@ -52,7 +52,7 @@ const dataSearch = computed(() => searchData(items.value, search.value));
 			name="search"
 			v-model="search"
 			placeholder="Buscar" />
-        <Crud :headers="headers" :items="items" />
+        <Crud :headers="headers" :items="dataSearch" />
     </div>
     <!-- END: Page Layout -->
 </template>

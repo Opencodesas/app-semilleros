@@ -42,17 +42,15 @@ const municipalities = asyncComputed(async () => {
 }, null);
 // Consulta todas las disciplinas
 const disciplines = asyncComputed(async () => {
-	return await getSelect(['disciplines']);
-}, null);
+    return await getDisciplinesByMonitor(form.user_id)
+}, null)
+
 // consulta los monitor por municipio
 const monitor = asyncComputed(async () => {
 	return await getMonitorByMunicipality(form.municipalitie_id);
 }, null);
 
-const monitorList = [
-	{ label: 'Camilo Martinez', value: 1 },
-	{ label: 'Miguel Torres', value: 2 },
-];
+
 const statusList = [
 	{ label: 'Aprobado', value: 1 },
 	{ label: 'Rechazado', value: 4 },
@@ -62,17 +60,17 @@ const statusList = [
 const v$ = useVuelidate(form_rules, form);
 
 // Obtiene los datos de la visita
-onMounted(() =>{ 
+onMounted(() => { 
 				form.id = props.item.id;
 				form.beneficiary_coverage = props.item.beneficiary_coverage;
 				form.date_visit = props.item.date_visit;
 				form.hour_visit = props.item.hour_visit;
+				form.municipalitie_id = props.item.municipalitie.id;
 				form.sports_scene = props.item.sports_scene;
 				form.observations = props.item.observations;
 				form.description = props.item.description;
+				form.user_id = props.item.monitor.id;
 				form.discipline_id = props.item.discipline_id;
-				form.municipalitie_id = props.item.municipalitie.id;
-				form.user_id = props.item.user_id;
 				form.sidewalk = props.item.sidewalk;
 				form.coordinator_name = props.item.created_by.name;
 				form.file = props.item.file;

@@ -16,8 +16,8 @@ const headers: Header[] = [
 	{ text: 'Fecha', value: 'date_visit', sortable: true },
 	{ text: 'Municipio', value: 'municipality.name', sortable: true },
 	{ text: 'Monitor', value: 'monitor.name', sortable: true },
-	{ text: 'Escenario Deportivo', value: 'sport_scene' },
-	{ text: 'Estado', value: 'status', sortable: true },
+	{ text: 'Escenario Deportivo', value: 'sport_scene', sortable: true },
+	{ text: 'Estado', value: 'status' },
 	{ text: 'Acciones', value: 'actions' },
 ];
 
