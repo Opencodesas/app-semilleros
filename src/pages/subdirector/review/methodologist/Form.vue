@@ -77,7 +77,6 @@ const statusList = [
 ];
 const v$ = useVuelidate(form_rules, form);
 const getData = () => {
-	console.log(props.item);
 				form.id = props.item.id;
 				form.observations = props.item.observations;
 				form.municipalitie_id = props.item.municipalities.id;
@@ -126,12 +125,11 @@ const getData = () => {
 				form.swich_plans_mp_5 =
 					props.item?.swich_plans_mp_5 == '0' ? false : true;
 				file.value = props.item.file;
-	dataLoaded.value = true;
-				console.log(dataLoaded.value);
+				dataLoaded.value = true;
 };
 
-onMounted(async () => {
-	await getData();
+onMounted(() => {
+	getData();
 });
 
 const event_supportList = [

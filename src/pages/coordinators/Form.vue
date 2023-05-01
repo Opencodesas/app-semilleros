@@ -56,11 +56,6 @@ const monitor = asyncComputed(async () => {
 	return await getMonitorByMunicipality(form.municipalitie_id)
 }, null);
 
-const monitorList = [
-	{ label: 'Joselito', value: 1 },
-	{ label: 'Miguelito', value: 2 },
-];
-
 const v$ = useVuelidate(form_rules, form);
 
 
