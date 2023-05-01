@@ -2,7 +2,6 @@
 .env
 *.local
 *.production
-auto-imports.d.ts
 components.d.ts
 dist
 dist-ssr
