@@ -341,14 +341,22 @@ export const useSideMenuStore = defineStore("sideMenu", {
         return state.menu.filter( (menuItem) => menuItem == 'divider' ? 'divider' : menuItem.title == "Auxiliar Administrativo")
       }
       else if (isRole('metodologo')){
-        return state.menu.filter( (menuItem) => menuItem == 'divider' ? 'divider' : menuItem.title == "Metodólogo")
+        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'methodologist_visits'))
       }
       else if (isRole('subdirector_tecnico')){
-        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) =>
-        //solo admite paginas ficha_inscripción
-        subMenuItem.pageName?.includes('subdirector_visit')
-        //&& para agregar
-        ))
+        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'subdirector_visit'))
+      }
+      else if (isRole('coordinador_regional')){
+        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'coordinator'))
+      }
+      else if (isRole('coordinador_psicosocial')){
+        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'psychosocial-coordinator'))
+      }
+      else if (isRole('psicologo')){
+        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'psychosocial'))
+      }
+      else if (isRole('director_tecnico')){
+        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'technical_director'))
       }
       else {
         return state.menu

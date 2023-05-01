@@ -2,42 +2,39 @@
 import { Header, Item } from 'vue3-easy-data-table';
 import { searchData } from '@/composables/search';
 import visitReview from './visitReview.vue'
+import { visitServices } from '@/services/psychosocial/visitServices';
 
 
 //Traer visitas personalizadas en revisión
 
 const headerVisits: Header[] = [
-    { text: 'No.', value: 'id', sortable: true },
-    { text: 'Fecha', value: 'date', sortable: true },
-    { text: 'Usuario', value: 'created_by' },
-    { text: 'Municipio', value: 'municipality', sortable: true },
-    { text: 'Escenario Deportivo', value: 'sport_arena' },
-    { text: 'Estado', value: 'status' },
+    { text: 'Fecha', value: 'date_visit', sortable: true },
+    { text: 'Usuario', value: 'createdBY.name' },
+    { text: 'Municipio', value: 'municipality.name', sortable: true },
+    { text: 'Escenario Deportivo', value: 'scenery' },
+    { text: 'Estado', value: 'status', sortable: true },
     { text: 'Acciones', value: 'actions' },
 ]
-const items = ref<Item[]>([
-    { id: '1', date: '2023-02-11', created_by: 'Juan', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 1, name: 'En Revisión', slug: 'ENR' } },
-    { id: '2', date: '2023-02-11', created_by: 'Pedro', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 1, name: 'En Revisión', slug: 'ENR' } },
-    { id: '3', date: '2023-02-11', created_by: 'Juan', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 1, name: 'En Revisión', slug: 'ENR' } },
-    { id: '4', date: '2023-02-11', created_by: 'Maria', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 1, name: 'En Revisión', slug: 'ENR' } },
-    { id: '5', date: '2023-02-11', created_by: 'Jose', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 1, name: 'En Revisión', slug: 'ENR' } },
-]);
+// const items = ref<Item[]>([
+//     { id: '1', date: '2023-02-11', created_by: 'Juan', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 1, name: 'En Revisión', slug: 'ENR' } },
+//     { id: '2', date: '2023-02-11', created_by: 'Pedro', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 1, name: 'En Revisión', slug: 'ENR' } },
+//     { id: '3', date: '2023-02-11', created_by: 'Juan', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 1, name: 'En Revisión', slug: 'ENR' } },
+//     { id: '4', date: '2023-02-11', created_by: 'Maria', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 1, name: 'En Revisión', slug: 'ENR' } },
+//     { id: '5', date: '2023-02-11', created_by: 'Jose', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 1, name: 'En Revisión', slug: 'ENR' } },
+// ]);
 
-//const v$ = useVuelidate(form_rules, form)
+const visits = ref<Item[]>([]);
 
-
-//Funciones para modal aun en desrrollo
-// const isOpen = ref(false)
-
-// function closeModal() {
-//     isOpen.value = false
-// }
-// function openModal() {
-//     isOpen.value = true
-// }
+onBeforeMount(async () => {
+     await visitServices.getAll().then((response) => {
+        visits.value = response?.data.items
+          console.log(response?.data.items)
+      })
+      console.log(visits.value)
+ })
 
 const search = ref('');
-const dataSearch = computed(() => searchData(items.value, search.value));
+const dataSearch = computed(() => searchData(visits.value, search.value));
 
 </script>
 

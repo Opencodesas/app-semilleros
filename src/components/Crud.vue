@@ -660,7 +660,7 @@ const selectedTab = inject('selectedTab', ref(0));
 					<template v-else-if="isProvider('psychosocial-coordinator')">
 						<template v-if="route.name == 'psychosocial-coordinator.reviews'">
 							<template v-if="props.Form!">
-								<Modal :Form="props.Form" :id_review="item" />
+								<Modal :Form="props.Form" :item="item" />
 							</template>
 						</template>
 					</template>
@@ -719,7 +719,7 @@ const selectedTab = inject('selectedTab', ref(0));
 							<template v-if="props.Form!">
 								<Modal
 									:Form="props.Form"
-									:id_review="item.id" />
+									:item="item" />
 							</template>
 						</template>
 					</template>

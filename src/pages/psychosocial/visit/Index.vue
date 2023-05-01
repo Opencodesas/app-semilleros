@@ -8,7 +8,6 @@ import { visitServices } from '@/services/psychosocial/visitServices';
 onBeforeMount(async () => {
 	await visitServices.getAll().then((response) => {
 		visits.value = response?.data.items
-		console.log(response?.data.items)
 	})
 })
 

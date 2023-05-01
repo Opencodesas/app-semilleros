@@ -6,23 +6,25 @@ import { visitServices } from '@/services/psychosocial/visitServices';
 import { selectOption } from '@/components/CommonSelect.vue';
 import { requiredIf } from '@vuelidate/validators';
 
+const urlStorage = `${import.meta.env.VITE_BASE_URL}/storage/`;
+
 const props = defineProps<{
     closeModal: Function;
-    id_review: String | number;
+    item: any;
 }>();
 
 
 const form = reactive({
     date_visit: '',
-    municipality_id: '',
-    monitor_id: '',
-    discipline_id: '',
-    numberBeneficiaries: '',
-    sports_scene: '',
+    municipalities_id: '',
+    monitor: '',
+    diciplines_id: '',
+    number_beneficiaries: '',
+    scenery: '',
     objetive: '',
-    beneficiaries_knows_project: false,
-    beneficiaries_knows_monthly_value: false,
-    monitor_organization_discipline_management: false,
+    beneficiaries_recognize_name: false,
+    beneficiary_recognize_value: false,
+    all_ok: false,
     description: '',
     observations: '',
     file: [],
@@ -30,6 +32,7 @@ const form = reactive({
     rejection_message: '',
     created_by: '',
 });
+
 const form_rules = computed(() => ({
     status_id: { required },
     rejection_message: { required: requiredIf(() => form.status_id == '4') },
@@ -44,7 +47,7 @@ const municipalities = asyncComputed(async () => {
     return await getSelect(['municipalities'])
 }, null)
 
-const disciplinesList = ref([]);
+const diciplines_idsList = ref([]);
 const monitorList = [
     { label: "Joselito", value: 1 },
     { label: "Miguelito", value: 2 },
@@ -56,31 +59,47 @@ const v$ = useVuelidate(form_rules, form)
 const dataLoaded = ref(false)
 
 const getData = async () => {
+    console.log(props.item)
+    form.date_visit = props.item.date_visit;
+    form.municipalities_id = props.item.municipality.name;
+    form.monitor = props.item.monitor.name;
+    form.diciplines_id = props.item.discipline.name;
+    form.number_beneficiaries = props.item.number_beneficiaries;
+    form.scenery = props.item.scenery;
+    form.objetive = props.item.objetive;
+    form.beneficiaries_recognize_name = props.item.beneficiaries_knows_project;
+    form.beneficiary_recognize_value = props.item.beneficiaries_knows_monthly_value;
+    form.all_ok = props.item.monitor_organization_discipline_management;
+    form.description = props.item.description;
+    form.observations = props.item.observations;
+    form.file = props.item.file;
+    form.created_by = props.item.createdBY.name;
 
-    await visitServices.get(props.id_review as string).then((response) => {
-        console.log(response?.data.items);
-        if (response?.status == 200 || response?.status == 201) {
-            form.rejection_message = response.data.items.rejection_message;
-            form.date_visit = response.data.items.date_visit;
-            form.municipality_id = response.data.items.municipality_id;
-            form.monitor_id = response.data.items.monitor_id;
-            form.discipline_id = response.data.items.discipline_id;
-            form.numberBeneficiaries = response.data.items.numberBeneficiaries;
-            form.sports_scene = response.data.items.sports_scene;
-            form.objetive = response.data.items.objetive;
-            form.beneficiaries_knows_project = response.data.items.beneficiaries_knows_project;
-            form.beneficiaries_knows_monthly_value = response.data.items.beneficiaries_knows_monthly_value;
-            form.monitor_organization_discipline_management = response.data.items.monitor_organization_discipline_management;
-            form.description = response.data.items.description;
-            form.observations = response.data.items.observations;
-            form.file = response.data.items.file;
-            form.status_id = response.data.items.status_id;
-            form.created_by = response.data.items.created_by;
-        } else {
-            alerts.custom("", "No se pudieron obtener los datos", "error");
-        }
-        console.log(form);
-    })
+
+    // await visitServices.get(props.item as string).then((response) => {
+    //     console.log(response?.data.items);
+    //     if (response?.status == 200 || response?.status == 201) {
+    //         form.rejection_message = response.data.items.rejection_message;
+    //         form.date_visit = response.data.items.date_visit;
+    //         form.municipalities_id = response.data.items.municipalities_id;
+    //         form.monitor = response.data.items.monitor;
+    //         form.diciplines_id = response.data.items.diciplines_id;
+    //         form.number_beneficiaries = response.data.items.number_beneficiaries;
+    //         form.scenery = response.data.items.scenery;
+    //         form.objetive = response.data.items.objetive;
+    //         form.beneficiaries_recognize_name = response.data.items.beneficiaries_recognize_name;
+    //         form.beneficiary_recognize_value = response.data.items.beneficiary_recognize_value;
+    //         form.all_ok = response.data.items.all_ok;
+    //         form.description = response.data.items.description;
+    //         form.observations = response.data.items.observations;
+    //         form.file = response.data.items.file;
+    //         form.status_id = response.data.items.status_id;
+    //         form.created_by = response.data.items.created_by;
+    // } else {
+    //     alerts.custom("", "No se pudieron obtener los datos", "error");
+    //         }
+    // console.log(form);
+    //     })
 };
 
 onMounted(async () => {
@@ -91,13 +110,14 @@ onMounted(async () => {
 const onSubmit = async () => {
     const valid = await v$.value.$validate()
     if (valid) {
-        await visitServices.update(props.id_review as string, formdataParser(form)).then((response) => {
+        await visitServices.update(props.item.id as string, formdataParser(form)).then((response) => {
             if (response) {
                 if (response.status >= 200 && response.status <= 300) {
                     setLoading(true)
-                    props.closeModal
-                    alerts.custom('', 'Revisión exitosa!', 'success');
+                    props.closeModal()
+                    //alerts.custom('', 'Revisión exitosa!', 'success');
                     setLoading(false)
+                    window.location.reload();
                 }
                 else {
                     alerts.custom('', 'Error al revisar!', 'error');
@@ -117,7 +137,7 @@ const definerejection_message = () => {
 
 <template>
     <div class="flex items-center justify-between mt-5 mb-2 intro-y">
-        <h1 class="mr-auto text-lg font-medium">Revisar visitas personalizadas de los Psicologos</h1>
+        <h1 class="mr-auto text-lg font-medium">Revisar visitas de los Psicologos</h1>
     </div>
 
     <div class="space-y-2 box px-5 py-4">
@@ -145,63 +165,59 @@ const definerejection_message = () => {
 
             <div class="grid grid-cols-2 gap-y-6 gap-x-4">
                 <CommonInput disabled type="date" label="Fecha *" name="date_visit" v-model="form.date_visit" />
-                <CommonSelect disabled label="Municipio *" name="municipality_id" v-model="form.municipality_id"
-                    :options="municipalities" />
-                <CommonSelect disabled label="Monitor Deportivo *" name="monitor_id" v-model="form.monitor_id"
-                    :options="monitorList" />
-                <CommonSelect disabled label="Disciplinas *" name="discipline_id" v-model="form.discipline_id"
-                    :options="disciplinesList" />
+                <CommonInput disabled type="text" label="Municipio *" name="municipalities_id" v-model="form.municipalities_id" />
+                <CommonInput disabled type="text" label="Monitor Deportivo *" name="monitor" v-model="form.monitor" />
+                <CommonInput disabled type="text" label="Disciplinas *" name="diciplines_id" v-model="form.diciplines_id" />
                 <CommonInput disabled type="number" min="0" label="No. Beneficiarios en el campo *" placeholder="Escriba..."
-                    name="numberBeneficiaries" v-model="form.numberBeneficiaries" />
-                <CommonInput disabled type="text" label="Escenario Deportivo *" placeholder="Escriba..." name="sports_scene"
-                    v-model="form.sports_scene" />
+                    name="number_beneficiaries" v-model="form.number_beneficiaries" />
+                <CommonInput disabled type="text" label="Escenario Deportivo *" placeholder="Escriba..." name="scenery"
+                    v-model="form.scenery" />
                 <div class="col-span-2">
                     <CommonInput disabled label="Objetivo del acompañamiento *" placeholder="Escriba..." name="objetive"
                         v-model="form.objetive" />
                 </div>
-            
+
                 <div class="p-5 intro-y box col-span-2  bg-gray-200 flex flex-col gap-3">
                     <div class="">
 
-                        <FormSwitch.Input disabled name="beneficiaries_knows_project" id="beneficiaries_knows_project"
-                            type="checkbox" v-model="form.beneficiaries_knows_project" />
-                        <FormSwitch.Label class="text-sm" htmlFor="beneficiaries_knows_project"> ¿LOS BENEFICIARIOS
+                        <FormSwitch.Input disabled name="beneficiaries_recognize_name" id="beneficiaries_recognize_name"
+                            type="checkbox" v-model="form.beneficiaries_recognize_name" />
+                        <FormSwitch.Label class="text-sm" htmlFor="beneficiaries_recognize_name"> ¿LOS BENEFICIARIOS
                             RECONOCEN EL NOMBRE
                             DEL
                             PROYECTO? </FormSwitch.Label>
                     </div>
                     <div class="">
 
-                        <FormSwitch.Input disabled name="beneficiaries_knows_monthly_value" id="beneficiaries_knows_monthly_value"
-                            type="checkbox" v-model="form.beneficiaries_knows_monthly_value" />
-                        <FormSwitch.Label htmlFor="beneficiaries_knows_monthly_value"> ¿LOS BENEFICIARIOS RECONOCEN EL
+                        <FormSwitch.Input disabled name="beneficiary_recognize_value"
+                            id="beneficiary_recognize_value" type="checkbox"
+                            v-model="form.beneficiary_recognize_value" />
+                        <FormSwitch.Label htmlFor="beneficiary_recognize_value"> ¿LOS BENEFICIARIOS RECONOCEN EL
                             VALOR DESARROLLADO
                             EN EL MES? </FormSwitch.Label>
                     </div>
                     <div class="">
 
-                        <FormSwitch.Input disabled name="monitor_organization_discipline_management"
-                            id="monitor_organization_discipline_management" type="checkbox"
-                            v-model="form.monitor_organization_discipline_management" />
-                        <FormSwitch.Label htmlFor="monitor_organization_discipline_management"> ¿SE OBSERVA
+                        <FormSwitch.Input disabled name="all_ok"
+                            id="all_ok" type="checkbox"
+                            v-model="form.all_ok" />
+                        <FormSwitch.Label htmlFor="all_ok"> ¿SE OBSERVA
                             ORGANIZACIÓN, DISCIPLINA Y BUEN MANEJO
                             DE GRUPO DURANTE LAS SESIONES DE CLASE DEL MONITOR? </FormSwitch.Label>
                     </div>
                 </div>
                 <div class="col-span-2">
-                    <CommonTextarea disabled label="Descripción de actividades *" placeholder="Escriba..." name="description"
-                        rows="5" v-model="form.description" />
+                    <CommonTextarea disabled label="Descripción de actividades *" placeholder="Escriba..."
+                        name="description" rows="5" v-model="form.description" />
                 </div>
                 <div class="col-span-2 sm:grid-cols-3">
                     <CommonTextarea disabled label="Observaciones *" placeholder="Escriba..." name="observations" rows="5"
                         v-model="form.observations" />
                 </div>
 
-                <!-- Comprobar qué es lo que se está enviando -->
                 <div class="grid justify-center col-span-2 gap-10 p-5">
                     <h1 class="text-center font-bold">Evidencia</h1>
-                    <!-- <img :src="form.file[0]" alt=""> -->
-                    <img src="/semilleros.png" width="200" alt="">
+                    <img :src="`${urlStorage}${form.file}`" width="400" alt="Evidencia de visita">
                 </div>
             </div>
 

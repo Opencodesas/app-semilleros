@@ -15,6 +15,7 @@ const translations: Translations = {
     transversalActivity: "Actividades transversales",
     coordinatorVisit: "Visitas coordinador regional",
     customPsychologicalVisits: "Visitas personalizas psicosocial",
+    psychologicalVisits: "Visitas psicosocial",
     inscriptions: "Fichas de inscripción",
     navigationHistory: "Historial de navegación",
 };
