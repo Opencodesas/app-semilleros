@@ -577,22 +577,11 @@ const selectedTab = inject('selectedTab', ref(0));
 								variant="outline-secondary"
 								@click="editAction(item.id)">
 								<Lucide
-									v-if="item.status.slug == 'REC'"
-									icon="FileEdit"
-									class="mr-2" />
-								<Lucide
-									v-else
-									icon="Eye"
+									:icon="item.status.slug == 'REC' ? 'FileEdit' : 'Eye'"
 									class="mr-2" />
 								<span
-									v-if="item.status.slug == 'REC'"
 									class="text-sm">
-									Editar
-								</span>
-								<span
-									v-else
-									class="text-sm">
-									Visualizar
+									{{ item.status.slug == 'REC' ? 'Editar' : 'Visualizar' }}									
 								</span>
 							</Button>
 						</template>
