@@ -16,12 +16,14 @@ const form = reactive({
     gender: '',
     lastname: '',
     municipalities: '',
+    cities: '',
     name: '',
     period: '',
     phone: '',
     roles: '',
     zones: '',
     password: '',
+    disciplines: '',
 })
 
 const form_rules = computed(() => ({
@@ -33,11 +35,13 @@ const form_rules = computed(() => ({
     gender: { required },
     lastname: { required },
     municipalities: { required },
+    cities: { required },
     period: {},
     phone: { required },
     roles: { required },
     zones: { required },
     password: {},
+    disciplines: {},
 }))
 
 const users = ref([]);
@@ -176,6 +180,10 @@ const municipalities = asyncComputed(async () => {
     return await getSelect(['municipalities'])
 }, null)
 
+const disciplines = asyncComputed(async () => {
+    return await getSelect(['disciplines'])
+}, null)
+
 const v$ = useVuelidate(form_rules, form)
 
 const router = useRouter()
@@ -280,8 +288,12 @@ const onSubmit = async () => {
             <CommonInput type="email" label="Correo *" placeholder="Ingrese el correo" name="email" v-model="form.email"
                 :validator="v$" />
             <CommonSelect label="Selecciona regiones *" name="zones" v-model="form.zones" :validator="v$" :options="zones" />
-            <CommonSelect label="Seleccione la ciudad *" name="municipalities" v-model="form.municipalities" :validator="v$"
+            <CommonSelect label="Seleccione la ciudad *" name="cities" v-model="form.cities" :validator="v$"
                 :options="cities" />
+            <CommonSelect label="Seleccione el municipio *" name="municipalities" v-model="form.municipalities" :validator="v$"
+                :options="municipalities" />
+            <CommonSelect class="h-30" label="Seleccione las disciplinas *" name="disciplines" v-model="form.disciplines" :validator="v$"
+                :options="disciplines" />
             <br>
             <CommonInput type="hidden" name="password" :value="form.document_number" v-model="form.password" :validator="v$" />
         </div>
