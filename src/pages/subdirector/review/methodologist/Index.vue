@@ -8,11 +8,11 @@ const search = ref('');
 
 const headers: Header[] = [
 	//{ text: 'Nro.', value: 'id' },
-	{ text: 'Fecha', value: 'date_visit' },
-	{ text: 'Municipio', value: 'municipalities.name' },
-	{ text: 'Metodologo', value: 'creator.name' },
-	{ text: 'Escenario Deportivo', value: 'sports_scene' },
-	{ text: 'Evaluacion', value: 'evaluations' },
+	{ text: 'Fecha', value: 'date_visit', sortable: true },
+	{ text: 'Municipio', value: 'municipalities.name', sortable: true  },
+	{ text: 'Metodologo', value: 'creator.name', sortable: true },
+	{ text: 'Escenario Deportivo', value: 'sports_scene', sortable: true },
+	{ text: 'Evaluacion', value: 'evaluations.label', sortable: true },
 	{ text: 'Estado', value: 'status' },
 	{ text: 'Acciones', value: 'actions' },
 ];
@@ -23,7 +23,7 @@ onMounted(async () => {
 	const res = await methodologistVisitServices.getAll()
 	items.value = await res?.data.items
 	for (let i = 0; i < items.value.length; i++) {
-		items.value[i].evaluations = await items.value[i].evaluations.id == '1' ? 'Aprobado' : 'Rechazado';
+		items.value[i].evaluations = await items.value[i].evaluations.id == '1' ? { label: 'Aprobado', id: 1 } : { label: 'Rechazado', id: 4 };
 	}
 });
 

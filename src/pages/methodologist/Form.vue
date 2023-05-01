@@ -97,12 +97,13 @@ const router = useRouter();
 const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
 }, null);
-// Consulta todas las disciplinas
-const disciplines = asyncComputed(async () => {
-	return await getSelect(['disciplines']);
-}, null);
+// Consulta todos los monitores por municipio
 const monitor = asyncComputed(async () => {
 	return await getMonitorByMunicipality(form.municipalitie_id);
+}, null);
+// Consulta todas las disciplinas
+const disciplines = asyncComputed(async () => {
+	return await getDisciplinesByMonitor(form.monitor_id);
 }, null);
 const selectFile = (event: any) => {
 	form.file = event.target.files[0];
@@ -119,6 +120,18 @@ const selectFile = (event: any) => {
  *
  *      servicios.create(fd)
  */
+watch(
+	() => form.municipalitie_id,
+	() => {
+			form.monitor_id = '';
+	}
+);
+watch(
+	() => form.monitor_id,
+	() => {
+			form.discipline_id = '';
+	}
+);
 const formdataParser = (form: any) => {
 	const formData = new FormData();
 	Object.keys(form).forEach((key) => {
@@ -137,7 +150,7 @@ const onSubmit = async () => {
 					if (response.status >= 200 && response.status <= 300) {
 						alerts.create();
 						setLoading(true);
-						router.push('').finally(() => {
+						router.push({name: 'methodologist_visits.index'}).finally(() => {
 							setLoading(false);
 						});
 					}
@@ -449,7 +462,7 @@ const onSubmit = async () => {
 			@change="selectFile"
 			@removefile="form.file = []" />
 	</div>
-	<div class="mt-6 flex justify-end col-span-1 md:col-span-2">
+	<div class="mt-6 flex justify-center col-span-1 md:col-span-2">
 		<Button
 			variant="primary"
 			class="btn btn-primary"

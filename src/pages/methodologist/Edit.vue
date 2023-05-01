@@ -103,11 +103,12 @@ const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
 }, null);
 // Consulta todas las disciplinas
-const disciplines = asyncComputed(async () => {
-	return await getSelect(['disciplines']);
-}, null);
 const monitorList = asyncComputed(async () => {
 	return await getMonitorByMunicipality(form.municipalitie_id);
+}, null);
+// Consulta todas las disciplinas
+const disciplines = asyncComputed(async () => {
+	return await getDisciplinesByMonitor(form.user_id);
 }, null);
 const formdataParser = (form: any) => {
 	const formData = new FormData();
@@ -182,16 +183,32 @@ const getData = async () => {
 					form.swich_plans_mp_5 =
 						res.data.items?.swich_plans_mp_5 == '0' ? false : true;
 					file.value = res.data.items.file;
-
-					dataLoaded.value = true;
+					
 				} else {
 					Swal.fire('', 'No se pudieron obtener los datos', 'error');
 				}
 			}
 		});
 };
-onBeforeMount(() => {
-	getData();
+watch(
+	() => form.municipalitie_id,
+	() => {
+			if(dataLoaded.value){
+				form.user_id = '';
+			}
+	}
+);
+watch(
+	() => form.user_id,
+	() => {
+			if(dataLoaded.value){
+				form.discipline_id = '';
+			}
+	}
+);
+onBeforeMount(async() => {
+	await getData();
+	dataLoaded.value = true;
 });
 
 const onSubmit = async () => {

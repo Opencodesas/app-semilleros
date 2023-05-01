@@ -213,7 +213,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
       },
       {
         icon: "User",
-        title: "Coordinador",
+        title: "Coordinador Regional",
         subMenu: [
           {
             icon: "Activity",

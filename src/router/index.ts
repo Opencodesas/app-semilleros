@@ -10,8 +10,7 @@ const authGuard = async (to: RouteLocationNormalized, from: RouteLocationNormali
 	const { isAuth } = storeToRefs(onboardingStore())
 	// const storeAccess = accessStore()
 	// const canAccess = await storeAccess.canUserAccess(to.name as string)
-
-	if (!isAuth && to.name != 'login')
+	if (!isAuth.value && to.name != 'login')
 		next({ name: 'login' })
 	else {
 		next()

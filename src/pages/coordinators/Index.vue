@@ -13,13 +13,12 @@ onMounted(async () => {
 
 const headers: Header[] = [
 	//{ text: 'ID', value: 'id' },
-	{ text: 'FECHA VISITA', value: 'date_visit' },
-	{ text: 'HORA VISITA', value: 'hour_visit' },
-	{ text: 'MUNICIPIO', value: 'municipalitie.name' },
-	{ text: 'ESCENARIO DEPORTIVO', value: 'sports_scene' },
+	{ text: 'Fecha', value: 'date_visit', sortable: true },
+	{ text: 'Municipio', value: 'municipalitie.name', sortable: true },
+	{ text: 'Coordinador', value: 'created_by.name', sortable: true },
+	{ text: 'Escenario Deportivo', value: 'sports_scene', sortable: true },
 	{ text: 'Estado', value: 'status' },
-	// { text: "ROLES", value: "roles" },
-	{ text: 'ACCIONES', value: 'actions' },
+	{ text: 'Acciones', value: 'actions' },
 ];
 const search = ref('');
 const data = computed(() => searchData(items.value, search.value));

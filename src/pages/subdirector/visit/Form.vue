@@ -57,8 +57,16 @@ const municipalities = asyncComputed(async () => {
 }, null);
 // Consulta todas las disciplinas
 const disciplines = asyncComputed(async () => {
-	return await getSelect(['disciplines']);
-}, null);
+    return await getDisciplinesByMonitor(form.monitor_id)
+}, null)
+
+watch(() => form.municipality_id, () => {
+    form.monitor_id = '';  
+})
+
+watch(() => form.monitor_id, () => {
+    form.discipline_id = '';
+})
 // Consulta todos los monitores por municipio
 const monitor = asyncComputed(async () => {
 	return await getMonitorByMunicipality(form.municipality_id)

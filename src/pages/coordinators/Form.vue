@@ -41,17 +41,20 @@ const municipalities = asyncComputed(async () => {
 }, null);
 // Consulta todas las disciplinas
 const disciplines = asyncComputed(async () => {
-	return await getSelect(['disciplines']);
-}, null);
+    return await getDisciplinesByMonitor(form.user_id)
+}, null)
+
+watch(() => form.municipalitie_id, () => {
+    form.user_id = '';  
+})
+
+watch(() => form.user_id, () => {
+    form.discipline_id = '';
+})
 // Consulta todos los monitores por municipio
 const monitor = asyncComputed(async () => {
 	return await getMonitorByMunicipality(form.municipalitie_id)
 }, null);
-
-const monitorList = [
-	{ label: 'Joselito', value: 1 },
-	{ label: 'Miguelito', value: 2 },
-];
 
 const v$ = useVuelidate(form_rules, form);
 
