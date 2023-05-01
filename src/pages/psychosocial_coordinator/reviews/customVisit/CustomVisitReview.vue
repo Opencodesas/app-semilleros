@@ -4,7 +4,6 @@ import useVuelidate from '@vuelidate/core'
 import { required } from '@/utils/validators'
 import { customVisitServices } from '@/services/psychosocial/customVisitServices';
 import { selectOption } from '@/components/CommonSelect.vue';
-import { filePondValue } from '@/composables/useFilepondEvents';
 import { requiredIf } from "@vuelidate/validators";
 
 const urlStorage = `${import.meta.env.VITE_BASE_URL}/storage/`;

@@ -4,8 +4,6 @@ import { required } from '@/utils/validators'
 import FormSwitch from "@/base-components/Form/FormSwitch";
 import { visitServices } from '@/services/psychosocial/visitServices';
 
-const { multiple } = useFilepondEvents();
-
 const form = reactive({
     date_visit: '',
     municipalities_id: '',
