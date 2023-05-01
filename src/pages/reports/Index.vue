@@ -107,6 +107,14 @@ const items = computed((): ReportItem[] => {
 					excel: true,
 					zip: false,
 				},
+				{
+					id: 9,
+					name: 'Informe Visitas Psicosocial',
+					type: 'psychologicalVisits',
+					pdf: false,
+					excel: true,
+					zip: false,
+				},
 			];
 		default:
 			return [
