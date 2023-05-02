@@ -180,6 +180,7 @@ const routes = [
 			{
 				path: "chronograms",
 				name: "chronograms",
+				meta: { provider: 'chronograms' },
 				children: [
 					{
 						path: "",

@@ -789,6 +789,26 @@ const selectedTab = inject('selectedTab', ref(0));
 							<span class="text-sm"> Editar </span>
 						</Button>
 					</template>
+					<template v-else-if="isProvider('chronograms')">
+						<Button
+							v-if="item.status.slug === 'ENR'"
+							variant="outline-secondary"
+							@click="seeAction(item.id)">
+							<Lucide
+								icon="Search"
+								class="mr-2" />
+							<span class="text-sm"> Ver </span>
+						</Button>
+						<Button
+							v-else-if="item.status.slug === 'REC'"
+							variant="outline-secondary"
+							@click="editAction(item.id)">
+							<Lucide
+								icon="FileEdit"
+								class="mr-2" />
+							<span class="text-sm"> Editar </span>
+						</Button>
+					</template>
 				</div>
 			</template>
 
