@@ -771,7 +771,7 @@ const selectedTab = inject('selectedTab', ref(0));
 					</template>
 					<template v-else-if="isProvider('fichaInscrip')">
 						<Button
-							v-if="item.status.slug === 'ENREV'"
+							v-if="item.status.slug === 'ENR'"
 							variant="outline-secondary"
 							@click="seeAction(item.id)">
 							<Lucide
