@@ -671,7 +671,7 @@ const fetch = async () => {
           form.oculomanual = response.data.items.tamizaje.oculomanual
           form.status = response.data.items.status
 
-          alerts.custom('', response?.data.message, 'info');
+          // alerts.custom('', response?.data.message, 'info');
         } else {
           alerts.custom("", "No se pudieron obtener los datos", "error");
         }
@@ -819,25 +819,6 @@ export default defineComponent({
 
     },
     ingreso( form: any ) {
-
-      const morfologica: any = {}
-      form.morfologicas.forEach( (item: any) => {
-        Object.keys( item ).forEach( (key: string) => {
-          if ( !morfologica[key] || morfologica[key] < item[key]) {
-            morfologica[key] = item[key];
-          }
-        })
-      })
-
-      const nutricional: any = {}
-      form.nutricionales.forEach( (item: any) => {
-        Object.keys( item ).forEach( (key: string) => {
-          if ( !nutricional[key] || nutricional[key] < item[key]) {
-            nutricional[key] = item[key];
-          }
-        })
-      })
-
       const data = {
         registration_date: form.fechaInscripcion,
         municipalities_id: form.municipio,
@@ -872,8 +853,13 @@ export default defineComponent({
         health_entity_id: form.health_entity,
 
         // Tamizaje
-        morfologica: morfologica,
-        nutricional: nutricional,
+        envergadura: form.envergadura,
+        estatura: form.estatura,
+        masa: form.masa,  
+        velocidad: form.velocidad,
+        flexibilidad: form.flexibilidad,
+        oculomanual: form.oculomanual,
+        fuerza: form.fuerza,
         
         // Datos del Acudiente
         attendant_name: form.nombresAcudiente,
