@@ -358,6 +358,9 @@ export const useSideMenuStore = defineStore("sideMenu", {
       else if (isRole('director_tecnico')){
         return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'technical_director'))
       }
+      else if (isRole('director_administrator')){
+        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'administrative_director'))
+      }
       else {
         return state.menu
       }
