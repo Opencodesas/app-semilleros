@@ -46,6 +46,13 @@ const form_rules = computed(() => ({
     }
 }))
 
+const scheduleBone = {
+    idx: 0,
+    day: '',
+    start_time: '',
+    end_time: '',
+}
+
 const groupBone = {
     group_id: '',
     sports_modality: '',
@@ -53,19 +60,7 @@ const groupBone = {
     main_sports_stage_address: '',
     alt_sports_stage_name: '',
     alt_sports_stage_address: '',
-    schedules: [{
-        idx: new Date().getTime(),
-        day: '',
-        start_time: '',
-        end_time: '',
-    }]
-}
-
-const scheduleBone = {
-    idx: 0,
-    day: '',
-    start_time: '',
-    end_time: '',
+    schedules: [ {...scheduleBone} ]
 }
 
 const v$ = useVuelidate(form_rules, form)
@@ -128,7 +123,7 @@ const fetch = async () => {
             // form.document_type = response.data.items.document_type;
             // form.document_number = response.data.items.document_number;
             // form.roles = response.data.items.roles[0];
-            alerts.custom('', response?.data.message, 'info');
+            // alerts.custom('', response?.data.message, 'info');
         } else {
             alerts.custom("", "No se pudieron obtener los datos", "error");
         }
@@ -191,7 +186,7 @@ const searchItem = ( schedules: any, horario: any ) => {
 
 const onAddGrupo = () => {
     if ( form.groups.length < 4 ) {
-        form.groups.push({ ...groupBone })
+        form.groups.push({ ...groupBone, schedules: [{...scheduleBone}] })
     }
 }
 
