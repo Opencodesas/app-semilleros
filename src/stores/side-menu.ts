@@ -276,8 +276,18 @@ export const useSideMenuStore = defineStore("sideMenu", {
         subMenu: [
           {
             icon: "Activity",
+            pageName: "users.index",
+            title: "Usuarios",
+          },
+          {
+            icon: "Activity",
+            pageName: "reports.index",
+            title: "Reportes",
+          },
+          {
+            icon: "Activity",
             pageName: "administrative_director.reviews",
-            title: "Revisiones",
+            title: "Revisiones Visitas Directores Técnicos",
           },
         ]
       },
@@ -360,6 +370,9 @@ export const useSideMenuStore = defineStore("sideMenu", {
       }
       else if (isRole('director_administrator')){
         return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'administrative_director'))
+      }
+      else if (isRole('director_programa')){
+        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'transversal_programs_director'))
       }
       else {
         return state.menu

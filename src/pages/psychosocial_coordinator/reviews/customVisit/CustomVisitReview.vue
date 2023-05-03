@@ -25,7 +25,13 @@ const form = reactive({
     concept: '',
     guardian_knows_semilleros: true,
     file: [],
-    created_by: '', //Revisar si recibe un objeto
+})
+
+const infoForm = reactive({
+    month_name: '',
+    municipality_name: '',
+    beneficiary_name: '',
+    created_by: '',
 })
 
 
@@ -56,46 +62,26 @@ const dataLoaded = ref(false)
 //Verificar si se puede hacer con asycComputed
 const getData = () => {
     console.log(props.item);
-    form.created_by = props.item.createdBy.name
-    form.month = props.item.months.name;
-    form.municipality = props.item.municipalities.name;
-    form.beneficiary = props.item.beneficiaries.full_name;
+    form.month = props.item.month_id;
+    form.municipality = props.item.municipality_id;
+    form.beneficiary = props.item.beneficiary_id;
     form.theme = props.item.theme;
     form.agreements = props.item.agreements;
     form.concept = props.item.concept;
     form.guardian_knows_semilleros = props.item.guardian_knows_semilleros;
     form.file = props.item.file;
+    
+    infoForm.month_name = props.item.months.name;
+    infoForm.municipality_name = props.item.municipalities.name;
+    infoForm.beneficiary_name = props.item.beneficiaries.full_name;
+    infoForm.created_by = `${props.item.createdBy.name} ${props.item.createdBy.lastname}`;
+
 
     beneficiary_data.scholar_level = props.item.beneficiaries.scholar_level ? scholarLevels[props.item.beneficiaries.scholar_level - 1].label : 'No tiene';
     beneficiary_data.health_entity = props.item.beneficiaries.health_entity_id ? healthEntities.value[props.item.beneficiaries.health_entity_id - 1].label : 'No tiene';
     beneficiary_data.guardian_name = props.item.guardian.firts_name;
     beneficiary_data.guardian_lastname = props.item.guardian.last_name;
     beneficiary_data.guardian_identification = props.item.guardian.cedula;
-    //form.created_by = props.item.createdBy.name;
-    // await customVisitServices.get(props.item as string).then((response) => {
-    //     console.log(response?.data.items);
-    //     if (response?.status == 200 || response?.status == 201) {
-    //         form.month = response.data.items.month_id;
-    //         form.municipality = response.data.items.municipality_id;
-    //         form.beneficiary = response.data.items.beneficiary_id;
-    //         form.theme = response.data.items.theme;
-    //         form.agreements = response.data.items.agreements;
-    //         form.concept = response.data.items.concept;
-    //         form.guardian_knows_semilleros = response.data.items.guardian_knows_semilleros;
-    //         form.file = response.data.items.file;
-    //         form.created_by = response.data.items.createdBy.name;
-
-    //         // beneficiary_data.scholar_level = response.data.items.beneficiaries.scholar_level ? scholarLevels[response.data.items.beneficiaries.scholar_level - 1].label : 'No tiene';
-    //         // beneficiary_data.health_entity = response.data.items.beneficiaries.health_entity_id ? healthEntities.value[response.data.items.beneficiaries.health_entity_id - 1].label : 'No tiene';
-    //         // beneficiary_data.guardian_name = response.data.items.beneficiaries.acudiente.firts_name;
-    //         // beneficiary_data.guardian_lastname = response.data.items.beneficiaries.acudiente.last_name;
-    //         // beneficiary_data.guardian_identification = response.data.items.beneficiaries.acudiente.cedula;
-
-    //     } else {
-    //         alerts.custom("", "No se pudieron obtener los datos", "error");
-    //     }
-    //     console.log(form);
-    // });
 };
 
 
@@ -176,15 +162,15 @@ const definereject_message = () => {
 
     <div v-if="dataLoaded" class="p-5 pt-1 mt-5 intro-y box">
         <div class="my-4">
-            <h3><span class="font-bold">Psicologo:</span> {{ form.created_by }}</h3>
+            <h3><span class="font-bold">Psicologo:</span> {{ infoForm.created_by }}</h3>
         </div>
 
         <div class="space-y-8 divide-y divide-slate-200 ">
 
             <div class="mt-3 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-3">
-                <CommonInput disabled label="Mes *" name="month" v-model="form.month" />
-                <CommonInput disabled label="Municipio *" name="municipality" v-model="form.municipality" />
-                <CommonInput disabled label="Beneficiario *" name="beneficiary" v-model="form.beneficiary" />
+                <CommonInput disabled label="Mes *" name="month" v-model="infoForm.month_name" />
+                <CommonInput disabled label="Municipio *" name="municipality" v-model="infoForm.municipality_name" />
+                <CommonInput disabled label="Beneficiario *" name="beneficiary" v-model="infoForm.beneficiary_name" />
             </div>
             <!-- cambiar condicion por "beneficiary_data" cuando haya función para traer los datos -->
             <div v-if="form.beneficiary">
