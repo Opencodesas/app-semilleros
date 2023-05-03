@@ -104,13 +104,13 @@ const onSubmit = async () => {
         await transversalActivityServices.update(props.item.id as string, formdataParser(form)).then((response) => {
             if (response) {
                 if (response.status >= 200 && response.status <= 300) {
-                    //props.closeModal()
+                    props.closeModal()
                     alerts.update()
                     setLoading(true)
                     //router.push('psychosocial-coordinator.reviews').finally(() => {
                     setLoading(false)
                     //})
-                    //window.location.reload();
+                    window.location.reload();
                 }
             }
         })
