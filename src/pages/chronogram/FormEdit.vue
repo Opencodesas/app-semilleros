@@ -9,6 +9,7 @@ import useVuelidate from '@vuelidate/core'
 import {chronogramServices} from "@/services/chronogramService";
 
 const form = reactive({
+    status_id: 0,
     month: '',
     municipality: '',
     note: '',
@@ -114,6 +115,7 @@ const fetch = async () => {
     await chronogramServices.get(route.params.id as string)
     .then((response) => {
         if (response?.status == 200 || response?.status == 201) {
+            form.status_id = response.data.items.status_id;
             form.month = response.data.items.month;
             form.municipality = response.data.items.municipality;
             form.note = response.data.items.note;
@@ -146,7 +148,7 @@ const checkChronogram = () => {
             const horario = schedules[j];
             if ( !horario ) continue
 
-            hayCruce = searchItem( schedules, horario );
+            hayCruce = searchItem( schedules, i+1, horario );
 
             if(hayCruce) break;
         }
@@ -157,7 +159,7 @@ const checkChronogram = () => {
     return hayCruce
 }
 
-const searchItem = ( schedules: any, horario: any ) => {
+const searchItem = ( schedules: any, grupo: number, horario: any ) => {
     let hayCruce = false; 
 
     for( let i = 0; i < form.groups.length; i++) {
@@ -177,6 +179,7 @@ const searchItem = ( schedules: any, horario: any ) => {
         })
 
         if ( hayCruce ){
+            alerts.custom('Validación', `Por favor verifique el horario cruzado ${horario.day} de ${horario.start_time} a ${horario.end_time} grupo ${grupo}.`, 'error')
             break;
         }
     }
@@ -218,12 +221,16 @@ const sports = [
                     <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
                         <CommonSelect label="Mes del cronograma *" name="month" v-model="form.month" :validator="v$"
                             :options="months" :allowEmpty="false"
+                            :disabled="form.status_id !== 4"
                         />
                         <CommonSelect label="Municipio *" name="municipality" v-model="form.municipality"
                             :validator="v$" :options="municipalities" :allowEmpty="false"
+                            :disabled="form.status_id !== 4"
                         />
                         <div class="col-span-1 md:col-span-2">
-                            <CommonEditor label="observaciones" name="note" v-model="form.note" :validator="v$" />
+                            <CommonEditor label="observaciones" name="note" v-model="form.note" :validator="v$" 
+                                :disabled="form.status_id !== 4"
+                            />
                         </div>
                     </div>
                 </div>
@@ -239,32 +246,45 @@ const sports = [
                                 <li class="box border border-slate-200 px-4 py-4 sm:p-4 mb-3">
                                     <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
                                         <CommonSelect label="Grupo *" name="group_id" v-model="group.group_id" :allowEmpty="false"
-                                            :collection_validator="{ index, name: 'groups', v$ }" :options="groups" />
+                                            :collection_validator="{ index, name: 'groups', v$ }" :options="groups" 
+                                            :disabled="form.status_id !== 4"
+                                        />
 
                                         <CommonSelect label="Modalidad deportiva *" name="sports_modality" :allowEmpty="false"
                                             v-model="group.sports_modality"
                                             :collection_validator="{ index, name: 'groups', v$ }"
-                                            :options="sports.filter(({ value }) => value == group.group_id)" />
+                                            :options="sports.filter(({ value }) => value == group.group_id)"
+                                            :disabled="form.status_id !== 4"
+                                        />
 
                                         <CommonInput type="text" placeholder="Ingrese"
                                             label="Escenario deportivo principal - Nombre *"
                                             name="main_sports_stage_name" v-model="group.main_sports_stage_name"
-                                            :collection_validator="{ index, name: 'groups', v$ }" />
+                                            :collection_validator="{ index, name: 'groups', v$ }"
+                                            :disabled="form.status_id !== 4"
+                                        
+                                        />
 
                                         <CommonInput type="text" placeholder="Ingrese"
                                             label="Escenario deportivo principal - Dirección *"
                                             name="main_sports_stage_address" v-model="group.main_sports_stage_address"
-                                            :collection_validator="{ index, name: 'groups', v$ }" />
+                                            :collection_validator="{ index, name: 'groups', v$ }" 
+                                            :disabled="form.status_id !== 4"
+                                        />
 
                                         <CommonInput type="text" placeholder="Ingrese"
                                             label="Escenario deportivo alternativo - Nombre *"
                                             name="alt_sports_stage_name" v-model="group.alt_sports_stage_name"
-                                            :collection_validator="{ index, name: 'groups', v$ }" />
+                                            :collection_validator="{ index, name: 'groups', v$ }" 
+                                            :disabled="form.status_id !== 4"
+                                        />
 
                                         <CommonInput type="text" placeholder="Ingrese"
                                             label="Escenario deportivo alternativo - Dirección *"
                                             name="alt_sports_stage_address" v-model="group.alt_sports_stage_address"
-                                            :collection_validator="{ index, name: 'groups', v$ }" />
+                                            :collection_validator="{ index, name: 'groups', v$ }" 
+                                            :disabled="form.status_id !== 4"
+                                        />
 
                                         <div class="col-span-1 sm:col-span-2">
                                             <Disclosure as="div" v-slot="{ open }">
@@ -286,7 +306,8 @@ const sports = [
                                                         <ul role="list" class="divide-y divide-slate-200">
                                                             <template v-for="(schedule, schIndex) in group.schedules"
                                                                 :key="schIndex">
-                                                                <ScheduleFieldset 
+                                                                <ScheduleFieldset
+                                                                    :status_id ="form.status_id"
                                                                     v-model:idx="schedule.idx"
                                                                     v-model:day="schedule.day"
                                                                     v-model:start_time="schedule.start_time"
@@ -298,7 +319,9 @@ const sports = [
                                                             <li class="py-4 space-x-4">
                                                                 <Button
                                                                     @click="group.schedules.push({ ...scheduleBone, idx: new Date().getTime() })"
-                                                                    type="button" variant="outline-primary">
+                                                                    type="button" variant="outline-primary"
+                                                                    v-if="form.status_id === 4"
+                                                                >
                                                                     <Lucide icon="ListPlus" class="mr-2" />
                                                                     Agregar horario
                                                                 </Button>
@@ -311,7 +334,9 @@ const sports = [
                                         <div v-if="index >= 1" class="col-span-1 sm:col-span-2">
                                             <Button :disabled="form.groups.length <= 1"
                                                 @click="form.groups.splice(index, 1)" type="button"
-                                                variant="outline-danger" size="sm">
+                                                variant="outline-danger" size="sm"
+                                                v-if="form.status_id === 4"
+                                            >
                                                 <Lucide icon="ListMinus" class="mr-2" />
                                                 Eliminar grupo
                                             </Button>
@@ -325,6 +350,7 @@ const sports = [
                                 variant="outline-primary"
                                 size="sm"
                                 :disabled="form.groups.length === 4"
+                                v-if="form.status_id === 4"
                             >
                                 <Lucide icon="Plus" class="mr-2" />
                                 Agregar grupo
@@ -339,7 +365,9 @@ const sports = [
                         variant="outline-secondary">
                         Cancelar
                     </Button>
-                    <Button type="submit" variant="primary">
+                    <Button type="submit" variant="primary"
+                        v-if="form.status_id === 4"
+                    >
                         Guardar
                     </Button>
                 </div>
