@@ -42,19 +42,14 @@ const form_rules = computed(() => ({
 
 const file: any = ref(null);
 const formdataParser = (form: any) => {
-    console.log(form);
     const formData = new FormData();
     Object.keys(form).forEach((key) => {
         formData.append(key, form[key]);
     });
-    console.log(formData);
     return formData;
 };
 const selectFile = (event: any) => {
-    console.log(form.file);
-    console.log(event.target.files);
     form.file = event.target.files[0];
-    console.log(form.file);
 }
 
 const municipalities = asyncComputed(async () => {
@@ -88,7 +83,6 @@ const dataLoaded = ref(false)
 const getData = async () => {
 
     await visitServices.get(route.params.id as string).then((response) => {
-        console.log(response?.data.items);
         if (response?.status == 200 || response?.status == 201) {
             form.rejection_message = response.data.items.rejection_message;
             form.date_visit = response.data.items.date_visit;
@@ -141,7 +135,7 @@ const download = () => {
 }
 
 const disableElements = computed(() => {
-    return form.status_id == '4' ? false : true; //id: 4 => Rechazado => REC
+    return form.status_id == '4' ? false : true;
 })
 
 </script>

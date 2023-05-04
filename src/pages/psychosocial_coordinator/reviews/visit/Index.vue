@@ -5,8 +5,6 @@ import visitReview from './visitReview.vue'
 import { visitServices } from '@/services/psychosocial/visitServices';
 
 
-//Traer visitas personalizadas en revisión
-
 const headerVisits: Header[] = [
     { text: 'Fecha', value: 'date_visit', sortable: true },
     { text: 'Usuario', value: 'createdBY.name' },
@@ -15,22 +13,13 @@ const headerVisits: Header[] = [
     { text: 'Estado', value: 'status', sortable: true },
     { text: 'Acciones', value: 'actions' },
 ]
-// const items = ref<Item[]>([
-//     { id: '1', date: '2023-02-11', created_by: 'Juan', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 1, name: 'En Revisión', slug: 'ENR' } },
-//     { id: '2', date: '2023-02-11', created_by: 'Pedro', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 1, name: 'En Revisión', slug: 'ENR' } },
-//     { id: '3', date: '2023-02-11', created_by: 'Juan', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 1, name: 'En Revisión', slug: 'ENR' } },
-//     { id: '4', date: '2023-02-11', created_by: 'Maria', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 1, name: 'En Revisión', slug: 'ENR' } },
-//     { id: '5', date: '2023-02-11', created_by: 'Jose', municipality: 'Cartago', sport_arena: 'Estadio Nacional', status: { id: 1, name: 'En Revisión', slug: 'ENR' } },
-// ]);
 
 const visits = ref<Item[]>([]);
 
 onBeforeMount(async () => {
      await visitServices.getAll().then((response) => {
         visits.value = response?.data.items
-          console.log(response?.data.items)
       })
-      console.log(visits.value)
  })
 
 const search = ref('');

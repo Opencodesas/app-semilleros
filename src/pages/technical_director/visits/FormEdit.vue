@@ -12,7 +12,7 @@ const { id } = route.params;
 
 const form = reactive({
 	status_id: '',
-	rejection_message: '',
+	reject_message: '',
 	date_visit: '',
 	hour_visit: '',
 	observations: '',
@@ -57,7 +57,6 @@ const evaluationList = [
 	{ label: 'Aceptada', value: 1 },
 	{ label: 'Rechazada', value: 2 },
 ];
-// Convierte el objeto a FormData
 const formdataParser = (form: any) => {
 	const formData = new FormData();
 	Object.keys(form).forEach((key) => {
@@ -65,11 +64,11 @@ const formdataParser = (form: any) => {
 	});
 	return formData;
 };
-// Guarda la imagen en variable form.file
+
 const selectFile = (e: any) => {
 	form.file = e.target.files[0]
 };
-// Consulta el monitor por municipio
+
 const monitor = asyncComputed(async () => {
 	return await getMonitorByMunicipality(form.municipality_id);
 }, null);
@@ -86,9 +85,8 @@ const dataLoaded = ref(false);
 const data = async () => {
 	await subdirectorVisitServices.get(id as string).then((response) => {
 		if (response?.status == 200) {
-			console.log(response.data.items)
-			console.log(response.data.items.status_id)
 			form.status_id = response.data.items.status_id;
+			form.reject_message = response.data.items.reject_message;
 			form.date_visit = response.data.items.date_visit;
 			form.hour_visit = response.data.items.hour_visit;
 			form.municipality_id = response.data.items.municipality_id;
@@ -171,7 +169,7 @@ const disableElements = computed(() => {
 	<div v-if="dataLoaded" class="p-5 mt-5 intro-y box">
 		<div class="mb-6" v-if="form.status_id == '4'">
 			<p class="text-danger font-bold">Razon de rechazo</p>
-			<p>{{ form.rejection_message }}</p>
+			<p>{{ form.reject_message }}</p>
 		</div>
 
 		<div class="grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">

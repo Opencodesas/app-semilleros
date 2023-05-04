@@ -27,12 +27,12 @@ const form = reactive({
 	file: [],
 	created_by: '',
 	status_id: '',
-	rejection_message: '',
+	reject_message: '',
 });
 
 const form_rules = computed(() => ({
 	status_id: { required },
-	rejection_message: { required: parseInt(form.status_id) == 2 },
+	reject_message: { required: parseInt(form.status_id) == 2 },
 }));
 
 const event_supportList = [
@@ -54,7 +54,6 @@ const dataLoaded = ref(false)
 const v$ = useVuelidate(form_rules, form);
 
 const data = async () => {
-	console.log(props.item)
 	form.date_visit = props.item.date_visit;
 	form.hour_visit = props.item.hour_visit;
 	form.municipality_id = props.item.municipality.name;
@@ -68,35 +67,7 @@ const data = async () => {
 	form.description = props.item.description;
 	form.observations = props.item.observations;
 	form.file = props.item.file;
-	form.rejection_message = props.item.rejection_message;
 	form.created_by = props.item.created_by.name;
-
-	// setLoading(true);
-	// await technicalDirectorVisitServices.get(props.item as string).then((response) => {
-	// 	if (response?.status == 200) {
-	// 		form.observations = response.data.observations;
-	// 		form.monitor = response.data.monitor;
-	// 		form.municipality = response.data.municipality;
-	// 		form.event_support = response.data.event_support;
-	// 		form.hour_visit = response.data.hour_visit;
-	// 		form.discipline = response.data.discipline;
-	// 		form.sidewalk = response.data.sidewalk;
-	// 		form.sports_scene = response.data.sports_scene;
-	// 		form.beneficiary_coverage = response.data.beneficiary_coverage;
-	// 		form.technical = response.data.technical;
-	// 		form.date_visit = response.data.date_visit;
-	// 		form.description = response.data.description;
-	// 		form.file = response.data.file;
-	// 		form.status_id = response.data.status_id;
-	// 		form.rejection_message = response.data.rejection_message;
-	// 		form.created_by = response.data.created_by;
-	// 		setLoading(false);
-	// 	} else {
-	// 		alerts.custom('', 'Error al cargar los datos!', 'error');
-	// 		setLoading(false);
-	// 	}
-	// 	return;
-	// });
 };
 
 onMounted(async () => {
@@ -124,9 +95,10 @@ const onSubmit = async () => {
 	}
 };
 
-const defineReason = () => {
-	if (form.status_id == '1') form.rejection_message = '';
-}
+watch(() => form.status_id, () => {
+	if (form.status_id == '1') form.reject_message = '';
+})
+
 </script>
 
 <template>
@@ -136,11 +108,11 @@ const defineReason = () => {
 
 	<div class="space-y-2 box px-5 py-4">
 		<h2 class="font-bold">Revisión</h2>
-		<CommonSelect @select="defineReason" label="Estado de la tarea *" name="status_id" v-model="form.status_id"
+		<CommonSelect label="Estado de la tarea *" name="status_id" v-model="form.status_id"
 			:validator="v$" :options="statusesList" />
 		<div v-if="form.status_id == '4'" class="pt-4">
-			<CommonTextarea name="rejection_message" class="" label="Comentario *" placeholder="Escriba..." rows="5"
-				v-model="form.rejection_message" :validator="v$" />
+			<CommonTextarea name="reject_message" class="" label="Comentario *" placeholder="Escriba..." rows="5"
+				v-model="form.reject_message" :validator="v$" />
 		</div>
 		<div class="mt-6 flex justify-end col-span-1 md:col-span-2 border-none gap-1" tabindex="1">
 			<Button variant="danger" @click="props.closeModal">Cerrar</Button>

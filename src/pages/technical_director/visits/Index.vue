@@ -3,10 +3,6 @@ import { searchData } from '@/composables/search';
 import { onboardingStore } from '@/stores/onboardingStore';
 import { Header, Item } from 'vue3-easy-data-table';
 
-const store = onboardingStore();
-
-const router = useRouter();
-
 const items = ref<Item[]>([]);
 
 onBeforeMount(async () => {
@@ -16,7 +12,6 @@ onBeforeMount(async () => {
 });
 
 const headers: Header[] = [
-	// { text: 'No', value: 'id' },
 	{ text: 'Fecha', value: 'date_visit' },
 	{ text: 'Municipio', value: 'municipality.name' },
 	{ text: 'Monitor', value: 'monitor.name' },

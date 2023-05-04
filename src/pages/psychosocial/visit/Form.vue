@@ -46,7 +46,6 @@ const formdataParser = (form: any) => {
 };
 
 const selectFile = (event: any) => {
-    console.log(form.file);
     form.file = event.target.files[0];
 }
 
@@ -54,14 +53,6 @@ const municipalities = asyncComputed(async () => {
     return await getSelect(['municipalities'])
 }, null)
 
-
-// watch(() => form.municipalities_id, (newVal, oldVal) => {
-//     console.log(newVal);
-//     if (newVal != null) monitorsByMunicipalities_id();
-//     if (newVal == null) monitorList.value = [];
-// })
-
-//const disciplinesList = ref([]);
 
 const monitorList = asyncComputed(async () => {
     return await getMonitorByMunicipality(form.municipalities_id);
@@ -87,7 +78,6 @@ const onSubmit = async () => {
     const valid = await v$.value.$validate()
     if (valid) {
         const formData = formdataParser(form);
-        console.log(form)
         await visitServices.create(formData).then((response) => {
             if (response) {
                 if (response.status >= 200 && response.status <= 300) {
