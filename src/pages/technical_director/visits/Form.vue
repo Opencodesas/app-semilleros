@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import CommonFile from '@/components/CommonFile.vue';
-import { filePondValue } from '@/composables/useFilepondEvents';
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
 import Swal from 'sweetalert2';
-const { multiple } = useFilepondEvents();
 const router = useRouter();
 
 const form = reactive({

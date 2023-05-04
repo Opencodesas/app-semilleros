@@ -577,22 +577,11 @@ const selectedTab = inject('selectedTab', ref(0));
 								variant="outline-secondary"
 								@click="editAction(item.id)">
 								<Lucide
-									v-if="item.status.slug == 'REC'"
-									icon="FileEdit"
-									class="mr-2" />
-								<Lucide
-									v-else
-									icon="Eye"
+									:icon="item.status.slug == 'REC' ? 'FileEdit' : 'Eye'"
 									class="mr-2" />
 								<span
-									v-if="item.status.slug == 'REC'"
 									class="text-sm">
-									Editar
-								</span>
-								<span
-									v-else
-									class="text-sm">
-									Visualizar
+									{{ item.status.slug == 'REC' ? 'Editar' : 'Visualizar' }}									
 								</span>
 							</Button>
 						</template>
@@ -710,7 +699,7 @@ const selectedTab = inject('selectedTab', ref(0));
 							<template v-if="props.Form!">
 								<Modal
 									:Form="props.Form"
-									:id_review="item.id" />
+									:item="item" />
 							</template>
 						</template>
 					</template>
@@ -782,7 +771,27 @@ const selectedTab = inject('selectedTab', ref(0));
 					</template>
 					<template v-else-if="isProvider('fichaInscrip')">
 						<Button
-							v-if="item.status.slug === 'ENREV'"
+							v-if="item.status.slug === 'ENR'"
+							variant="outline-secondary"
+							@click="seeAction(item.id)">
+							<Lucide
+								icon="Search"
+								class="mr-2" />
+							<span class="text-sm"> Ver </span>
+						</Button>
+						<Button
+							v-else-if="item.status.slug === 'REC'"
+							variant="outline-secondary"
+							@click="editAction(item.id)">
+							<Lucide
+								icon="FileEdit"
+								class="mr-2" />
+							<span class="text-sm"> Editar </span>
+						</Button>
+					</template>
+					<template v-else-if="isProvider('chronograms')">
+						<Button
+							v-if="item.status.slug === 'ENR'"
 							variant="outline-secondary"
 							@click="seeAction(item.id)">
 							<Lucide

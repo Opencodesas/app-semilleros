@@ -46,6 +46,14 @@ const form_rules = computed(() => ({
     }
 }))
 
+
+const scheduleBone = {
+    idx: new Date().getTime(),
+    day: '',
+    start_time: '',
+    end_time: '',
+}
+
 const groupBone = {
     group_id: '',
     sports_modality: '',
@@ -53,21 +61,7 @@ const groupBone = {
     main_sports_stage_address: '',
     alt_sports_stage_name: '',
     alt_sports_stage_address: '',
-    schedules: [{
-        idx: new Date().getTime(),
-        day: '',
-        start_time: '',
-        end_time: '',
-    }]
-}
-
-const groupBonetemplate = {...groupBone, schedules: {...groupBone.schedules}};
-
-const scheduleBone = {
-    idx: 0,
-    day: '',
-    start_time: '',
-    end_time: '',
+    schedules: [{...scheduleBone}]
 }
 
 const v$ = useVuelidate(form_rules, form)
@@ -164,10 +158,9 @@ const searchItem = ( schedules: any, grupo: number, horario: any ) => {
     return hayCruce;
 }
 
-const temp = { ...groupBonetemplate, schedules: {...groupBonetemplate.schedules} };
 const onAddGrupo = () => {
     if ( form.groups.length <= 4 ) {
-        form.groups.push({ ...groupBone })
+        form.groups.push({ ...groupBone, schedules: [{...scheduleBone}] })
     }
 }
 
