@@ -34,7 +34,6 @@ const form_rules = computed(() => ({
 }))
 
 const formdataParser = (form: any) => {
-    console.log(form);
     const formData = new FormData();
     Object.keys(form).forEach((key) => {
         formData.append(key, form[key]);
@@ -54,8 +53,6 @@ const months = asyncComputed(async () => {
 const municipalities = asyncComputed(async () => {
     return await getSelect(['municipalities'])
 }, null)
-
-//const beneficiariesList = ref<selectOption[]>([]);
 
 const beneficiariesList = asyncComputed(async () => {
     return await getBeneficiariesByDepartment(form.municipality as string)
@@ -89,9 +86,7 @@ const healthEntities = computedAsync(async () => {
 }, null)
 
 const getBeneficiaryData = async () => {
-    //console.log(healthEntities.value)
     await beneficiaryServices.get(form.beneficiary as string).then((response) => {
-        console.log(response?.data.items);
         if (response?.status == 200 || response?.status == 201) {
             beneficiary_data.scholar_level = response.data.items.scholar_level ? scholarLevels[response.data.items.scholar_level - 1].label : 'No tiene';
             beneficiary_data.health_entity = response.data.items.health_entity_id ? healthEntities.value[response.data.items.health_entity_id - 1].label : 'No tiene';
@@ -101,7 +96,6 @@ const getBeneficiaryData = async () => {
         } else {
             alerts.custom("", "No se pudieron obtener los datos", "error");
         }
-        //console.log(form);
     })
 }
 
@@ -115,8 +109,6 @@ const router = useRouter()
 const onSubmit = async () => {
     const valid = await v$.value.$validate()
     const formData = formdataParser(form)
-    console.log(form);
-    console.log(formData);
     if (valid) {
         await customVisitServices.create(formData).then((response) => {
             if (response) {

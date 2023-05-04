@@ -13,7 +13,6 @@ const props = defineProps<{
     item: any;
 }>();
 
-//Quitar datos de prueba
 const form = reactive({
     reject_message: '',
     status_id: '',
@@ -59,9 +58,8 @@ const healthEntities = ref()
 
 
 const dataLoaded = ref(false)
-//Verificar si se puede hacer con asycComputed
+
 const getData = () => {
-    console.log(props.item);
     form.month = props.item.month_id;
     form.municipality = props.item.municipality_id;
     form.beneficiary = props.item.beneficiary_id;
@@ -88,22 +86,12 @@ const getData = () => {
 
 onMounted(async () => {
     healthEntities.value = await getHealthentities();
-    console.log(healthEntities.value);
     getData();
-    //await getBeneficiaryData();
     dataLoaded.value = true;
 });
 
-
-
-//Mirar si hago servicio
-// const beneficiary_data = asyncComputed(async () => {
-//     return form.beneficiary ? await getBeneficiaryData(form.beneficiary) : null
-// }, null)
-
 const v$ = useVuelidate(form_rules, form)
 
-const router = useRouter()
 
 const onSubmit = async () => {
     const valid = await v$.value.$validate()
@@ -133,10 +121,10 @@ const positionRange = computed(() => {
     return `calc(${positionTooltip * 100}% - ${(2 * (parseInt(form.concept) - 1) ** 2) / 5 + 2 * (parseInt(form.concept) - 1)}px)`;
 });
 
-//Manejo de reject_message para no guardarla si el user selecciona rechazado y pone reject_message y despues pone aprobado.
-const definereject_message = () => {
-    if (form.status_id == '1') form.reject_message = '';
-}
+watch(() => form.status_id, () => {
+	if (form.status_id == '1') form.reject_message = '';
+})
+
 </script>
 
 <template>
@@ -146,7 +134,7 @@ const definereject_message = () => {
 
     <div class="space-y-2 box px-5 py-4">
         <h2 class="font-bold">Revisión</h2>
-        <CommonSelect @select="definereject_message" label="Estado de la tarea *" name="status_id" v-model="form.status_id"
+        <CommonSelect label="Estado de la tarea *" name="status_id" v-model="form.status_id"
             :validator="v$" :options="status_idList" />
         <div v-if="form.status_id == '4'" class="pt-4">
             <CommonTextarea name="reject_message" class="" label="Comentario *" placeholder="Escriba..." rows="5"

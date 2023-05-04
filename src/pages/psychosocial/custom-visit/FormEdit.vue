@@ -42,19 +42,14 @@ const beneficiary_data = reactive({
 
 const file: any = ref(null);
 const formdataParser = (form: any) => {
-    console.log(form);
     const formData = new FormData();
     Object.keys(form).forEach((key) => {
         formData.append(key, form[key]);
     });
-    console.log(formData);
     return formData;
 };
 const selectFile = (event: any) => {
-    console.log(form.file);
-    console.log(event.target.files);
     form.file = event.target.files[0];
-    console.log(form.file);
 }
 
 const months = asyncComputed(async () => {
@@ -71,7 +66,6 @@ const beneficiariesList = asyncComputed(async () => {
 
 watch(() => form.municipality, (newVal, oldVal) => {
     if (dataLoaded.value) {
-        console.log(newVal);
         form.beneficiary = '';
     }
 })
@@ -82,7 +76,6 @@ watch(() => form.beneficiary, (newVal, oldVal) => {
     beneficiary_data.guardian_name = '';
     beneficiary_data.guardian_lastname = '';
     beneficiary_data.guardian_identification = '';
-    //console.log(newVal);
     newVal && getBeneficiaryData();
 })
 
@@ -91,8 +84,6 @@ const dataLoaded = ref(false)
 const getData = async () => {
 
     await customVisitServices.get(route.params.id as string).then((response) => {
-        console.log(response?.data.items);
-        console.log(response?.data.items)
         if (response?.status == 200 || response?.status == 201) {
             form.rejection_message = response.data.items.reject_message;
             form.month = response.data.items.month_id;
@@ -107,7 +98,6 @@ const getData = async () => {
         } else {
             alerts.custom("", "No se pudieron obtener los datos", "error");
         }
-        console.log(form);
     })
 };
 
@@ -119,7 +109,6 @@ const healthEntities = computedAsync(async () => {
 
 const getBeneficiaryData = async () => {
     await beneficiaryServices.get(form.beneficiary as string).then((response) => {
-        console.log(response?.data.items);
         if (response?.status == 200 || response?.status == 201) {
             beneficiary_data.scholar_level = response.data.items.scholar_level ? scholarLevels[response.data.items.scholar_level - 1].label : 'No tiene';
             beneficiary_data.health_entity = response.data.items.health_entity_id ? healthEntities.value[response.data.items.health_entity_id - 1].label : 'No tiene';
@@ -166,7 +155,7 @@ const download = () => {
 }
 
 const disableElements = computed(() => {
-    return form.status_id == '4' ? false : true; //id: 4 => Rechazado => REC
+    return form.status_id == '4' ? false : true; 
 })
 
 const positionRange = computed(() => {
