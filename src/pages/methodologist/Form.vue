@@ -23,10 +23,6 @@ const form = reactive({
 	file: [],
 
 	swich_plans_r: false,
-	swich_plans_gm1: false,
-	swich_plans_gm2: false,
-	swich_plans_gm3: false,
-	swich_plans_gm4: false,
 	swich_plans_sc_1: false,
 	swich_plans_sc_2: false,
 	swich_plans_sc_3: false,
@@ -60,10 +56,6 @@ const form_rules = computed(() => ({
 	file: [],
 
 	swich_plans_r: { required },
-	swich_plans_gm1: { required },
-	swich_plans_gm2: { required },
-	swich_plans_gm3: { required },
-	swich_plans_gm4: { required },
 	swich_plans_sc_1: { required },
 	swich_plans_sc_2: { required },
 	swich_plans_sc_3: { required },
@@ -123,13 +115,13 @@ const selectFile = (event: any) => {
 watch(
 	() => form.municipalitie_id,
 	() => {
-			form.monitor_id = '';
+		form.monitor_id = '';
 	}
 );
 watch(
 	() => form.monitor_id,
 	() => {
-			form.discipline_id = '';
+		form.discipline_id = '';
 	}
 );
 const formdataParser = (form: any) => {
@@ -150,7 +142,7 @@ const onSubmit = async () => {
 					if (response.status >= 200 && response.status <= 300) {
 						alerts.create();
 						setLoading(true);
-						router.push({name: 'methodologist_visits.index'}).finally(() => {
+						router.push({ name: 'methodologist_visits.index' }).finally(() => {
 							setLoading(false);
 						});
 					}

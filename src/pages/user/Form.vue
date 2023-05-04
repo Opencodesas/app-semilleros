@@ -43,7 +43,24 @@ const form_rules = computed(() => ({
     password: {},
     disciplines: {},
 }))
-
+const formdataParser = (form: any) => {
+	const formData = new FormData();
+	Object.keys(form).forEach((key) => {
+		if (key == 'municipalities') {
+			form[key].forEach((file: any) => {
+				formData.append('municipalities[]', file);
+			});
+        } else if (key == 'disciplines') {
+            form[key].forEach((file: any) => {
+                formData.append('disciplines[]', file);
+            });
+        }
+        else {
+			formData.append(key, form[key]);
+		}
+	});
+	return formData;
+};
 const users = ref([]);
 
 const types = [
@@ -238,7 +255,6 @@ onMounted(async () => {
 
 const onSubmit = async () => {
     const valid = await v$.value.$validate()
-    console.log(form);
     if (valid) {
         await userServices.create(formdataParser(form)).then((response) => {
             if (response) {
@@ -291,9 +307,9 @@ const onSubmit = async () => {
             <CommonSelect label="Seleccione la ciudad *" name="cities" v-model="form.cities" :validator="v$"
                 :options="cities" />
             <CommonSelect label="Seleccione el municipio *" name="municipalities" v-model="form.municipalities" :validator="v$"
-                :options="municipalities" />
+                :options="municipalities" multiple />
             <CommonSelect class="h-30" label="Seleccione las disciplinas *" name="disciplines" v-model="form.disciplines" :validator="v$"
-                :options="disciplines" />
+                :options="disciplines" multiple />
             <br>
             <CommonInput type="hidden" name="password" :value="form.document_number" v-model="form.password" :validator="v$" />
         </div>

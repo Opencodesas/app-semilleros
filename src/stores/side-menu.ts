@@ -319,11 +319,6 @@ export const useSideMenuStore = defineStore("sideMenu", {
         subMenu: [
           {
             icon: "Activity",
-            pageName: "fichas_inscripcion.index",
-            title: "Revisiones",
-          },
-          {
-            icon: "Activity",
             pageName: "methodologist_visits.create",
             title: "Crear visita",
           },
@@ -331,6 +326,11 @@ export const useSideMenuStore = defineStore("sideMenu", {
             icon: "Activity",
             pageName: "methodologist_visits.index",
             title: "Visitas"
+          },
+          {
+            icon: "Activity",
+            pageName: "fichas_inscripcion.index",
+            title: "Revisiones",
           },
         ]
       },

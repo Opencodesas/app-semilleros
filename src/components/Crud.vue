@@ -809,6 +809,16 @@ const selectedTab = inject('selectedTab', ref(0));
 							<span class="text-sm"> Editar </span>
 						</Button>
 					</template>
+					<template v-else-if="isRole('super.root')">
+						<!-- <Button
+							variant="outline-secondary"
+							@click="editAction(item.id)">
+							<Lucide
+								icon="FileEdit"
+								class="mr-2" />
+							<span class="text-sm"> Editar </span>
+						</Button> -->
+					</template>
 				</div>
 			</template>
 
