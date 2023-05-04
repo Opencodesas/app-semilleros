@@ -699,7 +699,7 @@ const selectedTab = inject('selectedTab', ref(0));
 							<template v-if="props.Form!">
 								<Modal
 									:Form="props.Form"
-									:id_review="item.id" />
+									:item="item" />
 							</template>
 						</template>
 					</template>
