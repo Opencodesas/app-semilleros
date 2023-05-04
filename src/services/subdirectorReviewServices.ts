@@ -1,4 +1,4 @@
-let module: "methodologist_visit" | "coordinators"
+const module = "visits_review_director"
 
 export const subdirectorReviewServices = {
   get: async (id: string, module: string) => {
@@ -17,7 +17,6 @@ export const subdirectorReviewServices = {
   getAll: async () => {
     try {
       setLoading(true)
-
       const response = await api.get(`/${apiPath}/${module}`).finally(() => {
         setLoading(false)
       })

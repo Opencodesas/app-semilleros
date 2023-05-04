@@ -22,7 +22,7 @@ const header: Header[] = [
 
 const items = ref<Item[]>([]);
 onMounted(async () => {
-	await subdirectorVisitServices.getAll().then((response) => {
+	await subdirectorReviewServices.getAll().then((response) => {
 		items.value = response?.data.items;
 	});
 });
