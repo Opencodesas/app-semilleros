@@ -89,8 +89,9 @@ const formdataParser = (form: any) => {
 };
 
 const onSubmit = async () => {
-	form.file = files.value.length == form.file.length ? files.value : form.file;
+	form.file = form.file.length == 0 ? files.value : form.file;
 	const valid = await v$.value.$validate();
+	form.file = form.file == files.value ? [] : form.file;
 	if (form.nro_assistants < 0) {
 		alerts.error('El numero de asistentes no puede ser negativo');
 		return;
