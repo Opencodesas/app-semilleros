@@ -7,6 +7,7 @@ export interface Menu {
   pageName?: string;
   subMenu?: Menu[];
   ignore?: boolean;
+  role?: string;
 }
 
 export interface SideMenuState {
@@ -41,6 +42,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
         title: "Semilleros",
         subMenu: [
           {
+            role: 'monitor',
             icon: "Activity",
             pageName: "users.index",
             title: "Usuarios",
@@ -61,11 +63,13 @@ export const useSideMenuStore = defineStore("sideMenu", {
             title: "Visita Subdirectora"
           }, */
           {
+            role: 'monitor',
             icon: "Activity",
             pageName: "beneficiaries.index",
             title: "Beneficiarios"
           },
           {
+            role: 'monitor',
             icon: "Activity",
             pageName: "chronograms.index",
             title: "Cronograma"
@@ -338,7 +342,10 @@ export const useSideMenuStore = defineStore("sideMenu", {
   }),
   getters: {
     getMenu(state) {
-      if (isRole('auxiliar_administrativo_tecnico')) {
+      if (isRole('monitor')) {
+        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.role === 'monitor'))
+      } 
+      else if (isRole('auxiliar_administrativo_tecnico')) {
         return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.includes('assistants')))
       }
       else if (isRole('apoyo_juridico')) {
