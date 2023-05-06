@@ -126,6 +126,8 @@ const getData = () => {
 					props.item?.swich_plans_mp_5 == '0' ? false : true;
 				file.value = props.item.file;
 				dataLoaded.value = true;
+				console.log(props.item)
+				console.log(form);
 };
 
 onMounted(() => {

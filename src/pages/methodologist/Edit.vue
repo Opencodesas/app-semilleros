@@ -183,7 +183,7 @@ const getData = async () => {
 					form.swich_plans_mp_5 =
 						res.data.items?.swich_plans_mp_5 == '0' ? false : true;
 					file.value = res.data.items.file;
-					
+
 				} else {
 					Swal.fire('', 'No se pudieron obtener los datos', 'error');
 				}
@@ -193,20 +193,21 @@ const getData = async () => {
 watch(
 	() => form.municipalitie_id,
 	() => {
-			if(dataLoaded.value){
-				form.user_id = '';
-			}
+		if (dataLoaded.value) {
+			form.user_id = '';
+		}
 	}
 );
 watch(
 	() => form.user_id,
 	() => {
-			if(dataLoaded.value){
-				form.discipline_id = '';
-			}
+		if (dataLoaded.value) {
+			form.discipline_id = '';
+		}
 	}
 );
-onBeforeMount(async() => {
+onBeforeMount(async () => {
+	console.log(apiPath)
 	await getData();
 	dataLoaded.value = true;
 });
@@ -235,120 +236,77 @@ const onSubmit = async () => {
 const disableElements = computed(() => {
 	return form.status_id == '4' ? false : true; //id: 4 => Rechazado => REC
 });
+
+const downloadVisit = async () => {
+	return await methodologistVisitServices.download(form.id).then((res) => {
+		if (res) {
+			if (res.status >= 200 && res.status <= 300) {
+				// console.log(res.data)
+				// console.log(`${urlStorage}${file.value}`)
+				// const url = window.URL.createObjectURL(new Blob([res.data]));
+				const link = document.createElement('a');
+				const url = `${import.meta.env.VITE_BASE_URL}/${res.data}`;
+				//console.log(url)
+				link.href = url;
+				document.body.appendChild(link);
+				link.click();
+				document.body.removeChild(link);
+			}
+		}
+	});
+};
+
+
 </script>
 
 <template>
 	<div class="flex items-center mt-8 intro-y">
 		<div class="flex items-center space-x-4">
-			<CommonBackButton
-				to="methodologist_visits.index"
-				title="Listado" />
+			<CommonBackButton to="methodologist_visits.index" title="Listado" />
 			<h2 class="mr-auto text-lg font-medium">Registrar visita</h2>
 		</div>
 	</div>
 
-	<div
-		class="content"
-		v-if="dataLoaded">
+	<div class="content" v-if="dataLoaded">
 		<div class="p-5 mt-5 intro-y box">
-			<div
-				class="mb-6"
-				v-if="form.status_id == '4'">
+			<div class="mb-6" v-if="form.status_id == '4'">
 				<p class="text-danger font-bold">Razon de rechazo</p>
 				<p>{{ form.rejection_message }}</p>
 			</div>
 			<div class="grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
-				<CommonInput
-					type="date"
-					label="Fecha  *"
-					name="date_visit"
-					v-model="form.date_visit"
-					:validator="v$"
+				<CommonInput type="date" label="Fecha  *" name="date_visit" v-model="form.date_visit" :validator="v$"
 					:disabled="disableElements" />
-				<CommonInput
-					type="time"
-					label="Hora  *"
-					name="hour_visit"
-					v-model="form.hour_visit"
-					:validator="v$"
+				<CommonInput type="time" label="Hora  *" name="hour_visit" v-model="form.hour_visit" :validator="v$"
 					:disabled="disableElements" />
-				<CommonSelect
-					label="Municipio *"
-					name="municipalitie_id"
-					v-model="form.municipalitie_id"
-					:validator="v$"
-					:options="municipalities"
+				<CommonSelect label="Municipio *" name="municipalitie_id" v-model="form.municipalitie_id" :validator="v$"
+					:options="municipalities" :disabled="disableElements" />
+
+				<CommonInput label="Corregimiento / Vereda *" name="sidewalk"
+					placeholder="Ingrese el corregimiento o vereda" v-model="form.sidewalk" :validator="v$"
 					:disabled="disableElements" />
 
-				<CommonInput
-					label="Corregimiento / Vereda *"
-					name="sidewalk"
-					placeholder="Ingrese el corregimiento o vereda"
-					v-model="form.sidewalk"
-					:validator="v$"
+				<CommonSelect label="Monitor *" name="user_id" v-model="form.user_id" :validator="v$" :options="monitorList"
 					:disabled="disableElements" />
-
-				<CommonSelect
-					label="Monitor *"
-					name="user_id"
-					v-model="form.user_id"
-					:validator="v$"
-					:options="monitorList"
-					:disabled="disableElements" />
-				<CommonSelect
-					label="Diciplinas *"
-					name="discipline_id"
-					v-model="form.discipline_id"
-					:validator="v$"
-					:options="disciplines"
-					:disabled="disableElements" />
-				<CommonInput
-					type="text"
-					placeholder="Ingrese el escenario deportivo"
-					label="Escenario deportivo *"
-					name="sports_scene"
-					v-model="form.sports_scene"
-					:validator="v$"
-					:disabled="disableElements" />
-				<CommonInput
-					type="number"
-					min="0"
-					placeholder="Ingrese un numero de beneficiarios"
-					label="Cobertura de benificiario *"
-					name="beneficiary_coverage"
-					v-model="form.beneficiary_coverage"
-					:validator="v$"
-					:disabled="disableElements" />
-				<CommonSelect
-					label="Evaluacion *"
-					name="evaluation_id"
-					v-model="form.evaluation_id"
-					:validator="v$"
-					:options="evaluationList"
-					:disabled="disableElements" />
-				<CommonSelect
-					label="Apoyo a eventos *"
-					name="event_support_id"
-					v-model="form.event_support_id"
-					:validator="v$"
-					:options="event_supportList"
-					:disabled="disableElements" />
+				<CommonSelect label="Diciplinas *" name="discipline_id" v-model="form.discipline_id" :validator="v$"
+					:options="disciplines" :disabled="disableElements" />
+				<CommonInput type="text" placeholder="Ingrese el escenario deportivo" label="Escenario deportivo *"
+					name="sports_scene" v-model="form.sports_scene" :validator="v$" :disabled="disableElements" />
+				<CommonInput type="number" min="0" placeholder="Ingrese un numero de beneficiarios"
+					label="Cobertura de benificiario *" name="beneficiary_coverage" v-model="form.beneficiary_coverage"
+					:validator="v$" :disabled="disableElements" />
+				<CommonSelect label="Evaluacion *" name="evaluation_id" v-model="form.evaluation_id" :validator="v$"
+					:options="evaluationList" :disabled="disableElements" />
+				<CommonSelect label="Apoyo a eventos *" name="event_support_id" v-model="form.event_support_id"
+					:validator="v$" :options="event_supportList" :disabled="disableElements" />
 			</div>
 			<div class="w-full py-6 mx-auto">
 				<h2 class="text-center mr-auto text-lg font-medium">Requerimientos</h2>
 			</div>
 			<div class="p-5 intro-y box">
-				<div
-					class="grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly"></div>
-	
-				<FormSwitch.Input
-					name="swich_plans"
-					id="swich_plans"
-					type="checkbox"
-					v-model="form.swich_plans_r"
-					:checked="form.swich_plans_r"
-					:validator="v$"
-					:disabled="disableElements" />
+				<div class="grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly"></div>
+
+				<FormSwitch.Input name="swich_plans" id="swich_plans" type="checkbox" v-model="form.swich_plans_r"
+					:checked="form.swich_plans_r" :validator="v$" :disabled="disableElements" />
 				<FormSwitch.Label htmlFor="swich_plans">
 					Plan de clases
 				</FormSwitch.Label>
@@ -359,53 +317,33 @@ const disableElements = computed(() => {
 			<div class="p-5 intro-y box">
 				<div class="grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
 					<FormSwitch>
-						<FormSwitch.Input
-							name="swich_plans_sc_1"
-							id="swich_plans_sc_1"
-							type="checkbox"
-							v-model="form.swich_plans_sc_1"
-							:checked="form.swich_plans_sc_1"
-							:disabled="disableElements" />
+						<FormSwitch.Input name="swich_plans_sc_1" id="swich_plans_sc_1" type="checkbox"
+							v-model="form.swich_plans_sc_1" :checked="form.swich_plans_sc_1" :disabled="disableElements" />
 						<FormSwitch.Label htmlFor="swich_plans_sc_1">
 							Plantea actividades congruentes para el cumplimiento de los
 							objetivos de la sesión de clase
 						</FormSwitch.Label>
 					</FormSwitch>
-	
+
 					<FormSwitch>
-						<FormSwitch.Input
-							name="swich_plans_sc_2"
-							id="swich_plans_sc_2"
-							type="checkbox"
-							v-model="form.swich_plans_sc_2"
-							:checked="form.swich_plans_sc_2"
-							:disabled="disableElements" />
+						<FormSwitch.Input name="swich_plans_sc_2" id="swich_plans_sc_2" type="checkbox"
+							v-model="form.swich_plans_sc_2" :checked="form.swich_plans_sc_2" :disabled="disableElements" />
 						<FormSwitch.Label htmlFor="swich_plans_sc_2">
 							Desarrolla el componente técnico deportivo del mes
 						</FormSwitch.Label>
 					</FormSwitch>
-	
+
 					<FormSwitch>
-						<FormSwitch.Input
-							name="swich_plans_sc_3"
-							id="swich_plans_sc_3"
-							type="checkbox"
-							v-model="form.swich_plans_sc_3"
-							:checked="form.swich_plans_sc_3"
-							:disabled="disableElements" />
+						<FormSwitch.Input name="swich_plans_sc_3" id="swich_plans_sc_3" type="checkbox"
+							v-model="form.swich_plans_sc_3" :checked="form.swich_plans_sc_3" :disabled="disableElements" />
 						<FormSwitch.Label htmlFor="swich_plans_sc_3">
 							Tiene buen manejo de grupo en el desarrollo de las actividades
 						</FormSwitch.Label>
 					</FormSwitch>
-	
+
 					<FormSwitch>
-						<FormSwitch.Input
-							name="swich_plans_sc_4"
-							id="swich_plans_sc_4"
-							type="checkbox"
-							v-model="form.swich_plans_sc_4"
-							:checked="form.swich_plans_sc_4"
-							:disabled="disableElements" />
+						<FormSwitch.Input name="swich_plans_sc_4" id="swich_plans_sc_4" type="checkbox"
+							v-model="form.swich_plans_sc_4" :checked="form.swich_plans_sc_4" :disabled="disableElements" />
 						<FormSwitch.Label htmlFor="swich_plans_sc_4">
 							Desarrolla el componente funcional del mes
 						</FormSwitch.Label>
@@ -420,76 +358,46 @@ const disableElements = computed(() => {
 			<div class="p-5 intro-y box">
 				<div class="grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
 					<FormSwitch>
-						<FormSwitch.Input
-							name="swich_plans_gm_1"
-							id="swich_plans_gm_1"
-							type="checkbox"
-							v-model="form.swich_plans_gm_1"
-							:checked="form.swich_plans_gm_1"
-							:disabled="disableElements" />
+						<FormSwitch.Input name="swich_plans_gm_1" id="swich_plans_gm_1" type="checkbox"
+							v-model="form.swich_plans_gm_1" :checked="form.swich_plans_gm_1" :disabled="disableElements" />
 						<FormSwitch.Label htmlFor="swich_plans_gm_1">
 							Puntualidad
 						</FormSwitch.Label>
 					</FormSwitch>
-	
+
 					<FormSwitch>
-						<FormSwitch.Input
-							name="swich_plans_gm_2"
-							id="swich_plans_gm_2"
-							type="checkbox"
-							v-model="form.swich_plans_gm_2"
-							:checked="form.swich_plans_gm_2"
-							:disabled="disableElements" />
+						<FormSwitch.Input name="swich_plans_gm_2" id="swich_plans_gm_2" type="checkbox"
+							v-model="form.swich_plans_gm_2" :checked="form.swich_plans_gm_2" :disabled="disableElements" />
 						<FormSwitch.Label htmlFor="swich_plans_gm_2">
 							Presentacion personal - uniforme del Proyecto
 						</FormSwitch.Label>
 					</FormSwitch>
-	
+
 					<FormSwitch>
-						<FormSwitch.Input
-							name="swich_plans_gm_3"
-							id="swich_plans_gm_3"
-							type="checkbox"
-							v-model="form.swich_plans_gm_3"
-							:checked="form.swich_plans_gm_3"
-							:disabled="disableElements" />
+						<FormSwitch.Input name="swich_plans_gm_3" id="swich_plans_gm_3" type="checkbox"
+							v-model="form.swich_plans_gm_3" :checked="form.swich_plans_gm_3" :disabled="disableElements" />
 						<FormSwitch.Label htmlFor="swich_plans_gm_3">
 							Paciente
 						</FormSwitch.Label>
 					</FormSwitch>
-	
+
 					<FormSwitch>
-						<FormSwitch.Input
-							name="swich_plans_gm_4"
-							id="swich_plans_gm_4"
-							type="checkbox"
-							v-model="form.swich_plans_gm_4"
-							:checked="form.swich_plans_gm_4"
-							:disabled="disableElements" />
+						<FormSwitch.Input name="swich_plans_gm_4" id="swich_plans_gm_4" type="checkbox"
+							v-model="form.swich_plans_gm_4" :checked="form.swich_plans_gm_4" :disabled="disableElements" />
 						<FormSwitch.Label htmlFor="swich_plans_gm_4">
 							Disciplina
 						</FormSwitch.Label>
 					</FormSwitch>
 					<FormSwitch>
-						<FormSwitch.Input
-							name="swich_plans_gm_5"
-							id="swich_plans_gm_5"
-							type="checkbox"
-							v-model="form.swich_plans_gm_5"
-							:checked="form.swich_plans_gm_5"
-							:disabled="disableElements" />
+						<FormSwitch.Input name="swich_plans_gm_5" id="swich_plans_gm_5" type="checkbox"
+							v-model="form.swich_plans_gm_5" :checked="form.swich_plans_gm_5" :disabled="disableElements" />
 						<FormSwitch.Label htmlFor="swich_plans_gm_5">
 							Comunicación alumnos y padres
 						</FormSwitch.Label>
 					</FormSwitch>
 					<FormSwitch>
-						<FormSwitch.Input
-							name="swich_plans_gm_6"
-							id="swich_plans_gm_6"
-							type="checkbox"
-							v-model="form.swich_plans_gm_6"
-							:checked="form.swich_plans_gm_6"
-							:disabled="disableElements" />
+						<FormSwitch.Input name="swich_plans_gm_6" id="swich_plans_gm_6" type="checkbox"
+							v-model="form.swich_plans_gm_6" :checked="form.swich_plans_gm_6" :disabled="disableElements" />
 						<FormSwitch.Label htmlFor="swich_plans_gm_6">
 							Verbalización clara y simple
 						</FormSwitch.Label>
@@ -504,65 +412,40 @@ const disableElements = computed(() => {
 			<div class="p-5 intro-y box">
 				<div class="grid grid-cols-3 md:grid md:grid-cols-3 gap-6 justify-evenly">
 					<FormSwitch>
-						<FormSwitch.Input
-							name="swich_plans_mp_1"
-							id="swich_plans_mp_1"
-							type="checkbox"
-							v-model="form.swich_plans_mp_1"
-							:checked="form.swich_plans_mp_1"
-							:disabled="disableElements" />
+						<FormSwitch.Input name="swich_plans_mp_1" id="swich_plans_mp_1" type="checkbox"
+							v-model="form.swich_plans_mp_1" :checked="form.swich_plans_mp_1" :disabled="disableElements" />
 						<FormSwitch.Label htmlFor="swich_plans_mp_1">
 							Modelo pedagógico del monitor
 						</FormSwitch.Label>
 					</FormSwitch>
-	
+
 					<FormSwitch>
-						<FormSwitch.Input
-							name="swich_plans_mp_2"
-							id="swich_plans_mp_2"
-							type="checkbox"
-							v-model="form.swich_plans_mp_2"
-							:checked="form.swich_plans_mp_2"
-							:disabled="disableElements" />
+						<FormSwitch.Input name="swich_plans_mp_2" id="swich_plans_mp_2" type="checkbox"
+							v-model="form.swich_plans_mp_2" :checked="form.swich_plans_mp_2" :disabled="disableElements" />
 						<FormSwitch.Label htmlFor="swich_plans_mp_2">
 							Conductual
 						</FormSwitch.Label>
 					</FormSwitch>
-	
+
 					<FormSwitch>
-						<FormSwitch.Input
-							name="swich_plans_mp_3"
-							id="swich_plans_mp_3"
-							type="checkbox"
-							v-model="form.swich_plans_mp_3"
-							:checked="form.swich_plans_mp_3"
-							:disabled="disableElements" />
+						<FormSwitch.Input name="swich_plans_mp_3" id="swich_plans_mp_3" type="checkbox"
+							v-model="form.swich_plans_mp_3" :checked="form.swich_plans_mp_3" :disabled="disableElements" />
 						<FormSwitch.Label htmlFor="swich_plans_mp_3">
 							Romantico
 						</FormSwitch.Label>
 					</FormSwitch>
-	
+
 					<FormSwitch>
-						<FormSwitch.Input
-							name="swich_plans_mp_4"
-							id="swich_plans_mp_4"
-							type="checkbox"
-							v-model="form.swich_plans_mp_4"
-							:checked="form.swich_plans_mp_4"
-							:disabled="disableElements" />
+						<FormSwitch.Input name="swich_plans_mp_4" id="swich_plans_mp_4" type="checkbox"
+							v-model="form.swich_plans_mp_4" :checked="form.swich_plans_mp_4" :disabled="disableElements" />
 						<FormSwitch.Label htmlFor="swich_plans_mp_4">
 							Constructivista
 						</FormSwitch.Label>
 					</FormSwitch>
-	
+
 					<FormSwitch>
-						<FormSwitch.Input
-							name="swich_plans_mp_5"
-							id="swich_plans_mp_5"
-							type="checkbox"
-							v-model="form.swich_plans_mp_5"
-							:checked="form.swich_plans_mp_5"
-							:disabled="disableElements" />
+						<FormSwitch.Input name="swich_plans_mp_5" id="swich_plans_mp_5" type="checkbox"
+							v-model="form.swich_plans_mp_5" :checked="form.swich_plans_mp_5" :disabled="disableElements" />
 						<FormSwitch.Label htmlFor="swich_plans_mp_5">
 							Integrador – globalizador
 						</FormSwitch.Label>
@@ -570,50 +453,27 @@ const disableElements = computed(() => {
 				</div>
 			</div>
 			<div class="p-5 mt-6 intro-y box">
-				<CommonTextarea
-					label="Observaciones *"
-					rows="5"
-					placeholder="Ingrese las observaciones"
-					name="observations"
-					v-model="form.observations"
-					:validator="v$"
-					:disabled="disableElements" />
+				<CommonTextarea label="Observaciones *" rows="5" placeholder="Ingrese las observaciones" name="observations"
+					v-model="form.observations" :validator="v$" :disabled="disableElements" />
 			</div>
 			<div class="p-5 mt-6 intro-y">
-				<FormLabel
-					for="evidencia"
-					class="flex flex-col w-full sm:flex-row">
+				<FormLabel for="evidencia" class="flex flex-col w-full sm:flex-row">
 					Evidencia *
 				</FormLabel>
-				<img
-					:alt="`Evidencia de la visita del metodologo ${form.created_by}`"
-					class="m-auto border rounded-lg"
-					:src="`${urlStorage}${file}`"
-					width="400" />
+				<img :alt="`Evidencia de la visita del metodologo ${form.created_by}`" class="m-auto border rounded-lg"
+					:src="`${urlStorage}${file}`" width="400" />
 			</div>
 			<div class="p-5 mt-6 intro-y">
-				<CommonFile
-					:validator="v$"
-					v-model="form.file"
-					name="file"
-					@change="selectFile"
-					@removefile="selectFile"
-					class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
-					v-if="!disableElements" />
+				<CommonFile :validator="v$" v-model="form.file" name="file" @change="selectFile" @removefile="selectFile"
+					class="w-11/12 sm:w-8/12 m-auto cursor-pointer" v-if="!disableElements" />
 			</div>
 		</div>
 		<div class="mt-6 flex justify-center col-span-1 md:col-span-2">
-			<Button
-				v-if="!disableElements"
-				@click="onSubmit"
-				variant="primary">
+			<Button v-if="!disableElements" @click="onSubmit" variant="primary">
 				Guardar
 			</Button>
 
-			<Button
-				v-else-if="form.status_id == '1'"
-				type="button"
-				variant="primary">
+			<Button v-else-if="form.status_id == '1'" type="button" variant="primary" @click="downloadVisit">
 				Descargar visita
 			</Button>
 		</div>
