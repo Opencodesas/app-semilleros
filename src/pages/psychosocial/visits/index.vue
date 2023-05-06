@@ -5,30 +5,6 @@ import visits from '../visit/Index.vue';
 import cutomVisits from '../custom-visit/Index.vue';
 import transversalActivities from '../transversal-activity/Index.vue';
 
-const { multiple } = useFilepondEvents();
-
-const route = useRoute();
-
-
-// const itemsVisit = ref<Item[]>([])
-
-// const itemsCustomVisit = ref<Item[]>([])
-
-// const itemsTransversalActivity = ref<Item[]>([])
-
-// onBeforeMount(async () => {
-//     await psychosocialVisitServices.getAll().then((response) => {
-//          itemsVisit.value = response?.data.items
-//      })
-//     await customVisitServices.getAll().then((response) => {
-//          itemsCustomVisit.value = response?.data.items
-//      })
-//     await transversalActivityServices.getAll().then((response) => {
-//         itemsTransversalActivity.value = response?.data.items
-//     })
-// })
-
-
 const selectedTab = ref(1);
 provide('selectedTab', selectedTab);
 

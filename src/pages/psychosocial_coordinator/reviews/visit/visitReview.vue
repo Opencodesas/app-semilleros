@@ -55,7 +55,6 @@ const v$ = useVuelidate(form_rules, form)
 const dataLoaded = ref(false)
 
 const getData = () => {
-    console.log(props.item)
     form.date_visit = props.item.date_visit;
     form.municipalities_id = props.item.municipalities_id;
     form.monitor = props.item.monitor_id;
@@ -105,9 +104,9 @@ const onSubmit = async () => {
     }
 }
 
-const definerejection_message = () => {
-    if (form.status_id == '1') form.rejection_message = '';
-}
+watch(() => form.status_id, () => {
+	if (form.status_id == '1') form.rejection_message = '';
+})
 </script>
 
 <template>
@@ -117,7 +116,7 @@ const definerejection_message = () => {
 
     <div class="space-y-2 box px-5 py-4">
         <h2 class="font-bold">Revisión</h2>
-        <CommonSelect @select="definerejection_message" label="Estado de la tarea *" name="status_id"
+        <CommonSelect label="Estado de la tarea *" name="status_id"
             v-model="form.status_id" :validator="v$" :options="status_idList" />
         <div v-if="form.status_id == '4'" class="pt-4">
             <CommonTextarea name="rejection_message" class="" label="Comentario *" placeholder="Escriba..." rows="5"

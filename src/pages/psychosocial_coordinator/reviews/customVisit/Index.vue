@@ -3,7 +3,6 @@ import { Header, Item } from 'vue3-easy-data-table';
 import { searchData } from '@/composables/search';
 import customVisitReview from './CustomVisitReview.vue'
 import { customVisitServices } from '@/services/psychosocial/customVisitServices';
-import { onboardingStore } from '@/stores/onboardingStore';
 
 
 const headerCustomVisits: Header[] = [
@@ -19,12 +18,9 @@ const customVisits = ref<Item[]>([]);
 
 
 onBeforeMount(async () => {
-    console.log(onboardingStore().user)
      await customVisitServices.getAll().then((response) => {
           customVisits.value = response?.data.items
-          console.log(response?.data.items)
       })
-      console.log(customVisits.value)
  })
 
 

@@ -10,6 +10,7 @@ type roles = "apoyo_administrativo" |
 "director_tecnico" |
 "mensajero" |
 "metodologo" |
+"monitor" |
 "periodista" |
 "psicologo" |
 "root" |
