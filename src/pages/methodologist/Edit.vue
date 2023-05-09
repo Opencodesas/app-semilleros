@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import FormSwitch from '@/base-components/Form/FormSwitch';
-
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
 import Swal from 'sweetalert2';
@@ -241,16 +240,7 @@ const downloadVisit = async () => {
 	return await methodologistVisitServices.download(form.id).then((res) => {
 		if (res) {
 			if (res.status >= 200 && res.status <= 300) {
-				// console.log(res.data)
-				// console.log(`${urlStorage}${file.value}`)
-				// const url = window.URL.createObjectURL(new Blob([res.data]));
-				const link = document.createElement('a');
-				const url = `${import.meta.env.VITE_BASE_URL}/${res.data}`;
-				//console.log(url)
-				link.href = url;
-				document.body.appendChild(link);
-				link.click();
-				document.body.removeChild(link);
+				downloadFile(res);
 			}
 		}
 	});
