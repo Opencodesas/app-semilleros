@@ -23,7 +23,7 @@ onMounted(async () => {
 	const res = await methodologistVisitServices.getAll()
 	items.value = await res?.data.items
 	for (let i = 0; i < items.value.length; i++) {
-		items.value[i].evaluations = await items.value[i].evaluations.id == '1' ? { label: 'Aprobado', id: 1 } : { label: 'Rechazado', id: 4 };
+		items.value[i].evaluations = await items.value[i].evaluations.id == '1' ? { label: 'Aprobado', id: 1 } : { label: 'Rechazado', id: 2 };
 	}
 });
 

@@ -58,7 +58,7 @@ const form_rules = computed(() => ({
 
 const evaluationList = [
 	{ label: 'Aprobado', value: 1 },
-	{ label: 'Denegado', value: 2 },
+	{ label: 'Rechazado', value: 2 },
 ];
 const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
