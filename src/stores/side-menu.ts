@@ -318,6 +318,29 @@ export const useSideMenuStore = defineStore("sideMenu", {
           },
         ]
       },
+      //vvvv MODULO FRONT DE CONTRATACION AÑADIDO POR PETICION DE ALEJANDRO 5/9/2023 vvvv
+      {
+        icon: 'Activity',
+        title: 'Actividades',
+        subMenu: [
+          {
+            icon: 'Activity',
+            pageName: 'budget.active',
+            title: 'Procesos Activos',
+          },
+          {
+            icon: 'Activity',
+            pageName: 'budget.store',
+            title: 'Crear Informe',
+          },
+          {
+            icon: 'Activity',
+            pageName: 'budget.index',
+            title: 'Informes Ingresados',
+          }
+        ]
+      }
+      //^^^^ MODULO FRONT DE CONTRATACION AÑADIDO POR PETICION DE ALEJANDRO 5/9/2023 ^^^^
     ],
   }),
   getters: {

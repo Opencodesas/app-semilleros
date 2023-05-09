@@ -242,6 +242,7 @@ const items = ref<Item[]>([]);
 
 onMounted(async () => {
 	const res = await beneficiaryServices.getAll();
+    //const cStatus = await beneficiaryServices.changeStatus("asdf");
     data.value = res?.data;
 	items.value = await res?.data.items;
 });
