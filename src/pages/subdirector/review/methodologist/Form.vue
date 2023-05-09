@@ -58,7 +58,7 @@ const form_rules = computed(() => ({
 
 const evaluationList = [
 	{ label: 'Aprobado', value: 1 },
-	{ label: 'Denegado', value: 2 },
+	{ label: 'Rechazado', value: 2 },
 ];
 const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
@@ -126,6 +126,8 @@ const getData = () => {
 					props.item?.swich_plans_mp_5 == '0' ? false : true;
 				file.value = props.item.file;
 				dataLoaded.value = true;
+				console.log(props.item)
+				console.log(form);
 };
 
 onMounted(() => {

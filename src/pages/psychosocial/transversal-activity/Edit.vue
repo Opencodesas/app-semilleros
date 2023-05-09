@@ -39,7 +39,7 @@ const form_rules = computed(() => ({
 	team_socialization: { required },
 	development_activity: { required },
 	content_network: { required },
-	file: { required },
+	file: {},
 	create_by: { required },
 }));
 
@@ -52,25 +52,27 @@ const municipalities = asyncComputed(async () => {
 }, null);
 
 onMounted(async () => {
-	await transversalActivityServices.get(router.currentRoute.value.params.id as string).then((response: any) => {
-		form.id = response.data.items.id;
-		form.status_id = response.data.items.status_id;
-		form.rejection_message = response.data.items.reject_message;
-		form.municipality_id = response.data.items.municipality_id;
-		form.date_visit = response.data.items.date_visit;
-		form.nro_assistants = response.data.items.nro_assistants;
-		form.activity_name = response.data.items.activity_name;
-		form.objective_activity = response.data.items.objective_activity;
-		form.scene = response.data.items.scene;
-		form.meeting_planing = response.data.items.meeting_planing;
-		form.team_socialization = response.data.items.team_socialization;
-		form.development_activity = response.data.items.development_activity;
-		form.content_network = response.data.items.content_network;
-		files.value = response.data.items.files;
-		form.create_by = response.data.items.creator.name;
-		dataLoaded.value = true;
-	});
-})
+	await transversalActivityServices
+		.get(router.currentRoute.value.params.id as string)
+		.then((response: any) => {
+			form.id = response.data.items.id;
+			form.status_id = response.data.items.status_id;
+			form.rejection_message = response.data.items.reject_message;
+			form.municipality_id = response.data.items.municipality_id;
+			form.date_visit = response.data.items.date_visit;
+			form.nro_assistants = response.data.items.nro_assistants;
+			form.activity_name = response.data.items.activity_name;
+			form.objective_activity = response.data.items.objective_activity;
+			form.scene = response.data.items.scene;
+			form.meeting_planing = response.data.items.meeting_planing;
+			form.team_socialization = response.data.items.team_socialization;
+			form.development_activity = response.data.items.development_activity;
+			form.content_network = response.data.items.content_network;
+			files.value = response.data.items.files;
+			form.create_by = response.data.items.creator.name;
+			dataLoaded.value = true;
+		});
+});
 
 const formdataParser = (form: any) => {
 	const formData = new FormData();
@@ -87,8 +89,9 @@ const formdataParser = (form: any) => {
 };
 
 const onSubmit = async () => {
-	form.file = files.value.length == form.file.length ? files.value : form.file;
+	form.file = form.file.length == 0 ? files.value : form.file;
 	const valid = await v$.value.$validate();
+	form.file = form.file == files.value ? [] : form.file;
 	if (form.nro_assistants < 0) {
 		alerts.error('El numero de asistentes no puede ser negativo');
 		return;
@@ -149,15 +152,15 @@ const download = () => {};
 					class="cursor-pointer"
 					v-model="form.municipality_id"
 					:validator="v$"
-					:options="municipalities" 
-					:disabled="disableElements"/>
+					:options="municipalities"
+					:disabled="disableElements" />
 				<CommonInput
 					type="date"
 					label="Fecha  *"
 					name="date_visit"
 					v-model="form.date_visit"
-					:validator="v$" 
-					:disabled="disableElements"/>
+					:validator="v$"
+					:disabled="disableElements" />
 				<CommonInput
 					type="number"
 					placeholder="Ingrese el numero de asistentes"
@@ -165,8 +168,8 @@ const download = () => {};
 					label="Numero de asistentes  *"
 					name="nro_assistants"
 					v-model="form.nro_assistants"
-					:validator="v$" 
-					:disabled="disableElements"/>
+					:validator="v$"
+					:disabled="disableElements" />
 			</div>
 			<div class="w-full mt-2 grid gap-6">
 				<CommonInput
@@ -176,8 +179,8 @@ const download = () => {};
 					label="Actividad transversal *"
 					name="activity_name"
 					v-model="form.activity_name"
-					:validator="v$" 
-					:disabled="disableElements"/>
+					:validator="v$"
+					:disabled="disableElements" />
 				<CommonInput
 					class="col-span-1"
 					type="text"
@@ -185,16 +188,16 @@ const download = () => {};
 					label="Objetivo de la actividad *"
 					name="objective_activity"
 					v-model="form.objective_activity"
-					:validator="v$" 
-					:disabled="disableElements"/>
+					:validator="v$"
+					:disabled="disableElements" />
 				<CommonInput
 					type="text"
 					placeholder="Ingrese el escenario deportivo"
 					label="Escenario deportivo *"
 					name="scene"
 					v-model="form.scene"
-					:validator="v$" 
-					:disabled="disableElements"/>
+					:validator="v$"
+					:disabled="disableElements" />
 			</div>
 		</div>
 		<div class="mt-6 intro-y">
@@ -204,8 +207,8 @@ const download = () => {};
 				placeholder="Reuniones de Planeacion"
 				name="meeting_planing"
 				v-model="form.meeting_planing"
-				:validator="v$" 
-				:disabled="disableElements"/>
+				:validator="v$"
+				:disabled="disableElements" />
 		</div>
 		<div class="mt-6 intro-y">
 			<CommonTextarea
@@ -214,8 +217,8 @@ const download = () => {};
 				placeholder="Socializacion con el equipo de trabajo"
 				name="team_socialization"
 				v-model="form.team_socialization"
-				:validator="v$" 
-				:disabled="disableElements"/>
+				:validator="v$"
+				:disabled="disableElements" />
 		</div>
 		<div class="mt-6 intro-y">
 			<CommonTextarea
@@ -224,8 +227,8 @@ const download = () => {};
 				placeholder="Desarrollo de la actividad"
 				name="development_activity"
 				v-model="form.development_activity"
-				:validator="v$" 
-				:disabled="disableElements"/>
+				:validator="v$"
+				:disabled="disableElements" />
 		</div>
 		<div class="mt-6 intro-y">
 			<CommonTextarea
@@ -234,24 +237,26 @@ const download = () => {};
 				placeholder="Contenido de redes"
 				name="content_network"
 				v-model="form.content_network"
-				:validator="v$" 
-				:disabled="disableElements"/>
+				:validator="v$"
+				:disabled="disableElements" />
 		</div>
-		<div class="p-5 mt-6 intro-y" >
+		<div class="p-5 mt-6 intro-y">
 			<FormLabel
 				for="evidencia"
 				class="flex flex-col w-full sm:flex-row">
 				Evidencia *
 			</FormLabel>
 			<div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3">
-				<img v-for="file in files"
+				<img
+					v-for="file in files"
 					:alt="`Evidencia del psicosocial ${form.create_by}`"
 					class="m-auto border rounded-lg h-80 w-80 xl:h-96 xl:w-96"
-					:src="`${urlStorage}${file.path}`"
-					/>
+					:src="`${urlStorage}${file.path}`" />
 			</div>
 		</div>
-		<div class="p-5 intro-y" v-if="!disableElements">
+		<div
+			class="p-5 intro-y"
+			v-if="!disableElements">
 			<CommonDropzone
 				class="w-3/4 mx-auto"
 				name="file"

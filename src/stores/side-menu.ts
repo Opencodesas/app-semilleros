@@ -7,6 +7,7 @@ export interface Menu {
   pageName?: string;
   subMenu?: Menu[];
   ignore?: boolean;
+  role?: string;
 }
 
 export interface SideMenuState {
@@ -38,13 +39,14 @@ export const useSideMenuStore = defineStore("sideMenu", {
       // },*/
       {
         icon: "Activity",
-        title: "Semilleros",
+        title: "Monitor",
         subMenu: [
-          {
-            icon: "Activity",
-            pageName: "users.index",
-            title: "Usuarios",
-          }, 
+          // {
+          //   role: 'monitor',
+          //   icon: "Activity",
+          //   pageName: "users.index",
+          //   title: "Usuarios",
+          // }, 
           /* {
             icon: "Activity",
             pageName: "users_of_zones.index",
@@ -60,12 +62,14 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: "subdirector_visit.index",
             title: "Visita Subdirectora"
           }, */
+          // {
+          //   role: 'monitor',
+          //   icon: "Activity",
+          //   pageName: "beneficiaries.index",
+          //   title: "Beneficiarios"
+          // },
           {
-            icon: "Activity",
-            pageName: "beneficiaries.index",
-            title: "Beneficiarios"
-          },
-          {
+            role: 'monitor',
             icon: "Activity",
             pageName: "chronograms.index",
             title: "Cronograma"
@@ -281,8 +285,18 @@ export const useSideMenuStore = defineStore("sideMenu", {
         subMenu: [
           {
             icon: "Activity",
+            pageName: "users.index",
+            title: "Usuarios",
+          },
+          {
+            icon: "Activity",
+            pageName: "reports.index",
+            title: "Reportes",
+          },
+          {
+            icon: "Activity",
             pageName: "administrative_director.reviews",
-            title: "Revisiones",
+            title: "Revisiones Visitas Directores Técnicos",
           },
         ]
       },
@@ -303,11 +317,6 @@ export const useSideMenuStore = defineStore("sideMenu", {
         subMenu: [
           {
             icon: "Activity",
-            pageName: "fichas_inscripcion.index",
-            title: "Revisiones",
-          },
-          {
-            icon: "Activity",
             pageName: "methodologist_visits.create",
             title: "Crear visita",
           },
@@ -315,6 +324,11 @@ export const useSideMenuStore = defineStore("sideMenu", {
             icon: "Activity",
             pageName: "methodologist_visits.index",
             title: "Visitas"
+          },
+          {
+            icon: "Activity",
+            pageName: "fichas_inscripcion.index",
+            title: "Revisiones",
           },
         ]
       },
@@ -345,7 +359,10 @@ export const useSideMenuStore = defineStore("sideMenu", {
   }),
   getters: {
     getMenu(state) {
-      if (isRole('auxiliar_administrativo_tecnico')) {
+      if (isRole('monitor')) {
+        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.role === 'monitor'))
+      } 
+      else if (isRole('auxiliar_administrativo_tecnico')) {
         return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.includes('assistants')))
       }
       else if (isRole('apoyo_juridico')) {
@@ -375,6 +392,12 @@ export const useSideMenuStore = defineStore("sideMenu", {
       }
       else if (isRole('director_tecnico')){
         return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'technical_director'))
+      }
+      else if (isRole('director_administrator')){
+        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'administrative_director'))
+      }
+      else if (isRole('director_programa')){
+        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'transversal_programs_director'))
       }
       else {
         return state.menu

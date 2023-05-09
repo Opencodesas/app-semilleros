@@ -699,7 +699,7 @@ const selectedTab = inject('selectedTab', ref(0));
 							<template v-if="props.Form!">
 								<Modal
 									:Form="props.Form"
-									:id_review="item.id" />
+									:item="item" />
 							</template>
 						</template>
 					</template>
@@ -808,6 +808,16 @@ const selectedTab = inject('selectedTab', ref(0));
 								class="mr-2" />
 							<span class="text-sm"> Editar </span>
 						</Button>
+					</template>
+					<template v-else-if="isRole('super.root')">
+						<!-- <Button
+							variant="outline-secondary"
+							@click="editAction(item.id)">
+							<Lucide
+								icon="FileEdit"
+								class="mr-2" />
+							<span class="text-sm"> Editar </span>
+						</Button> -->
 					</template>
 				</div>
 			</template>

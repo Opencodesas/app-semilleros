@@ -6,18 +6,13 @@ import { onboardingStore } from '@/stores/onboardingStore';
 
 const store = onboardingStore();
 
-//Traer visitas personalizadas
-
  onBeforeMount(async () => {
      await customVisitServices.getAll().then((response) => {
           customVisits.value = response?.data.items
-          console.log(response?.data.items)
-          console.log(dataSearchCustomVisits.value)
       })
  })
 
 const headerCustomVisits: Header[] = [
-    { text: 'No', value: 'id', sortable: true },
     { text: 'Mes', value: 'months.name', sortable: true },
     { text: 'Municipio', value: 'municipalities.name', sortable: true },
     { text: 'Beneficiario', value: 'beneficiaries.full_name' },
@@ -26,7 +21,6 @@ const headerCustomVisits: Header[] = [
 ];
 
 
-//Cambiar items2 por customVisits
 const customVisits = ref<Item[]>([]);
 const searchCustomVisits = ref('');
 const dataSearchCustomVisits = computed(() => searchData(customVisits.value, searchCustomVisits.value));

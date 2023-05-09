@@ -4,21 +4,17 @@ import { searchData } from '@/composables/search';
 import visitReview from './VisitReview.vue'
 import { onboardingStore } from '@/stores/onboardingStore';
 
-//Traer visitas del director tecnico en revisión
-
 
 const items = ref<Item[]>([]);
 
 onBeforeMount(async () => {
 
-	await subdirectorVisitServices.getAll().then((response) => {
+	await subdirectorReviewServices.getAll().then((response) => {
 		items.value = response?.data.items;
-		console.log(items.value)
 	});
 });
 
 const headers: Header[] = [
-    { text: 'No', value: 'id' },
     { text: 'Fecha', value: 'date_visit' },
     { text: 'Director', value: 'created_by.name' },
     { text: 'Municipio', value: 'municipality.name' },
