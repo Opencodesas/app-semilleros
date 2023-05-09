@@ -16,7 +16,6 @@ const form = reactive({
     gender: '',
     lastname: '',
     municipalities: '',
-    cities: '',
     name: '',
     period: '',
     phone: '',
@@ -35,7 +34,6 @@ const form_rules = computed(() => ({
     gender: { required },
     lastname: { required },
     municipalities: { required },
-    cities: { required },
     period: {},
     phone: { required },
     roles: { required },
@@ -217,9 +215,6 @@ const zones = asyncComputed(async () => {
 
 const zone_id = computed(() => form.zones)
 
-const cities = asyncComputed(async () => {
-    return zone_id.value ? await getCitiesByDepartment(zone_id.value) : []
-}, null)
 
 const getAllNoPaginate = async () => {
     await userServices.getAll();
@@ -261,7 +256,7 @@ const onSubmit = async () => {
                 if (response.status >= 200 && response.status <= 300) {
                     alerts.create()
                     setLoading(true)
-                    router.push('').finally(() => {
+                    router.push({name: 'users.index'}).finally(() => {
                         setLoading(false)
                     })
                 }
@@ -304,8 +299,6 @@ const onSubmit = async () => {
             <CommonInput type="email" label="Correo *" placeholder="Ingrese el correo" name="email" v-model="form.email"
                 :validator="v$" />
             <CommonSelect label="Selecciona regiones *" name="zones" v-model="form.zones" :validator="v$" :options="zones" />
-            <CommonSelect label="Seleccione la ciudad *" name="cities" v-model="form.cities" :validator="v$"
-                :options="cities" />
             <CommonSelect label="Seleccione el municipio *" name="municipalities" v-model="form.municipalities" :validator="v$"
                 :options="municipalities" multiple />
             <CommonSelect class="h-30" label="Seleccione las disciplinas *" name="disciplines" v-model="form.disciplines" :validator="v$"
