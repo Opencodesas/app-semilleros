@@ -123,12 +123,6 @@ const routes = [
 							}
 						],
 					},
-					{
-						path: "",
-						name: "fichas_inscripcion.index",
-						meta: {provider:"fichaInscrip"},						
-						component: () => import('@/pages/monitors/Index.vue')
-					},
 				]
 			},
 			{
@@ -165,18 +159,18 @@ const routes = [
 					},
 				]
 			},
-			/*{
+			{
 				path: "monitors",
 				name: "monitors",
 				children: [
 					{
-						path: "fichaInscrip",
+						path: "fichas",
 						name: "fichas_inscripcion.index",
 						meta: {provider:"fichaInscrip"},						
 						component: () => import('@/pages/monitors/Index.vue')
 					},
 				]
-			},*/
+			},
 			{
 				path: "chronograms",
 				name: "chronograms",

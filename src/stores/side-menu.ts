@@ -225,6 +225,11 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: "coordinator.index",
             title: "Visitas",
           },
+          {
+            icon: "Activity",
+            pageName: "fichas_inscripcion.index",
+            title: "Revisiones",
+          },
         ]
       },
       {
@@ -294,17 +299,6 @@ export const useSideMenuStore = defineStore("sideMenu", {
       },
       {
         icon: "User",
-        title: "Auxiliar Administrativo",
-        subMenu: [
-          {
-            icon: "Activity",
-            pageName: "fichas_inscripcion.index",
-            title: "Revisiones",
-          },
-        ]
-      },
-      {
-        icon: "User",
         title: "Metodólogo",
         subMenu: [
           {
@@ -335,11 +329,11 @@ export const useSideMenuStore = defineStore("sideMenu", {
         return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'legal'))
       }
       else if (isRole('asistente_administrativo')){
-        return state.menu.filter( (menuItem) => menuItem == 'divider' ? 'divider' : menuItem.title == "Asistente Administrativo")
+        return state.menu.filter( (menuItem) => menuItem == 'divider' ? 'divider' : menuItem.title == "Coordinador Regional")
       }
-      else if (isRole('auxiliar_administrativo_tecnico')){
-        return state.menu.filter( (menuItem) => menuItem == 'divider' ? 'divider' : menuItem.title == "Auxiliar Administrativo")
-      }
+      /*else if (isRole('director_juridico')){
+        return state.menu.filter( (menuItem) => menuItem == 'divider' ? 'divider' : menuItem.title == "Director Jurídico")
+      }*/
       else if (isRole('metodologo')){
         return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'methodologist_visits'))
       }
@@ -347,7 +341,8 @@ export const useSideMenuStore = defineStore("sideMenu", {
         return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'subdirector_visit'))
       }
       else if (isRole('coordinador_regional')){
-        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'coordinator'))
+        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' :
+        menuItem.subMenu?.some((subMenuItem) => (subMenuItem.pageName?.split('.').at(0) == 'coordinator'|| menuItem.title == "Asistente Administrativo") ))
       }
       else if (isRole('coordinador_psicosocial')){
         return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'psychosocial-coordinator'))

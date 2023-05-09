@@ -8,29 +8,32 @@ import Form from './Form.vue'
 const route = useRoute();
 const router = useRouter();
 const store = onboardingStore();
+let currentUser = {id: onboardingStore().get_user.id, name: onboardingStore().get_user.name, rol: onboardingStore().get_user_role?.slug};
+//pruebas
+currentUser = {...currentUser, rol : 'metodologo'};
 //ver el provider - usado en CRUD para definir los botones de actions, leyendo status. fichasViewer si es único para esta tabla
 //console.log(route.meta.provider)
 //console.log();
 
 const headers: Header[] =
-store.get_user_role?.slug==="metodologo"?
+currentUser.rol==="metodologo"?
 [
     { text: 'No.', value: 'id', sortable: true},
-    { text: 'Monitor', value: 'mon.name', sortable: true},
-    { text: 'CC del Monitor', value: 'mon.id', sortable: true},
-    { text: 'Beneficiario', value: 'ficha_data.nombres', sortable: true},
-    { text: 'Municipio', value: 'ficha_data.municipio'},
+    { text: 'Monitor', value: 'full_name', sortable: true},
+    { text: 'CC del Monitor', value: 'created_by.document_number', sortable: true},
+    { text: 'Beneficiario', value: 'full_name', sortable: true},
+    { text: 'Municipio', value: 'full_name  '},
     { text: 'Estado', value: 'status'},
     { text: 'Acciones', value: 'fichasViewer' },
 ]
 :
 [
     { text: 'No.', value: 'id', sortable: true},
-    { text: 'Metodólogo', value: 'met.name', sortable: true},
-    { text: 'Monitor', value: 'mon.name', sortable: true},
-    { text: 'CC del Monitor', value: 'mon.id', sortable: true},
-    { text: 'Beneficiario', value: 'ficha_data.nombres', sortable: true},
-    { text: 'Municipio', value: 'ficha_data.municipio'},
+    { text: 'Metodólogo', value: 'full_name', sortable: true},
+    { text: 'Monitor', value: 'created_by.full_name', sortable: true},
+    { text: 'CC del Monitor', value: 'created_by.document_number', sortable: true},
+    { text: 'Beneficiario', value: 'full_name', sortable: true},
+    { text: 'Municipio', value: "municipality.name"},
     { text: 'Estado', value: 'status'},
     { text: 'Acciones', value: 'fichasViewer' },
 ];
@@ -209,84 +212,6 @@ const data = ref([
     },
     {
         //datos de ficha
-        id: 1,
-        status: {
-			name: 'En revision',
-			slug: 'ENR',
-		},
-        //datos usuario calificador
-        calif: {
-            resp_id: '',
-            resp_name: '',
-            reject_motive: '',
-        },
-        //datos del monitor asociado
-        mon: {
-            id: '1234567890',
-            name: 'Peter Parker',
-        },
-         //datos del metodologo asociado
-         met: {
-            id: 1,
-            name: 'Jennifer Montenegro',
-        },
-        //datos del beneficiario (de la ficha)
-        ficha_data: {...fiicha},
-    },
-    {
-        //datos de ficha
-        id: 2,
-        status: {
-			name: 'Aprobado',
-			slug: 'APR',
-		},
-        //datos usuario calificador
-        calif: {
-            resp_id: '2',
-            resp_name: 'Spider Man',
-            reject_motive: '',
-        },
-        //datos del monitor asociado
-        mon: {
-            id: '1234567890',
-            name: 'Peter Parker',
-        },
-         //datos del metodologo asociado
-         met: {
-            id: 1,
-            name: 'Jennifer Montenegro',
-        },
-        //datos del beneficiario (de la ficha)
-        ficha_data: {...fiicha},
-    },
-    {
-        //datos de ficha
-        id: 3,
-        status: {
-			name: 'Rechazado',
-			slug: 'REC',
-		},
-        //datos usuario calificador
-        calif: {
-            resp_id: 2,
-            resp_name: 'Spider Man',
-            reject_motive: 'Faltan documentos',
-        },
-        //datos del monitor asociado
-        mon: {
-            id: '1234567890',
-            name: 'Peter Parker',
-        },
-         //datos del metodologo asociado
-         met: {
-            id: 1,
-            name: 'Jennifer Montenegro',
-        },
-        //datos del beneficiario (de la ficha)
-        ficha_data: {...fiicha},
-    },
-    {
-        //datos de ficha
         id: 4,
         status: {
 			name: 'En revisión',
@@ -312,26 +237,17 @@ const data = ref([
         ficha_data: {...fiicha},
     },
 ]);
-const items: Item[] = [...data.value];
 
-//#region ocultar
-const currentMonitor = () => {
-   if(route.query.id){      
-    const currentMonitor = data.value.filter((tmonitor) => {return tmonitor.mon.id.toString()==route.query.id?.toString()})[0];
-    return currentMonitor;
-   }else{
-    return null;
-   }
-}
-const currentMetodologo = () => {
-   if(route.query.id){      
-    const currentMetodologo = data.value.filter((tmetodologo) => {return tmetodologo.met.id.toString()==route.query.id?.toString()})[0];
-    return currentMetodologo;
-   }else{
-    return null;
-   }
-}
+const items = ref<Item[]>([]);
+
+onMounted(async () => {
+	const res = await beneficiaryServices.getAll();
+    data.value = res?.data;
+	items.value = await res?.data.items;
+});
+
 const getFichaData = () => data.value;
+/*
 const aceptar = (id: any, user: any) =>{
     let ficha = data.value.find(o=>o.id=== id);
     if(ficha){
@@ -373,17 +289,25 @@ revertir=(id: any, user:any)=>{
     }
     console.log(ficha)
     console.log(data.value)
+}*/
+const loadmethods = {
+    /*"APR": aceptar,
+    "REC": rechazar,
+    "ENR": revertir,*/
+    "DATA": getFichaData,
 }
-const loadmethods = {"APR": aceptar, "REC": rechazar, "ENR": revertir, "DATA": getFichaData}
 
 const search = ref('');
-const cruddata = computed(() => searchData(items, search.value));
+
+const cruddata = computed(() => searchData(items.value, search.value) );
+
+const prueba = ()=>{ console.log(cruddata.value)}
 //#endregion
 </script>
 <template>
 
     <div class="flex items-center mt-8 intro-y">
-        <h2 class="mr-auto text-lg font-medium">Fichas de Inscripción de tus Monitores</h2>
+        <h2 class="mr-auto text-lg font-medium">Revisar las fichas de inscripción de los monitores</h2>
     </div>
     <div class="p-5 mt-5 intro-y box">
         <CommonInput
