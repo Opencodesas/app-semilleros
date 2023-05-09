@@ -39,14 +39,14 @@ export const useSideMenuStore = defineStore("sideMenu", {
       // },*/
       {
         icon: "Activity",
-        title: "Semilleros",
+        title: "Monitor",
         subMenu: [
-          {
-            role: 'monitor',
-            icon: "Activity",
-            pageName: "users.index",
-            title: "Usuarios",
-          }, 
+          // {
+          //   role: 'monitor',
+          //   icon: "Activity",
+          //   pageName: "users.index",
+          //   title: "Usuarios",
+          // }, 
           /* {
             icon: "Activity",
             pageName: "users_of_zones.index",
@@ -62,12 +62,12 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: "subdirector_visit.index",
             title: "Visita Subdirectora"
           }, */
-          {
-            role: 'monitor',
-            icon: "Activity",
-            pageName: "beneficiaries.index",
-            title: "Beneficiarios"
-          },
+          // {
+          //   role: 'monitor',
+          //   icon: "Activity",
+          //   pageName: "beneficiaries.index",
+          //   title: "Beneficiarios"
+          // },
           {
             role: 'monitor',
             icon: "Activity",
