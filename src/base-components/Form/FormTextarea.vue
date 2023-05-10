@@ -61,6 +61,7 @@ watch(localValue, () => {
 
 <template>
   <textarea
+    :disabled="props.disabled"
     :type="props.type"
     :class="computedClass"
     v-bind="_.omit(attrs, 'class')"
