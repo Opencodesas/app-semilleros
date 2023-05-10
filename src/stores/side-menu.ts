@@ -62,12 +62,12 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: "subdirector_visit.index",
             title: "Visita Subdirectora"
           }, */
-          // {
-          //   role: 'monitor',
-          //   icon: "Activity",
-          //   pageName: "beneficiaries.index",
-          //   title: "Beneficiarios"
-          // },
+          {
+            role: 'monitor',
+            icon: "Activity",
+            pageName: "beneficiaries.index",
+            title: "Beneficiarios"
+          },
           {
             role: 'monitor',
             icon: "Activity",
@@ -335,7 +335,6 @@ export const useSideMenuStore = defineStore("sideMenu", {
       //vvvv MODULO FRONT DE CONTRATACION AÑADIDO POR PETICION DE ALEJANDRO 5/9/2023 vvvv
       {
         icon: 'Activity',
-        role: 'monitor',
         title: 'Actividades',
         subMenu: [
           {
@@ -373,6 +372,9 @@ export const useSideMenuStore = defineStore("sideMenu", {
       else if (isRole('asistente_administrativo')){
         return state.menu.filter( (menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => menuItem.title == "Coordinador Regional" || subMenuItem.role?.includes('asistente_administrativo')))
       }
+      /*else if (isRole('director_juridico')){
+        return state.menu.filter( (menuItem) => menuItem == 'divider' ? 'divider' : menuItem.title == "Director Jurídico")
+      }*/
       else if (isRole('metodologo')){
         return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'methodologist_visits' || subMenuItem.role?.includes('metodologo') ))
       }

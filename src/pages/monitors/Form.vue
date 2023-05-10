@@ -33,7 +33,6 @@ const form = reactive(
   {...currentFicha,
     currentmotive: currentmotive.value,
     tempDesc: currentFicha.rejection_message,
-
 		selectid:
     currentUser.rol == 'metodologo'?
     (currentFicha.status.slug==='ENR'?0:
@@ -46,7 +45,6 @@ const form = reactive(
     :
     (currentFicha.status.slug==='APR'?3:1)
     ,
-
 		rejection_message: currentFicha.rejection_message||"",
     temp:"",
   }
@@ -105,7 +103,7 @@ const onSubmit = async (evt: any) => {
 				}
 			});
 	}*/
-
+/*
   //verificar error
   if (form.selectid===1&&form.currentmotive===""){error.value=true; return;}
 
@@ -204,9 +202,6 @@ const onSubmit = async (evt: any) => {
 				</span>
 			</span>
 	</div>
-{{ form.selectid }}
-{{ form.currentmotive }}
-{{ error }}
   <!--REVISION -->
     <div class="space-y-2 box px-5 py-4">
       <h2 class="font-bold">Revisión</h2>
@@ -539,6 +534,7 @@ const onSubmit = async (evt: any) => {
             :disabled="true"
           />
         </div>
+
         <div class="mt-5 mb-3 grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
           <CommonInput
             label="Redes sociales"

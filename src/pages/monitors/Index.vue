@@ -248,10 +248,6 @@ onMounted(async () => {
 
 const getFichaData = () => data.value;
 
-const updatedata = (id: any, data: any) =>{
-    items.value.find
-}
-
 /*
 const aceptar = (id: any, user: any) =>{
     let ficha = data.value.find(o=>o.id=== id);
