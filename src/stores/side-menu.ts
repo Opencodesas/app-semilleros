@@ -62,12 +62,12 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: "subdirector_visit.index",
             title: "Visita Subdirectora"
           }, */
-          // {
-          //   role: 'monitor',
-          //   icon: "Activity",
-          //   pageName: "beneficiaries.index",
-          //   title: "Beneficiarios"
-          // },
+          {
+            role: 'monitor',
+            icon: "Activity",
+            pageName: "beneficiaries.index",
+            title: "Beneficiarios"
+          },
           {
             role: 'monitor',
             icon: "Activity",
