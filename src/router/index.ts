@@ -123,12 +123,6 @@ const routes = [
 							}
 						],
 					},
-					{
-						path: "",
-						name: "fichas_inscripcion.index",
-						meta: {provider:"fichaInscrip"},						
-						component: () => import('@/pages/monitors/Index.vue')
-					},
 				]
 			},
 			{
@@ -165,18 +159,18 @@ const routes = [
 					},
 				]
 			},
-			/*{
+			{
 				path: "monitors",
 				name: "monitors",
 				children: [
 					{
-						path: "fichaInscrip",
+						path: "fichas",
 						name: "fichas_inscripcion.index",
 						meta: {provider:"fichaInscrip"},						
 						component: () => import('@/pages/monitors/Index.vue')
 					},
 				]
-			},*/
+			},
 			{
 				path: "chronograms",
 				name: "chronograms",
@@ -635,6 +629,33 @@ const routes = [
 					},
 				],
 			},
+			//vvvv MODULO FRONT DE CONTRATACION AÑADIDO POR PETICION DE ALEJANDRO 5/9/2023 vvvv
+			{
+				path: "budget",
+				name: "budget",
+				meta: { provider: 'budget' },
+				children: [
+					{
+						path: "budget",
+						name: "budget.index",
+						//meta: { provider: '' },
+						component: () => import('@/pages/monitors/Activities/Story.vue')
+					},
+					{
+						path: "create",
+						name: "budget.store",
+						//props: (route)=>g,
+						component: () => import('@/pages/monitors/Activities/Form.vue')
+					},
+					{
+						path: "active",
+						name: "budget.active",
+						//props: (route)=>g,
+						component: () => import('@/pages/monitors/Activities/Index.vue')
+					},
+				]
+			},
+			//^^^^ MODULO FRONT DE CONTRATACION AÑADIDO POR PETICION DE ALEJANDRO 5/9/2023 ^^^^
 		],
 	},
 	{

@@ -8,29 +8,32 @@ import Form from './Form.vue'
 const route = useRoute();
 const router = useRouter();
 const store = onboardingStore();
+let currentUser = {id: onboardingStore().get_user.id, name: onboardingStore().get_user.name, rol: onboardingStore().get_user_role?.slug};
+//pruebas
+currentUser = {...currentUser, rol : 'metodologo'};
 //ver el provider - usado en CRUD para definir los botones de actions, leyendo status. fichasViewer si es único para esta tabla
 //console.log(route.meta.provider)
 //console.log();
 
 const headers: Header[] =
-store.get_user_role?.slug==="metodologo"?
+currentUser.rol==="metodologo"?
 [
     { text: 'No.', value: 'id', sortable: true},
-    { text: 'Monitor', value: 'mon.name', sortable: true},
-    { text: 'CC del Monitor', value: 'mon.id', sortable: true},
-    { text: 'Beneficiario', value: 'ficha_data.nombres', sortable: true},
-    { text: 'Municipio', value: 'ficha_data.municipio'},
+    { text: 'Monitor', value: 'full_name', sortable: true},
+    { text: 'CC del Monitor', value: 'created_by.document_number', sortable: true},
+    { text: 'Beneficiario', value: 'full_name', sortable: true},
+    { text: 'Municipio', value: 'full_name  '},
     { text: 'Estado', value: 'status'},
     { text: 'Acciones', value: 'fichasViewer' },
 ]
 :
 [
     { text: 'No.', value: 'id', sortable: true},
-    { text: 'Metodólogo', value: 'met.name', sortable: true},
-    { text: 'Monitor', value: 'mon.name', sortable: true},
-    { text: 'CC del Monitor', value: 'mon.id', sortable: true},
-    { text: 'Beneficiario', value: 'ficha_data.nombres', sortable: true},
-    { text: 'Municipio', value: 'ficha_data.municipio'},
+    { text: 'Metodólogo', value: 'full_name', sortable: true},
+    { text: 'Monitor', value: 'created_by.full_name', sortable: true},
+    { text: 'CC del Monitor', value: 'created_by.document_number', sortable: true},
+    { text: 'Beneficiario', value: 'full_name', sortable: true},
+    { text: 'Municipio', value: "municipality.name"},
     { text: 'Estado', value: 'status'},
     { text: 'Acciones', value: 'fichasViewer' },
 ];
@@ -78,81 +81,132 @@ const fiicha = {
 //filtrado para este rol
 //ordenado con status.slug = 'ENR' primero
 const data = ref([
-    {
+{
+    "id": 1,
+        "registration_date": null,
+        "affiliation_type": "SUB",
+         //datos del monitor asociado
+        "created_by": {
+            "id": 19,
+            "name": "Monitor",
+            "lastname": null,
+            "address": null,
+            "document_number": null,
+            "document_type": null,
+            "phone": null,
+            "gender": null,
+            "profile_photo_path": null,
+            "email": "monitor@ssiset.com",
+            "email_verified_at": null,
+            "two_factor_secret": null,
+            "two_factor_recovery_codes": null,
+            "created_by": null,
+            "revised_by": null,
+            "status": "ENREV",
+            "rejection_message": null,
+            "created_at": "2023-04-25T02:08:11.000000Z",
+            "updated_at": "2023-04-25T02:08:11.000000Z",
+            "deleted_at": null
+        },
+        "group_id": null,
+        "full_name": "Alaina Schamberger",
+        "institution": null,
+        "accept": "0",
+        "linkage_project": "PMIE",
+        "participant_type": "C",
+        "type_document": null,
+        "document_number": "72192513",
+        "zone": "R",
+        "stratum": "6",
+        "phone": "71387974",
+        "email": "gislason.shea@example.org",
+        "file": null,
         //datos de ficha
-        id: 1,
-        status: {
-			name: 'En revision',
-			slug: 'ENR',
-		},
+        "status": {
+            "id": 1,
+            "name": "Aprobado",
+            "slug": "APR",
+            "created_at": "2023-04-25T02:10:27.000000Z",
+            "updated_at": "2023-04-25T02:10:27.000000Z",
+            "deleted_at": null
+        },
+        "municipality": null,
+        "audited": "0",
+        "rejection_message": null,
+        "referrer_name": null,
+        "created_at": "2023-04-26T05:54:46.000000Z",
+        "disciplines_id": null,
+        "birth_date": null,
+        "origin_place": "Origin place demo",
+        "home_address": "Demo address",
+        "conflict_victim": "0",
+        "distric": "Demo distric",
+        "gender": "M",
+        "ethnicities_id": null,
+        "disability": "0",
+        "other_disability": null,
+        "pathology": "1",
+        "what_pathology": null,
+        "blood_type": "2",
+        "live_with": "Demo live_with",
+        "scholarship": "1",
+        "scholar_level": null,
+        "health_entity_id": null,
+        "know_guardian": {
+            "id": 1,
+            "id_guardian": 1,
+            "id_beneficiary": 1,
+            "relationship": "Prima",
+            "find_out": "[]",
+            "social_media": "[]",
+            "created_at": "2023-04-26T05:55:06.000000Z",
+            "updated_at": "2023-04-26T05:55:06.000000Z",
+            "guardian": {
+                "id": 1,
+                "cedula": "66815276",
+                "firts_name": "Tobin",
+                "last_name": "Stamm",
+                "email": "vbernier@example.org",
+                "phone_number": "(505) 419-0683",
+                "created_at": "2023-04-26T05:54:36.000000Z",
+                "updated_at": "2023-04-26T05:54:36.000000Z"
+            }
+        },
+        "acudiente": {
+            "id": 1,
+            "cedula": "66815276",
+            "firts_name": "Tobin",
+            "last_name": "Stamm",
+            "email": "vbernier@example.org",
+            "phone_number": "(505) 419-0683",
+            "created_at": "2023-04-26T05:54:36.000000Z",
+            "updated_at": "2023-04-26T05:54:36.000000Z"
+        },
+        "tamizaje": null,
         //datos usuario calificador
-        calif: {
-            resp_id: '',
-            resp_name: '',
-            reject_motive: '',
+        "revised_by": {
+            "id": 10,
+            "name": "Apoyo administrativo",
+            "lastname": null,
+            "address": null,
+            "document_number": null,
+            "document_type": null,
+            "phone": null,
+            "gender": null,
+            "profile_photo_path": null,
+            "email": "apoyo_administrativo@ssiset.com",
+            "email_verified_at": null,
+            "two_factor_secret": null,
+            "two_factor_recovery_codes": null,
+            "created_by": null,
+            "revised_by": null,
+            "status": "ENREV",
+            "rejection_message": null,
+            "created_at": "2023-04-25T02:08:08.000000Z",
+            "updated_at": "2023-04-25T02:08:08.000000Z",
+            "deleted_at": null
         },
-        //datos del monitor asociado
-        mon: {
-            id: '1234567890',
-            name: 'Peter Parker',
-        },
-         //datos del metodologo asociado
-         met: {
-            id: 1,
-            name: 'Jennifer Montenegro',
-        },
-        //datos del beneficiario (de la ficha)
-        ficha_data: {...fiicha},
-    },
-    {
-        //datos de ficha
-        id: 2,
-        status: {
-			name: 'Aprobado',
-			slug: 'APR',
-		},
-        //datos usuario calificador
-        calif: {
-            resp_id: '2',
-            resp_name: 'Spider Man',
-            reject_motive: '',
-        },
-        //datos del monitor asociado
-        mon: {
-            id: '1234567890',
-            name: 'Peter Parker',
-        },
-         //datos del metodologo asociado
-         met: {
-            id: 1,
-            name: 'Jennifer Montenegro',
-        },
-        //datos del beneficiario (de la ficha)
-        ficha_data: {...fiicha},
-    },
-    {
-        //datos de ficha
-        id: 3,
-        status: {
-			name: 'Rechazado',
-			slug: 'REC',
-		},
-        //datos usuario calificador
-        calif: {
-            resp_id: 2,
-            resp_name: 'Spider Man',
-            reject_motive: 'Faltan documentos',
-        },
-        //datos del monitor asociado
-        mon: {
-            id: '1234567890',
-            name: 'Peter Parker',
-        },
-         //datos del metodologo asociado
-         met: {
-            id: 1,
-            name: 'Jennifer Montenegro',
-        },
+        "status_id": 1,
         //datos del beneficiario (de la ficha)
         ficha_data: {...fiicha},
     },
@@ -183,26 +237,18 @@ const data = ref([
         ficha_data: {...fiicha},
     },
 ]);
-const items: Item[] = [...data.value];
 
-//#region ocultar
-const currentMonitor = () => {
-   if(route.query.id){      
-    const currentMonitor = data.value.filter((tmonitor) => {return tmonitor.mon.id.toString()==route.query.id?.toString()})[0];
-    return currentMonitor;
-   }else{
-    return null;
-   }
-}
-const currentMetodologo = () => {
-   if(route.query.id){      
-    const currentMetodologo = data.value.filter((tmetodologo) => {return tmetodologo.met.id.toString()==route.query.id?.toString()})[0];
-    return currentMetodologo;
-   }else{
-    return null;
-   }
-}
+const items = ref<Item[]>([]);
+
+onMounted(async () => {
+	const res = await beneficiaryServices.getAll();
+    //const cStatus = await beneficiaryServices.changeStatus("asdf");
+    data.value = res?.data;
+	items.value = await res?.data.items;
+});
+
 const getFichaData = () => data.value;
+/*
 const aceptar = (id: any, user: any) =>{
     let ficha = data.value.find(o=>o.id=== id);
     if(ficha){
@@ -244,17 +290,25 @@ revertir=(id: any, user:any)=>{
     }
     console.log(ficha)
     console.log(data.value)
+}*/
+const loadmethods = {
+    /*"APR": aceptar,
+    "REC": rechazar,
+    "ENR": revertir,*/
+    "DATA": getFichaData,
 }
-const loadmethods = {"APR": aceptar, "REC": rechazar, "ENR": revertir, "DATA": getFichaData}
 
 const search = ref('');
-const cruddata = computed(() => searchData(items, search.value));
+
+const cruddata = computed(() => searchData(items.value, search.value) );
+
+const prueba = ()=>{ console.log(cruddata.value)}
 //#endregion
 </script>
 <template>
 
     <div class="flex items-center mt-8 intro-y">
-        <h2 class="mr-auto text-lg font-medium">Fichas de Inscripción de tus Monitores</h2>
+        <h2 class="mr-auto text-lg font-medium">Revisar las fichas de inscripción de los monitores</h2>
     </div>
     <div class="p-5 mt-5 intro-y box">
         <CommonInput

@@ -989,6 +989,26 @@ const selectedTab = inject('selectedTab', ref(0));
 					</template>
 				</template>
 			</template>
+			<!--vvvv MODULO FRONT DE CONTRATACION AÑADIDO POR PETICION DE ALEJANDRO 5/9/2023 vvvv-->
+			<template #item-budgetstatus="item">
+                <span v-if="item?.budgetstatus?.slug == 'PAG'"
+                :class="'bg-success/10 text-success'"
+                class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
+                    {{ item?.budgetstatus?.status }}
+                </span>
+                <span v-else-if="(item?.budgetstatus?.slug == 'SUP' || item?.budgetstatus?.slug == 'SUB')"
+                :class="'bg-danger/10 text-danger'"
+                class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
+                    {{ item?.budgetstatus?.status }}
+                </span>
+                <span v-else
+                :class="'bg-primary/10 text-primary'"
+                class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
+                    {{ item?.budgetstatus?.status }}
+                </span>
+            </template>
+			<!--^^^^ MODULO FRONT DE CONTRATACION AÑADIDO POR PETICION DE ALEJANDRO 5/9/2023 ^^^^-->
+
 		</DataTable>
 	</div>
 </template>
