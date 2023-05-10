@@ -122,7 +122,7 @@ const onSubmit = async (evt: any) => {
 
   //enviar neuvo status
   //setLoading(true);
-  const res = await beneficiary.changeStatus(nStatus, currentFicha.id);
+  const res = await beneficiaryServices.update(currentFicha.id, {...currentFicha, reviewed_by: currentUser.id, rejection_message: form.currentmotive, status_id: 1} );
   //console.log(r);
 
   console.log(JSON.stringify(nStatus)+currentFicha.id+onboardingStore().get_user.id);
