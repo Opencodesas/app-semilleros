@@ -312,9 +312,9 @@ function getObjectKey(obj:any, value:any) {
 </script>
 <template>
 
-    <div class="flex items-center mt-8 intro-y">
+    <!--<div class="flex items-center mt-8 intro-y">
         <h2 class="mr-auto text-lg font-medium">Revisar las fichas de inscripción de los monitores</h2>
-    </div>
+    </div>-->
     <div class="p-5 mt-5 intro-y box">
         <CommonInput
 			type="search"

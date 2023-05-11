@@ -1,5 +1,6 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { Icon } from "../base-components/Lucide/Lucide.vue";
+import { onboardingStore } from "./onboardingStore";
 
 export interface Menu {
   icon: Icon;
@@ -231,7 +232,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
           },
           {
             icon: "Activity",
-            pageName: "fichas_inscripcion.index",
+            pageName: "review.bene_chro",
             title: "Revisiones",
           },
         ]
@@ -306,7 +307,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
         subMenu: [
           {
             icon: "Activity",
-            pageName: "fichas_inscripcion.index",
+            pageName: "review.bene_chro",
             title: "Revisiones",
           },
         ]
@@ -327,7 +328,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
           },
           {
             icon: "Activity",
-            pageName: "fichas_inscripcion.index",
+            pageName: "review.bene_chro",
             title: "Revisiones",
           },
         ]
@@ -383,7 +384,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
       }
       else if (isRole('coordinador_regional')){
         return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' :
-        menuItem.subMenu?.some((subMenuItem) => (subMenuItem.pageName?.split('.').at(0) == 'coordinator'|| menuItem.title == "Asistente Administrativo" || subMenuItem.role?.includes('coordinador_regional')) ))
+        menuItem.subMenu?.some((subMenuItem) => (subMenuItem.pageName?.split('.').at(0) == 'coordinator' || subMenuItem.role?.includes('coordinador_regional')) ))
       }
       else if (isRole('coordinador_psicosocial')){
         return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'psychosocial-coordinator' || subMenuItem.role?.includes('coordinador_psicosocial')))
