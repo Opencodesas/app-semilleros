@@ -629,7 +629,6 @@ const routes = [
 					},
 				],
 			},
-			//vvvv MODULO FRONT DE CONTRATACION AÑADIDO POR PETICION DE ALEJANDRO 5/9/2023 vvvv
 			{
 				path: "budget",
 				name: "budget",
@@ -639,23 +638,34 @@ const routes = [
 						path: "budget",
 						name: "budget.index",
 						//meta: { provider: '' },
-						component: () => import('@/pages/monitors/Activities/Story.vue')
+						component: () => import('@/pages/activities/Story.vue')
 					},
 					{
 						path: "create",
 						name: "budget.store",
 						//props: (route)=>g,
-						component: () => import('@/pages/monitors/Activities/Form.vue')
+						component: () => import('@/pages/activities/Form.vue')
 					},
 					{
 						path: "active",
 						name: "budget.active",
 						//props: (route)=>g,
-						component: () => import('@/pages/monitors/Activities/Index.vue')
+						component: () => import('@/pages/activities/Index.vue')
 					},
 				]
 			},
-			//^^^^ MODULO FRONT DE CONTRATACION AÑADIDO POR PETICION DE ALEJANDRO 5/9/2023 ^^^^
+			{
+				path: "review",
+				name: "review",
+				children: [
+					{
+						path: "",
+						name: "review.bene_chro",
+						//meta: { provider: '' },
+						component: () => import('@/pages/monitors/Review.vue')
+					}
+				]
+			},
 		],
 	},
 	{

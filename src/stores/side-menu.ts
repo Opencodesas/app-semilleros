@@ -1,5 +1,6 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { Icon } from "../base-components/Lucide/Lucide.vue";
+import { onboardingStore } from "./onboardingStore";
 
 export interface Menu {
   icon: Icon;
@@ -231,7 +232,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
           },
           {
             icon: "Activity",
-            pageName: "fichas_inscripcion.index",
+            pageName: "review.bene_chro",
             title: "Revisiones",
           },
         ]
@@ -306,7 +307,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
         subMenu: [
           {
             icon: "Activity",
-            pageName: "fichas_inscripcion.index",
+            pageName: "review.bene_chro",
             title: "Revisiones",
           },
         ]
@@ -327,7 +328,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
           },
           {
             icon: "Activity",
-            pageName: "fichas_inscripcion.index",
+            pageName: "review.bene_chro",
             title: "Revisiones",
           },
         ]
@@ -339,6 +340,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
         subMenu: [
           {
             icon: 'Activity',
+            role: 'monitor auxiliar_administrativo_tecnico apoyo_juridico asistente_administrativo metodologo subdirector_tecnico coordinador_regional coordinador_psicosocial psicologo director_tecnico director_administrator director_programa',
             pageName: 'budget.active',
             title: 'Procesos Activos',
           },
@@ -360,44 +362,44 @@ export const useSideMenuStore = defineStore("sideMenu", {
   getters: {
     getMenu(state) {
       if (isRole('monitor')) {
-        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.role === 'monitor'))
+        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.role?.includes('monitor')))
       } 
       else if (isRole('auxiliar_administrativo_tecnico')) {
-        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.includes('assistants')))
+        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.includes('assistants') || subMenuItem.role?.includes('auxiliar_administrativo_tecnico')))
       }
       else if (isRole('apoyo_juridico')) {
-        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'legal'))
+        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'legal' || subMenuItem.role?.includes('apoyo_juridico')))
       }
       else if (isRole('asistente_administrativo')){
-        return state.menu.filter( (menuItem) => menuItem == 'divider' ? 'divider' : menuItem.title == "Coordinador Regional")
+        return state.menu.filter( (menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => menuItem.title == "Coordinador Regional" || subMenuItem.role?.includes('asistente_administrativo')))
       }
       /*else if (isRole('director_juridico')){
         return state.menu.filter( (menuItem) => menuItem == 'divider' ? 'divider' : menuItem.title == "Director Jurídico")
       }*/
       else if (isRole('metodologo')){
-        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'methodologist_visits'))
+        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'methodologist_visits' || subMenuItem.role?.includes('metodologo') ))
       }
       else if (isRole('subdirector_tecnico')){
-        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'subdirector_visit'))
+        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'subdirector_visit' || subMenuItem.role?.includes('subdirector_tecnico')))
       }
       else if (isRole('coordinador_regional')){
         return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' :
-        menuItem.subMenu?.some((subMenuItem) => (subMenuItem.pageName?.split('.').at(0) == 'coordinator'|| menuItem.title == "Asistente Administrativo") ))
+        menuItem.subMenu?.some((subMenuItem) => (subMenuItem.pageName?.split('.').at(0) == 'coordinator' || subMenuItem.role?.includes('coordinador_regional')) ))
       }
       else if (isRole('coordinador_psicosocial')){
-        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'psychosocial-coordinator'))
+        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'psychosocial-coordinator' || subMenuItem.role?.includes('coordinador_psicosocial')))
       }
       else if (isRole('psicologo')){
-        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'psychosocial'))
+        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'psychosocial' || subMenuItem.role?.includes('psicologo')))
       }
       else if (isRole('director_tecnico')){
-        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'technical_director'))
+        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'technical_director' || subMenuItem.role?.includes('director_tecnico')))
       }
       else if (isRole('director_administrator')){
-        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'administrative_director'))
+        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'administrative_director' || subMenuItem.role?.includes('director_administrator')))
       }
       else if (isRole('director_programa')){
-        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'transversal_programs_director'))
+        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'transversal_programs_director' || subMenuItem.role?.includes('director_programa')))
       }
       else {
         return state.menu

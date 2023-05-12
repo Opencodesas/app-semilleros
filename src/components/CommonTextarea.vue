@@ -50,7 +50,7 @@ export default {
         </template>
         <!-- Component -->
         <!--añadido el :disabled="disabled"-->
-        <FormTextarea :id="name" :rows="rows" :cols="rows" v-model="value" v-bind="props">
+        <FormTextarea :id="name" :rows="rows" :cols="rows" :disabled="disabled" v-model="value" v-bind="props">
         </FormTextarea>
         <!-- Validator -->
         <template v-if="tooltip">

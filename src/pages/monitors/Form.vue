@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import router from '@/router';
+import beneficiary from '@/services/beneficiary/beneficiary';
 import { onboardingStore } from '@/stores/onboardingStore';
 import useVuelidate from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
@@ -24,7 +25,7 @@ const data = ref(props?.payloadFunctions?.DATA());
 //buscar y traer solo la ficha correspondiente al props.id_review, haciendo copia profunda de varios objetos y reemplazando nulos por cadenas vacias
 const currentFicha = JSON.parse(JSON.stringify( 
     Object.keys(data.value.items[props.id_review-1]).map((key) => {
-  return { [key]: data.value.items[props.id_review-1][key] === null ? 'n/a' : data.value.items[props.id_review-1][key] };
+  return { [key]: data.value.items[props.id_review-1][key] === null ? '' : data.value.items[props.id_review-1][key] };
 }).reduce((acc, cur) => Object.assign(acc, cur), {})
 ));
 const currentmotive = ref(currentFicha.rejection_message||"");
@@ -32,10 +33,18 @@ const form = reactive(
   {...currentFicha,
     currentmotive: currentmotive.value,
     tempDesc: currentFicha.rejection_message,
+		selectid:
+    currentUser.rol == 'metodologo'?
+    (currentFicha.status.slug==='ENR'?0:
+		currentFicha.status.slug==='ENP'?2:3)
 
-		selectid: (currentFicha.status.slug==='ENR'?1:
-		currentFicha.status.slug==='APR'?2:3),
+    : currentUser.rol == 'coordinador_regional'?
+    (currentFicha.status.slug==='ENP'?2:
+		currentFicha.status.slug==='APR'?3:1)
 
+    :
+    (currentFicha.status.slug==='APR'?3:1)
+    ,
 		rejection_message: currentFicha.rejection_message||"",
     temp:"",
   }
@@ -52,24 +61,25 @@ currentUser = {...currentUser, rol : 'metodologo'};
 const evaluationList =
 currentUser.rol == 'metodologo'?
 [
-	{ label: 'En Revisión', value: 1, slug:'ENR' },
-	{ label: 'En proceso', value: 2, slug: 'ENP' },
-	{ label: 'Rechazado', value: 3, slug: 'REC' },
+	{ label: 'En Revisión', value: 0, slug:'ENR' },
+	{ label: 'Procesar', value: 2, slug: 'ENP' },
+	{ label: 'Rechazar', value: 1, slug: 'REC' },
 ]: currentUser.rol == 'coordinador_regional'?
 [
-	{ label: 'En Revisión', value: 1, slug:'ENR' },
-	{ label: 'Aprobada', value: 4, slug: 'APR' },
-	{ label: 'Rechazada', value: 3, slug: 'REC' },
+	{ label: 'En proceso', value: 2, slug:'ENP' },
+	{ label: 'Aprobar', value: 3, slug: 'APR' },
+	{ label: 'Rechazar', value: 1, slug: 'REC' },
 ]:
 [
-	{ label: 'Aprobada', value: 4, slug: 'APR'  },
-	{ label: 'Rechazada', value: 3  , slug: 'REC' },
+	{ label: 'Aprobada', value: 2, slug: 'APR'  },
+	{ label: 'Rechazar', value: 1, slug: 'REC' },
 ];
 const error = ref(false);
 
 const onSubmit = async (evt: any) => {
   evt.preventDefault();
 
+  
   //validar
   /*const valid = await v$.value.$validate()
   .then((response)=>{
@@ -95,8 +105,27 @@ const onSubmit = async (evt: any) => {
 	}*/
 /*
   //verificar error
-  if (form.selectid===3&&form.currentmotive===""){error.value=true;}
-  setLoading(true);
+  if (form.selectid===1&&form.currentmotive===""){error.value=true; return;}
+
+  //crear nuevo status
+  let nStatus = {
+    "status": '',
+    "rejection_message": form.currentmotive
+  }
+  nStatus.status = 
+  form.selectid==1?'REC':
+  form.selectid==2?'ENP':
+  form.selectid==3?'APR'
+  :'ENR';
+
+  //enviar neuvo status
+  //setLoading(true);
+  const res = await beneficiaryServices.update(currentFicha.id, {...currentFicha, reviewed_by: currentUser.id, rejection_message: form.currentmotive, status_id: 1} );
+  //console.log(r);
+
+  console.log(JSON.stringify(nStatus)+currentFicha.id+onboardingStore().get_user.id);
+
+/*  
 
   //verifica algun cambio de estado
 	if((currentFicha.status.slug === 'ENR' && form.selectid==1)||
@@ -131,10 +160,6 @@ const onSubmit = async (evt: any) => {
     setLoading(false);
     props.closeModal();    
   }*/
-
-  console.log(form.selectid)
-
-  const solicitud = {data: "", id: ""}
 	//const res = await beneficiaryServices.changeStatus(solicitud.data, solicitud.id);
 }
 
@@ -147,26 +172,43 @@ const onSubmit = async (evt: any) => {
     
 			<h1 class="mr-auto text-lg font-medium">Revisar ficha de Inscripción</h1>
 			<span class="ml-auto text-base font-medium">
-				Estado: 
-				<span :class="
-							currentFicha.status.slug == 'REC' ?
-							' bg-danger/10 text-danger' :
-							currentFicha.status.slug == 'APR' ?
-							' bg-success/10 text-success' :
-							' bg-primary/10 text-primary' 
+				Estado:
+				<span v-if="currentUser.rol === 'metodologo'" :class="
+							currentFicha.status.slug == 'REC'
+							? ' bg-danger/10 text-danger'
+							: currentFicha.status.slug == 'ENP'
+							? 'bg-success/10 text-success'
+							: 'bg-primary/10 text-primary'
+						" class="ml-2 inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
+						{{ currentFicha.status.name }}
+				</span>
+        <span v-else-if="currentUser.rol === 'coordinador_regional'" :class="
+							currentFicha.status.slug == 'REC'
+							? ' bg-danger/10 text-danger'
+							: currentFicha.status.slug == 'APR'
+							? 'bg-success/10 text-success'
+							: 'bg-primary/10 text-primary' 
+						" class="ml-2 inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
+						{{ currentFicha.status.name }}
+				</span>
+        <span v-else="" :class="
+							currentFicha.status.slug == 'REC'
+							? ' bg-danger/10 text-danger'
+							: currentFicha.status.slug == 'APR'
+							? 'bg-success/10 text-success'
+							: 'bg-warning/10 text-warning' 
 						" class="ml-2 inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
 						{{ currentFicha.status.name }}
 				</span>
 			</span>
 	</div>
-
   <!--REVISION -->
     <div class="space-y-2 box px-5 py-4">
       <h2 class="font-bold">Revisión</h2>
         <CommonSelect :allow-empty="false" label="Estado de la ficha*"
 		      name="selectid" v-model="form.selectid"
           :validator="v$" :options="evaluationList" />
-      <div v-if="form.selectid == 3" class="pt-4">
+      <div v-if="form.selectid == 1" class="pt-4">
 			  <CommonTextarea name="rejection_message" class=""
 				  label="Comentario *" :placeholder="(form.rejection_message===''?'Comentario...':form.rejection_message)" rows="5"
           v-model="form.currentmotive" :validator="v$" />
@@ -174,8 +216,16 @@ const onSubmit = async (evt: any) => {
       </div>
       
       <div class="mt-6 flex justify-end col-span-1 md:col-span-2 gap-1">
-        <Button variant="danger" @click="props.closeModal">Cerrar</Button>
-        <Button variant="primary" class="btn btn-primary" @click="onSubmit">Enviar</Button>
+        <Button variant="danger" @click="props.closeModal">
+          Cerrar
+        </Button>
+
+        <Button variant="primary" class="btn btn-primary"
+          @click="onSubmit"
+          :disabled="(form.selectid===1&&form.currentmotive==='')"
+          :title="(form.selectid===1&&form.currentmotive==='')?'Debes escribir un comentario o motivo de rechazo antes de enviar':'Presiona para revisar la ficha'">
+          Enviar
+        </Button>
       </div>
     </div>
     
@@ -484,12 +534,12 @@ const onSubmit = async (evt: any) => {
             :disabled="true"
           />
         </div>
-       
+
         <div class="mt-5 mb-3 grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
           <CommonInput
             label="Redes sociales"
             name="temp"
-            v-model="currentFicha.acudiente.social_media"
+            v-model="currentFicha.know_guardian.social_media"
             :validator="v$"
             type="text"
             :disabled="true"
@@ -497,7 +547,7 @@ const onSubmit = async (evt: any) => {
           <CommonInput
             label="¿Como se entero del proyecto?"
             name="temp"
-            v-model="currentFicha.find_out"
+            v-model="currentFicha.know_guardian.find_out"
             :validator="v$"
             type="text"
             :disabled="true"
