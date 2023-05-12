@@ -121,6 +121,14 @@
             :allowEmpty="false"
             :options="zonesList"
           />
+          <CommonInput
+            v-if="form.zona === 'R'"
+            label="Corregimiento/Barrio/Vereda"
+            name="pueblo"
+            v-model="form.pueblo"
+            :validator="v$"
+            :disabled="form.status.id !== 4"
+          />
           <CommonSelect
             label="Victima de conflicto"
             name="victimaConflicto"
@@ -129,13 +137,6 @@
             :disabled="form.status.id !== 4"
             :allowEmpty="false"
             :options="optionsVictima"
-          />
-          <CommonInput
-            label="Corregimiento/Barrio/Vereda"
-            name="pueblo"
-            v-model="form.pueblo"
-            :validator="v$"
-            :disabled="form.status.id !== 4"
           />
         </div>
         <div class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
@@ -532,7 +533,7 @@ const form_rules = computed(() => ({
   estrato:            { required },
   zona:               { required },
   victimaConflicto:   { required },
-  pueblo:             { required },
+  pueblo:             form.zona === 'U' ? {} : { required },
   genero:             { required },
   etnia:              { required },
   discapacidad:       { required },

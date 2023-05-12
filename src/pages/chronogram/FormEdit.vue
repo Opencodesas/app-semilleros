@@ -7,6 +7,10 @@ import Lucide from '@/base-components/Lucide'
 import ScheduleFieldset from '@/components/ScheduleFieldset.vue'
 import useVuelidate from '@vuelidate/core'
 import {chronogramServices} from "@/services/chronogramService";
+import { disciplineService } from '@/services/disciplineService'
+
+const storeOnboarding = onboardingStore()
+const sports = ref([])
 
 const form = reactive({
     status_id: 0,
@@ -135,6 +139,14 @@ const fetch = async () => {
 
 onBeforeMount(async () => {
     await fetch();
+
+    disciplineService.byUser( storeOnboarding.get_user.id || 0 )
+    .then((response: any) => {
+        sports.value = response.data.data.items.map( (sport: any) => {
+            return { label: sport.name, value: sport.id }
+        })
+    })
+
 })
 
 const checkChronogram = () => {
@@ -165,8 +177,10 @@ const searchItem = ( schedules: any, grupo: number, horario: any ) => {
     for( let i = 0; i < form.groups.length; i++) {
         const filterSameDay = schedules.filter( (item: any) => item.idx !== horario.idx && item.day === horario.day);
         
-        filterSameDay.forEach( (item: any) => {
-            if( 
+        filterSameDay.forEach( (item: any, idx: number) => {
+            if ( idx === 4) {
+                return
+            } if( 
                 (item.start_time <= horario.start_time && item.end_time <= horario.end_time && item.end_time > horario.start_time) ||
                 (item.start_time >= horario.start_time && item.end_time >= horario.end_time && item.start_time < horario.end_time) ||
                 (item.start_time >= horario.start_time && item.end_time <= horario.end_time) ||
@@ -189,7 +203,7 @@ const searchItem = ( schedules: any, grupo: number, horario: any ) => {
 
 const onAddGrupo = () => {
     if ( form.groups.length < 4 ) {
-        form.groups.push({ ...groupBone, schedules: [{...scheduleBone}] })
+        form.groups.push({ ...groupBone, schedules: [{...scheduleBone, idx: new Date().getTime()}] })
     }
 }
 
@@ -197,12 +211,6 @@ const removeChild = (pos: number, group: any) => {
     group.schedules.splice( pos, 1 )
 }
 
-const sports = [
-    { label: "Futbol", value: "1" },
-    { label: "Futbol sala", value: "2" },
-    { label: "Baloncesto", value: "3" },
-    { label: "Taekwondo", value: "4" },
-]
 </script>
 
 <template>
@@ -253,7 +261,7 @@ const sports = [
                                         <CommonSelect label="Modalidad deportiva *" name="sports_modality" :allowEmpty="false"
                                             v-model="group.sports_modality"
                                             :collection_validator="{ index, name: 'groups', v$ }"
-                                            :options="sports.filter(({ value }) => value == group.group_id)"
+                                            :options="sports"
                                             :disabled="form.status_id !== 4"
                                         />
 
@@ -320,7 +328,7 @@ const sports = [
                                                                 <Button
                                                                     @click="group.schedules.push({ ...scheduleBone, idx: new Date().getTime() })"
                                                                     type="button" variant="outline-primary"
-                                                                    v-if="form.status_id === 4"
+                                                                    v-if="form.status_id === 4 && index < 4"
                                                                 >
                                                                     <Lucide icon="ListPlus" class="mr-2" />
                                                                     Agregar horario
