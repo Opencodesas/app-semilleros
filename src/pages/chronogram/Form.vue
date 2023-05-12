@@ -90,7 +90,7 @@ onBeforeMount(async () => {
 
 const groupsLists = ref<any>([])
 
-watch(form, (newVal, oldVal) => {
+watch(form.groups, (newVal, oldVal) => {
     groupsFilter()
     checkChronogram()
 })
@@ -179,14 +179,13 @@ const searchItem = (grupo: number, horario: any) => {
         filterSameDay.forEach((item: any) => {
             if(!horario.start_time || !horario.end_time) return
             if (
-                //
                 (item.start_time <= horario.start_time && item.end_time <= horario.end_time && item.end_time > horario.start_time) ||
                 (item.start_time >= horario.start_time && item.end_time >= horario.end_time && item.start_time < horario.end_time) ||
                 (item.start_time >= horario.start_time && item.end_time <= horario.end_time) ||
                 (item.start_time <= horario.start_time && item.end_time >= horario.end_time) ||
                 (item.start_time == horario.start_time && item.end_time == horario.end_time)
             ) {
-                console.log(item.start_time, item.end_time, horario.start_time, horario.end_time)
+                //console.log(item.start_time, item.end_time, horario.start_time, horario.end_time)
                 hayCruce = true;
                 if (i != grupo) grupoCruce = i;
                 return;
