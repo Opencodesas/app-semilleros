@@ -25,7 +25,7 @@ export const searchData = (items: Item[], search: String) => {
 				item.scene?.toLowerCase().includes(searchValue) ||
 
 				//para fichas de monitores
-				item.mon?.name?.toLowerCase().includes(searchValue)
+				item.created_by.full_name?.toLowerCase().includes(searchValue)
 		);
 	}
 	return items

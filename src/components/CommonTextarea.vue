@@ -49,7 +49,8 @@ export default {
             </FormLabel>
         </template>
         <!-- Component -->
-        <FormTextarea :id="name" :rows="rows" :cols="rows" v-model="value" v-bind="props">
+        <!--añadido el :disabled="disabled"-->
+        <FormTextarea :id="name" :rows="rows" :cols="rows" :disabled="disabled" v-model="value" v-bind="props">
         </FormTextarea>
         <!-- Validator -->
         <template v-if="tooltip">
@@ -58,7 +59,8 @@ export default {
             </span>
         </template>
         <template v-else-if="validator">
-            <template v-if="validator[name].$error">
+            <!--añadido el ? de validator[name]-->
+            <template v-if="validator[name]?.$error">
                 <div v-for="(error, index) in validator[name].$errors" :key="index" class="mt-1 text-xs text-danger">
                     {{ error.$message }}
                 </div>

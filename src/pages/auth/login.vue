@@ -32,7 +32,7 @@ const onSubmit = async () => {
       router.push('/dashboard')
     }
     else {
-      alerts.custom('Oops!', `${response?.data.message}`, 'warning')
+      alerts.custom('Oops!', `${response?.data.message===undefined?"No se recibió respuesta de ningun servidor":response?.data.message}`, 'warning')
     }
   }
   else {

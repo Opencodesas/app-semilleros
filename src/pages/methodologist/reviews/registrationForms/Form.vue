@@ -1,101 +1,93 @@
 <script setup lang="ts">
+import router from '@/router';
+import beneficiary from '@/services/beneficiary/beneficiary';
 import { onboardingStore } from '@/stores/onboardingStore';
 import useVuelidate from '@vuelidate/core'
 import { required } from '@vuelidate/validators'
 import { isDataView } from 'util/types';
 
+
+
+
 const props = defineProps<{
+  //items?: [];
 	id_review: number;
 	closeModal: Function;
   payloadFunctions?: any;
 }>();
-const store = onboardingStore();
-const route = useRoute();
-const router = useRouter();
+
+//const route = useRoute();
+//const router = useRouter();
+let currentUser = {id: onboardingStore().get_user.id, name: onboardingStore().get_user.name, rol: onboardingStore().get_user_role?.slug};
 
 const data = ref(props?.payloadFunctions?.DATA());
 
-//buscar y traer solo la ficha correspondiente al props.id_review
-const currentFicha = data.value.filter((ficha: any) => {return ficha.id.toString()==props.id_review?.toString()})[0];
-const currentmotive = ref(currentFicha.calif.reject_motive.toString());
-const error = ref(false);
+//buscar y traer solo la ficha correspondiente al props.id_review, haciendo copia profunda de varios objetos y reemplazando nulos por cadenas vacias
+const currentFicha = JSON.parse(JSON.stringify( 
+    Object.keys(data.value.items[props.id_review-1]).map((key) => {
+  return { [key]: data.value.items[props.id_review-1][key] === null ? '' : data.value.items[props.id_review-1][key] };
+}).reduce((acc, cur) => Object.assign(acc, cur), {})
+));
+const currentmotive = ref(currentFicha.rejection_message||"");
 const form = reactive(
   {...currentFicha,
     currentmotive: currentmotive.value,
-    tempDesc: currentFicha.calif.reject_motive,
-		selectid: (currentFicha.status.slug==='ENR'?1:
-		currentFicha.status.slug==='APR'?2:3),
-		motive: currentFicha.calif.reject_motive||'',
+    tempDesc: currentFicha.rejection_message,
+		selectid:
+    currentUser.rol == 'metodologo'?
+    (currentFicha.status.slug==='ENR'?0:
+		currentFicha.status.slug==='ENP'?2:3)
 
+    : currentUser.rol == 'coordinador_regional'?
+    (currentFicha.status.slug==='ENP'?2:
+		currentFicha.status.slug==='APR'?3:1)
+
+    :
+    (currentFicha.status.slug==='APR'?3:1)
+    ,
+		rejection_message: currentFicha.rejection_message||"",
+    temp:"",
   }
 );
-
 const form_rules = computed(() => ({
+  rejection_message:{},
   selectid: { required },
-  calif: {
-    resp_id: {},
-    resp_name: {},
-    reject_motive: {},
-    fecha: {},
-  },
-  ficha_data: {
-    fechaInscripcion: {},
-    municipio: {},
-    disciplinas: {},
-    nombres: {},
-    apellidos: {},
-    fechaNacimiento: {},
-    lugarNacimiento: {},
-    tipoIdentificacion: {},
-    numeroDocumento: {},
-    direccionRes: {},
-    numeroCel: {},
-    estrato: {},
-    zona: {},
-    victimaConf: {},
-    pueblo: {},
-    genero: {},
-    etnia: {},
-    discapacidad: {},
-    otroDiscapacidad: {},
-    patologia: {},
-    otroPatologia: {},
-    sangre: {},
-    escolaridad: {},
-    vivoCon: {},
-    afiliacion: {},
-    nombresAcudiente: {},
-    apellidosAcudiente:{},
-    nDocuAcudiente: {},
-    parentesco: {},
-    email: {},
-    nCelularAcudiente: {},
-    redesAcudiente: {},
-    enterado: {},
-  },
   currentmotive: { },
+  temp: {},
 }))
-
 const v$ = useVuelidate(form_rules, form);
 
-const evaluationList = [
-	{ label: 'Selecciona valor', value: 1 },
-	{ label: 'Aprobada', value: 2 },
-	{ label: 'Rechazada', value: 3 },
+currentUser = {...currentUser, rol : 'metodologo'};
+const evaluationList =
+currentUser.rol == 'metodologo'?
+[
+	{ label: 'En Revisión', value: 0, slug:'ENR' },
+	{ label: 'Procesar', value: 2, slug: 'ENP' },
+	{ label: 'Rechazar', value: 1, slug: 'REC' },
+]: currentUser.rol == 'coordinador_regional'?
+[
+	{ label: 'En proceso', value: 2, slug:'ENP' },
+	{ label: 'Aprobar', value: 3, slug: 'APR' },
+	{ label: 'Rechazar', value: 1, slug: 'REC' },
+]:
+[
+	{ label: 'Aprobada', value: 2, slug: 'APR'  },
+	{ label: 'Rechazar', value: 1, slug: 'REC' },
 ];
-const currentUser = {id: onboardingStore().get_user.id, name: onboardingStore().get_user.name};
+const error = ref(false);
 
 const onSubmit = async (evt: any) => {
   evt.preventDefault();
 
+  
   //validar
   /*const valid = await v$.value.$validate()
   .then((response)=>{
 
   }).catch((error)=>{
 
-  });*/
-  /*if (valid) {
+  });
+  if (valid) {
 		await service
 			.update()
 			.then((response) => {
@@ -111,10 +103,29 @@ const onSubmit = async (evt: any) => {
 				}
 			});
 	}*/
-
+/*
   //verificar error
-  if (form.selectid===3&&form.currentmotive===""){error.value=true;}
-  setLoading(true);
+  if (form.selectid===1&&form.currentmotive===""){error.value=true; return;}
+
+  //crear nuevo status
+  let nStatus = {
+    "status": '',
+    "rejection_message": form.currentmotive
+  }
+  nStatus.status = 
+  form.selectid==1?'REC':
+  form.selectid==2?'ENP':
+  form.selectid==3?'APR'
+  :'ENR';
+
+  //enviar neuvo status
+  //setLoading(true);
+  const res = await beneficiaryServices.update(currentFicha.id, {...currentFicha, reviewed_by: currentUser.id, rejection_message: form.currentmotive, status_id: 1} );
+  //console.log(r);
+
+  console.log(JSON.stringify(nStatus)+currentFicha.id+onboardingStore().get_user.id);
+
+/*  
 
   //verifica algun cambio de estado
 	if((currentFicha.status.slug === 'ENR' && form.selectid==1)||
@@ -122,7 +133,7 @@ const onSubmit = async (evt: any) => {
 	   (currentFicha.status.slug === 'REC' && form.selectid==3)){
     //si conserva el slug y la intención, verificar que no sea una actualización
     //console.log(form.currentmotive+" | "+currentFicha.calif.reject_motive+": "+(form.currentmotive===currentFicha.calif.reject_motive).toString())
-    if(!(form.currentmotive===currentFicha.calif.reject_motive))
+    if(!(form.currentmotive===currentFicha.rejection_message))
 		{
       props.payloadFunctions?.REC();
 
@@ -148,62 +159,87 @@ const onSubmit = async (evt: any) => {
     }
     setLoading(false);
     props.closeModal();    
-  }
+  }*/
+	//const res = await beneficiaryServices.changeStatus(solicitud.data, solicitud.id);
 }
 
 </script>
 
 <template>
-  {{ '' }}
-  <!--HEADER-->
+  <!--HEADER--> 
 	<div class="flex items-center justify-between mt-5 mb-2 intro-y">
     <a href="#"></a>
     
 			<h1 class="mr-auto text-lg font-medium">Revisar ficha de Inscripción</h1>
 			<span class="ml-auto text-base font-medium">
-				Estado: 
-				<span :class="
-							currentFicha.status.slug == 'REC' ?
-							' bg-danger/10 text-danger' :
-							currentFicha.status.slug == 'APR' ?
-							' bg-success/10 text-success' :
-							' bg-primary/10 text-primary' 
+				Estado:
+				<span v-if="currentUser.rol === 'metodologo'" :class="
+							currentFicha.status.slug == 'REC'
+							? ' bg-danger/10 text-danger'
+							: currentFicha.status.slug == 'ENP'
+							? 'bg-success/10 text-success'
+							: 'bg-primary/10 text-primary'
+						" class="ml-2 inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
+						{{ currentFicha.status.name }}
+				</span>
+        <span v-else-if="currentUser.rol === 'coordinador_regional'" :class="
+							currentFicha.status.slug == 'REC'
+							? ' bg-danger/10 text-danger'
+							: currentFicha.status.slug == 'APR'
+							? 'bg-success/10 text-success'
+							: 'bg-primary/10 text-primary' 
+						" class="ml-2 inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
+						{{ currentFicha.status.name }}
+				</span>
+        <span v-else="" :class="
+							currentFicha.status.slug == 'REC'
+							? ' bg-danger/10 text-danger'
+							: currentFicha.status.slug == 'APR'
+							? 'bg-success/10 text-success'
+							: 'bg-warning/10 text-warning' 
 						" class="ml-2 inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
 						{{ currentFicha.status.name }}
 				</span>
 			</span>
 	</div>
-
-  <!--REVISION-->
+  <!--REVISION -->
     <div class="space-y-2 box px-5 py-4">
       <h2 class="font-bold">Revisión</h2>
         <CommonSelect :allow-empty="false" label="Estado de la ficha*"
 		      name="selectid" v-model="form.selectid"
           :validator="v$" :options="evaluationList" />
-      <div v-if="form.selectid == 3" class="pt-4">
-			  <CommonTextarea name="calif" class=""
-				  label="Comentario *" :placeholder="(form.calif.reject_motive===''?'Comentario...':form.calif.reject_motive)" rows="5"
+      <div v-if="form.selectid == 1" class="pt-4">
+			  <CommonTextarea name="rejection_message" class=""
+				  label="Comentario *" :placeholder="(form.rejection_message===''?'Comentario...':form.rejection_message)" rows="5"
           v-model="form.currentmotive" :validator="v$" />
         <span v-if="error" :class="'text-red-600 text-sm'">Este campo es obligatorio *</span>
       </div>
       
       <div class="mt-6 flex justify-end col-span-1 md:col-span-2 gap-1">
-        <Button variant="danger" @click="props.closeModal">Cerrar</Button>
-        <Button variant="primary" class="btn btn-primary" @click="onSubmit">Enviar</Button>
+        <Button variant="danger" @click="props.closeModal">
+          Cerrar
+        </Button>
+
+        <Button variant="primary" class="btn btn-primary"
+          @click="onSubmit"
+          :disabled="(form.selectid===1&&form.currentmotive==='')"
+          :title="(form.selectid===1&&form.currentmotive==='')?'Debes escribir un comentario o motivo de rechazo antes de enviar':'Presiona para revisar la ficha'">
+          Enviar
+        </Button>
       </div>
     </div>
+    
 
 <!--FICHA-->
   <div class="grid grid-cols-2 gap-6 justify-evenly">
-
     <div class="p-5 mt-5 col-span-2 intro-y box">
 
     <!--DATOS RESPONSABLES-->
-    <div class="mt-2 mb-5 col-span-2">
-      <!--<h3 v-if="currentFicha.calif.resp_name"><span class="font-bold">Revisado por:</span> {{ currentFicha.calif.resp_name }} el {{ currentFicha.calif.fecha }}</h3>-->
-      <h3><span class="font-bold">Monitor:</span> {{ currentFicha.mon.name }}</h3>
+    <div class="mt-2 mb-5 col-span-2"> 
+      <h3 v-if="currentFicha.revised_by"><span class="font-bold">Revisado por:</span> {{ currentFicha.revised_by.name }} el {{ currentFicha.revised_by.created_at }}</h3>
+      <h3><span class="font-bold">Monitor:</span> {{ currentFicha.created_by.name + ' '+currentFicha.created_by.lastname }}</h3>
     </div>
-    
+
     <div class="my-4 text-lg bold text-left text-gray-800">
         Datos del beneficiario
     </div>
@@ -212,28 +248,28 @@ const onSubmit = async (evt: any) => {
         <div class="col-span-2">
         <CommonInput
           label="Fecha de inscripción"
-          name="ficha_data"
-          v-model="currentFicha.ficha_data.fechaInscripcion"
+          name="temp"
+          v-model="currentFicha.created_at"
           :validator="v$"
           type="text"
           :disabled="true"
         />
         </div>
-        
+
           <CommonInput
             label="Municipio"
-            name="ficha_data"
-            v-model="currentFicha.ficha_data.municipio"
+            name="temp"
+            v-model="currentFicha.municipality.name"
             :validator="v$"
             type="text"
             :disabled="true"
           />
 
-          
+       
           <CommonInput
             label="Disciplinas"
-            name="ficha_data"
-            v-model="currentFicha.ficha_data.disciplinas"
+            name="temp"
+            v-model="currentFicha.created_by.name"
             :validator="v$"
             type="text"
             :disabled="true"
@@ -241,8 +277,8 @@ const onSubmit = async (evt: any) => {
           
           <CommonInput
             label="Nombres"
-            name="ficha_data"
-            v-model="currentFicha.ficha_data.nombres"
+            name="temp"
+            v-model="(currentFicha.full_name).toString().split(' ')[0]"
             :validator="v$"
             type="text"
             :disabled="true"
@@ -250,43 +286,43 @@ const onSubmit = async (evt: any) => {
           
           <CommonInput
             label="Apellidos"
-            name="ficha_data"
-            v-model="currentFicha.ficha_data.apellidos"
+            name="temp"
+            v-model="(currentFicha.full_name).toString().split(' ')[1]"
             :validator="v$"
             type="text"
             :disabled="true"
           />
-          
+           
           <CommonInput
             label="Fecha de nacimiento"
-            name="ficha_data"
-            v-model="currentFicha.ficha_data.fechaNacimiento"
+            name="temp"
+            v-model="currentFicha.birth_date"
             :validator="v$"
             type="text"
             :disabled="true"
           />
-
+ 
           <CommonInput
             label="Lugar de nacimiento"
-            name="ficha_data"
-            v-model="currentFicha.ficha_data.lugarNacimiento"
+            name="temp"
+            v-model="currentFicha.registration_date"
             :validator="v$"
             type="text"
             :disabled="true"
           />
-          
+        
           <CommonInput
             label="Tipo de Identificación"
-            name="ficha_data"
-            v-model="currentFicha.ficha_data.tipoIdentificacion"
+            name="temp"
+            v-model="currentFicha.type_document"
             :validator="v$"
             type="text"
             :disabled="true"
           />
           <CommonInput
             label="Número de documento"
-            name="ficha_data"
-            v-model="currentFicha.ficha_data.numeroDocumento"
+            name="temp"
+            v-model="currentFicha.document_number"
             :validator="v$"
             type="text"
             :disabled="true"
@@ -297,8 +333,8 @@ const onSubmit = async (evt: any) => {
          
           <CommonInput
             label="Direccion de residencia"
-            name="ficha_data"
-            v-model="currentFicha.ficha_data.direccionRes"
+            name="temp"
+            v-model="currentFicha.home_address"
             :validator="v$"
             type="text"
             :disabled="true"
@@ -306,16 +342,16 @@ const onSubmit = async (evt: any) => {
            
           <CommonInput
             label="Numero de celular"
-            name="ficha_data"
-            v-model="currentFicha.ficha_data.numeroCel"
+            name="temp"
+            v-model="currentFicha.phone"
             :validator="v$"
             type="text"
             :disabled="true"
           />
           <CommonInput
             label="Estrato"
-            name="ficha_data"
-            v-model="currentFicha.ficha_data.estrato"
+            name="temp"
+            v-model="currentFicha.stratum"
             :validator="v$"
             type="text"
             :disabled="true"
@@ -323,24 +359,24 @@ const onSubmit = async (evt: any) => {
           
           <CommonInput
             label="Zona"
-            name="ficha_data"
-            v-model="currentFicha.ficha_data.zona"
+            name="temp"
+            v-model="currentFicha.zone"
             :validator="v$"
             type="text"
             :disabled="true"
           />
           <CommonInput
             label="Victima de conflicto"
-            name="ficha_data"
-            v-model="currentFicha.ficha_data.victimaConf"
+            name="temp"
+            v-model="currentFicha.conflict_victim"
             :validator="v$"
             type="text"
             :disabled="true"
           />
           <CommonInput
             label="Corregimiento/Barrio/Vereda"
-            name="ficha_data"
-            v-model="currentFicha.ficha_data.pueblo"
+            name="temp"
+            v-model="currentFicha.distric"
             :validator="v$"
             type="text"
             :disabled="true"
@@ -350,16 +386,16 @@ const onSubmit = async (evt: any) => {
         <div class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
           <CommonInput
             label="Genero"
-            name="ficha_data"
-            v-model="currentFicha.ficha_data.genero"
+            name="temp"
+            v-model="currentFicha.gender"
             :validator="v$"
             type="text"
             :disabled="true"
           />
           <CommonInput
             label="Etnia"
-            name="ficha_data"
-            v-model="currentFicha.ficha_data.etnia"
+            name="temp"
+            v-model="currentFicha.ethnicities_id"
             :validator="v$"
             type="text"
             :disabled="true"
@@ -367,16 +403,16 @@ const onSubmit = async (evt: any) => {
           
           <CommonInput
             label="Discapacidad"
-            name="ficha_data"
-            v-model="currentFicha.ficha_data.discapacidad"
+            name="temp"
+            v-model="currentFicha.disability"
             :validator="v$"
             type="text"
             :disabled="true"
           />
           <CommonInput
             label="¿Cual?"
-            name="ficha_data"
-            v-model="currentFicha.ficha_data.otroDiscapacidad"
+            name="temp"
+            v-model="currentFicha.other_disability"
             :validator="v$"
             type="text"
             :disabled="true"
@@ -384,16 +420,16 @@ const onSubmit = async (evt: any) => {
 
           <CommonInput
             label="Patologia"
-            name="ficha_data"
-            v-model="currentFicha.ficha_data.patologia"
+            name="temp"
+            v-model="currentFicha.pathology"
             :validator="v$"
             type="text"
             :disabled="true"
           />
           <CommonInput
             label="¿Cual?"
-            name="ficha_data"
-            v-model="currentFicha.ficha_data.otroPatologia"
+            name="temp"
+            v-model="currentFicha.what_pathology"
             :validator="v$"
             type="text"
             :disabled="true"
@@ -401,16 +437,16 @@ const onSubmit = async (evt: any) => {
           
           <CommonInput
             label="Tipo de sangre"
-            name="ficha_data"
-            v-model="currentFicha.ficha_data.sangre"
+            name="temp"
+            v-model="currentFicha.blood_type"
             :validator="v$"
             type="text"
             :disabled="true"
           />
           <CommonInput
             label="Escolaridad"
-            name="ficha_data"
-            v-model="currentFicha.ficha_data.escolaridad"
+            name="temp"
+            v-model="currentFicha.scholarship"
             :validator="v$"
             type="text"
             :disabled="true"
@@ -418,8 +454,8 @@ const onSubmit = async (evt: any) => {
 
         <CommonInput
           label="Vivo con"
-          name="ficha_data"
-          v-model="currentFicha.ficha_data.vivoCon"
+          name="temp"
+          v-model="currentFicha.live_with"
           :validator="v$"
           type="text"
           :disabled="true"
@@ -427,91 +463,98 @@ const onSubmit = async (evt: any) => {
 
         <CommonInput
           label="Tipo afiliacion(EPS)"
-          name="ficha_data"
-          v-model="currentFicha.ficha_data.afiliacion"
+          name="temp"
+          v-model="currentFicha.affiliation_type"
           :validator="v$"
           type="text"
           :disabled="true"
         />
-      </div>
+      </div> 
     </div>
+
 
     <div class="p-5 mt-5 col-span-2 intro-y box">
       <div class="my-5 text-lg bold text-left text-gray-800">
         Datos del acudiente
       </div>
+
+
       <!--<div v-show="accordion[1].shown">-->
-      
+
+        
         <div class="mt-5 grid grid-cols-1 md:grid md:grid-cols-3 gap-6 justify-evenly">
           <CommonInput
             label="Nombres"
-            name="ficha_data"
-            v-model="currentFicha.ficha_data.nombresAcudiente"
+            name="temp"
+            v-model="currentFicha.acudiente.firts_name"
             :validator="v$"
             type="text"
             :disabled="true"
           />
+        
           <CommonInput
             label="Apellidos"
-            name="ficha_data"
-            v-model="currentFicha.ficha_data.apellidosAcudiente"
+            name="temp"
+            v-model="currentFicha.acudiente.last_name"
             :validator="v$"
             type="text"
             :disabled="true"
           />
+        
           <CommonInput
             label="Numero de documento"
-            name="ficha_data"
-            v-model="currentFicha.ficha_data.nDocuAcudiente"
+            name="temp"
+            v-model="currentFicha.acudiente.cedula"
             :validator="v$"
             type="text"
             :disabled="true"
           />
           <CommonInput
             label="Parentesco"
-            name="ficha_data"
-            v-model="currentFicha.ficha_data.parentesco"
+            name="temp"
+            v-model="currentFicha.know_guardian.relationship"
             :validator="v$"
             type="text"
             :disabled="true"
           />
           <CommonInput 
             label="Email"
-            name="ficha_data"
-            v-model="currentFicha.ficha_data.email"
+            name="temp"
+            v-model="currentFicha.acudiente.email"
             :validator="v$"
             type="text"
             :disabled="true"
           />
           <CommonInput
             label="Numero de celular"
-            name="ficha_data"
-            v-model="currentFicha.ficha_data.nCelularAcudiente"
+            name="temp"
+            v-model="currentFicha.acudiente.phone_number"
             :validator="v$"
             type="text"
             :disabled="true"
           />
         </div>
-        
+
         <div class="mt-5 mb-3 grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
           <CommonInput
             label="Redes sociales"
-            name="ficha_data"
-            v-model="currentFicha.ficha_data.redesAcudiente"
+            name="temp"
+            v-model="currentFicha.know_guardian.social_media"
             :validator="v$"
             type="text"
             :disabled="true"
           />
           <CommonInput
             label="¿Como se entero del proyecto?"
-            name="ficha_data"
-            v-model="currentFicha.ficha_data.enterado"
+            name="temp"
+            v-model="currentFicha.know_guardian.find_out"
             :validator="v$"
             type="text"
             :disabled="true"
           />
         </div>
-    </div>
+
   </div>
+</div>
   <!--FIN FICHA-->  
 </template>
