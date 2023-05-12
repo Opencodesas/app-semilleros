@@ -222,6 +222,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
         subMenu: [
           {
             icon: "Activity",
+            role: 'coordinador_regional',
             pageName: "coordinator.create",
             title: "Crear visita",
           },
@@ -307,7 +308,8 @@ export const useSideMenuStore = defineStore("sideMenu", {
         subMenu: [
           {
             icon: "Activity",
-            pageName: "review.bene_chro",
+            role: 'asistente_administrativo',
+            pageName: 'fichas_inscripcion.index'/*"review.bene_chro"*/,
             title: "Revisiones",
           },
         ]
@@ -318,6 +320,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
         subMenu: [
           {
             icon: "Activity",
+            role: 'metodologo',
             pageName: "methodologist_visits.create",
             title: "Crear visita",
           },
@@ -328,7 +331,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
           },
           {
             icon: "Activity",
-            pageName: "review.bene_chro",
+            pageName: "fichas_inscripcion.index",
             title: "Revisiones",
           },
         ]
@@ -371,7 +374,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
         return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'legal' || subMenuItem.role?.includes('apoyo_juridico')))
       }
       else if (isRole('asistente_administrativo')){
-        return state.menu.filter( (menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => menuItem.title == "Coordinador Regional" || subMenuItem.role?.includes('asistente_administrativo')))
+        return state.menu.filter( (menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) =>  subMenuItem.role?.includes('asistente_administrativo')))
       }
       /*else if (isRole('director_juridico')){
         return state.menu.filter( (menuItem) => menuItem == 'divider' ? 'divider' : menuItem.title == "Director Jurídico")

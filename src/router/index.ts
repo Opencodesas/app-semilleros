@@ -661,9 +661,8 @@ const routes = [
 					{
 						path: "",
 						name: "review.bene_chro",
-						//meta: { provider: '' },
 						component: () => import('@/pages/monitors/Review.vue')
-					}
+					},
 				]
 			},
 		],

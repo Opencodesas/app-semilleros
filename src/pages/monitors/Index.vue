@@ -4,6 +4,7 @@ import Crud from '@/components/Crud.vue'
 import { Header, Item } from 'vue3-easy-data-table';
 import { onboardingStore } from "@/stores/onboardingStore";
 import Form from './Form.vue'
+import beneficiary from '@/services/beneficiary/beneficiary';
 
 const route = useRoute();
 const router = useRouter();
@@ -13,7 +14,7 @@ let currentUser = {id: onboardingStore().get_user.id, name: onboardingStore().ge
 currentUser = {...currentUser, rol : 'metodologo'};
 //ver el provider - usado en CRUD para definir los botones de actions, leyendo status. fichasViewer si es único para esta tabla
 //console.log(route.meta.provider)
-//console.log();
+console.log(onboardingStore().get_user_role?.slug);
 
 const headers: Header[] =
 currentUser.rol==="metodologo"?
@@ -241,10 +242,13 @@ const data = ref([
 const items = ref<Item[]>([]);
 
 onMounted(async () => {
-	const res = await beneficiaryServices.getAll();
+    const res = await beneficiary.getAllUR();
+    console.log(res.data);
     data.value = res?.data;
 	items.value = await res?.data.items;
 });
+
+
 
 const getFichaData = () => data.value;
 
@@ -302,8 +306,16 @@ const search = ref('');
 
 const cruddata = computed(() => searchData(items.value, search.value) );
 
-const prueba = ()=>{ console.log(cruddata.value)}
 //#endregion
+
+const probar = ()=>{ 
+    const nStatus = {
+    "status": 'REC',
+    "rejection_message": 'mi mensaje'
+    }
+    const res = beneficiary.changeStatusUR(nStatus,'12').then((response)=>{console.log(response)})
+    .catch((error)=>{console.log(error)});
+}
 
 
 function getObjectKey(obj:any, value:any) {
@@ -315,6 +327,9 @@ function getObjectKey(obj:any, value:any) {
     <!--<div class="flex items-center mt-8 intro-y">
         <h2 class="mr-auto text-lg font-medium">Revisar las fichas de inscripción de los monitores</h2>
     </div>-->
+
+    <!--<Button @click="probar">BOTON</Button>-->
+    {{ items }}
     <div class="p-5 mt-5 intro-y box">
         <CommonInput
 			type="search"

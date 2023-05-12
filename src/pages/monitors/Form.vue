@@ -79,6 +79,7 @@ const error = ref(false);
 const onSubmit = async (evt: any) => {
   evt.preventDefault();
 
+  console.log(form.selectid);
   
   //validar
   /*const valid = await v$.value.$validate()
