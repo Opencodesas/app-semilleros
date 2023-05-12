@@ -539,7 +539,7 @@ onMounted(async () => {
   //peticion a la api para las listas desplegables, by rick.
   store.getListSelect().then((response) => {
     if (response?.status == 200) {
-      municipalitiesList.value = JSON.parse(JSON.stringify(response.data['municipalities']));
+      municipalitiesList.value = JSON.parse(JSON.stringify(response.data['my_municipalities']));
       diciplinesList.value = JSON.parse(JSON.stringify(response.data['diciplines']));
       ethniacityList.value = JSON.parse(JSON.stringify(response.data['ethniacity']));
     } else {
