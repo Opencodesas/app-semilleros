@@ -9,7 +9,7 @@ interface Props {
     tooltip?: string
     disabled?: boolean
     name: string
-    validator: Validation
+    validator?: Validation
 }
 
 const props = withDefaults(defineProps<Props>(), {})

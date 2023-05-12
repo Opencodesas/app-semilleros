@@ -714,28 +714,37 @@ const selectedTab = inject('selectedTab', ref(0));
 						</template>
 					</template>
 					<template v-else-if="isRole('metodologo')">
-						<Button
-							variant="outline-secondary"
-							@click="editAction(item.id)">
-							<Lucide
-								v-if="item.status.slug == 'REC'"
-								icon="FileEdit"
-								class="mr-2" />
-							<Lucide
-								v-else
-								icon="Eye"
-								class="mr-2" />
-							<span
-								v-if="item.status.slug == 'REC'"
-								class="text-sm">
-								Editar
-							</span>
-							<span
-								v-else
-								class="text-sm">
-								Visualizar
-							</span>
-						</Button>
+						<template v-if="route.name == 'methodologist_visits.index'">
+							<Button
+								variant="outline-secondary"
+								@click="editAction(item.id)">
+								<Lucide
+									v-if="item.status.slug == 'REC'"
+									icon="FileEdit"
+									class="mr-2" />
+								<Lucide
+									v-else
+									icon="Eye"
+									class="mr-2" />
+								<span
+									v-if="item.status.slug == 'REC'"
+									class="text-sm">
+									Editar
+								</span>
+								<span
+									v-else
+									class="text-sm">
+									Visualizar
+								</span>
+							</Button>
+						</template>
+						<template v-if="route.name == 'methodologist_visits.reviews'">
+							<template v-if="props.Form!">
+								<Modal
+									:Form="props.Form"
+									:item="item" />
+							</template>
+						</template>
 					</template>
 					<template v-else-if="isProvider('coordinator')">
 						<Button

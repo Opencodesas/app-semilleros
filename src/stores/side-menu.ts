@@ -328,7 +328,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
           },
           {
             icon: "Activity",
-            pageName: "review.bene_chro",
+            pageName: "methodologist_visits.reviews",
             title: "Revisiones",
           },
         ]
