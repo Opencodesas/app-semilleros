@@ -19,11 +19,11 @@ const headers: Header[] =
 currentUser.rol==="metodologo"?
 [
     { text: 'No.', value: 'id', sortable: true},
-    { text: 'Monitor', value: 'full_name', sortable: true},
+    { text: 'Monitor', value: 'created_by.full_name', sortable: true},
     { text: 'CC del Monitor', value: 'created_by.document_number', sortable: true},
     { text: 'Beneficiario', value: 'full_name', sortable: true},
-    { text: 'Municipio', value: 'full_name  '},
-    { text: 'Estado', value: 'status'},
+    { text: 'Municipio', value: 'municipality.name'},
+    { text: 'Estado', value: 'fichaStatus'},
     { text: 'Acciones', value: 'fichasViewer' },
 ]
 :
@@ -242,12 +242,12 @@ const items = ref<Item[]>([]);
 
 onMounted(async () => {
 	const res = await beneficiaryServices.getAll();
-    //const cStatus = await beneficiaryServices.changeStatus("asdf");
     data.value = res?.data;
 	items.value = await res?.data.items;
 });
 
 const getFichaData = () => data.value;
+
 /*
 const aceptar = (id: any, user: any) =>{
     let ficha = data.value.find(o=>o.id=== id);
@@ -304,12 +304,17 @@ const cruddata = computed(() => searchData(items.value, search.value) );
 
 const prueba = ()=>{ console.log(cruddata.value)}
 //#endregion
+
+
+function getObjectKey(obj:any, value:any) {
+  return Object.keys(obj).find(key => obj[key] === value);
+}
 </script>
 <template>
 
-    <div class="flex items-center mt-8 intro-y">
+    <!--<div class="flex items-center mt-8 intro-y">
         <h2 class="mr-auto text-lg font-medium">Revisar las fichas de inscripción de los monitores</h2>
-    </div>
+    </div>-->
     <div class="p-5 mt-5 intro-y box">
         <CommonInput
 			type="search"

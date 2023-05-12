@@ -7,6 +7,7 @@ import type { Header, Item } from 'vue3-easy-data-table';
 import CommonButtonLink from './CommonButtonLink.vue';
 import ContractCancellation from './ContractCancellation.vue';
 import Modal from './Modal.vue';
+import { onboardingStore } from '@/stores/onboardingStore';
 
 const storagePath = import.meta.env.VITE_BASE_URL;
 
@@ -971,10 +972,67 @@ const selectedTab = inject('selectedTab', ref(0));
 				</div>
 			</template>
 
+			<template #item-fichaStatus="item">
+				<!--si es metodologo entra ENR, convierte a ENP y REC-->
+				<span v-if="onboardingStore().get_user_role?.slug === 'metodologo'"
+					:class="
+						item.status.slug == 'REC'
+							? ' bg-danger/10 text-danger'
+							: item.status.slug == 'ENP'
+							? 'bg-success/10 text-success'
+							: 'bg-primary/10 text-primary'
+					"
+					class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
+					{{ _getStatus(item.status) }}
+				</span>				
+				<!--si es coordinador_regional entra ENP, convierte a APR y REC-->
+				<span v-else-if="onboardingStore().get_user_role?.slug === 'coordinador_regional'"
+					:class="
+						item.status.slug == 'REC'
+							? ' bg-danger/10 text-danger'
+							: item.status.slug == 'APR'
+							? 'bg-success/10 text-success'
+							: 'bg-primary/10 text-primary'
+					"
+					class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
+					{{ _getStatus(item.status) }}
+				</span>
+				<!--si es asistente_administrativo entra APR, convierte REC-->
+				<span v-else	
+					:class="
+						item.status.slug == 'REC'
+							? ' bg-danger/10 text-danger'
+							: item.status.slug == 'APR'
+							? 'bg-success/10 text-success'
+							: 'bg-warning/10 text-warning'
+					"
+					class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
+					{{ _getStatus(item.status) }}
+				</span>
+
+			</template>
 			<template #item-fichasViewer="item">
 				<template v-if="props.Form">
 					<template
-						v-if="item.status.slug === 'REC' || item.status.slug === 'APR'">
+						v-if="(onboardingStore().get_user_role?.slug === 'metodologo' && item.status.slug === 'APR') ||
+						(onboardingStore().get_user_role?.slug === 'metodologo' && item.status.slug === 'REC')">
+						<Modal
+							:Form="props.Form"
+							:id_review="item.id"
+							label="Actualizar"
+							:payloadFunctions="payloadFunctions" />
+					</template>
+					<template
+						v-else-if="(onboardingStore().get_user_role?.slug === 'coordinador_regional' && item.status.slug === 'ENP') ||
+						(onboardingStore().get_user_role?.slug === 'coordinador_regional' && item.status.slug === 'REC')">
+						<Modal
+							:Form="props.Form"
+							:id_review="item.id"
+							label="Actualizar"
+							:payloadFunctions="payloadFunctions" />
+					</template>
+					<template
+						v-else-if="item.status.slug === 'APR' || item.status.slug === 'REC'">
 						<Modal
 							:Form="props.Form"
 							:id_review="item.id"
