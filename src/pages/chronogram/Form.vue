@@ -6,7 +6,8 @@ import dayjs from 'dayjs'
 import Lucide from '@/base-components/Lucide'
 import ScheduleFieldset from '@/components/ScheduleFieldset.vue'
 import useVuelidate from '@vuelidate/core'
-import {chronogramServices} from "@/services/chronogramService";
+import { chronogramServices } from "@/services/chronogramService";
+import { onboardingStore } from '@/stores/onboardingStore'
 
 const form = reactive({
     month: '',
@@ -48,7 +49,7 @@ const form_rules = computed(() => ({
 
 
 const scheduleBone = {
-    idx: new Date().getTime(),
+    idx: new Date().getMilliseconds(),
     day: '',
     start_time: '',
     end_time: '',
@@ -61,7 +62,7 @@ const groupBone = {
     main_sports_stage_address: '',
     alt_sports_stage_name: '',
     alt_sports_stage_address: '',
-    schedules: [{...scheduleBone}]
+    schedules: [{ ...scheduleBone }]
 }
 
 const v$ = useVuelidate(form_rules, form)
@@ -80,16 +81,52 @@ const municipalities = computedAsync(async () => {
     return await getCitiesByDepartment('30')
 }, null)
 
-const groups = computedAsync(async () => {
-    return await getSelect(['groups'])
+const groups = ref<any>([])
+
+onBeforeMount(async () => {
+    groups.value = await getSelect(['groups'])
+    groupsLists.value = [groups.value]
+})
+
+const groupsLists = ref<any>([])
+
+watch(form, (newVal, oldVal) => {
+    groupsFilter()
+    checkChronogram()
+})
+
+const groupsFilter = () => {
+    
+    let lists = []
+
+    for (let i = 0; i < form.groups.length; i++) {
+        if(form.groups.length == 1) {
+            lists.push(groups.value)
+            break
+        }
+        let list = groups.value
+        for (let j = 0; j < form.groups.length; j++) {
+            if (j == i) continue
+            let groupSelected = form.groups[j].group_id
+            list = list.filter(({ value } : { value: string }) => value != groupSelected)
+        }
+        lists.push(list)
+    }
+    groupsLists.value = lists
+}
+
+
+const sports = computedAsync(async () => {
+    return await getDisciplinesByMonitor(onboardingStore().get_user.id as number)
 }, null)
+
 
 const onSubmit = async () => {
     const hayCruce = checkChronogram();
     const valid = await v$.value.$validate()
     if (valid) {
         if ( !hayCruce ) {
-            
+
             await chronogramServices.create( formdataParser(form) )
             .then((res: any) => {
                 if(res){
@@ -109,48 +146,59 @@ const onSubmit = async () => {
 }
 
 const checkChronogram = () => {
-    
-    let hayCruce = false; 
 
-    for( let i = 0; i < form.groups.length; i++) {
+    let hayCruce = false;
+
+    for (let i = 0; i < form.groups.length; i++) {
+
         const schedules = form.groups[i].schedules;
 
-        for( let j = 0; j <= schedules.length; j++ ) {
+        for (let j = 0; j < schedules.length; j++) {
+
             const horario = schedules[j];
-            if ( !horario ) continue
+            if (!horario) continue
 
-            hayCruce = searchItem( schedules, i+1, horario );
+            hayCruce = searchItem(i, horario);
 
-            if(hayCruce) break;
+            if (hayCruce) break;
         }
 
-        if(hayCruce) break;
+        if (hayCruce) break;
     }
 
     return hayCruce
 }
 
-const searchItem = ( schedules: any, grupo: number, horario: any ) => {
-    let hayCruce = false; 
+const searchItem = (grupo: number, horario: any) => {
+    let hayCruce = false;
+    let grupoCruce;
 
-    for( let i = 0; i < form.groups.length; i++) {
-        const filterSameDay = schedules.filter( (item: any) => item.idx !== horario.idx && item.day === horario.day);
-        
-        filterSameDay.forEach( (item: any) => {
-            if( 
+    for (let i = 0; i < form.groups.length; i++) {
+        const filterSameDay = form.groups[i].schedules.filter((item: any) => item.idx !== horario.idx && item.day === horario.day && item.start_time && item.end_time);
+
+        filterSameDay.forEach((item: any) => {
+            if(!horario.start_time || !horario.end_time) return
+            if (
+                //
                 (item.start_time <= horario.start_time && item.end_time <= horario.end_time && item.end_time > horario.start_time) ||
                 (item.start_time >= horario.start_time && item.end_time >= horario.end_time && item.start_time < horario.end_time) ||
                 (item.start_time >= horario.start_time && item.end_time <= horario.end_time) ||
                 (item.start_time <= horario.start_time && item.end_time >= horario.end_time) ||
                 (item.start_time == horario.start_time && item.end_time == horario.end_time)
             ) {
+                console.log(item.start_time, item.end_time, horario.start_time, horario.end_time)
                 hayCruce = true;
+                if (i != grupo) grupoCruce = i;
                 return;
             }
         })
 
-        if ( hayCruce ){
-            alerts.custom('Validación', `Por favor verifique el horario cruzado ${horario.day} de ${horario.start_time} a ${horario.end_time} grupo ${grupo}.`, 'error')
+        if (hayCruce) {
+            if (grupoCruce) {
+                alerts.custom('Validación', `Por favor verifique el horario cruzado del grupo ${form.groups[grupo].group_id} ${horario.day} de ${horario.start_time} a ${horario.end_time} porque se cruza con el grupo ${form.groups[grupoCruce].group_id}.`, 'error')
+            } else {
+                alerts.custom('Validación', `Por favor verifique el horario cruzado del grupo ${form.groups[grupo].group_id} ${horario.day} de ${horario.start_time} a ${horario.end_time} ya que se cruza con otro de los horarios de este grupo.`, 'error')
+            }
             break;
         }
     }
@@ -159,21 +207,15 @@ const searchItem = ( schedules: any, grupo: number, horario: any ) => {
 }
 
 const onAddGrupo = () => {
-    if ( form.groups.length <= 4 ) {
-        form.groups.push({ ...groupBone, schedules: [{...scheduleBone}] })
+    if (form.groups.length <= 4) {
+        form.groups.push({ ...groupBone, schedules: [{ ...scheduleBone }] })
     }
 }
 
 const removeChild = (pos: number, group: any) => {
-    group.schedules.splice( pos, 1 )
+    group.schedules.splice(pos, 1)
 }
 
-const sports = [
-    { label: "Futbol", value: "1" },
-    { label: "Futbol sala", value: "2" },
-    { label: "Baloncesto", value: "3" },
-    { label: "Taekwondo", value: "4" },
-]
 </script>
 
 <template>
@@ -191,11 +233,9 @@ const sports = [
 
                     <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
                         <CommonSelect label="Mes del cronograma *" name="month" v-model="form.month" :validator="v$"
-                            :options="months" :allowEmpty="false"
-                        />
-                        <CommonSelect label="Municipio *" name="municipality" v-model="form.municipality"
-                            :validator="v$" :options="municipalities" :allowEmpty="false"
-                        />
+                            :options="months" :allowEmpty="false" />
+                        <CommonSelect label="Municipio *" name="municipality" v-model="form.municipality" :validator="v$"
+                            :options="municipalities" :allowEmpty="false" />
                         <div class="col-span-1 md:col-span-2">
                             <CommonEditor label="observaciones" name="note" v-model="form.note" :validator="v$" />
                         </div>
@@ -212,17 +252,17 @@ const sports = [
                             <template v-for="(group, index) in form.groups" :key="index">
                                 <li class="box border border-slate-200 px-4 py-4 sm:p-4 mb-3">
                                     <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
-                                        <CommonSelect label="Grupo *" name="group_id" v-model="group.group_id" :allowEmpty="false"
-                                            :collection_validator="{ index, name: 'groups', v$ }" :options="groups" />
+                                        <CommonSelect label="Grupo *" name="group_id" v-model="group.group_id"       
+                                            :allowEmpty="false" :collection_validator="{ index, name: 'groups', v$ }"
+                                            :options="groupsLists[index]" />
 
-                                        <CommonSelect label="Modalidad deportiva *" name="sports_modality" :allowEmpty="false"
-                                            v-model="group.sports_modality"
-                                            :collection_validator="{ index, name: 'groups', v$ }"
-                                            :options="sports.filter(({ value }) => value == group.group_id)" />
+                                        <CommonSelect label="Modalidad deportiva *" name="sports_modality"
+                                            :allowEmpty="false" v-model="group.sports_modality"
+                                            :collection_validator="{ index, name: 'groups', v$ }" :options="sports" />
 
                                         <CommonInput type="text" placeholder="Ingrese"
-                                            label="Escenario deportivo principal - Nombre *"
-                                            name="main_sports_stage_name" v-model="group.main_sports_stage_name"
+                                            label="Escenario deportivo principal - Nombre *" name="main_sports_stage_name"
+                                            v-model="group.main_sports_stage_name"
                                             :collection_validator="{ index, name: 'groups', v$ }" />
 
                                         <CommonInput type="text" placeholder="Ingrese"
@@ -231,8 +271,8 @@ const sports = [
                                             :collection_validator="{ index, name: 'groups', v$ }" />
 
                                         <CommonInput type="text" placeholder="Ingrese"
-                                            label="Escenario deportivo alternativo - Nombre *"
-                                            name="alt_sports_stage_name" v-model="group.alt_sports_stage_name"
+                                            label="Escenario deportivo alternativo - Nombre *" name="alt_sports_stage_name"
+                                            v-model="group.alt_sports_stage_name"
                                             :collection_validator="{ index, name: 'groups', v$ }" />
 
                                         <CommonInput type="text" placeholder="Ingrese"
@@ -255,19 +295,15 @@ const sports = [
                                                     </DisclosureButton>
                                                 </dt>
                                                 <DisclosurePanel as="dd" class="mt-1">
-                                                    <div
-                                                        class="rounded-md border border-slate-200 px-4 bg-white">
+                                                    <div class="rounded-md border border-slate-200 px-4 bg-white">
                                                         <ul role="list" class="divide-y divide-slate-200">
                                                             <template v-for="(schedule, schIndex) in group.schedules"
                                                                 :key="schIndex">
-                                                                <ScheduleFieldset 
-                                                                    v-model:idx="schedule.idx"
+                                                                <ScheduleFieldset v-model:idx="schedule.idx"
                                                                     v-model:day="schedule.day"
                                                                     v-model:start_time="schedule.start_time"
-                                                                    v-model:end_time="schedule.end_time"
-                                                                    :item="schIndex"
-                                                                    @removeChild="removeChild($event, group)"
-                                                                />
+                                                                    v-model:end_time="schedule.end_time" :item="schIndex"
+                                                                    @removeChild="removeChild($event, group)" />
                                                             </template>
                                                             <li class="py-4 space-x-4">
                                                                 <Button
@@ -283,8 +319,7 @@ const sports = [
                                             </Disclosure>
                                         </div>
                                         <div v-if="index >= 1" class="col-span-1 sm:col-span-2">
-                                            <Button
-                                                @click="form.groups.splice(index, 1)" type="button"
+                                            <Button @click="form.groups.splice(index, 1)" type="button"
                                                 variant="outline-danger" size="sm">
                                                 <Lucide icon="ListMinus" class="mr-2" />
                                                 {{ index === 4 ? 'Eliminar competencia' : 'Eliminar grupo' }}
@@ -295,11 +330,8 @@ const sports = [
                             </template>
                         </ul>
                         <div class="pt-8 text-right">
-                            <Button @click="onAddGrupo()" type="button"
-                                variant="outline-primary"
-                                size="sm"
-                                :disabled="form.groups.length === 5"
-                            >
+                            <Button @click="onAddGrupo()" type="button" variant="outline-primary" size="sm"
+                                :disabled="form.groups.length === 5">
                                 <Lucide icon="Plus" class="mr-2" />
                                 {{ form.groups.length === 4 ? 'Agregar competencia' : 'Agregar grupo' }}
                             </Button>
@@ -309,8 +341,7 @@ const sports = [
             </div>
             <div class="pt-5">
                 <div class="flex justify-end gap-x-4">
-                    <Button @click="$router.push({ name: 'chronograms.index' })" type="button"
-                        variant="outline-secondary">
+                    <Button @click="$router.push({ name: 'chronograms.index' })" type="button" variant="outline-secondary">
                         Cancelar
                     </Button>
                     <Button type="submit" variant="primary">

@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import Vue from 'vue'
-import Crud from '@/components/Crud.vue'
+import Vue from 'vue';
 import { Header, Item } from 'vue3-easy-data-table';
 import { onboardingStore } from "@/stores/onboardingStore";
 import Form from './Form.vue'
@@ -11,6 +10,12 @@ const store = onboardingStore();
 //ver el provider - usado en CRUD para definir los botones de actions, leyendo status. fichasViewer si es único para esta tabla
 //console.log(route.meta.provider)
 //console.log();
+
+onBeforeMount(async () => {
+    await beneficiaryServices.getAll().then((response) => {
+        console.log(response?.data.items)
+    });
+});
 
 const headers: Header[] =
 store.get_user_role?.slug==="metodologo"?
@@ -253,10 +258,7 @@ const cruddata = computed(() => searchData(items, search.value));
 </script>
 <template>
 
-    <div class="flex items-center mt-8 intro-y">
-        <h2 class="mr-auto text-lg font-medium">Fichas de Inscripción de tus Monitores</h2>
-    </div>
-    <div class="p-5 mt-5 intro-y box">
+    <div class="p-5 intro-y box">
         <CommonInput
 			type="search"
 			name="search"

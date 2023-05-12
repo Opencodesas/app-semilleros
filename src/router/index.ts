@@ -86,12 +86,12 @@ const routes = [
 			{
 				path: "example-form",
 				name: "example.create",
-				component: () => import('@/pages/monitors/exampleForm.vue')
+				component: () => import('@/pages/methodologist/reviews/registrationForms/exampleForm.vue')
 			},
 			{
 				path: "example-list",
 				name: "example.index",
-				component: () => import('@/pages/monitors/exampleCrud.vue')
+				component: () => import('@/pages/methodologist/reviews/registrationForms/exampleCrud.vue')
 			},
 			{
 				path: "assistants",
@@ -127,7 +127,7 @@ const routes = [
 						path: "",
 						name: "fichas_inscripcion.index",
 						meta: {provider:"fichaInscrip"},						
-						component: () => import('@/pages/monitors/Index.vue')
+						component: () => import('@/pages/methodologist/reviews/registrationForms/Index.vue')
 					},
 				]
 			},
@@ -173,7 +173,7 @@ const routes = [
 						path: "fichaInscrip",
 						name: "fichas_inscripcion.index",
 						meta: {provider:"fichaInscrip"},						
-						component: () => import('@/pages/monitors/Index.vue')
+						component: () => import('@/pages/methodologist/reviews/registrationForms/Index.vue')
 					},
 				]
 			},*/
@@ -436,6 +436,17 @@ const routes = [
 						name: "methodologist_visits.edit",
 						component: () => import('@/pages/methodologist/Edit.vue')
 					},
+					{
+						path: "reviews",
+						name: "methodologist_visits.reviews",
+						component: () => import('@/pages/methodologist/reviews/Index.vue')
+					},
+					// {
+					// 	path: "",
+					// 	name: "fichas_inscripcion.index",
+					// 	meta: {provider:"fichaInscrip"},						
+					// 	component: () => import('@/pages/methodologist/reviews/registrationForms/Index.vue')
+					// },
 				]
 			},
 			{
