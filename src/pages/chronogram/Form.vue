@@ -269,7 +269,7 @@ const sports = [
                                                                     @removeChild="removeChild($event, group)"
                                                                 />
                                                             </template>
-                                                            <li class="py-4 space-x-4">
+                                                            <li class="py-4 space-x-4" v-show="!(group.group_id == '5')">
                                                                 <Button
                                                                     @click="group.schedules.push({ ...scheduleBone, idx: new Date().getTime() })"
                                                                     type="button" variant="outline-primary">
