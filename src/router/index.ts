@@ -173,7 +173,8 @@ const routes = [
 						path: "fichas",
 						name: "fichas_inscripcion.index",
 						meta: {provider:"fichaInscrip"},						
-						component: () => import('@/pages/methodologist/reviews/registrationForms/Index.vue')
+						//component: () => import('@/pages/methodologist/reviews/registrationForms/Index.vue')
+						component: () => import('@/pages/monitors/Index.vue')
 					},
 				]
 			},

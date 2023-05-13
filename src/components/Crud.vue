@@ -1030,7 +1030,7 @@ const selectedTab = inject('selectedTab', ref(0));
 							:payloadFunctions="payloadFunctions" />
 					</template>
 					<template
-						v-else-if="(onboardingStore().get_user_role?.slug === 'coordinador_regional' && item.status.slug === 'ENP') ||
+						v-else-if="(onboardingStore().get_user_role?.slug === 'coordinador_regional' && item.status.slug === 'APR') ||
 						(onboardingStore().get_user_role?.slug === 'coordinador_regional' && item.status.slug === 'REC')">
 						<Modal
 							:Form="props.Form"
