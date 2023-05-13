@@ -6,7 +6,7 @@
         </div>
   </div>
   <!-- BEGIN: Page Layout -->
-  <form @submit="onIngreso($event, v3$, form)">
+  <form @submit="onIngreso($event, v$, v2$, v3$, form)">
     <div class="p-5 mt-5 intro-y box">
       <h1 class="my-4 text-xl bold text-left text-gray-800 cursor-pointer" @click=" step != 1 ? next_step(1) : null ">
         Datos del beneficiario
@@ -109,6 +109,13 @@
             :allowEmpty="false"
             :options="zonesList"
           />
+          <CommonInput
+            v-if="form.zona === 'R'"
+            label="Corregimiento/Barrio/Vereda"
+            name="pueblo"
+            v-model="form.pueblo"
+            :validator="v$"
+          />
           <CommonSelect
             label="Victima de conflicto"
             name="victimaConflicto"
@@ -116,12 +123,6 @@
             :validator="v$"
             :allowEmpty="false"
             :options="optionsVictima"
-          />
-          <CommonInput
-            label="Corregimiento/Barrio/Vereda"
-            name="pueblo"
-            v-model="form.pueblo"
-            :validator="v$"
           />
         </div>
         <div class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
@@ -490,7 +491,7 @@ const form_rules = computed(() => ({
   estrato:            { required },
   zona:               { required },
   victimaConflicto:   { required },
-  pueblo:             { required },
+  pueblo:             form.zona === 'U' ? {} : { required },
   genero:             { required },
   etnia:              { required },
   discapacidad:       { required },
@@ -539,7 +540,7 @@ onMounted(async () => {
   //peticion a la api para las listas desplegables, by rick.
   store.getListSelect().then((response) => {
     if (response?.status == 200) {
-      municipalitiesList.value = JSON.parse(JSON.stringify(response.data['municipalities']));
+      municipalitiesList.value = JSON.parse(JSON.stringify(response.data['my_municipalities']));
       diciplinesList.value = JSON.parse(JSON.stringify(response.data['diciplines']));
       ethniacityList.value = JSON.parse(JSON.stringify(response.data['ethniacity']));
     } else {
@@ -720,16 +721,16 @@ export default defineComponent({
       console.log( evt.target.value );
       return false;
     },
-    async onIngreso( evt: any, validation: any, form: any ) {
+    async onIngreso( evt: any, v1: any, v2: any, v3: any, form: any ) {
       evt.preventDefault();
 
-      await validation.$validate()
+      await v3.$validate()
       .then((valid: boolean) => {
-          (valid) ? this.ingreso(form) : alerts.validation()
+          (valid) ? this.ingreso(form, v1, v2, v3) : alerts.validation()
       })
 
     },
-    ingreso( form: any ) {
+    ingreso( form: any, v1: any, v2: any, v3: any ) {
       const data = {
         registration_date: form.fechaInscripcion,
         municipalities_id: form.municipio,
@@ -748,7 +749,7 @@ export default defineComponent({
         stratum: form.estrato,
         zone: form.zona,
         conflict_victim: form.victimaConflicto,
-        distric: form.pueblo,
+        distric: form.pueblo || '',
         gender: form.genero,
         ethnicities_id: form.etnia,
         disability: form.discapacidad,
@@ -791,11 +792,11 @@ export default defineComponent({
         if(res){
           Swal.fire('', res.data.message, 'success').finally(() => {
           })
-          this.limpiar( form );
+          this.limpiar( form, v1, v2, v3 );
         }
       });
     },
-    limpiar( form: any ) {
+    limpiar( form: any, v1: any, v2: any, v3: any ) {
       
         form.fechaInscripcion   =  "";
         form.municipio          =  "";
@@ -840,6 +841,10 @@ export default defineComponent({
         form.velocidad          =  '';
         form.fuerza             =  '';
         form.oculomanual        =  '';
+
+        v1.$reset();
+        v2.$reset();
+        v3.$reset();
     },
     regresar() {
       window.alert("Regresa");

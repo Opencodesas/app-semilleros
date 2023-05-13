@@ -334,6 +334,12 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: "fichas_inscripcion.index",
             title: "Revisiones",
           },
+          //cual es la diferencia entre el review general y el de metodologo?? @JuanChicue
+          /*{
+            icon: "Activity",
+            pageName: "methodologist_visits.reviews",
+            title: "Revisiones",
+          },*/
         ]
       },
       //vvvv MODULO FRONT DE CONTRATACION AÑADIDO POR PETICION DE ALEJANDRO 5/9/2023 vvvv
