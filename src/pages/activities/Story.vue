@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import Crud from '../../../components/Crud.vue'
+import Crud from '@/components/Crud.vue'
 import { Header, Item } from 'vue3-easy-data-table';
 //import { required } from '@/utils/validators'
 //import Button from '@/base-components/Button';
-import { onboardingStore } from "../../../stores/onboardingStore";
+import { onboardingStore } from "@/stores/onboardingStore";
 
 const storeOnboarding = onboardingStore();
 
