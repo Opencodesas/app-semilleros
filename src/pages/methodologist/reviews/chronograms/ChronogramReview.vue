@@ -87,13 +87,16 @@ const groups = computedAsync(async () => {
 }, null)
 
 const onSubmit = async () => {
-    const valid = true //await v$.value.$validate()
+    const valid = await v$.value.$validate()
     if (valid) {
         await chronogramServices.update(props.item.id as string, formdataParser(form))
             .then((res: any) => {
                 if (res) {
-                    alerts.update();
+                    setLoading(true);
+                    props.closeModal();
                     setLoading(false)
+                    //alerts.custom('', 'Revisión exitosa!', 'success');
+                    window.location.reload();
 
                 }
 
@@ -107,25 +110,37 @@ const onSubmit = async () => {
 const dataLoaded = ref(false)
 
 const fetch = async () => {
-    console.log(props.item)
-    form.month = props.item.month
-    form.municipality = props.item.municipio
-    form.note = props.item.note
-    form.groups = props.item.groups
+    await chronogramServices.get(props.item.id as string)
+        .then((response) => {
+            if (response?.status == 200 || response?.status == 201) {
+                console.log(response.data.items)
+                form.month = response.data.items.month;
+                form.municipality = response.data.items.municipality;
+                form.note = response.data.items.note;
+                form.groups = response.data.items.groups;
+                form.created_by = response.data.items.created_by;
+                // form.gender = response.data.items.gender;
+                // form.phone = response.data.items.phone;
+                // form.document_type = response.data.items.document_type;
+                // form.document_number = response.data.items.document_number;
+                // form.roles = response.data.items.roles[0];
+                // alerts.custom('', response?.data.message, 'info');
+            } else {
+                alerts.custom("", "No se pudieron obtener los datos", "error");
+            }
+            console.log(form);
+        })
 }
 
 onBeforeMount(async () => {
-    fetch();
+    await fetch();
     dataLoaded.value = true;
 })
 
 
-const sports = [
-    { label: "Futbol", value: "1" },
-    { label: "Futbol sala", value: "2" },
-    { label: "Baloncesto", value: "3" },
-    { label: "Taekwondo", value: "4" },
-]
+const sports = computedAsync(async () => {
+    return await getDisciplinesByMonitor(props.item.created_by.id as number)
+}, null)
 
 watch(() => form.status_id, () => {
     if (form.status_id == '1') form.rejection_message = '';
@@ -165,8 +180,10 @@ watch(() => form.status_id, () => {
                     </h3>
 
                     <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
-                        <CommonInput label="Mes del cronograma *" name="month" v-model="form.month" disabled />
-                        <CommonInput label="Municipio *" name="municipality" v-model="form.municipality" disabled />
+                        <CommonSelect label="Mes del cronograma *" name="month" v-model="form.month" :options="months"
+                            :allowEmpty="false" disabled />
+                        <CommonSelect label="Municipio *" name="municipality" v-model="form.municipality"
+                            :options="municipalities" :allowEmpty="false" disabled />
                         <div class="col-span-1 md:col-span-2">
                             <CommonEditor label="observaciones" name="note" v-model="form.note" disabled />
                         </div>
@@ -188,7 +205,7 @@ watch(() => form.status_id, () => {
 
                                         <CommonSelect label="Modalidad deportiva *" name="sports_modality"
                                             :allowEmpty="false" v-model="group.sports_modality"
-                                            :options="sports.filter(({ value }) => value == group.group_id)" disabled />
+                                            :options="sports" disabled />
 
                                         <CommonInput type="text" placeholder="Ingrese"
                                             label="Escenario deportivo principal - Nombre *" name="main_sports_stage_name"
