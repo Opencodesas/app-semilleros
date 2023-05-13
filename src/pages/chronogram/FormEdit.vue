@@ -7,7 +7,6 @@ import Lucide from '@/base-components/Lucide'
 import ScheduleFieldset from '@/components/ScheduleFieldset.vue'
 import useVuelidate from '@vuelidate/core'
 import {chronogramServices} from "@/services/chronogramService";
-import { disciplineService } from '@/services/disciplineService'
 import { onboardingStore } from '@/stores/onboardingStore'
 
 const storeOnboarding = onboardingStore()
@@ -171,14 +170,6 @@ onBeforeMount(async () => {
     groups.value = await getSelect(['groups'])
     groupsLists.value = [groups.value]
     await fetch();
-
-    disciplineService.byUser( storeOnboarding.get_user.id || 0 )
-    .then((response: any) => {
-        sports.value = response.data.data.items.map( (sport: any) => {
-            return { label: sport.name, value: sport.id }
-        })
-    })
-
 })
 
 const checkChronogram = () => {

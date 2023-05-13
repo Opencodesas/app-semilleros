@@ -8,7 +8,6 @@ import ScheduleFieldset from '@/components/ScheduleFieldset.vue'
 import useVuelidate from '@vuelidate/core'
 import {chronogramServices} from "@/services/chronogramService";
 import { onboardingStore } from "@/stores/onboardingStore";
-import { disciplineService } from '@/services/disciplineService'
 
 const storeOnboarding = onboardingStore()
 
