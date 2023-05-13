@@ -306,7 +306,7 @@ const removeChild = (pos: number, group: any) => {
                                                                     v-model:end_time="schedule.end_time" :item="schIndex"
                                                                     @removeChild="removeChild($event, group)" />
                                                             </template>
-                                                            <li class="py-4 space-x-4">
+                                                            <li class="py-4 space-x-4" v-show="!(group.group_id == '5')">
                                                                 <Button
                                                                     v-if="index < 4"
                                                                     @click="group.schedules.push({ ...scheduleBone, idx: new Date().getTime() })"
