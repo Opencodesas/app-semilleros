@@ -66,7 +66,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
           {
             role: 'monitor',
             icon: "Activity",
-            pageName: "beneficiaries.index",
+            pageName: "beneficiaries.index", 
             title: "Beneficiarios"
           },
           {
@@ -309,7 +309,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
           {
             icon: "Activity",
             role: 'asistente_administrativo',
-            pageName: 'fichas_inscripcion.index'/*"review.bene_chro"*/,
+            pageName: 'review.bene_chro',
             title: "Revisiones",
           },
         ]
@@ -331,7 +331,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
           },
           {
             icon: "Activity",
-            pageName: "fichas_inscripcion.index",
+            pageName: "review.bene_chro",
             title: "Revisiones",
           },
           //cual es la diferencia entre el review general y el de metodologo?? @JuanChicue
