@@ -30,9 +30,11 @@ onBeforeMount(async () => {
 })
 
 const headers: Header[] = [
-    { text: 'ID', value: 'id' },
-    { text: 'NOMBRE USUARIO', value: 'name', sortable: true },
+    { text: 'No.', value: 'id' },
     { text: 'CORREO', value: 'email', sortable: true },
+    { text: 'NOMBRE', value: 'name', sortable: true },
+    { text: 'APELLIDO', value: 'lastname', sortable: true },
+    { text: 'DOCUMENTO', value: 'document_number', sortable: true },
     // { text: "ROLES", value: "roles" },
     { text: 'ACCIONES', value: 'actions' },
 ]
