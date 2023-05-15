@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
-import Cronograma from '../chronogram/Index.vue';
+import Cronograma from '../methodologist/reviews/chronograms/Index.vue';
 import Fichas from './Index.vue';
 
 </script>
