@@ -4,7 +4,7 @@ import axios from 'axios';
 
 export default {
     getAll() {
-        return api.get(`${apiPath}/beneficiaries`)
+        return api.get(`${apiPath}/beneficiaries`) //metodo ya existente en beneficiary_Services
     },
     async getAllUR() {
         try {

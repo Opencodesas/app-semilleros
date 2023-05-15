@@ -386,7 +386,12 @@ const routes = [
 						path: ":id",
 						name: "beneficiaries.edit",
 						component: () => import('@/pages/forms/FormEdit.vue')
-					}
+					},
+					{
+						path: "information",
+						name: "beneficiaries.information",
+						component: () => import('@/pages/monitors/BeneList.vue')
+					},
 				]
 			},
 			{

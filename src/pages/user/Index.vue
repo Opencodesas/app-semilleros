@@ -17,24 +17,25 @@ const create = () => {
     })
 }
 
-
-
-
-
-
 onBeforeMount(async () => {
     await userServices.getAll().then((response) => {
-        items.value = response?.data.items
-        console.log(response?.data.items)
+        items.value = 
+        [...response?.data.items].map(objeto => ({
+        ...objeto,
+        profile: JSON.parse(JSON.stringify({...objeto.profile})) //copia profuda de copia profunda del objeto
+        }));
+        //console.log(response?.data.items)
+        //console.log(items.value)
     })
 })
 
 const headers: Header[] = [
     { text: 'ID', value: 'id' },
-    { text: 'NOMBRE USUARIO', value: 'name', sortable: true },
-    { text: 'CORREO', value: 'email', sortable: true },
-    // { text: "ROLES", value: "roles" },
-    { text: 'ACCIONES', value: 'actions' },
+    { text: 'EMAIL', value: 'email', sortable: true },
+    { text: 'NOMBRE', value: 'profile.contractor_full_name', sortable: true },
+    { text: 'N. DOCUMENTO', value: 'profile.document_number' },
+    { text: 'ROL', value: 'name', sortable: true },
+    { text: 'ACCIONES', value: 'UserActions' },
 ]
 
 const items = ref<Item[]>([])

@@ -75,6 +75,12 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: "chronograms.index",
             title: "Cronograma"
           },
+          /*{
+            role: 'monitor',
+            icon: "Activity",
+            pageName: "beneficiaries.information",
+            title: "Beneficiarios Activos"
+          },*/
         ]
       },
       // {
@@ -236,6 +242,11 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: "review.bene_chro",
             title: "Revisiones",
           },
+          {
+            icon: "Activity",
+            pageName: "users_of_zones.index", 
+            title: "Ver usuarios",
+          },
         ]
       },
       {
@@ -334,25 +345,12 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: "review.bene_chro",
             title: "Revisiones",
           },
-          //cual es la diferencia entre el review general y el de metodologo?? @JuanChicue
-          /*{
-            icon: "Activity",
-            pageName: "methodologist_visits.reviews",
-            title: "Revisiones",
-          },*/
         ]
       },
-      //vvvv MODULO FRONT DE CONTRATACION AÑADIDO POR PETICION DE ALEJANDRO 5/9/2023 vvvv
       {
         icon: 'Activity',
         title: 'Actividades',
         subMenu: [
-          {
-            icon: 'Activity',
-            role: 'monitor auxiliar_administrativo_tecnico apoyo_juridico asistente_administrativo metodologo subdirector_tecnico coordinador_regional coordinador_psicosocial psicologo director_tecnico director_administrator director_programa',
-            pageName: 'budget.active',
-            title: 'Procesos Activos',
-          },
           {
             icon: 'Activity',
             pageName: 'budget.store',
@@ -360,12 +358,17 @@ export const useSideMenuStore = defineStore("sideMenu", {
           },
           {
             icon: 'Activity',
+            role: 'monitor auxiliar_administrativo_tecnico apoyo_juridico asistente_administrativo metodologo subdirector_tecnico coordinador_regional coordinador_psicosocial psicologo director_tecnico director_administrator director_programa',
+            pageName: 'budget.active',
+            title: 'Informes Activos',
+          },          
+          {
+            icon: 'Activity',
             pageName: 'budget.index',
             title: 'Informes Ingresados',
           }
         ]
       }
-      //^^^^ MODULO FRONT DE CONTRATACION AÑADIDO POR PETICION DE ALEJANDRO 5/9/2023 ^^^^
     ],
   }),
   getters: {
