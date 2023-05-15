@@ -179,6 +179,12 @@ const editAction = (id: string | number) => {
 		router.push({ name: `${routeName.value}.edit`, params: { id: id } });
 	}
 };
+const historyAction = (id: string | number) => {
+	console.log("redireccionar al historial de navegacipon");
+};
+const informationAction = (id: string | number) => {
+	console.log("redireccionar a los productos creados por el usuario");
+};
 
 const provider = computed(() => route.meta.provider);
 
@@ -537,6 +543,47 @@ const selectedTab = inject('selectedTab', ref(0));
 				</span>
 			</template>
 			<template #item-actions="item">
+				<div class="flex gap-2 justify-end">
+					<template v-if="route.name == 'users.index'">
+						<Button
+							variant="outline-secondary"
+							@click="editAction(item.id)">
+							<Lucide
+								:icon="'FileEdit'"
+								class="mr-2" />
+							<span
+								class="text-sm">
+								{{ "Perfil" }}									
+							</span>
+						</Button>
+					</template>
+					<template v-if="route.name == 'users.index'">
+						<Button
+							variant="outline-secondary"
+							@click="informationAction(item.id)">
+							<Lucide
+								:icon="'Info'"
+								class="mr-2" />
+							<span
+								class="text-sm">
+								{{ "Informacion" }}									
+							</span>
+						</Button>
+					</template>
+					<template v-if="route.name == 'users.index'">
+						<Button
+							variant="outline-secondary"
+							@click="historyAction(item.id)">
+							<Lucide
+								:icon="'Calendar'"
+								class="mr-2" />
+							<span
+								class="text-sm">
+								{{ "Historial" }}									
+							</span>
+						</Button>
+					</template>
+				</div>
 				<div class="flex gap-2 justify-end">
 					<template v-if="isProvider('assistants')">
 						<template v-if="hasDocumentsHeader && contractorDocuments != null">
