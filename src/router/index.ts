@@ -84,16 +84,6 @@ const routes = [
 				component: () => import('@/pages/Page2.vue'),
 			},
 			{
-				path: "example-form",
-				name: "example.create",
-				component: () => import('@/pages/methodologist/reviews/registrationForms/exampleForm.vue')
-			},
-			{
-				path: "example-list",
-				name: "example.index",
-				component: () => import('@/pages/methodologist/reviews/registrationForms/exampleCrud.vue')
-			},
-			{
 				path: "assistants",
 				name: "assistants",
 				meta: { provider: 'assistants' },
@@ -438,7 +428,7 @@ const routes = [
 					{
 						path: "reviews",
 						name: "methodologist_visits.reviews",
-						component: () => import('@/pages/methodologist/reviews/Index.vue')
+						component: () => import('@/pages/reviewfichas/Review.vue')
 					},
 					// {
 					// 	path: "",
