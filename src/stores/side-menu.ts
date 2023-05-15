@@ -66,7 +66,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
           {
             role: 'monitor',
             icon: "Activity",
-            pageName: "beneficiaries.index",
+            pageName: "beneficiaries.index", 
             title: "Beneficiarios"
           },
           {
@@ -75,6 +75,12 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: "chronograms.index",
             title: "Cronograma"
           },
+          /*{
+            role: 'monitor',
+            icon: "Activity",
+            pageName: "beneficiaries.information",
+            title: "Beneficiarios Activos"
+          },*/
         ]
       },
       // {
@@ -222,6 +228,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
         subMenu: [
           {
             icon: "Activity",
+            role: 'coordinador_regional',
             pageName: "coordinator.create",
             title: "Crear visita",
           },
@@ -234,6 +241,11 @@ export const useSideMenuStore = defineStore("sideMenu", {
             icon: "Activity",
             pageName: "review.bene_chro",
             title: "Revisiones",
+          },
+          {
+            icon: "Activity",
+            pageName: "users_of_zones.index", 
+            title: "Ver usuarios",
           },
         ]
       },
@@ -307,7 +319,8 @@ export const useSideMenuStore = defineStore("sideMenu", {
         subMenu: [
           {
             icon: "Activity",
-            pageName: "review.bene_chro",
+            role: 'asistente_administrativo',
+            pageName: 'review.bene_chro',
             title: "Revisiones",
           },
         ]
@@ -318,6 +331,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
         subMenu: [
           {
             icon: "Activity",
+            role: 'metodologo',
             pageName: "methodologist_visits.create",
             title: "Crear visita",
           },
@@ -328,22 +342,15 @@ export const useSideMenuStore = defineStore("sideMenu", {
           },
           {
             icon: "Activity",
-            pageName: "methodologist_visits.reviews",
+            pageName: "review.bene_chro",
             title: "Revisiones",
           },
         ]
       },
-      //vvvv MODULO FRONT DE CONTRATACION AÑADIDO POR PETICION DE ALEJANDRO 5/9/2023 vvvv
       {
         icon: 'Activity',
         title: 'Actividades',
         subMenu: [
-          {
-            icon: 'Activity',
-            role: 'monitor auxiliar_administrativo_tecnico apoyo_juridico asistente_administrativo metodologo subdirector_tecnico coordinador_regional coordinador_psicosocial psicologo director_tecnico director_administrator director_programa',
-            pageName: 'budget.active',
-            title: 'Procesos Activos',
-          },
           {
             icon: 'Activity',
             pageName: 'budget.store',
@@ -351,12 +358,17 @@ export const useSideMenuStore = defineStore("sideMenu", {
           },
           {
             icon: 'Activity',
+            role: 'monitor auxiliar_administrativo_tecnico apoyo_juridico asistente_administrativo metodologo subdirector_tecnico coordinador_regional coordinador_psicosocial psicologo director_tecnico director_administrator director_programa',
+            pageName: 'budget.active',
+            title: 'Informes Activos',
+          },          
+          {
+            icon: 'Activity',
             pageName: 'budget.index',
             title: 'Informes Ingresados',
           }
         ]
       }
-      //^^^^ MODULO FRONT DE CONTRATACION AÑADIDO POR PETICION DE ALEJANDRO 5/9/2023 ^^^^
     ],
   }),
   getters: {
@@ -371,7 +383,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
         return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'legal' || subMenuItem.role?.includes('apoyo_juridico')))
       }
       else if (isRole('asistente_administrativo')){
-        return state.menu.filter( (menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => menuItem.title == "Coordinador Regional" || subMenuItem.role?.includes('asistente_administrativo')))
+        return state.menu.filter( (menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) =>  subMenuItem.role?.includes('asistente_administrativo')))
       }
       /*else if (isRole('director_juridico')){
         return state.menu.filter( (menuItem) => menuItem == 'divider' ? 'divider' : menuItem.title == "Director Jurídico")
