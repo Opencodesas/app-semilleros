@@ -739,7 +739,7 @@ const selectedTab = inject('selectedTab', ref(0));
 								</span>
 							</Button>
 						</template>
-						<template v-if="route.name == 'methodologist_visits.reviews'">
+						<template v-if="route.name == 'review.bene_chro'">
 							<template v-if="props.Form!">
 								<Modal
 									:Form="props.Form"
