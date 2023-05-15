@@ -19,7 +19,7 @@ currentUser.rol==="metodologo"?
     { text: 'Estado', value: 'fichaStatus'},
     { text: 'Acciones', value: 'fichasViewer' },
 ]
-:
+: currentUser.rol==="coordinador_regional"?
 [
     { text: 'No.', value: 'id', sortable: true},
     { text: 'Metodólogo', value: 'reviewed_by.full_name', sortable: true},
@@ -27,10 +27,21 @@ currentUser.rol==="metodologo"?
     { text: 'CC del Monitor', value: 'created_by.document_number', sortable: true},
     { text: 'Beneficiario', value: 'full_name', sortable: true},
     { text: 'Municipio', value: "municipality.name"},
-    { text: 'Revisado por', value: "reviewed_by.full_name"},
     { text: 'Estado', value: 'status'},
     { text: 'Acciones', value: 'fichasViewer' },
-];
+]
+:
+[
+    { text: 'No.', value: 'id', sortable: true},
+    { text: 'Revisado por', value: 'reviewed_by.full_name', sortable: true},
+    { text: 'Monitor', value: 'created_by.full_name', sortable: true},
+    { text: 'CC del Monitor', value: 'created_by.document_number', sortable: true},
+    { text: 'Beneficiario', value: 'full_name', sortable: true},
+    { text: 'Municipio', value: "municipality.name"},
+    { text: 'Estado', value: 'status'},
+    { text: 'Acciones', value: 'fichasViewer' },
+]
+;
 
 const data = ref([]);
 
