@@ -9,6 +9,7 @@ import useVuelidate from '@vuelidate/core'
 import {chronogramServices} from "@/services/chronogramService";
 import { onboardingStore } from '@/stores/onboardingStore'
 
+const storeOnboarding = onboardingStore()
 
 const form = reactive({
     status_id: 0,
@@ -184,7 +185,7 @@ const checkChronogram = () => {
             const horario = schedules[j];
             if ( !horario ) continue
 
-            hayCruce = searchItem( schedules, i+1, horario );
+            hayCruce = searchItem( i+1, horario );
 
             if(hayCruce) break;
         }
@@ -195,16 +196,16 @@ const checkChronogram = () => {
     return hayCruce
 }
 
-const searchItem = ( schedules: any, grupo: number, horario: any ) => {
+const searchItem = ( grupo: number, horario: any ) => {
     let hayCruce = false;
     let grupoCruce;
 
     for( let i = 0; i < form.groups.length; i++) {
         const filterSameDay = form.groups[i].schedules.filter((item: any) => item.idx !== horario.idx && item.day === horario.day && item.start_time && item.end_time);
         
-        filterSameDay.forEach( (item: any) => {
-            if(!horario.start_time || !horario.end_time) return
-            if( 
+        filterSameDay.forEach( (item: any, idx: number) => {
+            if( idx === 4 || !horario.start_time || !horario.end_time) return
+            else if( 
                 (item.start_time <= horario.start_time && item.end_time <= horario.end_time && item.end_time > horario.start_time) ||
                 (item.start_time >= horario.start_time && item.end_time >= horario.end_time && item.start_time < horario.end_time) ||
                 (item.start_time >= horario.start_time && item.end_time <= horario.end_time) ||
@@ -232,7 +233,7 @@ const searchItem = ( schedules: any, grupo: number, horario: any ) => {
 
 const onAddGrupo = () => {
     if ( form.groups.length < 4 ) {
-        form.groups.push({ ...groupBone, schedules: [{...scheduleBone}] })
+        form.groups.push({ ...groupBone, schedules: [{...scheduleBone, idx: new Date().getTime()}] })
     }
 }
 
@@ -357,7 +358,7 @@ const removeChild = (pos: number, group: any) => {
                                                                 <Button
                                                                     @click="group.schedules.push({ ...scheduleBone, idx: new Date().getTime() })"
                                                                     type="button" variant="outline-primary"
-                                                                    v-if="form.status_id === 4"
+                                                                    v-if="form.status_id === 4 && index < 4"
                                                                 >
                                                                     <Lucide icon="ListPlus" class="mr-2" />
                                                                     Agregar horario

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Crud from '@/components/Crud.vue'
 import { Header, Item } from 'vue3-easy-data-table';
 //import { required } from '@/utils/validators'
 //import Button from '@/base-components/Button';
@@ -6,8 +7,8 @@ import { onboardingStore } from '@/stores/onboardingStore';
 
 const storeOnboarding = onboardingStore();
 
-const route = useRoute(); //the
-const { isProvider } = useProvider(); //isProvider return boolean value of especific role mode
+const route = useRoute();
+const { isProvider } = useProvider(); //isProvider return boolean value of especific role mode 
 
 //#region rutas
 const router = useRouter()
@@ -51,23 +52,19 @@ const headers: Header[] = [
     {text: 'CREADO', value: 'create' },
     {text: 'ESTADO', value: 'budgetstatus', sortable: true, width: 150},
 ]
-const userdata = {
-    nombre: "Arturo Marulanda",
-    id : "1112341234"
-}
 
-const data = [
+let data = [
     {
         id: "1",
         date: "febrero",
         create: "04-19-2023",
         contract: {
-            id: "0001",
-            name: "Arturo Marulanda",
-            cuote: formatoPesos.format(Number.parseInt("1500000")),
-            periodStart: "1-15-2023",
-            periodEnd: "12-15-2023",
-            periods: "12", 
+            id: "CPS-057",
+            name: "GLORIA INES MONTOYA",
+            cuote: formatoPesos.format(Number.parseInt("6600000")),
+            periodStart: "14/2/2023",
+            periodEnd: "31/5/2023",
+            periods: "1", 
         },
         budgetstatus: {
             status: "En Supervisión",
@@ -79,12 +76,12 @@ const data = [
         date: "marzo",
         create: "04-19-2023",
         contract: {
-            id: "0002",
-            name: "Arturo Marulanda",
-            cuote: formatoPesos.format(Number.parseInt("1500000")),
-            periodStart: "1-15-2023",
-            periodEnd: "12-15-2023",
-            periods: "12", 
+            id: "CPS-057",
+            name: "GLORIA INES MONTOYA",
+            cuote: formatoPesos.format(Number.parseInt("6600000")),
+            periodStart: "14/2/2023",
+            periodEnd: "31/5/2023",
+            periods: "1",  
         },
         budgetstatus: {
             status: "Contabilidad",
@@ -96,12 +93,12 @@ const data = [
         date: "abril",
         create: "04-19-2023",
         contract: {
-            id: "0003",
-            name: "Arturo Marulanda",
-            cuote: formatoPesos.format(Number.parseInt("1500000")),
-            periodStart: "1-15-2023",
-            periodEnd: "12-15-2023",
-            periods: "12", 
+            id: "CPS-057",
+            name: "GLORIA INES MONTOYA",
+            cuote: formatoPesos.format(Number.parseInt("6600000")),
+            periodStart: "14/2/2023",
+            periodEnd: "31/5/2023",
+            periods: "1",  
         },
         budgetstatus: {
             status: "Tesorería",
@@ -113,12 +110,12 @@ const data = [
         date: "mayo",
         create: "04-19-2023",
         contract: {
-            id: "0004",
-            name: "Arturo Marulanda",
-            cuote: formatoPesos.format(Number.parseInt("1500000")),
-            periodStart: "1-15-2023",
-            periodEnd: "12-15-2023",
-            periods: "12", 
+            id: "CPS-057",
+            name: "GLORIA INES MONTOYA",
+            cuote: formatoPesos.format(Number.parseInt("6600000")),
+            periodStart: "14/2/2023",
+            periodEnd: "31/5/2023",
+            periods: "1",  
         },
         budgetstatus: {
             status: "Presupuesto",
@@ -130,20 +127,64 @@ const data = [
         date: "junio",
         create: "04-19-2023",
         contract: {
-            id: "0005",
-            name: "Arturo Marulanda",
-            cuote: formatoPesos.format(Number.parseInt("1500000")),
-            periodStart: "1-15-2023",
-            periodEnd: "12-15-2023",
-            periods: "12", 
+            id: "CPS-057",
+            name: "GLORIA INES MONTOYA",
+            cuote: formatoPesos.format(Number.parseInt("6600000")),
+            periodStart: "14/2/2023",
+            periodEnd: "31/5/2023",
+            periods: "1",  
         },
         budgetstatus: {
             status: "Subsanación",
             slug: "SUB",
+            msn: "Aún no puedes hacer esta cuenta de cobro"
         },
     },
 ];
+
 console.log(data);
+let fakedata:Object | Array | String | null = localStorage.getItem("cuenta de cobro");
+console.log("fakedata: "+JSON.stringify(fakedata));
+if(fakedata){
+    fakedata = JSON.parse(fakedata);
+    if(fakedata.length===1){
+        fakedata = fakedata[0];
+    data[data.length] = {...fakedata,
+        id:data.length+1,
+        date:fakedata.budgetdata?.validity.split(" ")[0],
+        contract: {
+            id:fakedata.budgetdata?.contract?.id,
+            name: fakedata.budgetdata.contract?.username,
+            cuote:fakedata.budgetdata.contract?.cuote
+        },
+        create: fakedata.create,
+        budgetstatus: {
+            status:fakedata.budgetdata.state,
+            slug:'ENR'
+        }};
+    }else{
+        let temp;
+        fakedata.forEach(element => {
+            data[data.length] =
+            {...element,
+                id:data.length+1,
+                date:element.budgetdata?.validity.split(" ")[0],
+                contract: {
+                    id:element.budgetdata?.contract?.id,
+                    name: element.budgetdata.contract?.username,
+                    cuote:element.budgetdata.contract?.cuote
+                },
+                create: element.create,
+                budgetstatus: {
+                    status:element.budgetdata.state,
+                    slug:'ENR'
+                }
+            };
+        });
+    }
+}
+console.log(data);
+
 const items = ref<Item[]>(data);
 //#endregion
 
@@ -151,11 +192,9 @@ const items = ref<Item[]>(data);
 
 <template>
     <div class="flex items-center mt-8 intro-y">
-        <h2 v-if="route.meta.provider == 'contractor'" class="mr-auto text-lg font-medium">
-            {{ storeOnboarding.get_user_role?.name }}, estas son tus Cuentas de Cobro:</h2>
-        <h2 v-else class="mr-auto text-lg font-medium">
-            Cuentas de cobro de {{ userdata.nombre }}.</h2>
-        
+        <h2 class="mr-auto text-lg font-medium">
+            Informes de Cuentas de Cobro
+        </h2>        
         <!--<div class="w-full sm:w-auto flex mt-4 sm:mt-0">
             
             <Button class="bg-cyan-900 text-white border-0 hover:bg-cyan-800 hover:animate-pulse" @click="create">

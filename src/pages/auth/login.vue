@@ -25,7 +25,7 @@ const onSubmit = async () => {
 
   if (valid){
     const response = await store.login(form)
-    
+
     if (response?.status == 200){
       alerts.custom('Autenticación', 'Ha iniciado sesión con éxito', 'success')
       //console.log('ingresó rol: '+ store.get_user_role?.slug);

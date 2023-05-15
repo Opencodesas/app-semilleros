@@ -1,13 +1,17 @@
 <script setup lang="ts">
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
-import { helpers } from '@vuelidate/validators'
-import { required, nestedRequired, unique } from '@/utils/validators'
-import dayjs from 'dayjs'
+
 import Lucide from '@/base-components/Lucide'
 import ScheduleFieldset from '@/components/ScheduleFieldset.vue'
+import { chronogramServices } from "@/services/chronogramService"
+import { onboardingStore } from "@/stores/onboardingStore"
+import { nestedRequired, required, unique } from '@/utils/validators'
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
 import useVuelidate from '@vuelidate/core'
-import { chronogramServices } from "@/services/chronogramService";
-import { onboardingStore } from '@/stores/onboardingStore'
+
+import { helpers } from '@vuelidate/validators'
+import dayjs from 'dayjs'
+
+const storeOnboarding = onboardingStore()
 
 const form = reactive({
     month: '',
@@ -65,9 +69,19 @@ const groupBone = {
     schedules: [{ ...scheduleBone }]
 }
 
+interface Chronogram {
+    value: number,
+    label: string
+}
+
+const chronogram = ref<Chronogram[]>([]);
+
+const cloneChronogram = ref<Chronogram>();
+
 const v$ = useVuelidate(form_rules, form)
 
 const router = useRouter()
+
 
 const months = computedAsync(async () => {
     const data = await getSelect(['months'])
@@ -96,7 +110,7 @@ watch(form.groups, (newVal, oldVal) => {
 })
 
 const groupsFilter = () => {
-    
+	
     let lists = []
 
     for (let i = 0; i < form.groups.length; i++) {
@@ -114,7 +128,6 @@ const groupsFilter = () => {
     }
     groupsLists.value = lists
 }
-
 
 const sports = computedAsync(async () => {
     return await getDisciplinesByMonitor(onboardingStore().get_user.id as number)
@@ -153,12 +166,12 @@ const checkChronogram = () => {
 
         const schedules = form.groups[i].schedules;
 
-        for (let j = 0; j < schedules.length; j++) {
+        for( let j = 0; j < schedules.length; j++ ) {
 
             const horario = schedules[j];
             if (!horario) continue
 
-            hayCruce = searchItem(i, horario);
+            hayCruce = searchItem( i+1, horario );
 
             if (hayCruce) break;
         }
@@ -169,23 +182,22 @@ const checkChronogram = () => {
     return hayCruce
 }
 
-const searchItem = (grupo: number, horario: any) => {
+const searchItem = ( grupo: number, horario: any ) => {
     let hayCruce = false;
     let grupoCruce;
 
-    for (let i = 0; i < form.groups.length; i++) {
-        const filterSameDay = form.groups[i].schedules.filter((item: any) => item.idx !== horario.idx && item.day === horario.day && item.start_time && item.end_time);
+    for( let i = 0; i < form.groups.length; i++) {
+        const filterSameDay = form.groups[i].schedules.filter( (item: any) => item.idx !== horario.idx && item.day === horario.day);
 
-        filterSameDay.forEach((item: any) => {
-            if(!horario.start_time || !horario.end_time) return
-            if (
+        filterSameDay.forEach( (item: any, idx: number) => {
+            if( idx === 4 || !horario.start_time || !horario.end_time) return
+            else if(
                 (item.start_time <= horario.start_time && item.end_time <= horario.end_time && item.end_time > horario.start_time) ||
                 (item.start_time >= horario.start_time && item.end_time >= horario.end_time && item.start_time < horario.end_time) ||
                 (item.start_time >= horario.start_time && item.end_time <= horario.end_time) ||
                 (item.start_time <= horario.start_time && item.end_time >= horario.end_time) ||
                 (item.start_time == horario.start_time && item.end_time == horario.end_time)
             ) {
-                //console.log(item.start_time, item.end_time, horario.start_time, horario.end_time)
                 hayCruce = true;
                 if (i != grupo) grupoCruce = i;
                 return;
@@ -206,8 +218,8 @@ const searchItem = (grupo: number, horario: any) => {
 }
 
 const onAddGrupo = () => {
-    if (form.groups.length <= 4) {
-        form.groups.push({ ...groupBone, schedules: [{ ...scheduleBone }] })
+    if ( form.groups.length <= 4 ) {
+        form.groups.push({ ...groupBone, schedules: [{...scheduleBone, idx: new Date().getTime() }] })
     }
 }
 
@@ -215,139 +227,271 @@ const removeChild = (pos: number, group: any) => {
     group.schedules.splice(pos, 1)
 }
 
+onBeforeMount(async () => {
+    await chronogramServices.getAll().then((response) => {
+        const data = response?.data.items.map((item: any) => {
+            return {
+                value: item.id,
+                label: `${item.month} ${item.status.created_at.split('-')[0]}`
+            }
+        })
+        chronogram.value.push(...data)
+    })
+})
+
+const onCloneChronogram = async () => {
+	const id = cloneChronogram.value;
+  if (id != undefined) {
+      await chronogramServices.get(id as unknown as string)  
+      .then((res: any) => {;
+          form.groups = res.data.items.groups;
+      });
+  } else {
+			alerts.custom('Validación', 'Por favor seleccione un cronograma para clonar.', 'error')
+	}
+}
+
 </script>
 
 <template>
-    <div class="flex items-center mt-8 intro-y">
-        <h2 class="mr-auto text-lg font-medium">Creación de Cronograma</h2>
-    </div>
+	<div class="flex items-center mt-8 intro-y">
+		<h2 class="mr-auto text-lg font-medium">Creación de Cronograma</h2>
+	</div>
 
-    <div class="p-5 mt-5 intro-y box">
-        <form @submit.prevent="onSubmit" class="space-y-8 divide-y divide-slate-200">
-            <div class="space-y-8 divide-y divide-slate-200">
-                <div>
-                    <h3 class="text-lg font-medium leading-6 text-gray-900">
-                        Cronograma
-                    </h3>
+	<div class="p-5 mt-5 intro-y box">
+		<form
+			@submit.prevent="onSubmit"
+			class="space-y-8 divide-y divide-slate-200">
+			<div class="space-y-8 divide-y divide-slate-200">
+				<div>
+					<h3 class="text-lg font-medium leading-6 text-gray-900">
+						Cronograma
+					</h3>
 
-                    <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
-                        <CommonSelect label="Mes del cronograma *" name="month" v-model="form.month" :validator="v$"
-                            :options="months" :allowEmpty="false" />
-                        <CommonSelect label="Municipio *" name="municipality" v-model="form.municipality" :validator="v$"
-                            :options="municipalities" :allowEmpty="false" />
-                        <div class="col-span-1 md:col-span-2">
-                            <CommonEditor label="observaciones" name="note" v-model="form.note" :validator="v$" />
-                        </div>
-                    </div>
-                </div>
+					<div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+						<CommonSelect
+							label="Mes del cronograma *"
+							name="month"
+							v-model="form.month"
+							:validator="v$"
+							:options="months"
+							:allowEmpty="false" />
+						<CommonSelect
+							label="Municipio *"
+							name="municipality"
+							v-model="form.municipality"
+							:validator="v$"
+							:options="municipalities"
+							:allowEmpty="false" />
+						<CommonSelect
+							class=""
+							label="Clonar Cronograma *"
+							name="cloneChronogram"
+							v-model="cloneChronogram"
+							:options="chronogram"
+                        
+							:allowEmpty="false" />
+						<div class="col-span-1 flex items-end">
+							<Button
+                                @click="onCloneChronogram"
+								type="button"
+								variant="primary"
+								>Clonar</Button
+							>
+						</div>
+						<div class="col-span-1 md:col-span-2">
+							<CommonEditor
+								label="observaciones"
+								name="note"
+								v-model="form.note"
+								:validator="v$" />
+						</div>
+					</div>
+				</div>
 
-                <div class="pt-8">
-                    <h3 class="text-lg font-medium leading-6 text-gray-900">
-                        Grupos
-                    </h3>
+				<div class="pt-8">
+					<h3 class="text-lg font-medium leading-6 text-gray-900">Grupos</h3>
 
-                    <div class="mt-6 divide-y divide-slate-200">
-                        <ul role="list" class="divide-y">
-                            <template v-for="(group, index) in form.groups" :key="index">
-                                <li class="box border border-slate-200 px-4 py-4 sm:p-4 mb-3">
-                                    <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
-                                        <CommonSelect label="Grupo *" name="group_id" v-model="group.group_id"       
-                                            :allowEmpty="false" :collection_validator="{ index, name: 'groups', v$ }"
-                                            :options="groupsLists[index]" />
+					<div class="mt-6 divide-y divide-slate-200">
+						<ul
+							role="list"
+							class="divide-y">
+							<template
+								v-for="(group, index) in form.groups"
+								:key="index">
+								<li class="box border border-slate-200 px-4 py-4 sm:p-4 mb-3">
+									<div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+										<CommonSelect
+											label="Grupo *"
+											name="group_id"
+											v-model="group.group_id"
+											:allowEmpty="false"
+											:collection_validator="{ index, name: 'groups', v$ }"
+											:options="groupsLists[index]" />
 
-                                        <CommonSelect label="Modalidad deportiva *" name="sports_modality"
-                                            :allowEmpty="false" v-model="group.sports_modality"
-                                            :collection_validator="{ index, name: 'groups', v$ }" :options="sports" />
+										<CommonSelect
+											label="Modalidad deportiva *"
+											name="sports_modality"
+											:allowEmpty="false"
+											v-model="group.sports_modality"
+											:collection_validator="{ index, name: 'groups', v$ }"
+											:options="sports" />
 
-                                        <CommonInput type="text" placeholder="Ingrese"
-                                            label="Escenario deportivo principal - Nombre *" name="main_sports_stage_name"
-                                            v-model="group.main_sports_stage_name"
-                                            :collection_validator="{ index, name: 'groups', v$ }" />
+										<CommonInput
+											type="text"
+											placeholder="Ingrese"
+											label="Escenario deportivo principal - Nombre *"
+											name="main_sports_stage_name"
+											v-model="group.main_sports_stage_name"
+											:collection_validator="{ index, name: 'groups', v$ }" />
 
-                                        <CommonInput type="text" placeholder="Ingrese"
-                                            label="Escenario deportivo principal - Dirección *"
-                                            name="main_sports_stage_address" v-model="group.main_sports_stage_address"
-                                            :collection_validator="{ index, name: 'groups', v$ }" />
+										<CommonInput
+											type="text"
+											placeholder="Ingrese"
+											label="Escenario deportivo principal - Dirección *"
+											name="main_sports_stage_address"
+											v-model="group.main_sports_stage_address"
+											:collection_validator="{ index, name: 'groups', v$ }" />
 
-                                        <CommonInput type="text" placeholder="Ingrese"
-                                            label="Escenario deportivo alternativo - Nombre *" name="alt_sports_stage_name"
-                                            v-model="group.alt_sports_stage_name"
-                                            :collection_validator="{ index, name: 'groups', v$ }" />
+										<CommonInput
+											type="text"
+											placeholder="Ingrese"
+											label="Escenario deportivo alternativo - Nombre *"
+											name="alt_sports_stage_name"
+											v-model="group.alt_sports_stage_name"
+											:collection_validator="{ index, name: 'groups', v$ }" />
 
-                                        <CommonInput type="text" placeholder="Ingrese"
-                                            label="Escenario deportivo alternativo - Dirección *"
-                                            name="alt_sports_stage_address" v-model="group.alt_sports_stage_address"
-                                            :collection_validator="{ index, name: 'groups', v$ }" />
+										<CommonInput
+											type="text"
+											placeholder="Ingrese"
+											label="Escenario deportivo alternativo - Dirección *"
+											name="alt_sports_stage_address"
+											v-model="group.alt_sports_stage_address"
+											:collection_validator="{ index, name: 'groups', v$ }" />
 
-                                        <div class="col-span-1 sm:col-span-2">
-                                            <Disclosure as="div" v-slot="{ open }">
-                                                <dt>
-                                                    <DisclosureButton
-                                                        class="flex justify-between w-full px-3 py-2 rounded-md border border-slate-200 text-gray-900">
-                                                        <h3 class="text-sm font-medium leading-6 text-gray-900">
-                                                            Horarios
-                                                        </h3>
-                                                        <span class="ml-6 flex h-6 items-center">
-                                                            <Lucide v-if="!open" class="h-5 w-5" icon="ChevronDown" />
-                                                            <Lucide v-else class="h-5 w-5" icon="ChevronUp" />
-                                                        </span>
-                                                    </DisclosureButton>
-                                                </dt>
-                                                <DisclosurePanel as="dd" class="mt-1">
-                                                    <div class="rounded-md border border-slate-200 px-4 bg-white">
-                                                        <ul role="list" class="divide-y divide-slate-200">
-                                                            <template v-for="(schedule, schIndex) in group.schedules"
-                                                                :key="schIndex">
-                                                                <ScheduleFieldset v-model:idx="schedule.idx"
-                                                                    v-model:day="schedule.day"
-                                                                    v-model:start_time="schedule.start_time"
-                                                                    v-model:end_time="schedule.end_time" :item="schIndex"
-                                                                    @removeChild="removeChild($event, group)" />
-                                                            </template>
-                                                            <li class="py-4 space-x-4">
-                                                                <Button
-                                                                    @click="group.schedules.push({ ...scheduleBone, idx: new Date().getTime() })"
-                                                                    type="button" variant="outline-primary">
-                                                                    <Lucide icon="ListPlus" class="mr-2" />
-                                                                    Agregar horario
-                                                                </Button>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </DisclosurePanel>
-                                            </Disclosure>
-                                        </div>
-                                        <div v-if="index >= 1" class="col-span-1 sm:col-span-2">
-                                            <Button @click="form.groups.splice(index, 1)" type="button"
-                                                variant="outline-danger" size="sm">
-                                                <Lucide icon="ListMinus" class="mr-2" />
-                                                {{ index === 4 ? 'Eliminar competencia' : 'Eliminar grupo' }}
-                                            </Button>
-                                        </div>
-                                    </div>
-                                </li>
-                            </template>
-                        </ul>
-                        <div class="pt-8 text-right">
-                            <Button @click="onAddGrupo()" type="button" variant="outline-primary" size="sm"
-                                :disabled="form.groups.length === 5">
-                                <Lucide icon="Plus" class="mr-2" />
-                                {{ form.groups.length === 4 ? 'Agregar competencia' : 'Agregar grupo' }}
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="pt-5">
-                <div class="flex justify-end gap-x-4">
-                    <Button @click="$router.push({ name: 'chronograms.index' })" type="button" variant="outline-secondary">
-                        Cancelar
-                    </Button>
-                    <Button type="submit" variant="primary">
-                        Guardar
-                    </Button>
-                </div>
-            </div>
-        </form>
-    </div>
+										<div class="col-span-1 sm:col-span-2">
+											<Disclosure
+												as="div"
+												v-slot="{ open }">
+												<dt>
+													<DisclosureButton
+														class="flex justify-between w-full px-3 py-2 rounded-md border border-slate-200 text-gray-900">
+														<h3
+															class="text-sm font-medium leading-6 text-gray-900">
+															Horarios
+														</h3>
+														<span class="ml-6 flex h-6 items-center">
+															<Lucide
+																v-if="!open"
+																class="h-5 w-5"
+																icon="ChevronDown" />
+															<Lucide
+																v-else
+																class="h-5 w-5"
+																icon="ChevronUp" />
+														</span>
+													</DisclosureButton>
+												</dt>
+												<DisclosurePanel
+													as="dd"
+													class="mt-1">
+													<div
+														class="rounded-md border border-slate-200 px-4 bg-white">
+														<ul
+															role="list"
+															class="divide-y divide-slate-200">
+															<template
+																v-for="(schedule, schIndex) in group.schedules"
+																:key="schIndex">
+																<ScheduleFieldset
+																	v-model:idx="schedule.idx"
+																	v-model:day="schedule.day"
+																	v-model:start_time="schedule.start_time"
+																	v-model:end_time="schedule.end_time"
+																	:item="schIndex"
+																	@removeChild="removeChild($event, group)" />
+															</template>
+															<li
+																class="py-4 space-x-4"
+																v-show="!(group.group_id == '5')">
+																<Button
+																	v-if="index < 4"
+																	@click="
+																		group.schedules.push({
+																			...scheduleBone,
+																			idx: new Date().getTime(),
+																		})
+																	"
+																	type="button"
+																	variant="outline-primary">
+																	<Lucide
+																		icon="ListPlus"
+																		class="mr-2" />
+																	Agregar horario
+																</Button>
+															</li>
+														</ul>
+													</div>
+												</DisclosurePanel>
+											</Disclosure>
+										</div>
+										<div
+											v-if="index >= 1"
+											class="col-span-1 sm:col-span-2">
+											<Button
+												@click="form.groups.splice(index, 1)"
+												type="button"
+												variant="outline-danger"
+												size="sm">
+												<Lucide
+													icon="ListMinus"
+													class="mr-2" />
+												{{
+													index === 4
+														? 'Eliminar competencia'
+														: 'Eliminar grupo'
+												}}
+											</Button>
+										</div>
+									</div>
+								</li>
+							</template>
+						</ul>
+						<div class="pt-8 text-right">
+							<Button
+								@click="onAddGrupo()"
+								type="button"
+								variant="outline-primary"
+								size="sm"
+								:disabled="form.groups.length === 5">
+								<Lucide
+									icon="Plus"
+									class="mr-2" />
+								{{
+									form.groups.length === 4
+										? 'Agregar competencia'
+										: 'Agregar grupo'
+								}}
+							</Button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="pt-5">
+				<div class="flex justify-end gap-x-4">
+					<Button
+						@click="$router.push({ name: 'chronograms.index' })"
+						type="button"
+						variant="outline-secondary">
+						Cancelar
+					</Button>
+					<Button
+						type="submit"
+						variant="primary">
+						Guardar
+					</Button>
+				</div>
+			</div>
+		</form>
+	</div>
 </template>

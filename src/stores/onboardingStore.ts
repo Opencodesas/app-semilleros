@@ -67,10 +67,6 @@ export const onboardingStore = defineStore("onboarding", {
 				const result = await onboardingServices.login(values);
 				
 				// Si el usuario no tiene perfil
-				if (!result?.data?.user?.profile) {
-					alerts.custom('Oops!', 'El usuario no tiene perfil, por favor comunicarse con un administrador, para que te asigne un perfil', 'warning')
-					return null;
-				}
 				if (result.status == 200) {
 					this.set_auth(result.data.user)
 					// localStorage.setItem("user", JSON.stringify(result.data.user));
