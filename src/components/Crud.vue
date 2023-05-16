@@ -180,10 +180,10 @@ const editAction = (id: string | number) => {
 	}
 };
 const historyAction = (id: string | number) => {
-	console.log("redireccionar al historial de navegacipon");
+		router.push({ name: `${routeName.value}.history`, params: { id: id } });
 };
 const informationAction = (id: string | number) => {
-	console.log("redireccionar a los productos creados por el usuario");
+		router.push({ name: `${routeName.value}.information`, params: { id: id } });
 };
 
 const provider = computed(() => route.meta.provider);
