@@ -39,16 +39,24 @@ const form_rules = computed(() => ({
     month: { required },
     municipality: { required },
     note: { required },
-    groups: {
-        $each: helpers.forEach({
-            group_id: { nestedRequired, unique: unique(form.groups, 'group_id') },
-            sports_modality: { nestedRequired },
-            main_sports_stage_name: { nestedRequired },
-            main_sports_stage_address: { nestedRequired },
-            alt_sports_stage_name: { nestedRequired },
-            alt_sports_stage_address: { nestedRequired },
-        })
-    }
+	groups: {
+		$each: helpers.forEach({
+			group_id: { nestedRequired, unique: unique(form.groups, 'group_id') },
+			sports_modality: { nestedRequired },
+			main_sports_stage_name: { nestedRequired },
+			main_sports_stage_address: { nestedRequired },
+			alt_sports_stage_name: { nestedRequired },
+			alt_sports_stage_address: { nestedRequired },
+			schedules: {
+				$each: helpers.forEach({
+					day: { nestedRequired },
+					start_time: { nestedRequired },
+					end_time: { nestedRequired },
+				}),
+			}
+		}
+		),
+	}
 }))
 
 
