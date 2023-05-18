@@ -82,7 +82,7 @@ export default {
         <!-- Component -->
         <FormInput :id="name" :class="[{
             'border-danger': validator && validator[name].$error
-                || props.collection_validator?.v$[props.collection_validator?.name].$each.$response.$errors[props.collection_validator?.index][props.name].length
+                || collection_validator && (props.collection_validator?.v$[props.collection_validator?.name].$each.$response.$errors[props.collection_validator?.index][props.name].length && collection_validator.v$[collection_validator.name].$error)
         }, { 'block px-4 py-3 intro-x login__input min-w-full xl:min-w-[350px]': $route.name == 'login' }]"
             :max="max"
             :step="step"
