@@ -27,6 +27,9 @@ const userdata = {
     epsName: "Sura",
     arlName: "POSITIVA",
     pensionName: "PROTECCION",
+    epsValue: "1.5",
+    arlValue: "0.522",
+    pensionValue: "0.16",
 }
 const contractdata =
 {

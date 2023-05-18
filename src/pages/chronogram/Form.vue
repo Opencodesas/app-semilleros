@@ -84,7 +84,7 @@ interface Chronogram {
 
 const chronogram = ref<Chronogram[]>([]);
 
-const cloneChronogram = ref<Chronogram>();
+const cloneChronogram = ref();
 
 const v$ = useVuelidate(form_rules, form)
 
@@ -301,7 +301,7 @@ const onCloneChronogram = async () => {
 							:allowEmpty="false" />
 						<div class="col-span-1 flex items-end">
 							<Button
-                                @click="onCloneChronogram"
+                @click="onCloneChronogram"
 								type="button"
 								variant="primary"
 								>Clonar</Button

@@ -22,7 +22,7 @@ let currentUser = {id: onboardingStore().get_user.id, name: onboardingStore().ge
 
 const data = ref(props?.payloadFunctions?.DATA());
 //buscar y traer solo la ficha correspondiente al props.id_review
-let currentFicha = data.value.items.find(o=>o.id===props.id_review);
+let currentFicha = data.value.items.find((o: any) => o.id === props.id_review);
 
 const currentmotive = ref(currentFicha.rejection_message||"");
 const form = reactive(

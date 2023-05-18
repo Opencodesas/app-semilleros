@@ -57,7 +57,7 @@ onMounted(async () => {
 const getFichaData = () => data.value;
 
 const updateFichaData = (id:any, data:any) => {
-    let ficha = data.value.find(o=>o.id=== id);
+    let ficha = data.value.find((o: any) =>o.id=== id);
     if(ficha){
         ficha.status = data.status;
         ficha.reviewed_by = data.reviewed_by;
