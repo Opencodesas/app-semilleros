@@ -84,6 +84,11 @@ const routes = [
 				component: () => import('@/pages/Page2.vue'),
 			},
 			{
+				path: "profile",
+				name: "profile",
+				component: () => import('@/pages/profile/Index.vue'),
+			},
+			{
 				path: "assistants",
 				name: "assistants",
 				meta: { provider: 'assistants' },
@@ -611,6 +616,16 @@ const routes = [
 						path: ":id",
 						name: "users.edit",
 						component: () => import('@/pages/user/FormEdit.vue')
+					},
+					{
+						path: "information/:id",
+						name: "users.information",
+						component: () => import('@/pages/user/FormEdit.vue')
+					},
+					{
+						path: "history/:id",
+						name: "users.history",
+						component: () => import('@/pages/user/History.vue')
 					},
 				]
 			},

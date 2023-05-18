@@ -38,17 +38,25 @@ const form = reactive({
 const form_rules = computed(() => ({
     month: { required },
     municipality: { required },
-    note: { required },
-    groups: {
-        $each: helpers.forEach({
-            group_id: { nestedRequired, unique: unique(form.groups, 'group_id') },
-            sports_modality: { nestedRequired },
-            main_sports_stage_name: { nestedRequired },
-            main_sports_stage_address: { nestedRequired },
-            alt_sports_stage_name: { nestedRequired },
-            alt_sports_stage_address: { nestedRequired },
-        })
-    }
+    note: { },
+	groups: {
+		$each: helpers.forEach({
+			group_id: { nestedRequired, unique: unique(form.groups, 'group_id') },
+			sports_modality: { nestedRequired },
+			main_sports_stage_name: { nestedRequired },
+			main_sports_stage_address: { nestedRequired },
+			alt_sports_stage_name: { nestedRequired },
+			alt_sports_stage_address: { nestedRequired },
+			schedules: {
+				$each: helpers.forEach({
+					day: { nestedRequired },
+					start_time: { nestedRequired },
+					end_time: { nestedRequired },
+				}),
+			}
+		}
+		),
+	}
 }))
 
 
@@ -76,7 +84,7 @@ interface Chronogram {
 
 const chronogram = ref<Chronogram[]>([]);
 
-const cloneChronogram = ref<Chronogram>();
+const cloneChronogram = ref();
 
 const v$ = useVuelidate(form_rules, form)
 
@@ -285,7 +293,7 @@ const onCloneChronogram = async () => {
 							:allowEmpty="false" />
 						<CommonSelect
 							class=""
-							label="Clonar Cronograma *"
+							label="Clonar Cronograma"
 							name="cloneChronogram"
 							v-model="cloneChronogram"
 							:options="chronogram"
@@ -293,7 +301,7 @@ const onCloneChronogram = async () => {
 							:allowEmpty="false" />
 						<div class="col-span-1 flex items-end">
 							<Button
-                                @click="onCloneChronogram"
+                @click="onCloneChronogram"
 								type="button"
 								variant="primary"
 								>Clonar</Button

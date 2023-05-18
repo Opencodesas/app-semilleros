@@ -65,5 +65,18 @@ export const userServices = {
         } catch (error: any) {
             alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
         }
-    }
+    },
+    getHistory: async (id: string) => {
+        try {
+            setLoading(true)
+
+            const response = await api.get(`/${apiPath}/${module}/history/${id}`).finally(() => {
+                setLoading(false)
+            })
+
+            return response
+        } catch (error: any) {
+            alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
+        }
+    },
 }

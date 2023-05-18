@@ -179,6 +179,16 @@ const editAction = (id: string | number) => {
 		router.push({ name: `${routeName.value}.edit`, params: { id: id } });
 	}
 };
+const historyAction = (id: string | number) => {
+		router.push({ name: `${routeName.value}.history`, params: { id: id } });
+};
+const informationAction = (id: string | number) => {
+		router.push({ name: `${routeName.value}.information`, params: { id: id } });
+};
+const inactiveUserAction = (id: string | number) => {
+		// router.push({ name: `${routeName.value}.information`, params: { id: id } });
+		console.log("inactivando usuario");
+};
 
 const provider = computed(() => route.meta.provider);
 
@@ -539,6 +549,60 @@ const selectedTab = inject('selectedTab', ref(0));
 			</template>
 			<template #item-actions="item">
 				<div class="flex gap-2 justify-end">
+					<template v-if="route.name == 'users.index'">
+						<Button
+							variant="outline-secondary"
+							@click="editAction(item.id)">
+							<Lucide
+								:icon="'FileEdit'"
+								class="mr-2" />
+							<span
+								class="text-sm">
+								{{ "Perfil" }}									
+							</span>
+						</Button>
+					</template>
+					<template v-if="route.name == 'users.index'">
+						<Button
+							variant="outline-secondary"
+							@click="informationAction(item.id)">
+							<Lucide
+								:icon="'Info'"
+								class="mr-2" />
+							<span
+								class="text-sm">
+								{{ "Informacion" }}									
+							</span>
+						</Button>
+					</template>
+					<template v-if="route.name == 'users.index'">
+						<Button
+							variant="outline-secondary"
+							@click="historyAction(item.id)">
+							<Lucide
+								:icon="'Calendar'"
+								class="mr-2" />
+							<span
+								class="text-sm">
+								{{ "Historial" }}									
+							</span>
+						</Button>
+					</template>
+					<template v-if="route.name == 'users.index'">
+						<Button
+							variant="outline-secondary"
+							@click="inactiveUserAction(item.id)">
+							<Lucide
+								:icon="'Power'"
+								class="mr-2" />
+							<span
+								class="text-sm">
+								{{ "Inactivar" }}									
+							</span>
+						</Button>
+					</template>
+				</div>
+				<div class="flex gap-2 justify-end">
 					<template v-if="isProvider('assistants')">
 						<template v-if="hasDocumentsHeader && contractorDocuments != null">
 							<template v-if="contractorDocumentsCount(item.id) < 21">
@@ -801,21 +865,22 @@ const selectedTab = inject('selectedTab', ref(0));
 					</template>
 					<template v-else-if="isProvider('chronograms')">
 						<Button
+							v-if="item.status.slug === 'REC'"
+							variant="outline-secondary"
+							@click="editAction(item.id)">
+							<Lucide
+							icon="FileEdit"
+							class="mr-2" />
+							<span class="text-sm"> Editar </span>
+						</Button>
+						<Button
+							v-else
 							variant="outline-secondary"
 							@click="seeAction(item.id)">
 							<Lucide
 								icon="Search"
 								class="mr-2" />
 							<span class="text-sm"> Ver </span>
-						</Button>
-						<Button
-							v-if="item.status.slug === 'REC'"
-							variant="outline-secondary"
-							@click="editAction(item.id)">
-							<Lucide
-								icon="FileEdit"
-								class="mr-2" />
-							<span class="text-sm"> Editar </span>
 						</Button>
 					</template>
 					<template v-else-if="isRole('super.root')">

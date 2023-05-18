@@ -253,11 +253,11 @@ const hideSearchDropdown = () => {
           </Menu.Item>
           <Menu.Item class="hover:bg-white/5">
             <Lucide icon="Lock" class="w-4 h-4 mr-2" /> Reset Password
+          </Menu.Item> -->
+          <Menu.Item @click="$router.push({name: 'profile'})" class="hover:bg-white/5">
+            <Lucide icon="User" class="w-4 h-4 mr-2" /> Perfil
           </Menu.Item>
-          <Menu.Item class="hover:bg-white/5">
-            <Lucide icon="HelpCircle" class="w-4 h-4 mr-2" /> Help
-          </Menu.Item>
-          <Menu.Divider class="bg-white/[0.08]" /> -->
+          <Menu.Divider class="bg-white/[0.08]" />
           <Menu.Item @click="$router.push('/'), storeOnboarding.logout()" class="hover:bg-white/5">
             <Lucide icon="ToggleRight" class="w-4 h-4 mr-2" /> Logout
           </Menu.Item>
