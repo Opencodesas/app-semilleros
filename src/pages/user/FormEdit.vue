@@ -70,8 +70,8 @@ const sendUpdate = async () => {
 
 const types = [
 	{
-		label: 'Cédula de ciudadanía',
-		value: 'Cédula de ciudadanía',
+		label: 'Cédula de ciudadania',
+		value: 'Cédula de ciudadania',
 	},
 	{
 		label: 'Cédula de extranjeria',
@@ -88,12 +88,12 @@ const types = [
 ];
 const genders = [
 	{
-		label: 'Masculino',
-		value: 'Masculino',
+		label: 'MASCULINO',
+		value: 'MASCULINO',
 	},
 	{
-		label: 'Femenino',
-		value: 'Femenino',
+		label: 'FEMENINO',
+		value: 'FEMENINO',
 	},
 ];
 
@@ -193,8 +193,11 @@ const fetch = async () => {
 			form.phone = response.data.items.phone;
 			form.document_type = response.data.items.document_type;
 			form.document_number = response.data.items.document_number;
-			form.roles = response.data.items.roles[0];
-			form.roles = response.data.items.roles[0];
+			form.roles = response.data.items.roles[0].id;
+			if(response.data.items.zone.length > 0){
+				form.zones = response.data.items.zone[0].id;
+			};
+			form.municipalities = response.data.items.municipalities.map(obj => obj.id);
 			Swal.fire('', response?.data.message, 'info').finally(() => {});
 		} else {
 			Swal.fire('', 'No se pudieron obtener los datos', 'error');
