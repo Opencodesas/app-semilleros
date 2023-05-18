@@ -617,6 +617,16 @@ const routes = [
 						name: "users.edit",
 						component: () => import('@/pages/user/FormEdit.vue')
 					},
+					{
+						path: "information/:id",
+						name: "users.information",
+						component: () => import('@/pages/user/FormEdit.vue')
+					},
+					{
+						path: "history/:id",
+						name: "users.history",
+						component: () => import('@/pages/user/History.vue')
+					},
 				]
 			},
 			{
