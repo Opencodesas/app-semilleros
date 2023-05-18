@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { onboardingStore } from '@/stores/onboardingStore';
 
-const user = onboardingStore().user;
+const store = onboardingStore();
+
+const user: any = store.user
 
 //console.log(user)
 
