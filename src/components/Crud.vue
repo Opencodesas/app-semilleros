@@ -185,6 +185,10 @@ const historyAction = (id: string | number) => {
 const informationAction = (id: string | number) => {
 		router.push({ name: `${routeName.value}.information`, params: { id: id } });
 };
+const inactiveUserAction = (id: string | number) => {
+		// router.push({ name: `${routeName.value}.information`, params: { id: id } });
+		console.log("inactivando usuario");
+};
 
 const provider = computed(() => route.meta.provider);
 
@@ -580,6 +584,19 @@ const selectedTab = inject('selectedTab', ref(0));
 							<span
 								class="text-sm">
 								{{ "Historial" }}									
+							</span>
+						</Button>
+					</template>
+					<template v-if="route.name == 'users.index'">
+						<Button
+							variant="outline-secondary"
+							@click="inactiveUserAction(item.id)">
+							<Lucide
+								:icon="'Power'"
+								class="mr-2" />
+							<span
+								class="text-sm">
+								{{ "Inactivar" }}									
 							</span>
 						</Button>
 					</template>
