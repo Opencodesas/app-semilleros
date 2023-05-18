@@ -198,6 +198,7 @@ const fetch = async () => {
 				form.zones = response.data.items.zone[0].id;
 			};
 			form.municipalities = response.data.items.municipalities.map(obj => obj.id);
+			form.disciplines = response.data.items.disciplines.map(obj => obj.id);
 			Swal.fire('', response?.data.message, 'info').finally(() => {});
 		} else {
 			Swal.fire('', 'No se pudieron obtener los datos', 'error');
