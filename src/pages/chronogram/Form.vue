@@ -38,7 +38,7 @@ const form = reactive({
 const form_rules = computed(() => ({
     month: { required },
     municipality: { required },
-    note: { required },
+    note: { },
 	groups: {
 		$each: helpers.forEach({
 			group_id: { nestedRequired, unique: unique(form.groups, 'group_id') },
@@ -293,7 +293,7 @@ const onCloneChronogram = async () => {
 							:allowEmpty="false" />
 						<CommonSelect
 							class=""
-							label="Clonar Cronograma *"
+							label="Clonar Cronograma"
 							name="cloneChronogram"
 							v-model="cloneChronogram"
 							:options="chronogram"
