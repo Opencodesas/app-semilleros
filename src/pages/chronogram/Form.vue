@@ -301,7 +301,7 @@ const onCloneChronogram = async () => {
 							:allowEmpty="false" />
 						<div class="col-span-1 flex items-end">
 							<Button
-                                @click="onCloneChronogram"
+                @click="onCloneChronogram"
 								type="button"
 								variant="primary"
 								>Clonar</Button
