@@ -84,7 +84,7 @@ interface Chronogram {
 
 const chronogram = ref<Chronogram[]>([]);
 
-const cloneChronogram = ref<Chronogram>();
+const cloneChronogram = ref();
 
 const v$ = useVuelidate(form_rules, form)
 

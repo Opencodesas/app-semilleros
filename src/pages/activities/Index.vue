@@ -143,11 +143,11 @@ let data = [
 ];
 
 console.log(data);
-let fakedata:Object | Array | String | null = localStorage.getItem("cuenta de cobro");
+let fakedata: any = localStorage.getItem("cuenta de cobro");
 console.log("fakedata: "+JSON.stringify(fakedata));
 if(fakedata){
     fakedata = JSON.parse(fakedata);
-    if(fakedata.length===1){
+    if(fakedata?.length===1){
         fakedata = fakedata[0];
     data[data.length] = {...fakedata,
         id:data.length+1,
@@ -164,7 +164,7 @@ if(fakedata){
         }};
     }else{
         let temp;
-        fakedata.forEach(element => {
+        fakedata.forEach((element: any) => {
             data[data.length] =
             {...element,
                 id:data.length+1,
