@@ -5,7 +5,6 @@ import { Header, Item } from 'vue3-easy-data-table';
 
 const router = useRouter()
 const route = useRoute()
-
 const routeName = computed(() => {
     return String(route.name).split('.')[0]
 })
@@ -18,25 +17,16 @@ const create = () => {
 }
 
 onBeforeMount(async () => {
-    await userServices.getAll().then((response) => {
-        items.value = 
-        [...response?.data.items].map(objeto => ({
-        ...objeto,
-        profile: JSON.parse(JSON.stringify({...objeto.profile})) //copia profuda de copia profunda del objeto
-        }));
-        //console.log(response?.data.items)
-        //console.log(items.value)
+    await userServices.getHistory(route.params.id).then((response) => {
+        console.log(response);
+        items.value = response?.data
     })
 })
 
 const headers: Header[] = [
     { text: 'No.', value: 'id' },
-    { text: 'CORREO', value: 'email', sortable: true },
-    { text: 'NOMBRE', value: 'name', sortable: true },
-    { text: 'APELLIDO', value: 'lastname', sortable: true },
-    { text: 'DOCUMENTO', value: 'document_number', sortable: true },
-    // { text: "ROLES", value: "roles" },
-    { text: 'ACCIONES', value: 'actions' },
+    { text: 'Url', value: 'url', sortable: true },
+    { text: 'Fecha', value: 'created_at', sortable: true },
 ]
 
 const items = ref<Item[]>([])
@@ -45,7 +35,7 @@ const items = ref<Item[]>([])
 
 <template>
     <div class="flex items-center mt-8 intro-y">
-        <h2 class="mr-auto text-lg font-medium">Listado Usuarios</h2>
+        <h2 class="mr-auto text-lg font-medium">Historial del Usuario</h2>
         <div class="w-full sm:w-auto flex mt-4 sm:mt-0">
             <Button variant="primary" class="btn btn-primary" @click="create">
                 Crear Usuario
