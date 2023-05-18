@@ -6,7 +6,7 @@ import ChronogramReview from './ChronogramReview.vue';
 const headerVisits: Header[] = [
     { text: 'Fecha', value: 'created_at', sortable: true },
     { text: 'Monitor', value: 'created_by.name' },
-    { text: '#CC monitor', value: 'created_by.cedula'},
+    { text: '#CC monitor', value: 'created_by.document_number'},
     { text: 'Mes', value: 'month' },
     { text: 'Municipio', value: 'municipio', sortable: true },
     { text: 'Etapa', value: 'etapa' },
@@ -19,7 +19,6 @@ const chronograms = ref<Item[]>([]);
 onBeforeMount(async () => {
      await chronogramServices.getAll().then((response) => {
         chronograms.value = response?.data.items
-        console.log(chronograms.value)
       })
  })
 

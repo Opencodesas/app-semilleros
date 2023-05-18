@@ -17,15 +17,15 @@ const create = () => {
     })
 }
 
-
-
-
-
-
 onBeforeMount(async () => {
     await userServices.getAll().then((response) => {
-        items.value = response?.data.items
-        console.log(response?.data.items)
+        items.value = 
+        [...response?.data.items].map(objeto => ({
+        ...objeto,
+        profile: JSON.parse(JSON.stringify({...objeto.profile})) //copia profuda de copia profunda del objeto
+        }));
+        //console.log(response?.data.items)
+        //console.log(items.value)
     })
 })
 

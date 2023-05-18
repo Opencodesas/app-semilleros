@@ -24,15 +24,20 @@ const routeName = computed(() => {
 const userdata = {
     id: "11511231234",
     name: "Arturo Marulanda",
-    epsName: "Salud Total",
+    epsName: "Sura",
+    arlName: "POSITIVA",
+    pensionName: "PROTECCION",
+    epsValue: "1.5",
+    arlValue: "0.522",
+    pensionValue: "0.16",
 }
 const contractdata =
 {
-    id: "0010",
-    cuote: "$ 1.500.000",
-    periodStart: "1-15-2023",
-    periodEnd: "12-15-2023",
-    periods: "12", 
+    id: "CPS-057",
+    cuote: "$ 6.600.000",
+    periodStart: "14/2/2023",
+    periodEnd: "31/5/2023",
+    periods: "3", 
 };
 const budgetdata = {
         id: "100013",
@@ -47,32 +52,57 @@ const budgetdata = {
     };
 const activities = [
     {nombre: "Actividad 1",
-    desc: "Realizar la actividad 1",
+    desc: "Planear, organizar, direccionar y realizar control de los servicios administrativos en el desarrollo del proyecto Semilleros Deportivos",
     detail: "",
     make: false,
     },
     {nombre: "Actividad 2",
-    desc: "Realizar la actividad 2",
+    desc: "Revisar, autorizar los pagos y control de la ejecución presupuestal del proyecto semilleros deportivos.",
     detail: "",
     make: false,
     },
     {nombre: "Actividad 3",
-    desc: "Realizar la actividad 3",
+    desc: "Coordinar reuniones de planeación y seguimiento del proyecto",
     detail: "",
     make: false,
     },
     {nombre: "Actividad 4",
-    desc: "Realizar la actividad 4",
+    desc: "Coordinar la gestión de adquisición de bienes, obras y servicios para el proyecto",
     detail: "",
     make: false,
     },
     {nombre: "Actividad 5",
-    desc: "Realizar la actividad 5",
+    desc: "Realizar proyecciones de flujo de caja en la ejecución del proyecto.",
     detail: "",
     make: false,
     },
     {nombre: "Actividad 6",
-    desc: "Realizar la actividad 6",
+    desc: "Revisar y aprobar los informes del Proyecto para correspondientes desembolsos requeridos por la supervisión del proyecto.",
+    detail: "",
+    make: false,
+    },
+    {nombre: "Actividad 7",
+    desc: "Atender los requerimientos administrativos y/o PQRS en el marco del proyecto.",
+    detail: "",
+    make: false,
+    },
+    {nombre: "Actividad 8",
+    desc: "Convocar y/o asistir a eventos, capacitaciones, conferencias, reuniones que le sean citadas del proyecto, de carácter presencial y/o virtual.",
+    detail: "",
+    make: false,
+    },
+    {nombre: "Actividad 9",
+    desc: "Revisar y aprobar los informes presentados por los contratistas bajo supervisión para la verificación del proceso técnico y de pago.",
+    detail: "",
+    make: false,
+    },
+    {nombre: "Actividad 10",
+    desc: "Elaborar el informe en el que dé cuenta de sus actividades realizadas.",
+    detail: "",
+    make: false,
+    },
+    {nombre: "Actividad 11",
+    desc: "Las demás actividades afines o complementarias con las anteriores y que le sean asignadas y que correspondan a la naturaleza del contrato.",
     detail: "",
     make: false,
     },
@@ -163,7 +193,7 @@ const onSubmit = async () => {
     const valid = await v$.value.$validate()
     if (valid) {
 
-        await validity_periodsServices.create(formdataParser(form)).then((response) => {
+        /*await service.create(formdataParser(form)).then((response) => {
             if (response) {
                 if (response.status >= 200 && response.status <= 300) {
                     alerts.create()
@@ -173,10 +203,21 @@ const onSubmit = async () => {
                     })
                 }
             }
-        })
+        })*/
+        let lastinfo = localStorage.getItem("cuenta de cobro");
+        if(lastinfo){lastinfo = JSON.parse(lastinfo);}
+        const today = new Date();
+        const thedata = lastinfo==null?
+        [{...form, budgetdata, create: today.getMonth()+"-"+today.getDay()+"-"+today.getFullYear()}]
+        :
+        [...lastinfo, {...form, budgetdata, create: today.getMonth()+"-"+today.getDay()+"-"+today.getFullYear()}]
+
+        ;
+        
+        localStorage.setItem("cuenta de cobro", JSON.stringify(thedata));
         Swal.fire('', '¡La Cuenta de Cobro se creó exitosamente!', 'success')
         setLoading(true)
-        router.replace('budget').finally(() => {
+        router.replace('active').finally(() => {
             setLoading(false)
         })
     }
@@ -208,7 +249,7 @@ const onSubmit = async () => {
     <div class="p-5 mt-5 intro-y box">
         <div class="grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
             <CommonInput type="text" name="person.name" label="Contrato" placeholder="Seleccionar" v-model="budgetdata.contract.id" />
-            <CommonInput type="text" name="person.name" label="Cuota" placeholder="Seleccionar" v-model="budgetdata.contract.username"/>
+            <CommonInput type="text" name="person.name" label="Cuota" placeholder="Seleccionar" v-model="contractdata.cuote"/>
             <!--<CommonSelect label="Departamento *" name="department" v-model="form.department" :validator="v$" :options="departments" />-->
         </div>
     </div>
@@ -220,17 +261,17 @@ const onSubmit = async () => {
     <div class="p-5 mt-5 intro-y box">
         <div class="grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
             <!--<h1 class="m-4 col-span-2 text-xl bold text-left text-gray-800"> Planilla Seguridad Social </h1>-->
-            <div class="col-span-2"><CommonInput type="text" name="person.name" label="Periodo de cotización" v-model="budgetdata.contract.username"/></div>
-            <div class="col-span-2"><CommonInput type="text" name="person.name" label="Número de planilla" v-model="budgetdata.contract.username"/></div>
+            <div class="col-span-2"><CommonInput type="text" name="person.name" label="Periodo de cotización" v-model="budgetdata.validity"/></div>
+            <div class="col-span-2"><CommonInput type="text" name="person.name" label="Número de planilla" v-model="budgetdata.id"/></div>
 
-            <CommonInput type="text" name="person.name" label="Nombre EPS" v-model="budgetdata.contract.username"/>
-            <CommonInput type="text" name="person.name" label="Valor Pagado" v-model="budgetdata.contract.username"/>
+            <CommonInput type="text" name="person.name" label="Nombre EPS" v-model="userdata.epsName"/>
+            <CommonInput type="text" name="person.name" label="Valor Pagado" v-model="userdata.epsValue" :placeholder="'$ 0.00'"/>
 
-            <CommonInput type="text" name="person.name" label="Nombre ARL" v-model="budgetdata.contract.username"/>
-            <CommonInput type="text" name="person.name" label="Valor Pagado" v-model="budgetdata.contract.username"/>
+            <CommonInput type="text" name="person.name" label="Nombre ARL" v-model="userdata.arlName"/>
+            <CommonInput type="text" name="person.name" label="Valor Pagado" v-model="userdata.arlValue" :placeholder="'$ 0.00'"/>
 
-            <CommonInput type="text" name="person.name" label="Nombre Pensión" v-model="budgetdata.contract.username"/>
-            <CommonInput type="text" name="person.name" label="Valor Pagado" v-model="budgetdata.contract.username"/>
+            <CommonInput type="text" name="person.name" label="Nombre Pensión" v-model="userdata.pensionName"/>
+            <CommonInput type="text" name="person.name" label="Valor Pagado" v-model="userdata.pensionValue" :placeholder="'$ 0.00'"/>
         </div>
     </div>
 
@@ -332,8 +373,6 @@ const onSubmit = async () => {
             @removefile="(error: any, value: filePondValue) =>
             { form.evidencias = multiple.removefile({ error, value }, form.evidencias) as never[] }"
             :validator="v$" />
-
-            sdf
             
         </div><!---->
         

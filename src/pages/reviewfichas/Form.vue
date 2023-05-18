@@ -21,13 +21,9 @@ const props = defineProps<{
 let currentUser = {id: onboardingStore().get_user.id, name: onboardingStore().get_user.name, rol: onboardingStore().get_user_role?.slug};
 
 const data = ref(props?.payloadFunctions?.DATA());
+//buscar y traer solo la ficha correspondiente al props.id_review
+let currentFicha = data.value.items.find((o: any) => o.id === props.id_review);
 
-//buscar y traer solo la ficha correspondiente al props.id_review, haciendo copia profunda de varios objetos y reemplazando nulos por cadenas vacias
-const currentFicha = JSON.parse(JSON.stringify( 
-    Object.keys(data.value.items[props.id_review-1]).map((key) => {
-  return { [key]: data.value.items[props.id_review-1][key] === null ? '' : data.value.items[props.id_review-1][key] };
-}).reduce((acc, cur) => Object.assign(acc, cur), {})
-));
 const currentmotive = ref(currentFicha.rejection_message||"");
 const form = reactive(
   {...currentFicha,
@@ -57,19 +53,20 @@ const form_rules = computed(() => ({
 }))
 const v$ = useVuelidate(form_rules, form);
 
-currentUser = {...currentUser, rol : 'metodologo'};
 const evaluationList =
 currentUser.rol == 'metodologo'?
 [
 	{ label: 'En Revisión', value: 0, slug:'ENR' },
 	{ label: 'Procesar', value: 2, slug: 'ENP' },
 	{ label: 'Rechazar', value: 1, slug: 'REC' },
-]: currentUser.rol == 'coordinador_regional'?
+]
+: currentUser.rol == 'coordinador_regional'?
 [
 	{ label: 'En proceso', value: 2, slug:'ENP' },
 	{ label: 'Aprobar', value: 3, slug: 'APR' },
 	{ label: 'Rechazar', value: 1, slug: 'REC' },
-]:
+]
+:
 [
 	{ label: 'Aprobada', value: 2, slug: 'APR'  },
 	{ label: 'Rechazar', value: 1, slug: 'REC' },
@@ -77,90 +74,41 @@ currentUser.rol == 'metodologo'?
 const error = ref(false);
 
 const onSubmit = async (evt: any) => {
+  console.log(form.selectid+" "+form.currentmotive);
   evt.preventDefault();
 
-  
-  //validar
-  /*const valid = await v$.value.$validate()
-  .then((response)=>{
-
-  }).catch((error)=>{
-
-  });
-  if (valid) {
-		await service
-			.update()
-			.then((response) => {
-				if (response?.status == 200 || response?.status == 201) {
-					props.closeModal
-                    alerts.custom('', 'Revisión exitosa!', 'success');
-					setLoading(true);
-					router.push('PONER RUTA').finally(() => {
-						setLoading(false);
-					});
-				} else {
-					alerts.custom('', 'Error al revisar!', 'error')
-				}
-			});
-	}*/
-/*
   //verificar error
-  if (form.selectid===1&&form.currentmotive===""){error.value=true; return;}
+//  if (form.selectid===1&&form.currentmotive===""){error.value=true; return;}
 
   //crear nuevo status
-  let nStatus = {
-    "status": '',
+  const nStatus =
+  {
+    "status":(
+    form.selectid==1?'REC':
+    form.selectid==2?'ENP':
+    form.selectid==3?'APR'
+    :'ENR'),
     "rejection_message": form.currentmotive
   }
-  nStatus.status = 
-  form.selectid==1?'REC':
-  form.selectid==2?'ENP':
-  form.selectid==3?'APR'
-  :'ENR';
-
-  //enviar neuvo status
-  //setLoading(true);
-  const res = await beneficiaryServices.update(currentFicha.id, {...currentFicha, reviewed_by: currentUser.id, rejection_message: form.currentmotive, status_id: 1} );
-  //console.log(r);
-
-  console.log(JSON.stringify(nStatus)+currentFicha.id+onboardingStore().get_user.id);
-
-/*  
-
-  //verifica algun cambio de estado
-	if((currentFicha.status.slug === 'ENR' && form.selectid==1)||
-	   (currentFicha.status.slug === 'APR' && form.selectid==2)||
-	   (currentFicha.status.slug === 'REC' && form.selectid==3)){
-    //si conserva el slug y la intención, verificar que no sea una actualización
-    //console.log(form.currentmotive+" | "+currentFicha.calif.reject_motive+": "+(form.currentmotive===currentFicha.calif.reject_motive).toString())
-    if(!(form.currentmotive===currentFicha.rejection_message))
-		{
-      props.payloadFunctions?.REC();
-
-      setLoading(false);
-      props.closeModal();    
-      return;
-    }
-		alerts.custom('', 'Se ha abortado la operación', 'info');
-    setLoading(false);
-    props.closeModal();
+  
+  //enviar nuevo status
+  if( form.selectid === 1 && form.currentmotive==="" ){
+    alerts.custom('', 'Escriba un motivo de su rechazo', 'error');
   }else{
-    if(form.selectid===1){        
-        props.payloadFunctions?.ENR(props.id_review, currentUser);
-        data.value = props.payloadFunctions?.DATA();
-    }
-    if(form.selectid===2){
-        props.payloadFunctions?.APR(props.id_review, currentUser);
-        data.value = props.payloadFunctions?.DATA();
-    }
-    if(form.selectid===3){
-        props.payloadFunctions?.REC(props.id_review, currentUser, form.currentmotive);
-        data.value = props.payloadFunctions?.DATA();
-    }
-    setLoading(false);
-    props.closeModal();    
-  }*/
-	//const res = await beneficiaryServices.changeStatus(solicitud.data, solicitud.id);
+  const res = beneficiary.changeStatusUR(nStatus, props.id_review.toString())
+    .then((response)=>{
+      console.log(response.data.items.rejection_message)
+      currentFicha.status = {...response.data.items.status};
+      if(form.selectid==1){
+        currentFicha.rejection_message = {...response.data.items.rejection_message}
+      }else{
+        currentFicha.rejection_message = "";
+      }
+      alerts.custom('', 'Revisión exitosa!', 'success');
+    })
+    .catch((error)=>{alerts.custom('', 'Error al revisar!'+error, 'error')});
+  }
+
 }
 
 </script>
@@ -210,7 +158,7 @@ const onSubmit = async (evt: any) => {
           :validator="v$" :options="evaluationList" />
       <div v-if="form.selectid == 1" class="pt-4">
 			  <CommonTextarea name="rejection_message" class=""
-				  label="Comentario *" :placeholder="(form.rejection_message===''?'Comentario...':form.rejection_message)" rows="5"
+				  label="Comentario *" :placeholder="(form.currentmotive===''?'Comentario...':form.currentmotive)" rows="5"
           v-model="form.currentmotive" :validator="v$" />
         <span v-if="error" :class="'text-red-600 text-sm'">Este campo es obligatorio *</span>
       </div>

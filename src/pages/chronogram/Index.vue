@@ -21,6 +21,7 @@ const create = () => {
 
 const headers: Header[] = [
     { text: 'ID', value: 'id' },
+    { text: 'FECHA CREACIÓN', value: 'created_at' },
     { text: 'MES', value: 'month' },
     { text: 'MUNICIPIO', value: 'municipio' },
     { text: 'ETAPA', value: 'reviewed' },

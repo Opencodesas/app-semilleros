@@ -406,6 +406,7 @@ const selectedTab = inject('selectedTab', ref(0));
 
 <template>
 	<div class="intro-y flex flex-col gap-2">
+		<h2 v-if="props.label" class="mr-auto text-lg font-medium">{{ props.label }}</h2>
 		<section class="flex flex-col gap-3 lg:grid lg:grid-cols-4 lg:items-center">
 			<!-- <div class="grid grid-cols-2 gap-3">
 					                                    <div class="w-full">
@@ -802,7 +803,7 @@ const selectedTab = inject('selectedTab', ref(0));
 								</span>
 							</Button>
 						</template>
-						<template v-if="route.name == 'methodologist_visits.reviews'">
+						<template v-if="route.name == 'review.bene_chro'">
 							<template v-if="props.Form!">
 								<Modal
 									:Form="props.Form"
@@ -864,21 +865,22 @@ const selectedTab = inject('selectedTab', ref(0));
 					</template>
 					<template v-else-if="isProvider('chronograms')">
 						<Button
+							v-if="item.status.slug === 'REC'"
+							variant="outline-secondary"
+							@click="editAction(item.id)">
+							<Lucide
+							icon="FileEdit"
+							class="mr-2" />
+							<span class="text-sm"> Editar </span>
+						</Button>
+						<Button
+							v-else
 							variant="outline-secondary"
 							@click="seeAction(item.id)">
 							<Lucide
 								icon="Search"
 								class="mr-2" />
 							<span class="text-sm"> Ver </span>
-						</Button>
-						<Button
-							v-if="item.status.slug === 'REC'"
-							variant="outline-secondary"
-							@click="editAction(item.id)">
-							<Lucide
-								icon="FileEdit"
-								class="mr-2" />
-							<span class="text-sm"> Editar </span>
 						</Button>
 					</template>
 					<template v-else-if="isRole('super.root')">
@@ -1094,7 +1096,7 @@ const selectedTab = inject('selectedTab', ref(0));
 							:payloadFunctions="payloadFunctions" />
 					</template>
 					<template
-						v-else-if="(onboardingStore().get_user_role?.slug === 'coordinador_regional' && item.status.slug === 'ENP') ||
+						v-else-if="(onboardingStore().get_user_role?.slug === 'coordinador_regional' && item.status.slug === 'APR') ||
 						(onboardingStore().get_user_role?.slug === 'coordinador_regional' && item.status.slug === 'REC')">
 						<Modal
 							:Form="props.Form"
@@ -1118,7 +1120,6 @@ const selectedTab = inject('selectedTab', ref(0));
 					</template>
 				</template>
 			</template>
-			<!--vvvv MODULO FRONT DE CONTRATACION AÑADIDO POR PETICION DE ALEJANDRO 5/9/2023 vvvv-->
 			<template #item-budgetstatus="item">
                 <span v-if="item?.budgetstatus?.slug == 'PAG'"
                 :class="'bg-success/10 text-success'"
@@ -1127,7 +1128,8 @@ const selectedTab = inject('selectedTab', ref(0));
                 </span>
                 <span v-else-if="(item?.budgetstatus?.slug == 'SUP' || item?.budgetstatus?.slug == 'SUB')"
                 :class="'bg-danger/10 text-danger'"
-                class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
+                class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap"
+				:title="item?.budgetstatus?.msn || ''">
                     {{ item?.budgetstatus?.status }}
                 </span>
                 <span v-else
@@ -1136,7 +1138,13 @@ const selectedTab = inject('selectedTab', ref(0));
                     {{ item?.budgetstatus?.status }}
                 </span>
             </template>
-			<!--^^^^ MODULO FRONT DE CONTRATACION AÑADIDO POR PETICION DE ALEJANDRO 5/9/2023 ^^^^-->
+			<template #item-UserActions="item">
+				<span v-if="item?.budgetstatus?.slug == 'PAG'"
+                :class="'bg-success/10 text-success'"
+                class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
+                    {{ item?.budgetstatus?.status }}
+                </span>
+			</template>
 
 		</DataTable>
 	</div>

@@ -84,14 +84,9 @@ const routes = [
 				component: () => import('@/pages/Page2.vue'),
 			},
 			{
-				path: "example-form",
-				name: "example.create",
-				component: () => import('@/pages/methodologist/reviews/registrationForms/exampleForm.vue')
-			},
-			{
-				path: "example-list",
-				name: "example.index",
-				component: () => import('@/pages/methodologist/reviews/registrationForms/exampleCrud.vue')
+				path: "profile",
+				name: "profile",
+				component: () => import('@/pages/profile/Index.vue'),
 			},
 			{
 				path: "assistants",
@@ -122,12 +117,6 @@ const routes = [
 								component: () => import('@/pages/documents/FormControl.vue')
 							}
 						],
-					},
-					{
-						path: "",
-						name: "fichas_inscripcion.index",
-						meta: {provider:"fichaInscrip"},						
-						component: () => import('@/pages/methodologist/reviews/registrationForms/Index.vue')
 					},
 				]
 			},
@@ -166,14 +155,15 @@ const routes = [
 				]
 			},
 			{
-				path: "monitors",
-				name: "monitors",
+				path: "review",
+				name: "review",
 				children: [
 					{
 						path: "fichas",
 						name: "fichas_inscripcion.index",
 						meta: {provider:"fichaInscrip"},						
-						component: () => import('@/pages/methodologist/reviews/registrationForms/Index.vue')
+						//component: () => import('@/pages/methodologist/reviews/registrationForms/Index.vue')
+						component: () => import('@/pages/reviewfichas/Index.vue')
 					},
 				]
 			},
@@ -376,7 +366,6 @@ const routes = [
 			{
 				path: "beneficiaries",
 				name: "beneficiaries",
-				meta: { provider: 'fichaInscrip' },
 				children: [
 					{
 						path: "index",
@@ -392,7 +381,12 @@ const routes = [
 						path: ":id",
 						name: "beneficiaries.edit",
 						component: () => import('@/pages/forms/FormEdit.vue')
-					}
+					},
+					{
+						path: "information",
+						name: "beneficiaries.information",
+						component: () => import('@/pages/monitors/BeneList.vue')
+					},
 				]
 			},
 			{
@@ -439,7 +433,7 @@ const routes = [
 					{
 						path: "reviews",
 						name: "methodologist_visits.reviews",
-						component: () => import('@/pages/methodologist/reviews/Index.vue')
+						component: () => import('@/pages/reviewfichas/Review.vue')
 					},
 					// {
 					// 	path: "",
@@ -657,6 +651,23 @@ const routes = [
 				],
 			},
 			{
+				path: "review",
+				name: "review",
+				children: [
+					{
+						path: "",
+						name: "review.bene_chro",
+						component: () => import('@/pages/reviewfichas/Review.vue')
+					},
+					{
+						path: "",
+						name: "review.bene",
+						component: () => import('@/pages/reviewfichas/Index.vue')
+					},
+
+				]
+			},
+			{
 				path: "budget",
 				name: "budget",
 				meta: { provider: 'budget' },
@@ -681,18 +692,7 @@ const routes = [
 					},
 				]
 			},
-			{
-				path: "review",
-				name: "review",
-				children: [
-					{
-						path: "",
-						name: "review.bene_chro",
-						//meta: { provider: '' },
-						component: () => import('@/pages/monitors/Review.vue')
-					}
-				]
-			},
+			
 		],
 	},
 	{
