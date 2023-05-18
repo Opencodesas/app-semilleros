@@ -84,6 +84,11 @@ const routes = [
 				component: () => import('@/pages/Page2.vue'),
 			},
 			{
+				path: "profile",
+				name: "profile",
+				component: () => import('@/pages/profile/Index.vue'),
+			},
+			{
 				path: "assistants",
 				name: "assistants",
 				meta: { provider: 'assistants' },
