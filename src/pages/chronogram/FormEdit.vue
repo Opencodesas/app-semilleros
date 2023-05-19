@@ -37,7 +37,7 @@ const form = reactive({
 const form_rules = computed(() => ({
     month: { required },
     municipality: { required },
-    note: { required },
+    note: {  },
     groups: {
         $each: helpers.forEach({
             group_id: { nestedRequired, unique: unique(form.groups, 'group_id') },
