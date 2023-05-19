@@ -296,12 +296,12 @@ onMounted(async () => {
 				v-model="form.zones"
 				:validator="v$"
 				:options="zones" />
-			<CommonSelect
+			<!-- <CommonSelect
 				label="Seleccione la ciudad *"
 				name="municipalities"
 				v-model="form.municipalities"
 				:validator="v$"
-				:options="cities" />
+				:options="cities" /> -->
 			<CommonSelect
 				label="Seleccione el municipio *"
 				name="municipalities"
