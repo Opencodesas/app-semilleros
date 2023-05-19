@@ -627,6 +627,10 @@ const routes = [
 						name: "users.history",
 						component: () => import('@/pages/user/History.vue')
 					},
+					{
+						path: "inactiveUser/:id",
+						name: "users.inactiveUser",
+					},
 				]
 			},
 			{
