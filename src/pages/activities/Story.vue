@@ -45,16 +45,16 @@ prueba();
 //#region TABLA
 const headers: Header[] = [
     { text: 'N.', value: 'id' },
-    { text: 'CONTRATO', value: 'contract.id', sortable: true },
-    {text: 'PERIODO', value: 'date', sortable: true },
-    {text: 'VALOR', value: 'contract.cuote' },
-    {text: 'NOMBRE CONTRATISTA', value: 'contract.name' },
-    {text: 'CREADO', value: 'create' },
-    {text: 'ESTADO', value: 'budgetstatus', sortable: true, width: 150},
+    { text: 'CONTRATO', value: 'user.NODECONTRATO', sortable: true },
+    {text: 'PERIODO', value: 'periodo', sortable: true },
+    {text: 'VALOR', value: 'user.VALORCUOTASINMOVILIZACION' },
+    {text: 'NOMBRE CONTRATISTA', value: 'user.NOMBREMATRIZ' },
+    {text: 'CREADO EL', value: 'create' },
+    {text: 'ESTADO', value: 'budgetFase', sortable: true    },
 ]
 
-const data = [
-    {
+let data = [
+    /*{
         id: "1",
         date: "noviembre",
         create: "04-19-2022",
@@ -87,9 +87,14 @@ const data = [
             status: "Pagada",
             slug: "PAG",
         },
-    },
+    },*/
 ];
-console.log(data);
+let pagados = localStorage.getItem("pagadas");
+if(pagados){
+    pagados = JSON.parse(pagados);
+    data = pagados;
+    console.log(data);
+}
 const items = ref<Item[]>(data);
 //#endregion
 
