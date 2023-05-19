@@ -195,7 +195,7 @@ const fetch = async () => {
 			form.document_number = response.data.items.document_number;
 			form.roles = response.data.items.roles[0].id;
 			if(response.data.items.zone.length > 0){
-				form.zones = response.data.items.zone[0].id;
+				form.zones = response.data.items.zone[0].zones_id;
 			};
 			form.municipalities = response.data.items.municipalities.map(obj => obj.id);
 			form.disciplines = response.data.items.disciplines.map(obj => obj.id);
