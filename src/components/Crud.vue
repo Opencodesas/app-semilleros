@@ -8,6 +8,7 @@ import CommonButtonLink from './CommonButtonLink.vue';
 import ContractCancellation from './ContractCancellation.vue';
 import Modal from './Modal.vue';
 import { onboardingStore } from '@/stores/onboardingStore';
+import Swal from 'sweetalert2';
 
 const storagePath = import.meta.env.VITE_BASE_URL;
 
@@ -185,9 +186,14 @@ const historyAction = (id: string | number) => {
 const informationAction = (id: string | number) => {
 		router.push({ name: `${routeName.value}.information`, params: { id: id } });
 };
-const inactiveUserAction = (id: string | number) => {
-		// router.push({ name: `${routeName.value}.information`, params: { id: id } });
-		console.log("inactivando usuario");
+const toggleUserStatus  = async (id: number, status: number) => {
+		await userServices
+			.toggleUserStatus(id, status)
+			.then((response) => {
+				if (response) {
+					Swal.fire('', response.data.message, 'info');
+				}
+			});
 };
 
 const provider = computed(() => route.meta.provider);
@@ -591,13 +597,13 @@ const selectedTab = inject('selectedTab', ref(0));
 					<template v-if="route.name == 'users.index'">
 						<Button
 							variant="outline-secondary"
-							@click="inactiveUserAction(item.id)">
+							@click="toggleUserStatus (item.id, item.inactive)">
 							<Lucide
 								:icon="'Power'"
 								class="mr-2" />
 							<span
 								class="text-sm">
-								{{ "Inactivar" }}									
+								{{ item.inactive ? 'Activar' : 'Inactivar' }}								
 							</span>
 						</Button>
 					</template>
