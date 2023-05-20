@@ -66,7 +66,7 @@ export const userServices = {
             alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
         }
     },
-    getHistory: async (id: string) => {
+    getHistory: async (id: string|string[]) => {
         try {
             setLoading(true)
 
