@@ -8,6 +8,7 @@ import CommonButtonLink from './CommonButtonLink.vue';
 import ContractCancellation from './ContractCancellation.vue';
 import Modal from './Modal.vue';
 import { onboardingStore } from '@/stores/onboardingStore';
+import Swal from 'sweetalert2';
 
 const storagePath = import.meta.env.VITE_BASE_URL;
 
@@ -185,9 +186,14 @@ const historyAction = (id: string | number) => {
 const informationAction = (id: string | number) => {
 		router.push({ name: `${routeName.value}.information`, params: { id: id } });
 };
-const inactiveUserAction = (id: string | number) => {
-		// router.push({ name: `${routeName.value}.information`, params: { id: id } });
-		console.log("inactivando usuario");
+const toggleUserStatus  = async (id: number, status: number) => {
+		await userServices
+			.toggleUserStatus(id, status)
+			.then((response) => {
+				if (response) {
+					Swal.fire('', response.data.message, 'info');
+				}
+			});
 };
 
 const provider = computed(() => route.meta.provider);
@@ -591,13 +597,13 @@ const selectedTab = inject('selectedTab', ref(0));
 					<template v-if="route.name == 'users.index'">
 						<Button
 							variant="outline-secondary"
-							@click="inactiveUserAction(item.id)">
+							@click="toggleUserStatus (item.id, item.inactive)">
 							<Lucide
 								:icon="'Power'"
 								class="mr-2" />
 							<span
 								class="text-sm">
-								{{ "Inactivar" }}									
+								{{ item.inactive ? 'Activar' : 'Inactivar' }}								
 							</span>
 						</Button>
 					</template>
@@ -1120,24 +1126,45 @@ const selectedTab = inject('selectedTab', ref(0));
 					</template>
 				</template>
 			</template>
+
 			<template #item-budgetstatus="item">
                 <span v-if="item?.budgetstatus?.slug == 'PAG'"
                 :class="'bg-success/10 text-success'"
                 class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
-                    {{ item?.budgetstatus?.status }}
+                    {{ item?.budgetstatus?.state }}
                 </span>
                 <span v-else-if="(item?.budgetstatus?.slug == 'SUP' || item?.budgetstatus?.slug == 'SUB')"
                 :class="'bg-danger/10 text-danger'"
                 class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap"
 				:title="item?.budgetstatus?.msn || ''">
-                    {{ item?.budgetstatus?.status }}
+                    {{ item?.budgetstatus?.state }}
                 </span>
                 <span v-else
                 :class="'bg-primary/10 text-primary'"
                 class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
-                    {{ item?.budgetstatus?.status }}
+                    {{ item?.budgetstatus?.state }}
                 </span>
             </template>
+			<template #item-budgetFase="item">
+				<span v-if="item?.budgetstatus?.slug == 'ERV'"
+                :class="'bg-primary/10 text-primary'"
+                class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
+                    {{ item?.budgetstatus?.fase }}
+                </span>
+				<span v-else>{{ item?.budgetstatus?.fase }}</span>
+			</template>
+			<template #item-budgetactions="item">
+				<Button @click="item_see_fnc(item.id)" variant="outline-success" class="mb-2">
+                    <span class="text-sm">Aprobar</span>
+                </Button>
+                <CommonButtonLink :to="''" variant="outline-pending">
+                    <span class="text-sm">Rechazar</span>
+                </CommonButtonLink>
+			</template>
+			
+
+
+
 			<template #item-UserActions="item">
 				<span v-if="item?.budgetstatus?.slug == 'PAG'"
                 :class="'bg-success/10 text-success'"
