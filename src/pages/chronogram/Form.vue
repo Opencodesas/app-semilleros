@@ -1,44 +1,47 @@
 <script setup lang="ts">
+import Lucide from '@/base-components/Lucide';
+import ScheduleFieldset from '@/components/ScheduleFieldset.vue';
+import { chronogramServices } from '@/services/chronogramService';
+import { onboardingStore } from '@/stores/onboardingStore';
+import { nestedRequired, required, unique } from '@/utils/validators';
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
+import useVuelidate from '@vuelidate/core';
 
-import Lucide from '@/base-components/Lucide'
-import ScheduleFieldset from '@/components/ScheduleFieldset.vue'
-import { chronogramServices } from "@/services/chronogramService"
-import { onboardingStore } from "@/stores/onboardingStore"
-import { nestedRequired, required, unique } from '@/utils/validators'
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
-import useVuelidate from '@vuelidate/core'
+import { helpers } from '@vuelidate/validators';
+import dayjs from 'dayjs';
 
-import { helpers } from '@vuelidate/validators'
-import dayjs from 'dayjs'
-
-const storeOnboarding = onboardingStore()
+const storeOnboarding = onboardingStore();
 
 const form = reactive({
-    month: '',
-    municipality: '',
-    note: '',
-    groups: [
-        {
-            group_id: '',
-            sports_modality: '',
-            main_sports_stage_name: '',
-            main_sports_stage_address: '',
-            alt_sports_stage_name: '',
-            alt_sports_stage_address: '',
-            schedules: [{
-                idx: new Date().getTime(),
-                day: '',
-                start_time: '',
-                end_time: '',
-            }]
-        }
-    ]
-})
+	month: '',
+	municipality: '',
+	note: '',
+	noteHoliday: '',
+	groups: [
+		{
+			group_id: '',
+			sports_modality: '',
+			main_sports_stage_name: '',
+			main_sports_stage_address: '',
+			alt_sports_stage_name: '',
+			alt_sports_stage_address: '',
+			schedules: [
+				{
+					idx: new Date().getTime(),
+					day: '',
+					start_time: '',
+					end_time: '',
+				},
+			],
+		},
+	],
+});
 
 const form_rules = computed(() => ({
-    month: { required },
-    municipality: { required },
-    note: { },
+	month: { required },
+	municipality: { required },
+	note: {},
+	noteHoliday: {},
 	groups: {
 		$each: helpers.forEach({
 			group_id: { nestedRequired, unique: unique(form.groups, 'group_id') },
@@ -53,212 +56,283 @@ const form_rules = computed(() => ({
 					start_time: { nestedRequired },
 					end_time: { nestedRequired },
 				}),
-			}
-		}
-		),
-	}
-}))
-
+			},
+		}),
+	},
+}));
 
 const scheduleBone = {
-    idx: new Date().getMilliseconds(),
-    day: '',
-    start_time: '',
-    end_time: '',
-}
+	idx: new Date().getMilliseconds(),
+	day: '',
+	start_time: '',
+	end_time: '',
+};
 
 const groupBone = {
-    group_id: '',
-    sports_modality: '',
-    main_sports_stage_name: '',
-    main_sports_stage_address: '',
-    alt_sports_stage_name: '',
-    alt_sports_stage_address: '',
-    schedules: [{ ...scheduleBone }]
-}
+	group_id: '',
+	sports_modality: '',
+	main_sports_stage_name: '',
+	main_sports_stage_address: '',
+	alt_sports_stage_name: '',
+	alt_sports_stage_address: '',
+	schedules: [{ ...scheduleBone }],
+};
 
 interface Chronogram {
-    value: number,
-    label: string
+	value: number;
+	label: string;
 }
 
 const chronogram = ref<Chronogram[]>([]);
 
 const cloneChronogram = ref();
 
-const v$ = useVuelidate(form_rules, form)
+const v$ = useVuelidate(form_rules, form);
 
-const router = useRouter()
+const router = useRouter();
 
+const getHolidays = (date: string, nameHoliday: string) => {
+	const week = [
+		'Domingo',
+		'Lunes',
+		'Martes',
+		'Miércoles',
+		'Jueves',
+		'Viernes',
+		'Sábado',
+	];
+	const fecha = date.split('-');
+	const dia = new Date(
+		parseInt(fecha[0]),
+		parseInt(fecha[1]) - 1,
+		parseInt(fecha[2])
+	);
+	return `${week[dia.getDay()]} ${dia.getDate()} de ${dia.toLocaleString('CO', {
+		month: 'long',
+	})}: ${nameHoliday}`;
+};
+
+const holidays = computedAsync(async () => {
+	const year = new Date().getFullYear();
+	const holidaysYear = await fetch(
+		`https://date.nager.at/Api/v3/PublicHolidays/${year}/CO`
+	);
+	const res = await holidaysYear.json();
+	const holidays = res.map((holiday: any) => {
+		if (holiday.localName.includes('Battle of Boyacá')) {
+			holiday.localName = 'Batalla de Boyacá';
+		}
+		if(holiday.localName == 'Carnival') {
+			holiday.localName = 'Caranaval de Barranquilla';
+		}
+		return {
+			date: holiday.date,
+			name: holiday.localName,
+		};
+	});
+	return holidays;
+}, null);
+
+let holidaysMonth: string[];
+
+watch(
+	() => form.month,
+	(newVal) => {
+		if (newVal) {
+			const res = holidays.value.filter((holiday: any) => {
+				const month = holiday.date.split('-')[1];
+				return month == newVal;
+			});
+			holidaysMonth = res.map((holiday: any) => {
+				return getHolidays(holiday.date, holiday.name);
+			});
+			console.log(holidaysMonth.join(' - '));
+		}
+	}
+);
 
 const months = computedAsync(async () => {
-    const data = await getSelect(['months'])
+	const data = await getSelect(['months']);
 
-    const [day, month, year] = dayjs().format('DD/MM/YYYY').split('/')
+	const [day, month, year] = dayjs().format('DD/MM/YYYY').split('/');
 
-    return data.slice(Number(month) - 1)
-}, null)
+	return data.slice(Number(month) - 1);
+}, null);
 
 const municipalities = computedAsync(async () => {
-    return await getCitiesByDepartment('30')
-}, null)
+	return await getCitiesByDepartment('30');
+}, null);
 
-const groups = ref<any>([])
+const groups = ref<any>([]);
 
 onBeforeMount(async () => {
-    groups.value = await getSelect(['groups'])
-    groupsLists.value = [groups.value]
-})
+	groups.value = await getSelect(['groups']);
+	groupsLists.value = [groups.value];
+});
 
-const groupsLists = ref<any>([])
+const groupsLists = ref<any>([]);
 
 watch(form.groups, (newVal, oldVal) => {
-    groupsFilter()
-    checkChronogram()
-})
+	groupsFilter();
+	checkChronogram();
+});
 
 const groupsFilter = () => {
-	
-    let lists = []
+	let lists = [];
 
-    for (let i = 0; i < form.groups.length; i++) {
-        if(form.groups.length == 1) {
-            lists.push(groups.value)
-            break
-        }
-        let list = groups.value
-        for (let j = 0; j < form.groups.length; j++) {
-            if (j == i) continue
-            let groupSelected = form.groups[j].group_id
-            list = list.filter(({ value } : { value: string }) => value != groupSelected)
-        }
-        lists.push(list)
-    }
-    groupsLists.value = lists
-}
+	for (let i = 0; i < form.groups.length; i++) {
+		if (form.groups.length == 1) {
+			lists.push(groups.value);
+			break;
+		}
+		let list = groups.value;
+		for (let j = 0; j < form.groups.length; j++) {
+			if (j == i) continue;
+			let groupSelected = form.groups[j].group_id;
+			list = list.filter(
+				({ value }: { value: string }) => value != groupSelected
+			);
+		}
+		lists.push(list);
+	}
+	groupsLists.value = lists;
+};
 
 const sports = computedAsync(async () => {
-    return await getDisciplinesByMonitor(onboardingStore().get_user.id as number)
-}, null)
-
+	return await getDisciplinesByMonitor(onboardingStore().get_user.id as number);
+}, null);
 
 const onSubmit = async () => {
-    const hayCruce = checkChronogram();
-    const valid = await v$.value.$validate()
-    if (valid) {
-        if ( !hayCruce ) {
-
-            await chronogramServices.create( formdataParser(form) )
-            .then((res: any) => {
-                if(res){
-                    alerts.create();
-                    router.push('/dashboard/chronograms')
-                    .finally(() => {
-                        setLoading(false)
-                    })
-                }
-
-            });
-        }
-    }
-    else {
-        alerts.validation()
-    }
-}
+	const hayCruce = checkChronogram();
+	const valid = await v$.value.$validate();
+	if (valid) {
+		if (!hayCruce) {
+			await chronogramServices.create(formdataParser(form)).then((res: any) => {
+				if (res) {
+					alerts.create();
+					router.push('/dashboard/chronograms').finally(() => {
+						setLoading(false);
+					});
+				}
+			});
+		}
+	} else {
+		alerts.validation();
+	}
+};
 
 const checkChronogram = () => {
+	let hayCruce = false;
 
-    let hayCruce = false;
+	for (let i = 0; i < form.groups.length; i++) {
+		const schedules = form.groups[i].schedules;
 
-    for (let i = 0; i < form.groups.length; i++) {
+		for (let j = 0; j < schedules.length; j++) {
+			const horario = schedules[j];
+			if (!horario) continue;
 
-        const schedules = form.groups[i].schedules;
+			hayCruce = searchItem(i + 1, horario);
 
-        for( let j = 0; j < schedules.length; j++ ) {
+			if (hayCruce) break;
+		}
 
-            const horario = schedules[j];
-            if (!horario) continue
+		if (hayCruce) break;
+	}
 
-            hayCruce = searchItem( i+1, horario );
+	return hayCruce;
+};
 
-            if (hayCruce) break;
-        }
+const searchItem = (grupo: number, horario: any) => {
+	let hayCruce = false;
+	let grupoCruce;
 
-        if (hayCruce) break;
-    }
+	for (let i = 0; i < form.groups.length; i++) {
+		const filterSameDay = form.groups[i].schedules.filter(
+			(item: any) => item.idx !== horario.idx && item.day === horario.day
+		);
 
-    return hayCruce
-}
+		filterSameDay.forEach((item: any, idx: number) => {
+			if (idx === 4 || !horario.start_time || !horario.end_time) return;
+			else if (
+				(item.start_time <= horario.start_time &&
+					item.end_time <= horario.end_time &&
+					item.end_time > horario.start_time) ||
+				(item.start_time >= horario.start_time &&
+					item.end_time >= horario.end_time &&
+					item.start_time < horario.end_time) ||
+				(item.start_time >= horario.start_time &&
+					item.end_time <= horario.end_time) ||
+				(item.start_time <= horario.start_time &&
+					item.end_time >= horario.end_time) ||
+				(item.start_time == horario.start_time &&
+					item.end_time == horario.end_time)
+			) {
+				hayCruce = true;
+				if (i != grupo) grupoCruce = i;
+				return;
+			}
+		});
 
-const searchItem = ( grupo: number, horario: any ) => {
-    let hayCruce = false;
-    let grupoCruce;
+		if (hayCruce) {
+			if (grupoCruce) {
+				alerts.custom(
+					'Validación',
+					`Por favor verifique el horario cruzado del grupo ${form.groups[grupo].group_id} ${horario.day} de ${horario.start_time} a ${horario.end_time} porque se cruza con el grupo ${form.groups[grupoCruce].group_id}.`,
+					'error'
+				);
+			} else {
+				alerts.custom(
+					'Validación',
+					`Por favor verifique el horario cruzado del grupo ${form.groups[grupo].group_id} ${horario.day} de ${horario.start_time} a ${horario.end_time} ya que se cruza con otro de los horarios de este grupo.`,
+					'error'
+				);
+			}
+			break;
+		}
+	}
 
-    for( let i = 0; i < form.groups.length; i++) {
-        const filterSameDay = form.groups[i].schedules.filter( (item: any) => item.idx !== horario.idx && item.day === horario.day);
-
-        filterSameDay.forEach( (item: any, idx: number) => {
-            if( idx === 4 || !horario.start_time || !horario.end_time) return
-            else if(
-                (item.start_time <= horario.start_time && item.end_time <= horario.end_time && item.end_time > horario.start_time) ||
-                (item.start_time >= horario.start_time && item.end_time >= horario.end_time && item.start_time < horario.end_time) ||
-                (item.start_time >= horario.start_time && item.end_time <= horario.end_time) ||
-                (item.start_time <= horario.start_time && item.end_time >= horario.end_time) ||
-                (item.start_time == horario.start_time && item.end_time == horario.end_time)
-            ) {
-                hayCruce = true;
-                if (i != grupo) grupoCruce = i;
-                return;
-            }
-        })
-
-        if (hayCruce) {
-            if (grupoCruce) {
-                alerts.custom('Validación', `Por favor verifique el horario cruzado del grupo ${form.groups[grupo].group_id} ${horario.day} de ${horario.start_time} a ${horario.end_time} porque se cruza con el grupo ${form.groups[grupoCruce].group_id}.`, 'error')
-            } else {
-                alerts.custom('Validación', `Por favor verifique el horario cruzado del grupo ${form.groups[grupo].group_id} ${horario.day} de ${horario.start_time} a ${horario.end_time} ya que se cruza con otro de los horarios de este grupo.`, 'error')
-            }
-            break;
-        }
-    }
-
-    return hayCruce;
-}
+	return hayCruce;
+};
 
 const onAddGrupo = () => {
-    if ( form.groups.length <= 4 ) {
-        form.groups.push({ ...groupBone, schedules: [{...scheduleBone, idx: new Date().getTime() }] })
-    }
-}
+	if (form.groups.length <= 4) {
+		form.groups.push({
+			...groupBone,
+			schedules: [{ ...scheduleBone, idx: new Date().getTime() }],
+		});
+	}
+};
 
 const removeChild = (pos: number, group: any) => {
-    group.schedules.splice(pos, 1)
-}
+	group.schedules.splice(pos, 1);
+};
 
 onBeforeMount(async () => {
-    await chronogramServices.getAll().then((response) => {
-        const data = response?.data.items.map((item: any) => {
-            return {
-                value: item.id,
-                label: `${item.month} ${item.status.created_at.split('-')[0]}`
-            }
-        })
-        chronogram.value.push(...data)
-    })
-})
+	await chronogramServices.getAll().then((response) => {
+		const data = response?.data.items.map((item: any) => {
+			return {
+				value: item.id,
+				label: `${item.month} ${item.status.created_at.split('-')[0]}`,
+			};
+		});
+		chronogram.value.push(...data);
+	});
+});
 
 const onCloneChronogram = async () => {
 	const id = cloneChronogram.value;
-  if (id != undefined) {
-      await chronogramServices.get(id as unknown as string)  
-      .then((res: any) => {;
-          form.groups = res.data.items.groups;
-      });
-  } else {
-			alerts.custom('Validación', 'Por favor seleccione un cronograma para clonar.', 'error')
+	if (id != undefined) {
+		await chronogramServices.get(id as unknown as string).then((res: any) => {
+			form.groups = res.data.items.groups;
+		});
+	} else {
+		alerts.custom(
+			'Validación',
+			'Por favor seleccione un cronograma para clonar.',
+			'error'
+		);
 	}
-}
-
+};
 </script>
 
 <template>
@@ -297,11 +371,10 @@ const onCloneChronogram = async () => {
 							name="cloneChronogram"
 							v-model="cloneChronogram"
 							:options="chronogram"
-                        
 							:allowEmpty="false" />
 						<div class="col-span-1 flex items-end">
 							<Button
-                @click="onCloneChronogram"
+								@click="onCloneChronogram"
 								type="button"
 								variant="primary"
 								>Clonar</Button
@@ -309,10 +382,18 @@ const onCloneChronogram = async () => {
 						</div>
 						<div class="col-span-1 md:col-span-2">
 							<CommonEditor
-								label="observaciones"
+								label="Observaciones Generales"
 								name="note"
 								v-model="form.note"
 								:validator="v$" />
+						</div>
+						<div v-if="holidaysMonth" class="col-span-1 md:col-span-2">
+							<CommonEditor
+								label="Observaciones Dias Festivos"
+								name="noteHoliday"
+								v-model="form.noteHoliday"
+								:validator="v$" />
+								<p class="mt-2">{{ form.month && holidaysMonth.join(' - ') }}</p>
 						</div>
 					</div>
 				</div>
