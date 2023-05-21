@@ -16,6 +16,7 @@ const form = reactive({
     month: '',
     municipality: '',
     note: '',
+    noteHoliday: '',
     groups: [
         {
             group_id: '',
@@ -37,7 +38,8 @@ const form = reactive({
 const form_rules = computed(() => ({
     month: { required },
     municipality: { required },
-    note: {  },
+    note: {},
+    noteHoliday: {},
     groups: {
         $each: helpers.forEach({
             group_id: { nestedRequired, unique: unique(form.groups, 'group_id') },
@@ -70,7 +72,69 @@ const groupBone = {
 const v$ = useVuelidate(form_rules, form)
 
 const router = useRouter()
-const route  = useRoute()
+const route = useRoute()
+
+
+const getHolidays = (date: string, nameHoliday: string) => {
+	const week = [
+		'Domingo',
+		'Lunes',
+		'Martes',
+		'Miércoles',
+		'Jueves',
+		'Viernes',
+		'Sábado',
+	];
+	const fecha = date.split('-');
+	const dia = new Date(
+		parseInt(fecha[0]),
+		parseInt(fecha[1]) - 1,
+		parseInt(fecha[2])
+	);
+	return `${week[dia.getDay()]} ${dia.getDate()} de ${dia.toLocaleString('CO', {
+		month: 'long',
+	})}: ${nameHoliday}`;
+};
+
+// const holidays = computedAsync(async () => {
+// 	const year = new Date().getFullYear();
+// 	const holidaysYear = await fetch(
+// 		`https://date.nager.at/Api/v3/PublicHolidays/${year}/CO`
+// 	);
+// 	const res = await holidaysYear.json();
+// 	const holidays = res.map((holiday: any) => {
+// 		if (holiday.localName.includes('Battle of Boyacá')) {
+// 			holiday.localName = 'Batalla de Boyacá';
+// 		}
+// 		if (holiday.localName == 'Carnival') {
+// 			holiday.localName = 'Caranaval de Barranquilla';
+// 		}
+// 		return {
+// 			date: holiday.date,
+// 			name: holiday.localName,
+// 		};
+// 	});
+// 	return holidays;
+// }, null);
+
+let holidaysMonth: string[];
+
+// watch(
+// 	() => form.month,
+// 	(newVal) => {
+// 		if (newVal) {
+// 			const res = holidays.value.filter((holiday: any) => {
+// 				const month = holiday.date.split('-')[1];
+// 				return month == newVal;
+// 			});
+// 			holidaysMonth = res.map((holiday: any) => {
+// 				return getHolidays(holiday.date, holiday.name);
+// 			});
+// 			console.log(holidaysMonth.join(' - '));
+// 		}
+// 	}
+// );
+
 
 const months = computedAsync(async () => {
     const data = await getSelect(['months'])
@@ -270,6 +334,11 @@ const removeChild = (pos: number, group: any) => {
                                 :disabled="form.status_id !== 4"
                             />
                         </div>
+                        <div v-if="holidaysMonth" class="col-span-1 md:col-span-2">
+							<CommonEditor label="Observaciones Dias Festivos" name="noteHoliday" v-model="form.noteHoliday"
+								:validator="v$" />
+							<p class="mt-2">{{ form.month && holidaysMonth.join(' - ') }}</p>
+						</div>
                     </div>
                 </div>
 

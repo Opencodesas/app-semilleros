@@ -39,7 +39,10 @@ const headers: Header[] = [
     { text: 'ACCIONES', value: 'actions' },
 ]
 
+const search = ref('')
 const items = ref<Item[]>([])
+
+const data = computed(() => searchData(items.value, search.value))
 
 </script>
 
@@ -54,7 +57,12 @@ const items = ref<Item[]>([])
     </div>
     <!-- BEGIN: Page Layout -->
     <div class="p-5 mt-5 intro-y box">
-        <Crud :headers="headers" :items="items" />
+        	<CommonInput
+			type="search"
+			name="search"
+			v-model="search"
+			placeholder="Buscar" />
+        <Crud :headers="headers" :items="data" />
         <!-- <Button @click="ingreso()">Ingresar</Button> -->
     </div>
     <!-- END: Page Layout -->
