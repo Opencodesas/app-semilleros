@@ -28,8 +28,6 @@ const form = reactive({
 	disciplines: '',
 });
 
-const excludedRoles = [3, 5, 6 ,7]
-
 const form_rules = computed(() => ({
 	name: { required },
 	address: { required },
@@ -38,11 +36,11 @@ const form_rules = computed(() => ({
 	email: { required, email },
 	gender: { required },
 	lastname: { required },
-	municipalities: { required: requiredIf(() => !excludedRoles.includes(parseInt(form.roles))) },
+	municipalities: {},
 	period: {},
 	phone: { required },
 	roles: { required },
-	zones: { required: requiredIf(() => !excludedRoles.includes(parseInt(form.roles))) },
+	zones: {},
 	password: {},
 	disciplines: {},
 }));
@@ -115,53 +113,12 @@ const formdataParser = (form: any) => {
 	return formData;
 };
 
-const towns = [
-	{
-		label: 'Tulua',
-		value: 'Tulua',
-	},
-	{
-		label: 'Cali',
-		value: 'Cali',
-	},
-	{
-		label: 'Palmira',
-		value: 'Palmira',
-	},
-	{
-		label: 'Dagua',
-		value: 'Dagua',
-	},
-	{
-		label: 'El Cerrito',
-		value: 'El Cerrito',
-	},
-	{
-		label: 'Florida',
-		value: 'Florida',
-	},
-	{
-		label: 'Jamundí',
-		value: 'Jamundí',
-	},
-	{
-		label: 'Vijes ',
-		value: 'Vijes ',
-	},
-	{
-		label: 'Yumbo',
-		value: 'Yumbo',
-	},
-];
 const zones = asyncComputed(async () => {
 	return await getSelect(['zones']);
 }, null);
 
 const zone_id = computed(() => form.zones);
 
-const cities = asyncComputed(async () => {
-	return zone_id.value ? await getCitiesByDepartment(zone_id.value) : [];
-}, null);
 const roles = asyncComputed(async () => {
 	const roles_data = await getSelect(['roles']);
 	return roles_data.filter(({ value }) => value != '1');
@@ -291,13 +248,20 @@ onMounted(async () => {
 				:validator="v$" />
 
 			<CommonSelect
-				v-if="!excludedRoles.includes(parseInt(form.roles))"
 				label="Selecciona regiones *"
 				name="zones"
 				v-model="form.zones"
 				:validator="v$"
-				:options="zones" 
-				multiple/>
+				:options="zones"
+				v-if="form.roles == '1' || 
+				form.roles == '2' || 
+				form.roles == '4' || 
+				form.roles == '8' || 
+				form.roles == '9' || 
+				form.roles == '10' || 
+				form.roles == '11' || 
+				form.roles == '12'"
+			/>
 			<!-- <CommonSelect
 				label="Seleccione la ciudad *"
 				name="municipalities"
@@ -305,22 +269,38 @@ onMounted(async () => {
 				:validator="v$"
 				:options="cities" /> -->
 			<CommonSelect
-				v-if="!excludedRoles.includes(parseInt(form.roles))"
 				label="Seleccione el municipio *"
 				name="municipalities"
 				v-model="form.municipalities"
 				:validator="v$"
 				:options="municipalities"
-				/>
+				multiple 
+				v-if="form.roles == '1' || 
+				form.roles == '2' || 
+				form.roles == '4' || 
+				form.roles == '8' || 
+				form.roles == '9' || 
+				form.roles == '10' || 
+				form.roles == '11' || 
+				form.roles == '12'"
+			/>
 			<CommonSelect
-				v-if="!excludedRoles.includes(parseInt(form.roles))"
 				class="h-30"
 				label="Seleccione las disciplinas *"
 				name="disciplines"
 				v-model="form.disciplines"
 				:validator="v$"
 				:options="disciplines"
-				multiple />
+				multiple
+				v-if="form.roles == '1' || 
+				form.roles == '2' || 
+				form.roles == '4' || 
+				form.roles == '8' || 
+				form.roles == '9' || 
+				form.roles == '10' || 
+				form.roles == '11' || 
+				form.roles == '12'"
+			/>
 			<br />
 			<!-- <CommonInput type="hidden" name="password" :value="form.document_number" v-model="form.password" :validator="v$" />-->
 		</div>
