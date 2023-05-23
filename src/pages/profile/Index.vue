@@ -5,7 +5,6 @@ const store = onboardingStore();
 
 const user: any = store.user
 
-console.log(user)
 
 </script>
 
@@ -36,7 +35,7 @@ console.log(user)
                     </div>
                     <div>
                         <div class="text-base font-medium truncate sm:whitespace-normal text-slate-700">
-                            {{ user.document_type }}
+                            {{ user.document_type}}
                         </div>
                         <div class="text-slate-500">Tipo de documento de identidad</div>
                     </div>

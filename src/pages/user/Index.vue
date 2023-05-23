@@ -30,15 +30,19 @@ onBeforeMount(async () => {
 })
 
 const headers: Header[] = [
-    { text: 'ID', value: 'id' },
-    { text: 'EMAIL', value: 'email', sortable: true },
-    { text: 'NOMBRE', value: 'profile.contractor_full_name', sortable: true },
-    { text: 'N. DOCUMENTO', value: 'profile.document_number' },
-    { text: 'ROL', value: 'name', sortable: true },
-    { text: 'ACCIONES', value: 'UserActions' },
+    { text: 'No.', value: 'id' },
+    { text: 'CORREO', value: 'email', sortable: true },
+    { text: 'NOMBRE', value: 'name', sortable: true },
+    { text: 'APELLIDO', value: 'lastname', sortable: true },
+    { text: 'DOCUMENTO', value: 'document_number', sortable: true },
+    // { text: "ROLES", value: "roles" },
+    { text: 'ACCIONES', value: 'actions' },
 ]
 
+const search = ref('')
 const items = ref<Item[]>([])
+
+const data = computed(() => searchData(items.value, search.value))
 
 </script>
 
@@ -53,7 +57,12 @@ const items = ref<Item[]>([])
     </div>
     <!-- BEGIN: Page Layout -->
     <div class="p-5 mt-5 intro-y box">
-        <Crud :headers="headers" :items="items" />
+        	<CommonInput
+			type="search"
+			name="search"
+			v-model="search"
+			placeholder="Buscar" />
+        <Crud :headers="headers" :items="data" />
         <!-- <Button @click="ingreso()">Ingresar</Button> -->
     </div>
     <!-- END: Page Layout -->

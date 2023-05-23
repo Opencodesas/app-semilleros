@@ -65,5 +65,31 @@ export const userServices = {
         } catch (error: any) {
             alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
         }
-    }
+    },
+    getHistory: async (id: string|string[]) => {
+        try {
+            setLoading(true)
+
+            const response = await api.get(`/${apiPath}/${module}/history/${id}`).finally(() => {
+                setLoading(false)
+            })
+
+            return response
+        } catch (error: any) {
+            alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
+        }
+    },
+    toggleUserStatus: async (id: number, statusUSer: number) => {
+        try {
+            setLoading(true)
+
+            const response = await api.post(`/${apiPath}/${module}/toggleUserStatus/${id}`).finally(() => {
+                setLoading(false)
+            })
+
+            return response
+        } catch (error: any) {
+            alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
+        }
+    },
 }

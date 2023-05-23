@@ -20,13 +20,66 @@ const routeName = computed(() => {
 //#endregion
 
 //#region backend-data
+const TheUserData = {
+  ORDENDECONTRATOS: "6",
+  NODECONTRATO: "CPS-245",
+  RPA: "622",
+  REGION: "1",
+  ROL: "MONITORDEPORTIVO",
+  DISCIPLINAMATRIZ: "FUTBOL",
+  NOMBREMATRIZ: "ALEXANDER GOMEZ GIL",
+  GENERO: "MASCULINO",
+  NUMERODEDOCUMENTO: "94228623",
+  LUGARDEEXPEDICIONDELDOCUMENTO: "ZARZAL VALLEDELCAUCA",
+  FECHADEEXPEDICIONDELDOCUMENTO: "20/2/1991",
+  FECHADENACIMIENTO: "7/5/1972",
+  NUMERODECELULAR: "3177880336",
+  MUNICIPIODERESIDENCIA: "ZARZAL",
+  DIRECCIONDERESIDENCIA: "CARRERA15#10A04",
+  CORREOELECTRONICO: "alegogil07@hotmail.com",
+  ENTIDADBANCARIA: "BANCOLOMBIA",
+  NUMERODECUENTABANCARIA: "83661902232",
+  TIPODECUENTA: "AHORROS",
+  RUT: "94228623-0",
+  ENTIDADPROMOTORADESALUD: "SURA",
+  FONDODEPENSIONES: "COLPENSIONES",
+  ARL: "POSITIVA",
+  MODOPAGOPLANILLA: "",
+  OBJETOCONTRACTUAL: "PrestacióndeservicioscomoMonitorDeportivoenelmarcodelproyectoSemillerosDeportivos.",
+  ASIGNACIONPRESUPUESTAL: "23-010110MonitoresDeportivos",
+  CERTIFICADODEASIGNACIONPRESUPUESTAL: "615",
+  FECHADECAP: "14/2/2023",
+  FECHADEINICIO: "14defebrerode2023",
+  FECHADEFINALIZACION: "28deabrilde2023",
+  FECHADEFINALIZACIONOTROSI: "31/5/2023",
+  VALORCUOTASINMOVILIZACION: "1540000",
+  MOVILIZACIONYOTRANSPORTE: "0",
+  NUMERODECUOTAS: "3",
+  VALORCUOTAINCLUIDOMOVILIZACION: "1540000",
+  VALORTOTALCONTRATO: "4620000",
+  ROJO: {
+    ASIGNACIONPRESUPUESTALOTROSI: "23-010134",
+    CAPOTROSI: "2709",
+    FECHADECAP: "27/4/2023",
+    VALORCUOTAOTROSISINMOVILIZACION: "1540000",
+    VALORTOTALCONTRATOOTROSI: "6160000",
+    RPAADICION: "",
+  },
+  SUPERVISOR: "OSCARANDRESGARCIARIOS",
+  ADMINISTRATIVO: "KATHERINEMARTINEZSANDOVAL"
+};
 
+
+/*
 const userdata = {
     id: "11511231234",
     name: "Arturo Marulanda",
     epsName: "Sura",
     arlName: "POSITIVA",
     pensionName: "PROTECCION",
+    epsValue: "1.5",
+    arlValue: "0.522",
+    pensionValue: "0.16",
 }
 const contractdata =
 {
@@ -47,59 +100,81 @@ const budgetdata = {
         state: "En Supervisión",
         validity: "abril 2023",
     };
+*/
+
 const activities = [
     {nombre: "Actividad 1",
-    desc: "Planear, organizar, direccionar y realizar control de los servicios administrativos en el desarrollo del proyecto Semilleros Deportivos",
+    desc: "Apoyar y fortalecer el proceso de vinculación de las niñas, niños, adolescentes y jóvenes al proyecto, por medio de socializaciones en colegios, parques o espacios donde se encuentre la población",
     detail: "",
     make: false,
     },
     {nombre: "Actividad 2",
-    desc: "Revisar, autorizar los pagos y control de la ejecución presupuestal del proyecto semilleros deportivos.",
+    desc: "Diligenciar las fichas de inscripción y tamizaje de los beneficiarios de acuerdo al indicador por disciplina deportiva, y reportar el retiro de los beneficiarios y el ingreso de beneficiarios de remplazo durante la ejecución del contrato, si aplica",
     detail: "",
     make: false,
     },
     {nombre: "Actividad 3",
-    desc: "Coordinar reuniones de planeación y seguimiento del proyecto",
+    desc: "Implementar las orientaciones técnicas recibidas por parte del metodólogo como estrategia de fortalecimiento de los procesos de enseñanza - aprendizaje, para brindar un proceso de calidad",
     detail: "",
     make: false,
     },
     {nombre: "Actividad 4",
-    desc: "Coordinar la gestión de adquisición de bienes, obras y servicios para el proyecto",
+    desc: "Realizar la práctica deportiva con los beneficiarios de acuerdo a los contenidos establecidos en el plan clase entregado por el equipo técnico, sobre la disciplina a su cargo",
     detail: "",
     make: false,
     },
     {nombre: "Actividad 5",
-    desc: "Realizar proyecciones de flujo de caja en la ejecución del proyecto.",
+    desc: "Mantener permanente y buena comunicación con el equipo del proyecto, los padres de familia, los líderes deportivos y sociales y los beneficiarios",
     detail: "",
     make: false,
     },
     {nombre: "Actividad 6",
-    desc: "Revisar y aprobar los informes del Proyecto para correspondientes desembolsos requeridos por la supervisión del proyecto.",
+    desc: "Implementar con sus beneficiarios las actividades del programa semilleros transversales en compañía de las psicólogas, metodólogos y coordinadores de la región",
     detail: "",
     make: false,
     },
     {nombre: "Actividad 7",
-    desc: "Atender los requerimientos administrativos y/o PQRS en el marco del proyecto.",
+    desc: "Asistir a eventos, capacitaciones, conferencias, reuniones que le sean citadas por el programa, de carácter presencial y/o virtual",
     detail: "",
     make: false,
     },
     {nombre: "Actividad 8",
-    desc: "Convocar y/o asistir a eventos, capacitaciones, conferencias, reuniones que le sean citadas del proyecto, de carácter presencial y/o virtual.",
+    desc: "Elaborar y presentar el informe sobre los avances y el desarrollo del proceso según las orientaciones impartidas por el equipo técnico del proyecto y presentar al metodólogo para su aprobación",
     detail: "",
     make: false,
     },
     {nombre: "Actividad 9",
-    desc: "Revisar y aprobar los informes presentados por los contratistas bajo supervisión para la verificación del proceso técnico y de pago.",
+    desc: "Elaborar el cronograma de prácticas deportivas y realizar actualizaciones si aplica",
     detail: "",
     make: false,
     },
     {nombre: "Actividad 10",
-    desc: "Elaborar el informe en el que dé cuenta de sus actividades realizadas.",
+    desc: "Realizar la convocatoria a padres y/o acudientes para el desarrollo de los semilleros de familia y asesorías personalizadas que lideran las psicólogas en el marco del proyecto Semilleros Deportivos",
     detail: "",
     make: false,
     },
     {nombre: "Actividad 11",
-    desc: "Las demás actividades afines o complementarias con las anteriores y que le sean asignadas y que correspondan a la naturaleza del contrato.",
+    desc: "Realizar una vez al mes convocatoria para reunión de padres de familia y/o acudientes con el fin de dar orientación sobre el desarrollo técnico, deportivo y administrativo de los beneficiarios",
+    detail: "",
+    make: false,
+    },
+    {nombre: "Actividad 12",
+    desc: "Apoyar en el desarrollo de activación de rutas de violencia sexual de género en relación a los niños, niñas, adolescentes y jóvenes, de acuerdo a la normativa colombiana",
+    detail: "",
+    make: false,
+    },
+    {nombre: "Actividad 13",
+    desc: "Garantizar la gratuidad del programa en los Municipios y su enfoque diferencial",
+    detail: "",
+    make: false,
+    },
+    {nombre: "Actividad 14",
+    desc: "Elaborar el informe en el que dé cuenta de las actividades realizadas",
+    detail: "",
+    make: false,
+    },
+    {nombre: "Actividad 15",
+    desc: "Las demás actividades afines o complementarias con las anteriores y que le sean asignadas y que correspondan a la naturaleza del cargo",
     detail: "",
     make: false,
     },
@@ -162,6 +237,12 @@ const form = reactive({
     activity: [...activities],
     evidencias: [...evidence.value],
     department: "",
+
+    periodo: "mayo",
+    planilla: "",
+    eps: "",
+    arl: "",
+    pension: "",
 })
 
 
@@ -205,9 +286,9 @@ const onSubmit = async () => {
         if(lastinfo){lastinfo = JSON.parse(lastinfo);}
         const today = new Date();
         const thedata = lastinfo==null?
-        [{...form, budgetdata, create: today.getMonth()+"-"+today.getDay()+"-"+today.getFullYear()}]
+        [{id:'1', ...form, user: {...TheUserData}, /*budgetdata,*/ create: today.getMonth()+"-"+today.getDay()+"-"+today.getFullYear(), budgetstatus: {state: "En Revisión", slug: "ERV", fase: "En supervisión"},}]
         :
-        [...lastinfo, {...form, budgetdata, create: today.getMonth()+"-"+today.getDay()+"-"+today.getFullYear()}]
+        [...lastinfo, {id:'1', ...form, user: {...TheUserData}, /*budgetdata,*/ create: today.getMonth()+"-"+today.getDay()+"-"+today.getFullYear(), budgetstatus: {state: "En Revisión", slug: "ERV", fase: "En supervisión"},}]
 
         ;
         
@@ -245,8 +326,8 @@ const onSubmit = async () => {
 
     <div class="p-5 mt-5 intro-y box">
         <div class="grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
-            <CommonInput type="text" name="person.name" label="Contrato" placeholder="Seleccionar" v-model="budgetdata.contract.id" />
-            <CommonInput type="text" name="person.name" label="Cuota" placeholder="Seleccionar" v-model="contractdata.cuote"/>
+            <CommonInput type="text" name="person.name" label="Contrato" placeholder="Seleccionar" v-model="TheUserData.NODECONTRATO" :disabled="true"/>
+            <CommonInput type="text" name="person.name" label="Cuota" placeholder="Seleccionar" v-model="TheUserData.VALORCUOTAINCLUIDOMOVILIZACION" :disabled="true"/>
             <!--<CommonSelect label="Departamento *" name="department" v-model="form.department" :validator="v$" :options="departments" />-->
         </div>
     </div>
@@ -258,17 +339,17 @@ const onSubmit = async () => {
     <div class="p-5 mt-5 intro-y box">
         <div class="grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
             <!--<h1 class="m-4 col-span-2 text-xl bold text-left text-gray-800"> Planilla Seguridad Social </h1>-->
-            <div class="col-span-2"><CommonInput type="text" name="person.name" label="Periodo de cotización" v-model="budgetdata.validity"/></div>
-            <div class="col-span-2"><CommonInput type="text" name="person.name" label="Número de planilla" v-model="budgetdata.id"/></div>
+            <CommonInput type="text" name="person.name" label="Periodo de cotización" v-model="form.periodo" :disabled="true"/>
+            <CommonInput type="text" name="person.name" label="Número de planilla" v-model="form.planilla" :placeholder="'123456789'"/>
 
-            <CommonInput type="text" name="person.name" label="Nombre EPS" v-model="userdata.epsName"/>
-            <CommonInput type="text" name="person.name" label="Valor Pagado" v-model="userdata.epsValue" :placeholder="'$ 0.00'"/>
+            <CommonInput type="text" name="person.name" label="Nombre EPS" v-model="TheUserData.ENTIDADPROMOTORADESALUD"/>
+            <CommonInput type="text" name="person.name" label="Valor Pagado" v-model="form.eps" :placeholder="'$ 0.00'"/>
 
-            <CommonInput type="text" name="person.name" label="Nombre ARL" v-model="userdata.arlName"/>
-            <CommonInput type="text" name="person.name" label="Valor Pagado" v-model="userdata.arlValue" :placeholder="'$ 0.00'"/>
+            <CommonInput type="text" name="person.name" label="Nombre ARL" v-model="TheUserData.ARL"/>
+            <CommonInput type="text" name="person.name" label="Valor Pagado" v-model="form.arl" :placeholder="'$ 0.00'"/>
 
-            <CommonInput type="text" name="person.name" label="Nombre Pensión" v-model="userdata.pensionName"/>
-            <CommonInput type="text" name="person.name" label="Valor Pagado" v-model="userdata.pensionValue" :placeholder="'$ 0.00'"/>
+            <CommonInput type="text" name="person.name" label="Nombre Pensión" v-model="TheUserData.FONDODEPENSIONES"/>
+            <CommonInput type="text" name="person.name" label="Valor Pagado" v-model="form.pension" :placeholder="'$ 0.00'"/>
         </div>
     </div>
 
@@ -323,9 +404,9 @@ const onSubmit = async () => {
 </div>
 
 <div class="p-5 mt-5 intro-y box">
-    <div class="grid grid-cols-4 gap-4 justify-evenly">
+    <div class="grid grid-cols-5 gap-2 justify-evenly">
 
-        <div class="font-bold text-center align-middle my-auto mb-4">
+        <div class="font-bold text-center align-middle my-auto mb-4 col-span-2">
                 <span class="px-2 py-1 mb-3">Nombre Actividad</span><hr/>
         </div>
         <div class="font-bold text-center align-middle my-auto mb-4">
@@ -337,7 +418,7 @@ const onSubmit = async () => {
 
         <template v-for="(myactivity, index) in form.activity">
 
-            <div class="font-medium text-center my-auto">
+            <div class="font-medium text-justify my-auto mt-2 mb-3 col-span-2">
                 <span class="px-2 py-1">{{ myactivity.nombre }}</span><br/>
                 <span class="px-2 py-1 font-normal">{{ myactivity.desc }}</span>
             </div>
