@@ -37,12 +37,12 @@ const form_rules = computed(() => ({
 	email: { required, email },
 	gender: { required },
 	lastname: { required },
-	municipalities: { required },
-	cities: { required },
+	municipalities: {},
+	cities: {},
 	period: {},
 	phone: { required },
 	roles: { required },
-	zones: { required },
+	zones: {},
 	password: {},
 	disciplines: {},
 }));
@@ -295,7 +295,16 @@ onMounted(async () => {
 				name="zones"
 				v-model="form.zones"
 				:validator="v$"
-				:options="zones" />
+				:options="zones"
+				v-if="form.roles == '1' || 
+				form.roles == '2' || 
+				form.roles == '4' || 
+				form.roles == '8' || 
+				form.roles == '9' || 
+				form.roles == '10' || 
+				form.roles == '11' || 
+				form.roles == '12'"
+			/>
 			<!-- <CommonSelect
 				label="Seleccione la ciudad *"
 				name="municipalities"
@@ -308,7 +317,16 @@ onMounted(async () => {
 				v-model="form.municipalities"
 				:validator="v$"
 				:options="municipalities"
-				multiple />
+				multiple 
+				v-if="form.roles == '1' || 
+				form.roles == '2' || 
+				form.roles == '4' || 
+				form.roles == '8' || 
+				form.roles == '9' || 
+				form.roles == '10' || 
+				form.roles == '11' || 
+				form.roles == '12'"
+			/>
 			<CommonSelect
 				class="h-30"
 				label="Seleccione las disciplinas *"
@@ -316,7 +334,16 @@ onMounted(async () => {
 				v-model="form.disciplines"
 				:validator="v$"
 				:options="disciplines"
-				multiple />
+				multiple
+				v-if="form.roles == '1' || 
+				form.roles == '2' || 
+				form.roles == '4' || 
+				form.roles == '8' || 
+				form.roles == '9' || 
+				form.roles == '10' || 
+				form.roles == '11' || 
+				form.roles == '12'"
+			/>
 			<br />
 			<!-- <CommonInput type="hidden" name="password" :value="form.document_number" v-model="form.password" :validator="v$" />-->
 		</div>
