@@ -5,7 +5,7 @@ const store = onboardingStore();
 
 const user: any = store.user
 
-//console.log(user)
+console.log(user)
 
 </script>
 
@@ -24,7 +24,7 @@ const user: any = store.user
                     </div>
                     <div>
                         <div class="text-base font-medium truncate sm:whitespace-normal text-slate-700">
-                            {{ `${user?.name} ${user?.lastname}`  }}
+                            {{ user.full_name}}
                         </div>
                         <div class="text-slate-500">Nombre</div>
                     </div>
@@ -36,7 +36,7 @@ const user: any = store.user
                     </div>
                     <div>
                         <div class="text-base font-medium truncate sm:whitespace-normal text-slate-700">
-                            {{ user?.profile.document_type == 'CC' ? 'Cédula de ciudadanía' : 'No definido'}}
+                            {{ user.document_type }}
                         </div>
                         <div class="text-slate-500">Tipo de documento de identidad</div>
                     </div>
@@ -48,7 +48,7 @@ const user: any = store.user
                     </div>
                     <div>
                         <div class="text-base font-medium truncate sm:whitespace-normal text-slate-700">
-                            {{ user?.phone }}
+                            {{ user.phone }}
                         </div>
                         <div class="text-slate-500">Teléfono</div>
                     </div>
@@ -60,7 +60,7 @@ const user: any = store.user
                     </div>
                     <div>
                         <div class="text-base font-medium truncate sm:whitespace-normal text-slate-700">
-                            {{ user?.roles[0].name }}
+                            {{ user.roles[0].name }}
                         </div>
                         <div class="text-slate-500">Rol</div>
                     </div>
@@ -74,7 +74,7 @@ const user: any = store.user
                     </div>
                     <div>
                         <div class="text-base font-medium truncate sm:whitespace-normal text-slate-700">
-                            {{ user?.email }}
+                            {{ user.email }}
                         </div>
                         <div class="text-slate-500">Email</div>
                     </div>
@@ -86,7 +86,7 @@ const user: any = store.user
                     </div>
                     <div>
                         <div class="text-base font-medium truncate sm:whitespace-normal text-slate-700">
-                            {{ user?.document_number }}
+                            {{ user.document_number }}
                         </div>
                         <div class="text-slate-500">Numero de documento de identidad</div>
                     </div>
@@ -98,7 +98,7 @@ const user: any = store.user
                     </div>
                     <div>
                         <div class="text-base font-medium truncate sm:whitespace-normal text-slate-700">
-                            {{ user?.address != null ? user?.address : 'No definido' }}
+                            {{ user.adress }}
                         </div>
                         <div class="text-slate-500">Dirección</div>
                     </div>
@@ -110,7 +110,7 @@ const user: any = store.user
                     </div>
                     <div>
                         <div class="text-base font-medium truncate sm:whitespace-normal text-slate-700">
-                            {{ user?.gender != null ? user?.gender : 'No definido' }}
+                            {{ user.gender }}
                         </div>
                         <div class="text-slate-500">Genero</div>
                     </div>
