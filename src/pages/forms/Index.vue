@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Crud from '@/components/Crud.vue';
 import { Header, Item } from 'vue3-easy-data-table';
+import View from '@/pages/forms/View.vue'
 
 import { beneficiaryServices } from '@/services/beneficiaryServices';  // 1. Llamar el servicio
 const router = useRouter()
@@ -25,7 +26,7 @@ const headers: Header[] = [
     { text: 'MUNICIPIO', value: 'municipality.name' },
     { text: 'ESTADO', value: 'status' },
     { text: 'FECHA CREADO', value: 'created_at' },
-    { text: 'ACCIONES', value: 'actions' },
+    { text: 'ACCIONES', value: 'actionsBene' },
 ]
 const items = ref<Item[]>([])// 3. Definir una variable,para guardar los los datos que llega tipo  ref<Item[]>([])
 
@@ -70,7 +71,7 @@ const dataSearch = computed(() => searchData(items.value, search.value));
 			v-model="search"
 			placeholder="Buscar" />
 
-        <Crud :headers="headers" :items="dataSearch" />
+        <Crud :headers="headers" :items="dataSearch" :Form="{...View}" />
     </div>
     <!-- END: Page Layout -->
 </template>
