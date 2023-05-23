@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { email, required } from '@vuelidate/validators';
+import { email, required, requiredIf } from '@vuelidate/validators';
 import { onMounted, ref } from 'vue';
 //import { useUser } from '@/stores/user'
 import { useVuelidate } from '@vuelidate/core';
@@ -19,7 +19,6 @@ const form = reactive({
 	gender: '',
 	lastname: '',
 	municipalities: '',
-	cities: '',
 	name: '',
 	period: '',
 	phone: '',
@@ -29,6 +28,8 @@ const form = reactive({
 	disciplines: '',
 });
 
+const excludedRoles = [3, 5, 6 ,7]
+
 const form_rules = computed(() => ({
 	name: { required },
 	address: { required },
@@ -37,12 +38,11 @@ const form_rules = computed(() => ({
 	email: { required, email },
 	gender: { required },
 	lastname: { required },
-	municipalities: { required },
-	cities: { required },
+	municipalities: { required: requiredIf(() => !excludedRoles.includes(parseInt(form.roles))) },
 	period: {},
 	phone: { required },
 	roles: { required },
-	zones: { required },
+	zones: { required: requiredIf(() => !excludedRoles.includes(parseInt(form.roles))) },
 	password: {},
 	disciplines: {},
 }));
@@ -197,8 +197,8 @@ const fetch = async () => {
 			if(response.data.items.zone.length > 0){
 				form.zones = response.data.items.zone[0].zones_id;
 			};
-			form.municipalities = response.data.items.municipalities.map(obj => obj.id);
-			form.disciplines = response.data.items.disciplines.map(obj => obj.id);
+			form.municipalities = response.data.items.municipalities.map((obj: any) => obj.id);
+			form.disciplines = response.data.items.disciplines.map((obj: any) => obj.id);
 			Swal.fire('', response?.data.message, 'info').finally(() => {});
 		} else {
 			Swal.fire('', 'No se pudieron obtener los datos', 'error');
@@ -291,11 +291,13 @@ onMounted(async () => {
 				:validator="v$" />
 
 			<CommonSelect
+				v-if="!excludedRoles.includes(parseInt(form.roles))"
 				label="Selecciona regiones *"
 				name="zones"
 				v-model="form.zones"
 				:validator="v$"
-				:options="zones" />
+				:options="zones" 
+				multiple/>
 			<!-- <CommonSelect
 				label="Seleccione la ciudad *"
 				name="municipalities"
@@ -303,13 +305,15 @@ onMounted(async () => {
 				:validator="v$"
 				:options="cities" /> -->
 			<CommonSelect
+				v-if="!excludedRoles.includes(parseInt(form.roles))"
 				label="Seleccione el municipio *"
 				name="municipalities"
 				v-model="form.municipalities"
 				:validator="v$"
 				:options="municipalities"
-				multiple />
+				/>
 			<CommonSelect
+				v-if="!excludedRoles.includes(parseInt(form.roles))"
 				class="h-30"
 				label="Seleccione las disciplinas *"
 				name="disciplines"

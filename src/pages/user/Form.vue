@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { addFile } from '@/types/filepond'
-import { email, required } from '@vuelidate/validators'
+import { email, required, requiredIf } from '@vuelidate/validators'
 import CommonFile from '@/components/CommonFile.vue'
 //import { useUser } from '@/stores/user'
 import { useVuelidate } from '@vuelidate/core'
@@ -25,6 +25,8 @@ const form = reactive({
     disciplines: '',
 })
 
+const excludedRoles = [3, 5, 6 ,7]
+
 const form_rules = computed(() => ({
     name:{required},
     address: { required },
@@ -33,11 +35,11 @@ const form_rules = computed(() => ({
     email: { required, email },
     gender: { required },
     lastname: { required },
-    municipalities: { required },
+    municipalities: { required: requiredIf(() => !excludedRoles.includes(parseInt(form.roles))) },
     period: {},
     phone: { required },
     roles: { required },
-    zones: { required },
+    zones: { required: requiredIf(() => !excludedRoles.includes(parseInt(form.roles))) },
     password: {},
     disciplines: {},
 }))
@@ -298,10 +300,10 @@ const onSubmit = async () => {
                 :options="genders" />
             <CommonInput type="email" label="Correo *" placeholder="Ingrese el correo" name="email" v-model="form.email"
                 :validator="v$" />
-            <CommonSelect label="Selecciona regiones *" name="zones" v-model="form.zones" :validator="v$" :options="zones" />
-            <CommonSelect label="Seleccione el municipio *" name="municipalities" v-model="form.municipalities" :validator="v$"
+            <CommonSelect v-if="!excludedRoles.includes(parseInt(form.roles))" label="Selecciona regiones *" name="zones" v-model="form.zones" :validator="v$" :options="zones" multiple  />
+            <CommonSelect v-if="!excludedRoles.includes(parseInt(form.roles))" label="Seleccione el municipio *" name="municipalities" v-model="form.municipalities" :validator="v$"
                 :options="municipalities" multiple />
-            <CommonSelect class="h-30" label="Seleccione las disciplinas *" name="disciplines" v-model="form.disciplines" :validator="v$"
+            <CommonSelect v-if="!excludedRoles.includes(parseInt(form.roles))" class="h-30" label="Seleccione las disciplinas *" name="disciplines" v-model="form.disciplines" :validator="v$"
                 :options="disciplines" multiple />
             <br>
             <CommonInput type="hidden" name="password" :value="form.document_number" v-model="form.password" :validator="v$" />
