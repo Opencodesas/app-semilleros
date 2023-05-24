@@ -249,6 +249,7 @@ onMounted(async () => {
 
 			<CommonSelect
 				label="Selecciona regiones *"
+				multiple
 				name="zones"
 				v-model="form.zones"
 				:validator="v$"
