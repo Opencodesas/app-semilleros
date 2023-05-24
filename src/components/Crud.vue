@@ -2,6 +2,7 @@
 import Lucide from '@/base-components/Lucide';
 import { isRole } from '@/composables/isRole';
 import ContractorDocumentsType from '@/types/contractorDocumentsTypes';
+import FormSwitch from '@/base-components/Form/FormSwitch';
 import dayjs from 'dayjs';
 import type { Header, Item } from 'vue3-easy-data-table';
 import CommonButtonLink from './CommonButtonLink.vue';
@@ -597,13 +598,14 @@ const selectedTab = inject('selectedTab', ref(0));
 					<template v-if="route.name == 'users.index'">
 						<Button
 							variant="outline-secondary"
-							@click="toggleUserStatus (item.id, item.inactive)">
+							>
 							<Lucide
-								:icon="'Power'"
 								class="mr-2" />
 							<span
 								class="text-sm">
-								{{ item.inactive ? 'Activar' : 'Inactivar' }}								
+								Estado
+								<FormSwitch.Input name="swich_plans" id="swich_plans" type="checkbox"
+									:checked="item.inactive ? false : true" @click="toggleUserStatus (item.id, item.inactive)" />	
 							</span>
 						</Button>
 					</template>
