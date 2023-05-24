@@ -117,20 +117,23 @@ const getHolidays = (date: string, nameHoliday: string) => {
 // 	return holidays;
 // }, null);
 
-let holidaysMonth: string[];
+let holidaysMonth: string;
 
 // watch(
 // 	() => form.month,
-// 	(newVal) => {
+// 	(newVal: any) => {
 // 		if (newVal) {
 // 			const res = holidays.value.filter((holiday: any) => {
 // 				const month = holiday.date.split('-')[1];
 // 				return month == newVal;
 // 			});
-// 			holidaysMonth = res.map((holiday: any) => {
+// 			const holidaysRes = res.map((holiday: any) => {
 // 				return getHolidays(holiday.date, holiday.name);
 // 			});
-// 			console.log(holidaysMonth.join(' - '));
+// 			const date = new Date();
+// 			date.setMonth(newVal - 1);
+// 			const nameMonth = date.toLocaleString('CO', { month: 'long' });
+// 			holidaysMonth = `Festivos de ${nameMonth}: ${holidaysRes.join(' - ')}`;
 // 		}
 // 	}
 // );
@@ -337,7 +340,7 @@ const removeChild = (pos: number, group: any) => {
                         <div v-if="holidaysMonth" class="col-span-1 md:col-span-2">
 							<CommonEditor label="Observaciones Dias Festivos" name="noteHoliday" v-model="form.noteHoliday"
 								:validator="v$" />
-							<p class="mt-2">{{ form.month && holidaysMonth.join(' - ') }}</p>
+							<p class="mt-2">{{ form.month && holidaysMonth }}</p>
 						</div>
                     </div>
                 </div>

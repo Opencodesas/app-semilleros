@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { addFile } from '@/types/filepond'
-import { email, required } from '@vuelidate/validators'
+import { email, required, requiredIf } from '@vuelidate/validators'
 import CommonFile from '@/components/CommonFile.vue'
 //import { useUser } from '@/stores/user'
 import { useVuelidate } from '@vuelidate/core'
@@ -24,6 +24,8 @@ const form = reactive({
     password: '',
     disciplines: '',
 })
+
+const excludedRoles = [3, 5, 6 ,7]
 
 const form_rules = computed(() => ({
     name:{required},
@@ -245,7 +247,7 @@ const onSubmit = async () => {
                 :options="genders" />
             <CommonInput type="email" label="Correo *" placeholder="Ingrese el correo" name="email" v-model="form.email"
                 :validator="v$" />
-            <CommonSelect label="Selecciona regiones *" name="zones" v-model="form.zones" :validator="v$" :options="zones" v-if="form.roles == '1' || form.roles == '2' || form.roles == '4' || form.roles == '8' || form.roles == '9' || form.roles == '10' || form.roles == '11' || form.roles == '12'" />
+            <CommonSelect multiple label="Selecciona regiones *" name="zones" v-model="form.zones" :validator="v$" :options="zones" v-if="form.roles == '1' || form.roles == '2' || form.roles == '4' || form.roles == '8' || form.roles == '9' || form.roles == '10' || form.roles == '11' || form.roles == '12'" />
             <CommonSelect label="Seleccione el municipio *" name="municipalities" v-model="form.municipalities" :validator="v$"
                 :options="municipalities" multiple v-if="form.roles == '1' || form.roles == '2' || form.roles == '4' || form.roles == '8' || form.roles == '9' || form.roles == '10' || form.roles == '11' || form.roles == '12'" />
             <CommonSelect class="h-30" label="Seleccione las disciplinas *" name="disciplines" v-model="form.disciplines" :validator="v$"

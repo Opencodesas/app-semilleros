@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { email, required } from '@vuelidate/validators';
+import { email, required, requiredIf } from '@vuelidate/validators';
 import { onMounted, ref } from 'vue';
 //import { useUser } from '@/stores/user'
 import { useVuelidate } from '@vuelidate/core';
@@ -19,7 +19,6 @@ const form = reactive({
 	gender: '',
 	lastname: '',
 	municipalities: '',
-	cities: '',
 	name: '',
 	period: '',
 	phone: '',
@@ -38,7 +37,6 @@ const form_rules = computed(() => ({
 	gender: { required },
 	lastname: { required },
 	municipalities: {},
-	cities: {},
 	period: {},
 	phone: { required },
 	roles: { required },
@@ -115,53 +113,12 @@ const formdataParser = (form: any) => {
 	return formData;
 };
 
-const towns = [
-	{
-		label: 'Tulua',
-		value: 'Tulua',
-	},
-	{
-		label: 'Cali',
-		value: 'Cali',
-	},
-	{
-		label: 'Palmira',
-		value: 'Palmira',
-	},
-	{
-		label: 'Dagua',
-		value: 'Dagua',
-	},
-	{
-		label: 'El Cerrito',
-		value: 'El Cerrito',
-	},
-	{
-		label: 'Florida',
-		value: 'Florida',
-	},
-	{
-		label: 'Jamundí',
-		value: 'Jamundí',
-	},
-	{
-		label: 'Vijes ',
-		value: 'Vijes ',
-	},
-	{
-		label: 'Yumbo',
-		value: 'Yumbo',
-	},
-];
 const zones = asyncComputed(async () => {
 	return await getSelect(['zones']);
 }, null);
 
 const zone_id = computed(() => form.zones);
 
-const cities = asyncComputed(async () => {
-	return zone_id.value ? await getCitiesByDepartment(zone_id.value) : [];
-}, null);
 const roles = asyncComputed(async () => {
 	const roles_data = await getSelect(['roles']);
 	return roles_data.filter(({ value }) => value != '1');
@@ -197,8 +154,8 @@ const fetch = async () => {
 			if(response.data.items.zone.length > 0){
 				form.zones = response.data.items.zone[0].zones_id;
 			};
-			form.municipalities = response.data.items.municipalities.map(obj => obj.id);
-			form.disciplines = response.data.items.disciplines.map(obj => obj.disciplines_id);
+			form.municipalities = response.data.items.municipalities.map((obj: any) => obj.id);
+			form.disciplines = response.data.items.disciplines.map((obj: any) => obj.disciplines_id);
 			Swal.fire('', response?.data.message, 'info').finally(() => {});
 		} else {
 			Swal.fire('', 'No se pudieron obtener los datos', 'error');
@@ -292,6 +249,7 @@ onMounted(async () => {
 
 			<CommonSelect
 				label="Selecciona regiones *"
+				multiple
 				name="zones"
 				v-model="form.zones"
 				:validator="v$"
