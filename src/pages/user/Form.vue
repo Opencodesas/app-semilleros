@@ -2,8 +2,6 @@
 import { storeToRefs } from 'pinia'
 import { addFile } from '@/types/filepond'
 import { email, required } from '@vuelidate/validators'
-import CommonFile from '@/components/CommonFile.vue'
-//import { useUser } from '@/stores/user'
 import { useVuelidate } from '@vuelidate/core'
 import Swal, { SweetAlertIcon } from "sweetalert2"
 
@@ -42,22 +40,27 @@ const form_rules = computed(() => ({
     password: {},
 }))
 const formdataParser = (form: any) => {
-	const formData = new FormData();
-	Object.keys(form).forEach((key) => {
-		if (key == 'municipalities') {
-			form[key].forEach((file: any) => {
-				formData.append('municipalities[]', file);
-			});
-        } else if (key == 'disciplines') {
-            form[key].forEach((file: any) => {
-                formData.append('disciplines[]', file);
-            });
-        }
-        else {
-			formData.append(key, form[key]);
-		}
-	});
-	return formData;
+  const formData = new FormData();
+  
+  if (form.municipalities) {
+    form.municipalities.forEach((file: any) => {
+      formData.append('municipalities[]', file);
+    });
+  }
+
+  if (form.disciplines) {
+    form.disciplines.forEach((file: any) => {
+      formData.append('disciplines[]', file);
+    });
+  }
+
+  Object.keys(form).forEach((key) => {
+    if (key !== 'municipalities' && key !== 'disciplines') {
+      formData.append(key, form[key]);
+    }
+  });
+
+  return formData;
 };
 const users = ref([]);
 
@@ -182,8 +185,7 @@ const fetchtTypeUsers = async () => {
         form.document_type = users_data.data.items.document_type;
         form.document_number = users_data.data.items.document_number;
         //form.roles = users_data.data.items.roles[0];
-    }
-   
+    }   
 }
 onUnmounted(() => {
     v$.value.$reset();
@@ -204,7 +206,7 @@ const onSubmit = async () => {
                     alerts.create()
                     setLoading(true)
                     router.push({name: 'users.index'}).finally(() => {
-                        setLoading(false)
+                        setLoading(false);                    
                     })
                 }
             }
