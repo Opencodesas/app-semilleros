@@ -151,9 +151,7 @@ const fetch = async () => {
 			form.document_type = response.data.items.document_type;
 			form.document_number = response.data.items.document_number;
 			form.roles = response.data.items.roles[0].id;
-			if(response.data.items.zone.length > 0){
-				form.zones = response.data.items.zone[0].zones_id;
-			};
+			form.zones = response.data.items.zone.map((obj: any) => obj.zones_id);
 			form.municipalities = response.data.items.municipalities.map((obj: any) => obj.id);
 			form.disciplines = response.data.items.disciplines.map((obj: any) => obj.disciplines_id);
 			Swal.fire('', response?.data.message, 'info').finally(() => {});
