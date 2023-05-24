@@ -152,7 +152,7 @@ const fetch = async () => {
 			form.document_number = response.data.items.document_number;
 			form.roles = response.data.items.roles[0].id;
 			form.zones = response.data.items.zone.map((obj: any) => obj.zones_id);
-			form.municipalities = response.data.items.municipalities.map((obj: any) => obj.id);
+			form.municipalities = response.data.items.municipalities.map((obj: any) => obj.municipalities_id);
 			form.disciplines = response.data.items.disciplines.map((obj: any) => obj.disciplines_id);
 			Swal.fire('', response?.data.message, 'info').finally(() => {});
 		} else {
