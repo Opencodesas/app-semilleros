@@ -107,9 +107,7 @@ const getHolidays = (date: string, nameHoliday: string) => {
 		parseInt(fecha[1]) - 1,
 		parseInt(fecha[2])
 	);
-	return `${week[dia.getDay()]} ${dia.getDate()} de ${dia.toLocaleString('CO', {
-		month: 'long',
-	})}: ${nameHoliday}`;
+	return `${week[dia.getDay()]} ${dia.getDate()} ${nameHoliday}`;
 };
 
 const holidays = computedAsync(async () => {
@@ -133,20 +131,23 @@ const holidays = computedAsync(async () => {
 	return holidays;
 }, null);
 
-let holidaysMonth: string[];
+let holidaysMonth: string;
 
 watch(
 	() => form.month,
-	(newVal) => {
+	(newVal: any) => {
 		if (newVal) {
 			const res = holidays.value.filter((holiday: any) => {
 				const month = holiday.date.split('-')[1];
 				return month == newVal;
 			});
-			holidaysMonth = res.map((holiday: any) => {
+			const holidaysRes = res.map((holiday: any) => {
 				return getHolidays(holiday.date, holiday.name);
 			});
-			console.log(holidaysMonth.join(' - '));
+			const date = new Date();
+			date.setMonth(newVal - 1);
+			const nameMonth = date.toLocaleString('CO', { month: 'long' });
+			holidaysMonth = `Festivos de ${nameMonth}: ${holidaysRes.join(' - ')}`;
 		}
 	}
 );
@@ -364,7 +365,7 @@ const onCloneChronogram = async () => {
 						<div v-if="holidaysMonth" class="col-span-1 md:col-span-2">
 							<CommonEditor label="Observaciones Dias Festivos" name="noteHoliday" v-model="form.noteHoliday"
 								:validator="v$" />
-							<p class="mt-2">{{ form.month && holidaysMonth.join(' - ') }}</p>
+							<p class="mt-2">{{ form.month && holidaysMonth }}</p>
 						</div>
 					</div>
 				</div>
