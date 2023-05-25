@@ -790,8 +790,13 @@ export default defineComponent({
       };
       axios.addBeneficiary(data).then((res: any) => {
         if(res){
-          Swal.fire('', res.data.message, 'success').finally(() => {
-          })
+		    if (res?.status == 200) {
+            Swal.fire('', res.data.message, 'success').finally(() => {
+            })
+          }else{
+            Swal.fire('', res.data.error, 'error').finally(() => {
+            })
+          }
           this.limpiar( form, v1, v2, v3 );
         }
       });
