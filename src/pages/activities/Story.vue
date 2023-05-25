@@ -53,7 +53,7 @@ const headers: Header[] = [
     {text: 'ESTADO', value: 'budgetFase', sortable: true    },
 ]
 
-let data = [
+let data: any = [
     /*{
         id: "1",
         date: "noviembre",

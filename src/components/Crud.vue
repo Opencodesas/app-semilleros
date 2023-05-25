@@ -35,7 +35,7 @@ const props = withDefaults(
 		edit_gestor?: boolean;
 		headers: Header[];
 		items: Item[];
-		item_see_fnc?: Function | boolean;
+		item_see_fnc?: any;
 		item_see_fullview?: boolean;
 		label?: string;
 		Form?: Object;
@@ -46,7 +46,7 @@ const props = withDefaults(
 	}>(),
 	{
 		edit_gestor: false,
-		item_see_fnc: () => false,
+		item_see_fnc: ( id: any ) => {},
 		item_see_fullview: false,
 		label: '',
 		management_permissions: false,
