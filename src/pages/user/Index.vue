@@ -22,7 +22,8 @@ onBeforeMount(async () => {
         items.value = 
         [...response?.data.items].map(objeto => ({
         ...objeto,
-        profile: JSON.parse(JSON.stringify({...objeto.profile})) //copia profuda de copia profunda del objeto
+        profile: JSON.parse(JSON.stringify({...objeto.profile})), //copia profuda de copia profunda del objeto
+        role:objeto.roles[0],
         }));
         //console.log(response?.data.items)
         //console.log(items.value)
@@ -35,7 +36,7 @@ const headers: Header[] = [
     { text: 'NOMBRE', value: 'name', sortable: true },
     { text: 'APELLIDO', value: 'lastname', sortable: true },
     { text: 'DOCUMENTO', value: 'document_number', sortable: true },
-    // { text: "ROLES", value: "roles" },
+    { text: "ROLES", value: "role.name" },
     { text: 'ACCIONES', value: 'actions' },
 ]
 
