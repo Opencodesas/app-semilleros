@@ -54,7 +54,7 @@ const headers: Header[] = [
     {text: 'ESTADO', value: 'budgetstatus', sortable: true},
     {text: 'Acciones', value: 'budgetactions' },
 ]
-let data = [
+let data: any = [
     /*{
         id: "1",
         date: "febrero",
@@ -192,7 +192,7 @@ const TheUserData = {
   ADMINISTRATIVO: "KATHERINEMARTINEZSANDOVAL"
 };
 const aceptarCuenta = (id:any)=>{
-    const index = data.findIndex(obj => obj.id === id);
+    const index = data.findIndex( (obj: any) => obj.id === id);
     if (index !== -1) {
     let obj = JSON.parse( JSON.stringify( data[index] ) );
     obj = {...obj, budgetstatus: {...obj.budgetstatus, fase: 

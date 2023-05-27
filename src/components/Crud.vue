@@ -2,6 +2,7 @@
 import Lucide from '@/base-components/Lucide';
 import { isRole } from '@/composables/isRole';
 import ContractorDocumentsType from '@/types/contractorDocumentsTypes';
+import FormSwitch from '@/base-components/Form/FormSwitch';
 import dayjs from 'dayjs';
 import type { Header, Item } from 'vue3-easy-data-table';
 import CommonButtonLink from './CommonButtonLink.vue';
@@ -35,7 +36,7 @@ const props = withDefaults(
 		edit_gestor?: boolean;
 		headers: Header[];
 		items: Item[];
-		item_see_fnc?: Function | boolean;
+		item_see_fnc?: any;
 		item_see_fullview?: boolean;
 		label?: string;
 		Form?: Object;
@@ -46,7 +47,7 @@ const props = withDefaults(
 	}>(),
 	{
 		edit_gestor: false,
-		item_see_fnc: () => false,
+		item_see_fnc: ( id: any ) => {},
 		item_see_fullview: false,
 		label: '',
 		management_permissions: false,
@@ -597,13 +598,14 @@ const selectedTab = inject('selectedTab', ref(0));
 					<template v-if="route.name == 'users.index'">
 						<Button
 							variant="outline-secondary"
-							@click="toggleUserStatus (item.id, item.inactive)">
+							>
 							<Lucide
-								:icon="'Power'"
 								class="mr-2" />
 							<span
 								class="text-sm">
-								{{ item.inactive ? 'Activar' : 'Inactivar' }}								
+								Estado
+								<FormSwitch.Input name="swich_plans" id="swich_plans" type="checkbox"
+									:checked="item.inactive ? false : true" @click="toggleUserStatus (item.id, item.inactive)" />	
 							</span>
 						</Button>
 					</template>
@@ -1127,50 +1129,11 @@ const selectedTab = inject('selectedTab', ref(0));
 				</template>
 			</template>
 
-			<template #item-budgetstatus="item">
-                <span v-if="item?.budgetstatus?.slug == 'PAG'"
-                :class="'bg-success/10 text-success'"
-                class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
-                    {{ item?.budgetstatus?.state }}
-                </span>
-                <span v-else-if="(item?.budgetstatus?.slug == 'SUP' || item?.budgetstatus?.slug == 'SUB')"
-                :class="'bg-danger/10 text-danger'"
-                class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap"
-				:title="item?.budgetstatus?.msn || ''">
-                    {{ item?.budgetstatus?.state }}
-                </span>
-                <span v-else
-                :class="'bg-primary/10 text-primary'"
-                class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
-                    {{ item?.budgetstatus?.state }}
-                </span>
-            </template>
-			<template #item-budgetFase="item">
-				<span v-if="item?.budgetstatus?.slug == 'ERV'"
-                :class="'bg-primary/10 text-primary'"
-                class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
-                    {{ item?.budgetstatus?.fase }}
-                </span>
-				<span v-else>{{ item?.budgetstatus?.fase }}</span>
-			</template>
-			<template #item-budgetactions="item">
-				<Button @click="item_see_fnc(item.id)" variant="outline-success" class="mb-2">
-                    <span class="text-sm">Aprobar</span>
-                </Button>
-                <CommonButtonLink :to="''" variant="outline-pending">
-                    <span class="text-sm">Rechazar</span>
-                </CommonButtonLink>
-			</template>
-			
+			//BUDGET ZONE
+			//BUDGET ZONE
 
-
-
-			<template #item-UserActions="item">
-				<span v-if="item?.budgetstatus?.slug == 'PAG'"
-                :class="'bg-success/10 text-success'"
-                class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
-                    {{ item?.budgetstatus?.status }}
-                </span>
+			<template #item-actionsBene="item">
+				<Modal :Form="props.Form" label="Ver" :item="item" />
 			</template>
 
 		</DataTable>

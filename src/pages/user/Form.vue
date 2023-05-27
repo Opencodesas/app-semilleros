@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { addFile } from '@/types/filepond'
-import { email, required } from '@vuelidate/validators'
+import { email, required, requiredIf } from '@vuelidate/validators'
 import CommonFile from '@/components/CommonFile.vue'
 //import { useUser } from '@/stores/user'
 import { useVuelidate } from '@vuelidate/core'
@@ -25,6 +25,8 @@ const form = reactive({
     disciplines: '',
 })
 
+const excludedRoles = [3, 5, 6 ,7]
+
 const form_rules = computed(() => ({
     name:{required},
     address: { required },
@@ -33,31 +35,36 @@ const form_rules = computed(() => ({
     email: { required, email },
     gender: { required },
     lastname: { required },
-    municipalities: { required },
     period: {},
     phone: { required },
     roles: { required },
-    zones: { required },
-    password: {},
+    municipalities: {},
+    zones: {},
     disciplines: {},
+    password: {},
 }))
 const formdataParser = (form: any) => {
-	const formData = new FormData();
-	Object.keys(form).forEach((key) => {
-		if (key == 'municipalities') {
-			form[key].forEach((file: any) => {
-				formData.append('municipalities[]', file);
-			});
-        } else if (key == 'disciplines') {
-            form[key].forEach((file: any) => {
-                formData.append('disciplines[]', file);
-            });
-        }
-        else {
-			formData.append(key, form[key]);
-		}
-	});
-	return formData;
+  const formData = new FormData();
+  
+  if (form.municipalities) {
+    form.municipalities.forEach((file: any) => {
+      formData.append('municipalities[]', file);
+    });
+  }
+
+  if (form.disciplines) {
+    form.disciplines.forEach((file: any) => {
+      formData.append('disciplines[]', file);
+    });
+  }
+
+  Object.keys(form).forEach((key) => {
+    if (key !== 'municipalities' && key !== 'disciplines') {
+      formData.append(key, form[key]);
+    }
+  });
+
+  return formData;
 };
 const users = ref([]);
 
@@ -144,6 +151,23 @@ const getAllNoPaginate = async () => {
     await userServices.getAll();
 }
 
+const fetchtTypeUsers = async () => {
+    //Get all user, to add
+    //await getAllNoPaginate()
+    const users_data = await userServices.get("3");
+    console.log(users_data);
+    if(users_data?.data.success == true){
+        Swal.fire('', users_data?.data.message, 'info').finally(() => {
+        })
+        //Object.assign(form, users_data.data.items)}
+        form.name = users_data.data.items.name;
+        form.email = users_data.data.items.email;
+        form.gender = users_data.data.items.gender;
+        form.document_type = users_data.data.items.document_type;
+        form.document_number = users_data.data.items.document_number;
+        //form.roles = users_data.data.items.roles[0];
+    }   
+}
 onUnmounted(() => {
     v$.value.$reset();
 });
@@ -157,7 +181,7 @@ const onSubmit = async () => {
                     alerts.create()
                     setLoading(true)
                     router.push({name: 'users.index'}).finally(() => {
-                        setLoading(false)
+                        setLoading(false);                    
                     })
                 }
             }
@@ -198,11 +222,11 @@ const onSubmit = async () => {
                 :options="genders" />
             <CommonInput type="email" label="Correo *" placeholder="Ingrese el correo" name="email" v-model="form.email"
                 :validator="v$" />
-            <CommonSelect label="Selecciona regiones *" name="zones" v-model="form.zones" :validator="v$" :options="zones" multiple :allow-empty="true" />
+            <CommonSelect multiple label="Selecciona regiones *" name="zones" v-model="form.zones" :validator="v$" :options="zones" v-if="form.roles == '1' || form.roles == '2' || form.roles == '4' || form.roles == '8' || form.roles == '9' || form.roles == '10' || form.roles == '11' || form.roles == '12'"  :allow-empty="true" />
             <CommonSelect label="Seleccione el municipio *" name="municipalities" v-model="form.municipalities" :validator="v$"
-                :options="municipalities" multiple :allow-empty="true"/>
+                :options="municipalities" multiple v-if="form.roles == '1' || form.roles == '2' || form.roles == '4' || form.roles == '8' || form.roles == '9' || form.roles == '10' || form.roles == '11' || form.roles == '12'" :allow-empty="true"/>
             <CommonSelect class="h-30" label="Seleccione las disciplinas *" name="disciplines" v-model="form.disciplines" :validator="v$"
-                :options="disciplines" multiple />
+                :options="disciplines" multiple v-if="form.roles == '1' || form.roles == '2' || form.roles == '4' || form.roles == '8' || form.roles == '9' || form.roles == '10' || form.roles == '11' || form.roles == '12'" />
             <br>
             <CommonInput type="hidden" name="password" :value="form.document_number" v-model="form.password" :validator="v$" />
         </div>

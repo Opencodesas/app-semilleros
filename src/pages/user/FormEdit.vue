@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { email, required } from '@vuelidate/validators';
+import { email, required, requiredIf } from '@vuelidate/validators';
 import { onMounted, ref } from 'vue';
 //import { useUser } from '@/stores/user'
 import { useVuelidate } from '@vuelidate/core';
@@ -19,7 +19,6 @@ const form = reactive({
 	gender: '',
 	lastname: '',
 	municipalities: '',
-	cities: '',
 	name: '',
 	period: '',
 	phone: '',
@@ -37,12 +36,11 @@ const form_rules = computed(() => ({
 	email: { required, email },
 	gender: { required },
 	lastname: { required },
-	municipalities: { required },
-	cities: { required },
+	municipalities: {},
 	period: {},
 	phone: { required },
 	roles: { required },
-	zones: { required },
+	zones: {},
 	password: {},
 	disciplines: {},
 }));
@@ -70,8 +68,8 @@ const sendUpdate = async () => {
 
 const types = [
 	{
-		label: 'Cédula de ciudadania',
-		value: 'Cédula de ciudadania',
+		label: 'Cédula de ciudadanía',
+		value: 'Cédula de ciudadanía',
 	},
 	{
 		label: 'Cédula de extranjeria',
@@ -88,12 +86,12 @@ const types = [
 ];
 const genders = [
 	{
-		label: 'MASCULINO',
-		value: 'MASCULINO',
+		label: 'Masculino',
+		value: 'Masculino',
 	},
 	{
-		label: 'FEMENINO',
-		value: 'FEMENINO',
+		label: 'Femenino',
+		value: 'Femenino',
 	},
 ];
 
@@ -115,53 +113,12 @@ const formdataParser = (form: any) => {
 	return formData;
 };
 
-const towns = [
-	{
-		label: 'Tulua',
-		value: 'Tulua',
-	},
-	{
-		label: 'Cali',
-		value: 'Cali',
-	},
-	{
-		label: 'Palmira',
-		value: 'Palmira',
-	},
-	{
-		label: 'Dagua',
-		value: 'Dagua',
-	},
-	{
-		label: 'El Cerrito',
-		value: 'El Cerrito',
-	},
-	{
-		label: 'Florida',
-		value: 'Florida',
-	},
-	{
-		label: 'Jamundí',
-		value: 'Jamundí',
-	},
-	{
-		label: 'Vijes ',
-		value: 'Vijes ',
-	},
-	{
-		label: 'Yumbo',
-		value: 'Yumbo',
-	},
-];
 const zones = asyncComputed(async () => {
 	return await getSelect(['zones']);
 }, null);
 
 const zone_id = computed(() => form.zones);
 
-const cities = asyncComputed(async () => {
-	return zone_id.value ? await getCitiesByDepartment(zone_id.value) : [];
-}, null);
 const roles = asyncComputed(async () => {
 	const roles_data = await getSelect(['roles']);
 	return roles_data.filter(({ value }) => value != '1');
@@ -194,11 +151,9 @@ const fetch = async () => {
 			form.document_type = response.data.items.document_type;
 			form.document_number = response.data.items.document_number;
 			form.roles = response.data.items.roles[0].id;
-			if(response.data.items.zone.length > 0){
-				form.zones = response.data.items.zone[0].zones_id;
-			};
-			form.municipalities = response.data.items.municipalities.map(obj => obj.id);
-			form.disciplines = response.data.items.disciplines.map(obj => obj.id);
+			form.zones = response.data.items.zone.map((obj: any) => obj.zones_id);
+			form.municipalities = response.data.items.municipalities.map((obj: any) => obj.municipalities_id);
+			form.disciplines = response.data.items.disciplines.map((obj: any) => obj.disciplines_id);
 			Swal.fire('', response?.data.message, 'info').finally(() => {});
 		} else {
 			Swal.fire('', 'No se pudieron obtener los datos', 'error');
@@ -206,6 +161,8 @@ const fetch = async () => {
 		console.log(form);
 	});
 };
+
+const excludedRoles = [3, 6, 7, 8];
 
 onMounted(async () => {
 	console.log(route);
@@ -292,10 +249,13 @@ onMounted(async () => {
 
 			<CommonSelect
 				label="Selecciona regiones *"
+				multiple
 				name="zones"
 				v-model="form.zones"
 				:validator="v$"
-				:options="zones" />
+				:options="zones"
+				v-if="!(excludedRoles.includes(+form.roles))"
+			/>
 			<!-- <CommonSelect
 				label="Seleccione la ciudad *"
 				name="municipalities"
@@ -308,7 +268,9 @@ onMounted(async () => {
 				v-model="form.municipalities"
 				:validator="v$"
 				:options="municipalities"
-				multiple />
+				multiple 
+				v-if="!(excludedRoles.includes(+form.roles))"
+			/>
 			<CommonSelect
 				class="h-30"
 				label="Seleccione las disciplinas *"
@@ -316,7 +278,9 @@ onMounted(async () => {
 				v-model="form.disciplines"
 				:validator="v$"
 				:options="disciplines"
-				multiple />
+				multiple
+				v-if="!(excludedRoles.includes(+form.roles))"
+			/>
 			<br />
 			<!-- <CommonInput type="hidden" name="password" :value="form.document_number" v-model="form.password" :validator="v$" />-->
 		</div>
