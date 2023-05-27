@@ -1084,6 +1084,7 @@ const selectedTab = inject('selectedTab', ref(0));
 				</span>
 
 			</template>
+			
 			<template #item-fichasViewer="item">
 				<template v-if="props.Form">
 					<template
@@ -1120,7 +1121,7 @@ const selectedTab = inject('selectedTab', ref(0));
 					</template>
 				</template>
 			</template>
-
+			<!--budget-->
 			<template #item-budgetstatus="item">
                 <span v-if="item?.budgetstatus?.slug == 'PAG'"
                 :class="'bg-success/10 text-success'"
@@ -1147,18 +1148,6 @@ const selectedTab = inject('selectedTab', ref(0));
                 </span>
 				<span v-else>{{ item?.budgetstatus?.fase }}</span>
 			</template>
-			<template #item-budgetactions="item">
-				<Button @click="item_see_fnc(item.id)" variant="outline-success" class="mb-2">
-                    <span class="text-sm">Aprobar</span>
-                </Button>
-                <CommonButtonLink :to="''" variant="outline-pending">
-                    <span class="text-sm">Rechazar</span>
-                </CommonButtonLink>
-			</template>
-			
-
-
-
 			<template #item-UserActions="item">
 				<span v-if="item?.budgetstatus?.slug == 'PAG'"
                 :class="'bg-success/10 text-success'"
@@ -1166,6 +1155,7 @@ const selectedTab = inject('selectedTab', ref(0));
                     {{ item?.budgetstatus?.status }}
                 </span>
 			</template>
+			<!--budget-->
 
 		</DataTable>
 	</div>
