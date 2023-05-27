@@ -15,7 +15,7 @@ const form = reactive({
     email: '',
     gender: '',
     lastname: '',
-    municipalities: '',
+    municipalities: [],
     name: '',
     period: '',
     phone: '',
@@ -107,46 +107,37 @@ const disciplines = asyncComputed(async () => {
 const v$ = useVuelidate(form_rules, form)
 
 const router = useRouter()
-const route = useRoute()
-
-const routeName = computed(() => {
-    return String(route.name).split('.')[0]
-})
-
 
 const zones = asyncComputed(async () => {
     return await getSelect(['zones'])
 }, null)
 
-const municipalities : any = ref([])
+const municipalities = asyncComputed(async () => {
+    return await getSelect(['municipalities'])
+}, null)
+
+const selectedMunicipalities: any = ref([])
 
 const municipalitiesByZone = async () => {
-    // console.log('entra a la funcion')
-    // console.log(form.zones)
- 
-    
+
     await getMunicipalitiesByZone(form.zones[form.zones.length - 1]).then((response) => {
-            console.log(response)
-            municipalities.value = [...response, ...municipalities.value];
+            selectedMunicipalities.value = [...selectedMunicipalities.value, ...response]
+            form.municipalities = selectedMunicipalities.value.map((municipality: any) => municipality.value);
         })
  
 }
 
-watch(() => form.zones, async (newVal, oldVal) => {
-    console.log(oldVal);
-    console.log(form.zones);
-    
-    if(form.zones.length > 0) {
+watch(() => form.zones, async (newVal : any, oldVal : any) => {
+    if(form.zones.length > oldVal.length) {
         await municipalitiesByZone();
-        console.log(municipalities.value);
     };
 
-    //Diferencia entre los dos
-
-    //console.log(form.municipalities);
+    if(form.zones.length < oldVal.length) {
+        const missingZone = oldVal.filter((element: any) => !newVal.includes(element));
+        selectedMunicipalities.value = selectedMunicipalities.value.filter((municipality: any) => municipality.zone_id != missingZone);
+        form.municipalities = selectedMunicipalities.value.map((municipality: any) => municipality.value);
+    };
 })
-
-const zone_id = computed(() => form.zones)
 
 
 const getAllNoPaginate = async () => {
@@ -158,24 +149,23 @@ onUnmounted(() => {
 });
 
 const onSubmit = async () => {
-    console.log(form.zones)
-    // const valid = await v$.value.$validate()
-    // if (valid) {
-    //     await userServices.create(formdataParser(form)).then((response) => {
-    //         if (response) {
-    //             if (response.status >= 200 && response.status <= 300) {
-    //                 alerts.create()
-    //                 setLoading(true)
-    //                 router.push({name: 'users.index'}).finally(() => {
-    //                     setLoading(false)
-    //                 })
-    //             }
-    //         }
-    //     })
-    // }
-    // else {
-    //     alerts.validation()
-    // }
+    const valid = await v$.value.$validate()
+    if (valid) {
+        await userServices.create(formdataParser(form)).then((response) => {
+            if (response) {
+                if (response.status >= 200 && response.status <= 300) {
+                    alerts.create()
+                    setLoading(true)
+                    router.push({name: 'users.index'}).finally(() => {
+                        setLoading(false)
+                    })
+                }
+            }
+        })
+    }
+    else {
+        alerts.validation()
+    }
 }
 
 </script>
@@ -208,9 +198,9 @@ const onSubmit = async () => {
                 :options="genders" />
             <CommonInput type="email" label="Correo *" placeholder="Ingrese el correo" name="email" v-model="form.email"
                 :validator="v$" />
-            <CommonSelect label="Selecciona regiones *" name="zones" v-model="form.zones" :validator="v$" :options="zones" multiple :allow-empty="false" />
+            <CommonSelect label="Selecciona regiones *" name="zones" v-model="form.zones" :validator="v$" :options="zones" multiple :allow-empty="true" />
             <CommonSelect label="Seleccione el municipio *" name="municipalities" v-model="form.municipalities" :validator="v$"
-                :options="municipalities" multiple :allow-empty="false"/>
+                :options="municipalities" multiple :allow-empty="true"/>
             <CommonSelect class="h-30" label="Seleccione las disciplinas *" name="disciplines" v-model="form.disciplines" :validator="v$"
                 :options="disciplines" multiple />
             <br>
