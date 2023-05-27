@@ -254,7 +254,7 @@ onMounted(async () => {
 				v-model="form.zones"
 				:validator="v$"
 				:options="zones"
-				v-if="!(excludedRoles.includes(form.roles))"
+				v-if="!(excludedRoles.includes(+form.roles))"
 			/>
 			<!-- <CommonSelect
 				label="Seleccione la ciudad *"
@@ -269,7 +269,7 @@ onMounted(async () => {
 				:validator="v$"
 				:options="municipalities"
 				multiple 
-				v-if="!(excludedRoles.includes(form.roles))"
+				v-if="!(excludedRoles.includes(+form.roles))"
 			/>
 			<CommonSelect
 				class="h-30"
@@ -279,7 +279,7 @@ onMounted(async () => {
 				:validator="v$"
 				:options="disciplines"
 				multiple
-				v-if="!(excludedRoles.includes(form.roles))"
+				v-if="!(excludedRoles.includes(+form.roles))"
 			/>
 			<br />
 			<!-- <CommonInput type="hidden" name="password" :value="form.document_number" v-model="form.password" :validator="v$" />-->
