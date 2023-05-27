@@ -146,28 +146,35 @@ watch(() => form.zones, async (newVal : any, oldVal : any) => {
     };
 })
 
+watch(()=> form.roles, (newVal : any, oldVal : any) => {
+    if(excludedRoles.includes(newVal)) {
+        form.zones = '';
+        form.municipalities = [];
+    }
+})
+
 
 const getAllNoPaginate = async () => {
     await userServices.getAll();
 }
 
-const fetchtTypeUsers = async () => {
-    //Get all user, to add
-    //await getAllNoPaginate()
-    const users_data = await userServices.get("3");
-    console.log(users_data);
-    if(users_data?.data.success == true){
-        Swal.fire('', users_data?.data.message, 'info').finally(() => {
-        })
-        //Object.assign(form, users_data.data.items)}
-        form.name = users_data.data.items.name;
-        form.email = users_data.data.items.email;
-        form.gender = users_data.data.items.gender;
-        form.document_type = users_data.data.items.document_type;
-        form.document_number = users_data.data.items.document_number;
-        //form.roles = users_data.data.items.roles[0];
-    }   
-}
+// const fetchtTypeUsers = async () => {
+//     //Get all user, to add
+//     //await getAllNoPaginate()
+//     const users_data = await userServices.get("3");
+//     console.log(users_data);
+//     if(users_data?.data.success == true){
+//         Swal.fire('', users_data?.data.message, 'info').finally(() => {
+//         })
+//         //Object.assign(form, users_data.data.items)}
+//         form.name = users_data.data.items.name;
+//         form.email = users_data.data.items.email;
+//         form.gender = users_data.data.items.gender;
+//         form.document_type = users_data.data.items.document_type;
+//         form.document_number = users_data.data.items.document_number;
+//         //form.roles = users_data.data.items.roles[0];
+//     }   
+// }
 onUnmounted(() => {
     v$.value.$reset();
 });
