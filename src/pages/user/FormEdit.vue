@@ -162,6 +162,8 @@ const fetch = async () => {
 	});
 };
 
+const excludedRoles = [3, 6, 7, 8];
+
 onMounted(async () => {
 	console.log(route);
 	await fetch();
@@ -252,14 +254,7 @@ onMounted(async () => {
 				v-model="form.zones"
 				:validator="v$"
 				:options="zones"
-				v-if="form.roles == '1' || 
-				form.roles == '2' || 
-				form.roles == '4' || 
-				form.roles == '8' || 
-				form.roles == '9' || 
-				form.roles == '10' || 
-				form.roles == '11' || 
-				form.roles == '12'"
+				v-if="!(excludedRoles.includes(form.roles))"
 			/>
 			<!-- <CommonSelect
 				label="Seleccione la ciudad *"
@@ -274,14 +269,7 @@ onMounted(async () => {
 				:validator="v$"
 				:options="municipalities"
 				multiple 
-				v-if="form.roles == '1' || 
-				form.roles == '2' || 
-				form.roles == '4' || 
-				form.roles == '8' || 
-				form.roles == '9' || 
-				form.roles == '10' || 
-				form.roles == '11' || 
-				form.roles == '12'"
+				v-if="!(excludedRoles.includes(form.roles))"
 			/>
 			<CommonSelect
 				class="h-30"
@@ -291,14 +279,7 @@ onMounted(async () => {
 				:validator="v$"
 				:options="disciplines"
 				multiple
-				v-if="form.roles == '1' || 
-				form.roles == '2' || 
-				form.roles == '4' || 
-				form.roles == '8' || 
-				form.roles == '9' || 
-				form.roles == '10' || 
-				form.roles == '11' || 
-				form.roles == '12'"
+				v-if="!(excludedRoles.includes(form.roles))"
 			/>
 			<br />
 			<!-- <CommonInput type="hidden" name="password" :value="form.document_number" v-model="form.password" :validator="v$" />-->
