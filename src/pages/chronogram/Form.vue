@@ -160,9 +160,9 @@ const months = computedAsync(async () => {
 	return data.slice(Number(month) - 1);
 }, null);
 
-const municipalities = computedAsync(async () => {
-	return await getCitiesByDepartment('30');
-}, null);
+const municipalities = asyncComputed(async () => {
+    return await getSelect(['municipalities'])
+}, null)
 
 const groups = ref<any>([]);
 
