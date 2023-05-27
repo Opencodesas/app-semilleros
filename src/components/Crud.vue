@@ -565,11 +565,11 @@ const selectedTab = inject('selectedTab', ref(0));
 								class="mr-2" />
 							<span
 								class="text-sm">
-								{{ "Perfil" }}									
+								{{ "Editar" }}									
 							</span>
 						</Button>
 					</template>
-					<template v-if="route.name == 'users.index'">
+					<!-- <template v-if="route.name == 'users.index'">
 						<Button
 							variant="outline-secondary"
 							@click="informationAction(item.id)">
@@ -581,7 +581,7 @@ const selectedTab = inject('selectedTab', ref(0));
 								{{ "Informacion" }}									
 							</span>
 						</Button>
-					</template>
+					</template> -->
 					<template v-if="route.name == 'users.index'">
 						<Button
 							variant="outline-secondary"
