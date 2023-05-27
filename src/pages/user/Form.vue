@@ -80,59 +80,6 @@ const types = [
     },
 ]
 
-// const roles = [
-
-//     {
-//         label: 'ASISTENTE Y AUXILIAR ADMINISTRATIVO',
-//         value: 'ASISTENTE Y AUXILIAR ADMINISTRATIVO'
-//     },
-
-//     {
-//         label: 'COORDINADOR DE ENLACE',
-//         value: 'COORDINADOR DE ENLACE'
-//     },
-
-//     {
-//         label: 'COORDINADOR DE PROGRAMAS ESPECIALES',
-//         value: 'COORDINADOR DE PROGRAMAS ESPECIALES'
-//     },
-
-//     {
-//         label: 'COORDINADOR DE PSICOSOCIAL',
-//         value: 'COORDINADOR DE PSICOSOCIAL'
-//     },
-
-//     {
-//         label: 'COORDINADOR REGIONAL',
-//         value: 'COORDINADOR REGIONAL'
-//     },
-
-//     {
-//         label: 'COORDINADOR TECNICO',
-//         value: 'COORDINADOR TECNICO'
-//     },
-
-//     {
-//         label: 'METODOLOGO',
-//         value: 'METODOLOGO'
-//     },
-
-//     {
-//         label: 'MONITOR',
-//         value: 'MONITOR'
-//     },
-
-//     {
-//         label: 'PSICOSOCIAL',
-//         value: 'PSICOSOCIAL'
-//     },
-
-//     {
-//         label: 'SUBDIRECTOR',
-//         value: 'SUBDIRECTOR'
-//     },
-// ]
-
 const genders = [
 
     {
@@ -145,45 +92,6 @@ const genders = [
     },
 ]
 
-const towns = [
-    {
-        label: 'Tulua',
-        value: 'Tulua'
-    },
-    {
-        label: 'Cali',
-        value: 'Cali'
-    },
-    {
-        label: 'Palmira',
-        value: 'Palmira'
-    },
-    {
-        label: 'Dagua',
-        value: 'Dagua'
-    },
-    {
-        label: 'El Cerrito',
-        value: 'El Cerrito'
-    },
-    {
-        label: 'Florida',
-        value: 'Florida'
-    },
-    {
-        label: 'Jamundí',
-        value: 'Jamundí'
-    },
-    {
-        label: 'Vijes ',
-        value: 'Vijes '
-    },
-    {
-        label: 'Yumbo',
-        value: 'Yumbo'
-    }
-]
-
 
 
 const roles = asyncComputed(async () => {
@@ -191,9 +99,6 @@ const roles = asyncComputed(async () => {
     return roles_data.filter(({ value }) => value != '1')
 }, null)
 
-const municipalities = asyncComputed(async () => {
-    return await getSelect(['municipalities'])
-}, null)
 
 const disciplines = asyncComputed(async () => {
     return await getSelect(['disciplines'])
@@ -213,6 +118,34 @@ const zones = asyncComputed(async () => {
     return await getSelect(['zones'])
 }, null)
 
+const municipalities : any = ref([])
+
+const municipalitiesByZone = async () => {
+    // console.log('entra a la funcion')
+    // console.log(form.zones)
+ 
+    
+    await getMunicipalitiesByZone(form.zones[form.zones.length - 1]).then((response) => {
+            console.log(response)
+            municipalities.value = [...response, ...municipalities.value];
+        })
+ 
+}
+
+watch(() => form.zones, async (newVal, oldVal) => {
+    console.log(oldVal);
+    console.log(form.zones);
+    
+    if(form.zones.length > 0) {
+        await municipalitiesByZone();
+        console.log(municipalities.value);
+    };
+
+    //Diferencia entre los dos
+
+    //console.log(form.municipalities);
+})
+
 const zone_id = computed(() => form.zones)
 
 
@@ -220,52 +153,29 @@ const getAllNoPaginate = async () => {
     await userServices.getAll();
 }
 
-const fetchtTypeUsers = async () => {
-    //Get all user, to add
-    //await getAllNoPaginate()
-    const users_data = await userServices.get("3");
-    console.log(users_data);
-    if(users_data?.data.success == true){
-        Swal.fire('', users_data?.data.message, 'info').finally(() => {
-        })
-        //Object.assign(form, users_data.data.items)}
-        form.name = users_data.data.items.name;
-        form.email = users_data.data.items.email;
-        form.gender = users_data.data.items.gender;
-        form.document_type = users_data.data.items.document_type;
-        form.document_number = users_data.data.items.document_number;
-        //form.roles = users_data.data.items.roles[0];
-    }
-   
-}
 onUnmounted(() => {
     v$.value.$reset();
 });
-onMounted(async () => {
-    //v$.value.$reset()
-    //roles.value = options.value.roles; //data.map((item) => ({ label: item.name, value: item.slug }));
-    //await fetchtTypeUsers();
-    //console.log(form);
-});
 
 const onSubmit = async () => {
-    const valid = await v$.value.$validate()
-    if (valid) {
-        await userServices.create(formdataParser(form)).then((response) => {
-            if (response) {
-                if (response.status >= 200 && response.status <= 300) {
-                    alerts.create()
-                    setLoading(true)
-                    router.push({name: 'users.index'}).finally(() => {
-                        setLoading(false)
-                    })
-                }
-            }
-        })
-    }
-    else {
-        alerts.validation()
-    }
+    console.log(form.zones)
+    // const valid = await v$.value.$validate()
+    // if (valid) {
+    //     await userServices.create(formdataParser(form)).then((response) => {
+    //         if (response) {
+    //             if (response.status >= 200 && response.status <= 300) {
+    //                 alerts.create()
+    //                 setLoading(true)
+    //                 router.push({name: 'users.index'}).finally(() => {
+    //                     setLoading(false)
+    //                 })
+    //             }
+    //         }
+    //     })
+    // }
+    // else {
+    //     alerts.validation()
+    // }
 }
 
 </script>
@@ -298,9 +208,9 @@ const onSubmit = async () => {
                 :options="genders" />
             <CommonInput type="email" label="Correo *" placeholder="Ingrese el correo" name="email" v-model="form.email"
                 :validator="v$" />
-            <CommonSelect label="Selecciona regiones *" name="zones" v-model="form.zones" :validator="v$" :options="zones" />
+            <CommonSelect label="Selecciona regiones *" name="zones" v-model="form.zones" :validator="v$" :options="zones" multiple :allow-empty="false" />
             <CommonSelect label="Seleccione el municipio *" name="municipalities" v-model="form.municipalities" :validator="v$"
-                :options="municipalities" multiple />
+                :options="municipalities" multiple :allow-empty="false"/>
             <CommonSelect class="h-30" label="Seleccione las disciplinas *" name="disciplines" v-model="form.disciplines" :validator="v$"
                 :options="disciplines" multiple />
             <br>
