@@ -18,7 +18,7 @@ const form = reactive({
 	email: '',
 	gender: '',
 	lastname: '',
-	municipalities: '',
+	municipalities: [],
 	name: '',
 	period: '',
 	phone: '',
@@ -113,23 +113,53 @@ const formdataParser = (form: any) => {
 	return formData;
 };
 
-const zones = asyncComputed(async () => {
-	return await getSelect(['zones']);
-}, null);
-
-const zone_id = computed(() => form.zones);
 
 const roles = asyncComputed(async () => {
 	const roles_data = await getSelect(['roles']);
 	return roles_data.filter(({ value }) => value != '1');
 }, null);
 
-const municipalities = asyncComputed(async () => {
-	return await getSelect(['municipalities']);
-}, null);
 const disciplines = asyncComputed(async () => {
 	return await getSelect(['disciplines']);
 }, null);
+
+const zones = asyncComputed(async () => {
+    return await getSelect(['zones'])
+}, null)
+
+const municipalities = asyncComputed(async () => {
+    return await getSelect(['municipalities'])
+}, null)
+
+const selectedMunicipalities: any = ref([])
+
+const municipalitiesByZone = async () => {
+
+    await getMunicipalitiesByZone(form.zones[form.zones.length - 1]).then((response) => {
+            selectedMunicipalities.value = [...selectedMunicipalities.value, ...response]
+            form.municipalities = selectedMunicipalities.value.map((municipality: any) => municipality.value);
+        })
+ 
+}
+
+watch(() => form.zones, async (newVal : any, oldVal : any) => {
+    if(form.zones.length > oldVal.length) {
+        await municipalitiesByZone();
+    };
+
+    if(form.zones.length < oldVal.length) {
+        const missingZone = oldVal.filter((element: any) => !newVal.includes(element));
+        selectedMunicipalities.value = selectedMunicipalities.value.filter((municipality: any) => municipality.zone_id != missingZone);
+        form.municipalities = selectedMunicipalities.value.map((municipality: any) => municipality.value);
+    };
+})
+
+watch(()=> form.roles, (newVal : any, oldVal : any) => {
+    if(excludedRoles.includes(newVal)) {
+        form.zones = '';
+        form.municipalities = [];
+    }
+})
 
 const v$ = useVuelidate(form_rules, form);
 

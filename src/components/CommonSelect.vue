@@ -11,7 +11,7 @@ export interface selectOption {
 // [TypeScript] => Defining Props
 interface Props {
     required? : boolean,
-    modelValue?: string | number
+    modelValue?: string | number | Array<string | number>
     label?: string
     placeholder?: string
     multiple?: boolean

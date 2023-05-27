@@ -50,6 +50,7 @@ declare global {
   const getDocumentLabel: typeof import('./src/helpers/getDocumentLabel')['default']
   const getHealthentities: typeof import('./src/composables/getHealthentities')['getHealthentities']
   const getMonitorByMunicipality: typeof import('./src/composables/getMonitorByMunicipality')['getMonitorByMunicipality']
+  const getMunicipalitiesByZone: typeof import('./src/composables/getMunicipalitiesByZone')['getMunicipalitiesByZone']
   const getOneWithPick: typeof import('./src/composables/getOneWithPick')['getOneWithPick']
   const getSelect: typeof import('./src/composables/getSelect')['getSelect']
   const getSelectStatus: typeof import('./src/composables/getSelectStatus')['getSelectStatus']
