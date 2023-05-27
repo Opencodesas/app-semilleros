@@ -77,9 +77,9 @@ export const onboardingStore = defineStore("onboarding", {
 					// this.roles = result.data.data.roles;
 					// this.isAuth = true;
 				}
-				return result
-			} catch (error) {
-				// return error.response
+				return result;
+			} catch (error: any) {
+				return error?.response;
 			}
 		}, async getListSelect() {
 			try {
