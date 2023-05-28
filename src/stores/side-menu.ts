@@ -251,6 +251,33 @@ export const useSideMenuStore = defineStore("sideMenu", {
       },
       {
         icon: "User",
+        title: "Coordinador Marítimo",
+        subMenu: [
+          {
+            icon: "Activity",
+            role: 'coordinador_maritimo',
+            pageName: "coordinator.create",
+            title: "Crear visita",
+          },
+          {
+            icon: "Activity",
+            pageName: "coordinator.index",
+            title: "Visitas",
+          },
+          {
+            icon: "Activity",
+            pageName: "review.bene_chro",
+            title: "Revisiones",
+          },
+          {
+            icon: "Activity",
+            pageName: "users_of_zones.index", 
+            title: "Ver usuarios",
+          },
+        ]
+      },
+      {
+        icon: "User",
         title: "Coordinador Psicosocial",
         subMenu: [
           {
@@ -396,7 +423,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
       }
       else if (isRole('coordinador_regional')){
         return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' :
-        menuItem.subMenu?.some((subMenuItem) => (subMenuItem.pageName?.split('.').at(0) == 'coordinator' || subMenuItem.role?.includes('coordinador_regional')) ))
+        menuItem.subMenu?.some((subMenuItem) => (subMenuItem.role?.includes('coordinador_regional')) ))
       }
       else if (isRole('coordinador_psicosocial')){
         return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'psychosocial-coordinator' || subMenuItem.role?.includes('coordinador_psicosocial')))
@@ -412,6 +439,9 @@ export const useSideMenuStore = defineStore("sideMenu", {
       }
       else if (isRole('director_programa')){
         return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.pageName?.split('.').at(0) == 'transversal_programs_director' || subMenuItem.role?.includes('director_programa')))
+      }
+      else if (isRole('coordinador_maritimo')) {
+        return state.menu.filter((menuItem) => menuItem == 'divider' ? 'divider' : menuItem.subMenu?.some((subMenuItem) => subMenuItem.role?.includes('coordinador_maritimo')))
       }
       else {
         return state.menu

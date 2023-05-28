@@ -1067,7 +1067,7 @@ const selectedTab = inject('selectedTab', ref(0));
 					{{ _getStatus(item.status) }}
 				</span>				
 				<!--si es coordinador_regional entra ENP, convierte a APR y REC-->
-				<span v-else-if="onboardingStore().get_user_role?.slug === 'coordinador_regional'"
+				<span v-else-if="onboardingStore().get_user_role?.slug === 'coordinador_regional'"	
 					:class="
 						item.status.slug == 'REC'
 							? ' bg-danger/10 text-danger'
@@ -1106,6 +1106,15 @@ const selectedTab = inject('selectedTab', ref(0));
 					<template
 						v-else-if="(onboardingStore().get_user_role?.slug === 'coordinador_regional' && item.status.slug === 'APR') ||
 						(onboardingStore().get_user_role?.slug === 'coordinador_regional' && item.status.slug === 'REC')">
+						<Modal
+							:Form="props.Form"
+							:id_review="item.id"
+							label="Actualizar"
+							:payloadFunctions="payloadFunctions" />
+					</template>
+					<template
+						v-else-if="(onboardingStore().get_user_role?.slug === 'coordinador_maritimo' && item.status.slug === 'APR') ||
+						(onboardingStore().get_user_role?.slug === 'coordinador_maritimo' && item.status.slug === 'REC')">
 						<Modal
 							:Form="props.Form"
 							:id_review="item.id"
