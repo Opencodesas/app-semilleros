@@ -55,7 +55,7 @@ const sendUpdate = async () => {
 					if (response.status >= 200 && response.status <= 300) {
 						alerts.update();
 						setLoading(true);
-						router.push('beneficiaries.index').finally(() => {
+						router.push({name: 'users.index'}).finally(() => {
 							setLoading(false);
 						});
 					}
@@ -159,7 +159,9 @@ watch(()=> form.roles, (newVal : any, oldVal : any) => {
         form.zones = '';
         form.municipalities = [];
     }
-	form.disciplines = '';
+	if(newVal != '12'){
+		form.disciplines = '';
+	}
 })
 
 const v$ = useVuelidate(form_rules, form);
