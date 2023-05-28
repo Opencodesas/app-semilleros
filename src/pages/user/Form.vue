@@ -25,8 +25,6 @@ const form = reactive({
     disciplines: '',
 })
 
-const excludedRoles = [3, 5, 6 ,7]
-
 const form_rules = computed(() => ({
     name:{required},
     address: { required },
@@ -55,6 +53,12 @@ const formdataParser = (form: any) => {
   if (form.disciplines) {
     form.disciplines.forEach((file: any) => {
       formData.append('disciplines[]', file);
+    });
+  }
+
+  if (form.disciplines) {
+    form.disciplines.forEach((file: any) => {
+      formData.append('zones[]', file);
     });
   }
 
@@ -144,13 +148,6 @@ watch(() => form.zones, async (newVal : any, oldVal : any) => {
         selectedMunicipalities.value = selectedMunicipalities.value.filter((municipality: any) => municipality.zone_id != missingZone);
         form.municipalities = selectedMunicipalities.value.map((municipality: any) => municipality.value);
     };
-})
-
-watch(()=> form.roles, (newVal : any, oldVal : any) => {
-    if(excludedRoles.includes(newVal)) {
-        form.zones = '';
-        form.municipalities = [];
-    }
 })
 
 
