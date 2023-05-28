@@ -42,7 +42,7 @@ const form_rules = computed(() => ({
 	roles: { required },
 	zones: {},
 	password: {},
-	disciplines: {},
+	disciplines: (form.roles == '12') ? { required } : {},
 }));
 
 const sendUpdate = async () => {
@@ -159,6 +159,7 @@ watch(()=> form.roles, (newVal : any, oldVal : any) => {
         form.zones = '';
         form.municipalities = [];
     }
+	form.disciplines = '';
 })
 
 const v$ = useVuelidate(form_rules, form);
@@ -192,7 +193,7 @@ const fetch = async () => {
 	});
 };
 
-const excludedRoles = [3, 6, 7, 8];
+const excludedRoles = [3, 5, 6, 7, 8];
 
 onMounted(async () => {
 	console.log(route);
@@ -309,7 +310,7 @@ onMounted(async () => {
 				:validator="v$"
 				:options="disciplines"
 				multiple
-				v-if="!(excludedRoles.includes(+form.roles))"
+				v-if="form.roles && form.roles == '12'"
 			/>
 			<br />
 			<!-- <CommonInput type="hidden" name="password" :value="form.document_number" v-model="form.password" :validator="v$" />-->
