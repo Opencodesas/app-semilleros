@@ -15,7 +15,7 @@ const form = reactive({
     email: '',
     gender: '',
     lastname: '',
-    municipalities: '',
+    municipalities: [],
     name: '',
     period: '',
     phone: '',
@@ -99,45 +99,6 @@ const genders = [
     },
 ]
 
-const towns = [
-    {
-        label: 'Tulua',
-        value: 'Tulua'
-    },
-    {
-        label: 'Cali',
-        value: 'Cali'
-    },
-    {
-        label: 'Palmira',
-        value: 'Palmira'
-    },
-    {
-        label: 'Dagua',
-        value: 'Dagua'
-    },
-    {
-        label: 'El Cerrito',
-        value: 'El Cerrito'
-    },
-    {
-        label: 'Florida',
-        value: 'Florida'
-    },
-    {
-        label: 'Jamundí',
-        value: 'Jamundí'
-    },
-    {
-        label: 'Vijes ',
-        value: 'Vijes '
-    },
-    {
-        label: 'Yumbo',
-        value: 'Yumbo'
-    }
-]
-
 
 
 const roles = asyncComputed(async () => {
@@ -145,9 +106,6 @@ const roles = asyncComputed(async () => {
     return roles_data.filter(({ value }) => value != '1')
 }, null)
 
-const municipalities = asyncComputed(async () => {
-    return await getSelect(['municipalities'])
-}, null)
 
 const disciplines = asyncComputed(async () => {
     return await getSelect(['disciplines'])
@@ -156,49 +114,69 @@ const disciplines = asyncComputed(async () => {
 const v$ = useVuelidate(form_rules, form)
 
 const router = useRouter()
-const route = useRoute()
-
-const routeName = computed(() => {
-    return String(route.name).split('.')[0]
-})
-
 
 const zones = asyncComputed(async () => {
     return await getSelect(['zones'])
 }, null)
 
-const zone_id = computed(() => form.zones)
+const municipalities = asyncComputed(async () => {
+    return await getSelect(['municipalities'])
+}, null)
+
+const selectedMunicipalities: any = ref([])
+
+const municipalitiesByZone = async () => {
+
+    await getMunicipalitiesByZone(form.zones[form.zones.length - 1]).then((response) => {
+            selectedMunicipalities.value = [...selectedMunicipalities.value, ...response]
+            form.municipalities = selectedMunicipalities.value.map((municipality: any) => municipality.value);
+        })
+ 
+}
+
+watch(() => form.zones, async (newVal : any, oldVal : any) => {
+    if(form.zones.length > oldVal.length) {
+        await municipalitiesByZone();
+    };
+
+    if(form.zones.length < oldVal.length) {
+        const missingZone = oldVal.filter((element: any) => !newVal.includes(element));
+        selectedMunicipalities.value = selectedMunicipalities.value.filter((municipality: any) => municipality.zone_id != missingZone);
+        form.municipalities = selectedMunicipalities.value.map((municipality: any) => municipality.value);
+    };
+})
+
+watch(()=> form.roles, (newVal : any, oldVal : any) => {
+    if(excludedRoles.includes(newVal)) {
+        form.zones = '';
+        form.municipalities = [];
+    }
+})
 
 
 const getAllNoPaginate = async () => {
     await userServices.getAll();
 }
 
-const fetchtTypeUsers = async () => {
-    //Get all user, to add
-    //await getAllNoPaginate()
-    const users_data = await userServices.get("3");
-    console.log(users_data);
-    if(users_data?.data.success == true){
-        Swal.fire('', users_data?.data.message, 'info').finally(() => {
-        })
-        //Object.assign(form, users_data.data.items)}
-        form.name = users_data.data.items.name;
-        form.email = users_data.data.items.email;
-        form.gender = users_data.data.items.gender;
-        form.document_type = users_data.data.items.document_type;
-        form.document_number = users_data.data.items.document_number;
-        //form.roles = users_data.data.items.roles[0];
-    }   
-}
+// const fetchtTypeUsers = async () => {
+//     //Get all user, to add
+//     //await getAllNoPaginate()
+//     const users_data = await userServices.get("3");
+//     console.log(users_data);
+//     if(users_data?.data.success == true){
+//         Swal.fire('', users_data?.data.message, 'info').finally(() => {
+//         })
+//         //Object.assign(form, users_data.data.items)}
+//         form.name = users_data.data.items.name;
+//         form.email = users_data.data.items.email;
+//         form.gender = users_data.data.items.gender;
+//         form.document_type = users_data.data.items.document_type;
+//         form.document_number = users_data.data.items.document_number;
+//         //form.roles = users_data.data.items.roles[0];
+//     }   
+// }
 onUnmounted(() => {
     v$.value.$reset();
-});
-onMounted(async () => {
-    //v$.value.$reset()
-    //roles.value = options.value.roles; //data.map((item) => ({ label: item.name, value: item.slug }));
-    //await fetchtTypeUsers();
-    //console.log(form);
 });
 
 const onSubmit = async () => {
@@ -251,9 +229,9 @@ const onSubmit = async () => {
                 :options="genders" />
             <CommonInput type="email" label="Correo *" placeholder="Ingrese el correo" name="email" v-model="form.email"
                 :validator="v$" />
-            <CommonSelect multiple label="Selecciona regiones *" name="zones" v-model="form.zones" :validator="v$" :options="zones" v-if="form.roles == '1' || form.roles == '2' || form.roles == '4' || form.roles == '8' || form.roles == '9' || form.roles == '10' || form.roles == '11' || form.roles == '12'" />
+            <CommonSelect multiple label="Selecciona regiones *" name="zones" v-model="form.zones" :validator="v$" :options="zones" v-if="form.roles == '1' || form.roles == '2' || form.roles == '4' || form.roles == '8' || form.roles == '9' || form.roles == '10' || form.roles == '11' || form.roles == '12'"  :allow-empty="true" />
             <CommonSelect label="Seleccione el municipio *" name="municipalities" v-model="form.municipalities" :validator="v$"
-                :options="municipalities" multiple v-if="form.roles == '1' || form.roles == '2' || form.roles == '4' || form.roles == '8' || form.roles == '9' || form.roles == '10' || form.roles == '11' || form.roles == '12'" />
+                :options="municipalities" multiple v-if="form.roles == '1' || form.roles == '2' || form.roles == '4' || form.roles == '8' || form.roles == '9' || form.roles == '10' || form.roles == '11' || form.roles == '12'" :allow-empty="true"/>
             <CommonSelect class="h-30" label="Seleccione las disciplinas *" name="disciplines" v-model="form.disciplines" :validator="v$"
                 :options="disciplines" multiple v-if="form.roles == '1' || form.roles == '2' || form.roles == '4' || form.roles == '8' || form.roles == '9' || form.roles == '10' || form.roles == '11' || form.roles == '12'" />
             <br>

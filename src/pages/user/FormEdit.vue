@@ -18,7 +18,7 @@ const form = reactive({
 	email: '',
 	gender: '',
 	lastname: '',
-	municipalities: '',
+	municipalities: [],
 	name: '',
 	period: '',
 	phone: '',
@@ -113,23 +113,53 @@ const formdataParser = (form: any) => {
 	return formData;
 };
 
-const zones = asyncComputed(async () => {
-	return await getSelect(['zones']);
-}, null);
-
-const zone_id = computed(() => form.zones);
 
 const roles = asyncComputed(async () => {
 	const roles_data = await getSelect(['roles']);
 	return roles_data.filter(({ value }) => value != '1');
 }, null);
 
-const municipalities = asyncComputed(async () => {
-	return await getSelect(['municipalities']);
-}, null);
 const disciplines = asyncComputed(async () => {
 	return await getSelect(['disciplines']);
 }, null);
+
+const zones = asyncComputed(async () => {
+    return await getSelect(['zones'])
+}, null)
+
+const municipalities = asyncComputed(async () => {
+    return await getSelect(['municipalities'])
+}, null)
+
+const selectedMunicipalities: any = ref([])
+
+const municipalitiesByZone = async () => {
+
+    await getMunicipalitiesByZone(form.zones[form.zones.length - 1]).then((response) => {
+            selectedMunicipalities.value = [...selectedMunicipalities.value, ...response]
+            form.municipalities = selectedMunicipalities.value.map((municipality: any) => municipality.value);
+        })
+ 
+}
+
+watch(() => form.zones, async (newVal : any, oldVal : any) => {
+    if(form.zones.length > oldVal.length) {
+        await municipalitiesByZone();
+    };
+
+    if(form.zones.length < oldVal.length) {
+        const missingZone = oldVal.filter((element: any) => !newVal.includes(element));
+        selectedMunicipalities.value = selectedMunicipalities.value.filter((municipality: any) => municipality.zone_id != missingZone);
+        form.municipalities = selectedMunicipalities.value.map((municipality: any) => municipality.value);
+    };
+})
+
+watch(()=> form.roles, (newVal : any, oldVal : any) => {
+    if(excludedRoles.includes(newVal)) {
+        form.zones = '';
+        form.municipalities = [];
+    }
+})
 
 const v$ = useVuelidate(form_rules, form);
 
@@ -161,6 +191,8 @@ const fetch = async () => {
 		console.log(form);
 	});
 };
+
+const excludedRoles = [3, 6, 7, 8];
 
 onMounted(async () => {
 	console.log(route);
@@ -252,14 +284,7 @@ onMounted(async () => {
 				v-model="form.zones"
 				:validator="v$"
 				:options="zones"
-				v-if="form.roles == '1' || 
-				form.roles == '2' || 
-				form.roles == '4' || 
-				form.roles == '8' || 
-				form.roles == '9' || 
-				form.roles == '10' || 
-				form.roles == '11' || 
-				form.roles == '12'"
+				v-if="!(excludedRoles.includes(+form.roles))"
 			/>
 			<!-- <CommonSelect
 				label="Seleccione la ciudad *"
@@ -274,14 +299,7 @@ onMounted(async () => {
 				:validator="v$"
 				:options="municipalities"
 				multiple 
-				v-if="form.roles == '1' || 
-				form.roles == '2' || 
-				form.roles == '4' || 
-				form.roles == '8' || 
-				form.roles == '9' || 
-				form.roles == '10' || 
-				form.roles == '11' || 
-				form.roles == '12'"
+				v-if="!(excludedRoles.includes(+form.roles))"
 			/>
 			<CommonSelect
 				class="h-30"
@@ -291,14 +309,7 @@ onMounted(async () => {
 				:validator="v$"
 				:options="disciplines"
 				multiple
-				v-if="form.roles == '1' || 
-				form.roles == '2' || 
-				form.roles == '4' || 
-				form.roles == '8' || 
-				form.roles == '9' || 
-				form.roles == '10' || 
-				form.roles == '11' || 
-				form.roles == '12'"
+				v-if="!(excludedRoles.includes(+form.roles))"
 			/>
 			<br />
 			<!-- <CommonInput type="hidden" name="password" :value="form.document_number" v-model="form.password" :validator="v$" />-->
