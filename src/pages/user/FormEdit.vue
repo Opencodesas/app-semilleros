@@ -36,13 +36,13 @@ const form_rules = computed(() => ({
 	email: { required, email },
 	gender: { required },
 	lastname: { required },
-	municipalities: {},
+	municipalities: !excludedRoles.includes(+form.roles) ? { required } : {},
 	period: {},
 	phone: { required },
 	roles: { required },
 	zones: {},
 	password: {},
-	disciplines: {},
+	disciplines: (form.roles == '12') ? { required } : {},
 }));
 
 const sendUpdate = async () => {
@@ -55,7 +55,7 @@ const sendUpdate = async () => {
 					if (response.status >= 200 && response.status <= 300) {
 						alerts.update();
 						setLoading(true);
-						router.push('beneficiaries.index').finally(() => {
+						router.push({name: 'users.index'}).finally(() => {
 							setLoading(false);
 						});
 					}
@@ -116,7 +116,7 @@ const formdataParser = (form: any) => {
 
 const roles = asyncComputed(async () => {
 	const roles_data = await getSelect(['roles']);
-	return roles_data.filter(({ value }) => value != '1');
+	return roles_data.filter(({ value }) => value != '1' && value != '2');
 }, null);
 
 const disciplines = asyncComputed(async () => {
@@ -159,6 +159,9 @@ watch(()=> form.roles, (newVal : any, oldVal : any) => {
         form.zones = '';
         form.municipalities = [];
     }
+	if(newVal != '12'){
+		form.disciplines = '';
+	}
 })
 
 const v$ = useVuelidate(form_rules, form);
@@ -192,7 +195,7 @@ const fetch = async () => {
 	});
 };
 
-const excludedRoles = [3, 6, 7, 8];
+const excludedRoles = [2, 3, 5, 6, 7];
 
 onMounted(async () => {
 	console.log(route);
@@ -309,7 +312,7 @@ onMounted(async () => {
 				:validator="v$"
 				:options="disciplines"
 				multiple
-				v-if="form.roles == '1' || form.roles == '2' || form.roles == '5'"
+				v-if="form.roles && form.roles == '12'"
 			/>
 			<br />
 			<!-- <CommonInput type="hidden" name="password" :value="form.document_number" v-model="form.password" :validator="v$" />-->

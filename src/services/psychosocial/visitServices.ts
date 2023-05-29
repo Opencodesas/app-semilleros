@@ -65,5 +65,18 @@ export const visitServices = {
         } catch (error: any) {
             alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
         }
+    },
+    download: async (id: string) => {
+        try{
+            setLoading(true)
+
+            const response = await api.get(`/${apiPath}/GetReportPsycologicVisit/${id}`).finally(() => { 
++                setLoading(false)
+            })
+
+            return response
+        }catch (error: any) {
+            alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
+        }
     }
 }
