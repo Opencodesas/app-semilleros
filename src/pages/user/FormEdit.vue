@@ -195,7 +195,7 @@ const fetch = async () => {
 	});
 };
 
-const excludedRoles = [3, 5, 6, 7, 8];
+const excludedRoles = [2, 3, 4, 5, 6, 7, 8];
 
 onMounted(async () => {
 	console.log(route);

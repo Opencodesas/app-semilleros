@@ -25,7 +25,7 @@ const form = reactive({
     disciplines: '',
 })
 
-const excludedRoles = [3, 5, 6, 7, 8]
+const excludedRoles = [2, 3, 4, 5, 6, 7, 8]
 
 const form_rules = computed(() => ({
     name:{required},
