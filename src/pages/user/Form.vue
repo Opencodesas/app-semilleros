@@ -58,6 +58,12 @@ const formdataParser = (form: any) => {
     });
   }
 
+  if (form.disciplines) {
+    form.disciplines.forEach((file: any) => {
+      formData.append('zones[]', file);
+    });
+  }
+
   Object.keys(form).forEach((key) => {
     if (key !== 'municipalities' && key !== 'disciplines') {
       formData.append(key, form[key]);

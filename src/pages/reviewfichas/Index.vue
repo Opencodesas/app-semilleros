@@ -30,6 +30,17 @@ currentUser.rol==="metodologo"?
     { text: 'Estado', value: 'status'},
     { text: 'Acciones', value: 'fichasViewer' },
 ]
+: currentUser.rol==="coordinador_maritimo"?
+[
+    { text: 'No.', value: 'id', sortable: true},
+    { text: 'Metodólogo', value: 'reviewed_by.full_name', sortable: true},
+    { text: 'Monitor', value: 'created_by.full_name', sortable: true},
+    { text: 'CC del Monitor', value: 'created_by.document_number', sortable: true},
+    { text: 'Beneficiario', value: 'full_name', sortable: true},
+    { text: 'Municipio', value: "municipality.name"},
+    { text: 'Estado', value: 'status'},
+    { text: 'Acciones', value: 'fichasViewer' },
+]
 :
 [
     { text: 'No.', value: 'id', sortable: true},
@@ -79,7 +90,7 @@ const cruddata = computed(() => searchData(items.value, search.value) );
         <h2 class="mr-auto text-lg font-medium">Revisión de fichas</h2>
     </div>
 
-    <div v-if="currentUser.rol==='asistente_administrativo' || currentUser.rol==='coordinador_regional' || currentUser.rol==='metodologo' || currentUser.rol==='super.root'"
+    <div v-if="currentUser.rol==='asistente_administrativo' || currentUser.rol==='coordinador_regional' || currentUser.rol==='metodologo' || currentUser.rol==='super.root' || currentUser.rol==='coordinador_maritimo'"
     class="p-5 mt-5 intro-y box">
         <CommonInput
 			type="search"
