@@ -25,7 +25,7 @@ const form = reactive({
     disciplines: '',
 })
 
-const excludedRoles = [2, 3, 4, 5, 6, 7, 8]
+const excludedRoles = [2, 3, 5, 6, 7]
 
 const form_rules = computed(() => ({
     name:{required},
@@ -38,7 +38,7 @@ const form_rules = computed(() => ({
     period: {},
     phone: { required },
     roles: { required },
-    municipalities: {},
+    municipalities: !excludedRoles.includes(+form.roles) ? { required } : {},
     zones: {},
     disciplines: (form.roles == '12') ? { required } : {},
     password: {},
@@ -103,7 +103,7 @@ const genders = [
 
 const roles = asyncComputed(async () => {
     const roles_data = await getSelect(['roles'])
-    return roles_data.filter(({ value }) => value != '1')
+    return roles_data.filter(({ value }) => value != '1' && value != '2')
 }, null)
 
 

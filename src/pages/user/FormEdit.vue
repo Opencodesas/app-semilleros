@@ -36,7 +36,7 @@ const form_rules = computed(() => ({
 	email: { required, email },
 	gender: { required },
 	lastname: { required },
-	municipalities: {},
+	municipalities: !excludedRoles.includes(+form.roles) ? { required } : {},
 	period: {},
 	phone: { required },
 	roles: { required },
@@ -116,7 +116,7 @@ const formdataParser = (form: any) => {
 
 const roles = asyncComputed(async () => {
 	const roles_data = await getSelect(['roles']);
-	return roles_data.filter(({ value }) => value != '1');
+	return roles_data.filter(({ value }) => value != '1' && value != '2');
 }, null);
 
 const disciplines = asyncComputed(async () => {
@@ -195,7 +195,7 @@ const fetch = async () => {
 	});
 };
 
-const excludedRoles = [2, 3, 4, 5, 6, 7, 8];
+const excludedRoles = [2, 3, 5, 6, 7];
 
 onMounted(async () => {
 	console.log(route);
