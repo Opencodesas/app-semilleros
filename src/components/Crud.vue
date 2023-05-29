@@ -819,38 +819,38 @@ const selectedTab = inject('selectedTab', ref(0));
 							</template>
 						</template>
 					</template>
-					<template v-else-if="isProvider('coordinator')">
-						<Button
-							variant="outline-secondary"
-							@click="editAction(item.id)">
-							<Lucide
-								v-if="item.status.slug == 'REC'"
-								icon="FileEdit"
-								class="mr-2" />
-							<Lucide
-								v-else
-								icon="Eye"
-								class="mr-2" />
-							<span
-								v-if="item.status.slug == 'REC'"
-								class="text-sm">
-								Editar
-							</span>
-							<span
-								v-else
-								class="text-sm">
-								Visualizar
-							</span>
-						</Button>
-
-						<!-- <Button
-												variant="outline-danger"
-												@click="onDeleteFnc(item.id)">
-												<Lucide
-													icon="Delete"
-													class="mr-2" />
-												<span class="text-sm"> Eliminar </span> 
-											</Button> -->
+					<template v-else-if="isRole('coordinador_regional')">
+						<template v-if="route.name == 'coordinator.index'">
+							<Button
+								variant="outline-secondary"
+								@click="editAction(item.id)">
+								<Lucide
+									v-if="item.status.slug == 'REC'"
+									icon="FileEdit"
+									class="mr-2" />
+								<Lucide
+									v-else
+									icon="Eye"
+									class="mr-2" />
+								<span
+									v-if="item.status.slug == 'REC'"
+									class="text-sm">
+									Editar
+								</span>
+								<span
+									v-else
+									class="text-sm">
+									Visualizar
+								</span>
+							</Button>
+						</template>
+						<template v-if="route.name == 'review.bene_chro'">
+							<template v-if="props.Form!">
+								<Modal
+									:Form="props.Form"
+									:item="item" />
+							</template>
+						</template>
 					</template>
 					<template v-else-if="isProvider('fichaInscrip')">
 						<Button
