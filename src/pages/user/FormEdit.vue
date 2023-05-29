@@ -309,7 +309,7 @@ onMounted(async () => {
 				:validator="v$"
 				:options="disciplines"
 				multiple
-				v-if="!(excludedRoles.includes(+form.roles))"
+				v-if="form.roles == '1' || form.roles == '2' || form.roles == '5'"
 			/>
 			<br />
 			<!-- <CommonInput type="hidden" name="password" :value="form.document_number" v-model="form.password" :validator="v$" />-->
