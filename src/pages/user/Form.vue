@@ -8,6 +8,8 @@ import { useVuelidate } from '@vuelidate/core'
 import Swal, { SweetAlertIcon } from "sweetalert2"
 
 //const user_store = useUser();
+const excludedRoles = [2, 3, 5, 6, 7]
+
 const form = reactive({
     address: '',
     document_number: '',
@@ -25,7 +27,6 @@ const form = reactive({
     disciplines: '',
 })
 
-const excludedRoles = [2, 3, 5, 6, 7]
 
 const form_rules = computed(() => ({
     name:{required},
