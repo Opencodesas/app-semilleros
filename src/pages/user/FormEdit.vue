@@ -10,6 +10,7 @@ import { useRoute } from 'vue-router';
 
 const router = useRouter();
 const route = useRoute();
+const excludedRoles = [2, 3, 5, 6, 7];
 
 const form = reactive({
 	address: '',
@@ -195,7 +196,6 @@ const fetch = async () => {
 	});
 };
 
-const excludedRoles = [2, 3, 5, 6, 7];
 
 onMounted(async () => {
 	console.log(route);
