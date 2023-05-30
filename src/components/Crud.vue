@@ -1142,7 +1142,18 @@ const selectedTab = inject('selectedTab', ref(0));
 			//BUDGET ZONE
 
 			<template #item-actionsBene="item">
+						<div  class="flex gap-1 w-20">
+							<Button
+							v-if="item.status.slug === 'REC'"
+							variant="outline-secondary"
+							@click="editAction(item.id)">
+							<Lucide
+								icon="FileEdit"
+								class="" />
+							<span class="text-sm"> Editar </span>
+						</Button>
 				<Modal :Form="props.Form" label="Ver" :item="item" />
+						</div>
 			</template>
 
 		</DataTable>
