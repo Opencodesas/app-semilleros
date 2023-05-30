@@ -119,7 +119,16 @@ const onSubmit = async () => {
 const disableElements = computed(() => {
 	return form.status_id == '4' ? false : true; //id: 4 => Rechazado => REC
 });
-const download = () => {};
+
+const download = async () => {
+	return await transversalActivityServices.download(form.id).then((res) => {
+		if (res) {
+			if (res.status >= 200 && res.status <= 300) {
+				downloadFile(res);
+			}
+		}
+	});
+};
 </script>
 
 <template>

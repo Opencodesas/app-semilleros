@@ -25,6 +25,8 @@ const form = reactive({
     disciplines: '',
 })
 
+const excludedRoles = [2, 3, 5, 6, 7]
+
 const form_rules = computed(() => ({
     name:{required},
     address: { required },
@@ -36,9 +38,9 @@ const form_rules = computed(() => ({
     period: {},
     phone: { required },
     roles: { required },
-    municipalities: {},
+    municipalities: !excludedRoles.includes(+form.roles) ? { required } : {},
     zones: {},
-    disciplines: {},
+    disciplines: (form.roles == '12') ? { required } : {},
     password: {},
 }))
 const formdataParser = (form: any) => {
@@ -107,7 +109,7 @@ const genders = [
 
 const roles = asyncComputed(async () => {
     const roles_data = await getSelect(['roles'])
-    return roles_data.filter(({ value }) => value != '1')
+    return roles_data.filter(({ value }) => value != '1' && value != '2')
 }, null)
 
 
@@ -148,6 +150,14 @@ watch(() => form.zones, async (newVal : any, oldVal : any) => {
         selectedMunicipalities.value = selectedMunicipalities.value.filter((municipality: any) => municipality.zone_id != missingZone);
         form.municipalities = selectedMunicipalities.value.map((municipality: any) => municipality.value);
     };
+})
+
+watch(()=> form.roles, (newVal : any, oldVal : any) => {
+    if(excludedRoles.includes(newVal)) {
+        form.zones = '';
+        form.municipalities = [];
+    }
+    form.disciplines = '';
 })
 
 
@@ -226,11 +236,11 @@ const onSubmit = async () => {
                 :options="genders" />
             <CommonInput type="email" label="Correo *" placeholder="Ingrese el correo" name="email" v-model="form.email"
                 :validator="v$" />
-            <CommonSelect multiple label="Selecciona regiones *" name="zones" v-model="form.zones" :validator="v$" :options="zones" v-if="form.roles == '1' || form.roles == '2' || form.roles == '4' || form.roles == '8' || form.roles == '9' || form.roles == '10' || form.roles == '11' || form.roles == '12'"  :allow-empty="true" />
+            <CommonSelect multiple label="Selecciona regiones *" name="zones" v-model="form.zones" :validator="v$" :options="zones" v-if="form.roles && !excludedRoles.includes(+form.roles)"  :allow-empty="true" />
             <CommonSelect label="Seleccione el municipio *" name="municipalities" v-model="form.municipalities" :validator="v$"
-                :options="municipalities" multiple v-if="form.roles == '1' || form.roles == '2' || form.roles == '4' || form.roles == '8' || form.roles == '9' || form.roles == '10' || form.roles == '11' || form.roles == '12'" :allow-empty="true"/>
+                :options="municipalities" multiple v-if="form.roles && !excludedRoles.includes(+form.roles)" :allow-empty="true"/>
             <CommonSelect class="h-30" label="Seleccione las disciplinas *" name="disciplines" v-model="form.disciplines" :validator="v$"
-                :options="disciplines" multiple v-if="form.roles == '1' || form.roles == '2' || form.roles == '4' || form.roles == '8' || form.roles == '9' || form.roles == '10' || form.roles == '11' || form.roles == '12'" />
+                :options="disciplines" multiple v-if="form.roles && form.roles == '12'" />
             <br>
             <CommonInput type="hidden" name="password" :value="form.document_number" v-model="form.password" :validator="v$" />
         </div>

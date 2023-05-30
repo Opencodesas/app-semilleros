@@ -1,17 +1,113 @@
 <script setup lang="ts">
+import { onboardingStore } from "@/stores/onboardingStore";
 
 const props = defineProps<{
     item?: any;
 	closeModal: Function;
 }>();
 
+const store = onboardingStore();
+
+const optionsMunicipio = ref([
+  { label: "cali", value: "1" },
+  { label: "caicedonia", value: "2" },
+  { label: "cartago", value: "3" },
+  { label: "yumbo", value: "4" },
+  { label: "alcala", value: "5" },
+  { label: "florida", value: "6" },
+  { label: "jamundi", value: "7" },
+])
+
+const optionsDisciplinas= asyncComputed(async () => {
+  return await getSelect(['disciplines']);
+});
+
+const optionsIdentificacion= asyncComputed(async () => {
+  return await getSelect(['identification_types']);
+});
+
+const optionsEstrato= ref([
+  { label: "1", value: "1" },
+  { label: "2", value: "2" },
+  { label: "3", value: "3" },
+  { label: "4", value: "4" },
+  { label: "5", value: "5" },
+  { label: "6", value: "6" },
+])
+const zonesList= ref([
+  { label: "RURAL", value: "R" },
+  { label: "URBANA", value: "U" },
+])
+const optionsVictima= ref([
+  { label: "SI", value: "1" },
+  { label: "NO", value: "0" },
+])
+
+const yesnoList= ref([
+  { label: "SI", value: "1" },
+  { label: "NO", value: "0" },
+])
+
+const optionsGenero= ref([
+  { label: "Masculino", value: "M" },
+  { label: "Femenino", value: "F" },
+])
+const optionsEtnia= ref([
+  { label: "Indigena", value: "1" },
+  { label: "Afro", value: "2" },
+  { label: "Mestizo", value: "3" },
+  { label: "Blanco", value: "4" },
+])
+
+const optionsSangre= ref([
+  { label: "A+", value: "1" },
+  { label: "A-", value: "2" },
+  { label: "B+", value: "3" },
+  { label: "B-", value: "4" },
+  { label: "AB+", value: "5" },
+  { label: "O+", value: "6" },
+  { label: "O-", value: "7" },
+])
+const optionsEscolaridad= ref([
+  { label: "Si", value: "1" },
+  { label: "No", value: "0" },
+])
+const optionsNivelEscolaridad= ref([
+  { label: "Primaria", value: "1" },
+  { label: "Secundaria", value: "2" },
+  { label: "Graduado", value: "3" },
+])
+
+const optionsAfiliacion= ref([
+  { label: "Subsidiado", value: "SUB" },
+  { label: "Contributivo", value: "CON" },
+  { label: "No tiene", value: "NA" },
+])
+const optionsRedes= ref([
+  { label: "Facebook", value: "Facebook" },
+  { label: "Instagram", value: "Instagram" },
+  { label: "Telegram", value: "Telegram" },
+  { label: "Twitter", value: "Twitter" },
+])
+const optionsEnterado= ref([
+  { label: "Ente municipal", value: "Ente municipal" },
+  { label: "Contributivo", value: "Ente deportivo" },
+  { label: "Redes sociales", value: "Redes sociales" },
+  { label: "Radio", value: "Radio" },
+  { label: "Television", value: "Television" },
+  { label: "Monitor deportivo", value: "Monitor deportivo" },
+])
+
+const healthEntities = computedAsync( async () => {
+  return await getHealthentities();
+}, null)
 
 const data = ref(props.item);
 let currentFicha = {...data.value,
     created_at:data.value.created_at.split("T")[0],
     name: data.value.full_name.split(" "),
-    disability: data.value.disability==='0'?'No presenta':data.value.disability,
-    pathology: data.value.pathology==='0'?'No presenta':data.value.disability,  
+    disability: data.value.disability==='0'?'No presenta': 'Sí',
+    pathology: data.value.pathology==='0'?'No presenta':'Sí',  
     know_guardian: {...data.value.know_guardian,
         social_media: JSON.parse(data.value.know_guardian.social_media).join(', '),
         find_out: JSON.parse(data.value.know_guardian.find_out).join(', ')
@@ -19,11 +115,26 @@ let currentFicha = {...data.value,
 };
 
 
+
+
 const onDownload = async (evt: any) => {
   evt.preventDefault();
   alerts.custom('', 'Descargando archivo...', 'info');
   //descargar
 }
+const ethniacityList = ref([]);
+
+onMounted(async () => {
+  console.log(currentFicha);
+  //peticion a la api para las listas desplegables, by rick.
+  store.getListSelect().then((response) => {
+    if (response?.status == 200) {
+      ethniacityList.value = JSON.parse(JSON.stringify(response.data['ethniacity']));
+    } else {
+      alerts.custom("", "No se pudieron obtener los datos", "error");
+    }
+  });
+});
 
 </script>
 
@@ -75,13 +186,13 @@ const onDownload = async (evt: any) => {
             :disabled="true"
           />
 
-       
-          <CommonInput
+          <CommonSelect
             label="Disciplinas"
             name="temp"
             v-model="currentFicha.disciplines_id"
-            type="text"
-            :disabled="true"
+            :allowEmpty="false"
+            :options="optionsDisciplinas"
+            disabled
           />
           
           <div class="col-span-2">
@@ -106,18 +217,20 @@ const onDownload = async (evt: any) => {
           <CommonInput
             label="Lugar de nacimiento"
             name="temp"
-            v-model="currentFicha.registration_date"
+            v-model="currentFicha.origin_place"
             type="text"
             :disabled="true"
           />
-        
-          <CommonInput
+
+          <CommonSelect
             label="Tipo de Identificación"
-            name="temp"
+            name="tipoIdentificacion"
             v-model="currentFicha.type_document"
-            type="text"
-            :disabled="true"
+            :allowEmpty="false"
+            :options="optionsIdentificacion"
+            disabled
           />
+
           <CommonInput
             label="Número de documento"
             name="temp"
@@ -153,19 +266,23 @@ const onDownload = async (evt: any) => {
           />
         </div>
         <div class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
-          <CommonInput
+
+          <CommonSelect
             label="Zona"
-            name="temp"
+            name="zona"
             v-model="currentFicha.zone"
-            type="text"
-            :disabled="true"
+            :allowEmpty="false"
+            :options="zonesList"
+            disabled
           />
-          <CommonInput
+
+          <CommonSelect
             label="Victima de conflicto"
-            name="temp"
+            name="victimaConflicto"
             v-model="currentFicha.conflict_victim"
-            type="text"
-            :disabled="true"
+            :allowEmpty="false"
+            :options="yesnoList"
+            disabled
           />
           <div class="col-span-2">
             <CommonInput
@@ -179,19 +296,23 @@ const onDownload = async (evt: any) => {
         </div>
 
         <div class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
-          <CommonInput
-            label="Genero"
-            name="temp"
+
+          <CommonSelect
+            label="Género"
+            name="genero"
             v-model="currentFicha.gender"
-            type="text"
-            :disabled="true"
+            :allowEmpty="false"
+            :options="optionsGenero"
+            disabled
           />
-          <CommonInput
+
+          <CommonSelect
             label="Etnia"
-            name="temp"
+            name="etnia"
             v-model="currentFicha.ethnicities_id"
-            type="text"
-            :disabled="true"
+            :allowEmpty="false"
+            :options="ethniacityList"
+            disabled
           />
           
           <CommonInput
@@ -226,22 +347,16 @@ const onDownload = async (evt: any) => {
             :disabled="true"
           />
           
-          <CommonInput
+          <CommonSelect
             label="Tipo de sangre"
-            name="temp"
+            name="sangre"
             v-model="currentFicha.blood_type"
-            type="text"
-            :disabled="true"
-          />
-          <CommonInput
-            label="Escolaridad"
-            name="temp"
-            v-model="currentFicha.scholarship"
-            type="text"
-            :disabled="true"
+            :allowEmpty="false"
+            :options="optionsSangre"
+            disabled
           />
 
-        <CommonInput
+          <CommonInput
           label="Vivo con"
           name="temp"
           v-model="currentFicha.live_with"
@@ -249,13 +364,52 @@ const onDownload = async (evt: any) => {
           :disabled="true"
         />
 
-        <CommonInput
-          label="Tipo afiliacion(EPS)"
-          name="temp"
-          v-model="currentFicha.affiliation_type"
-          type="text"
-          :disabled="true"
+          <CommonSelect
+            class="mt-5 col-span-2"
+            label="Escolaridad"
+            name="escolaridad"
+            v-model="currentFicha.scholarship"
+            :allowEmpty="false"
+            :options="yesnoList"
+            disabled
         />
+
+        <div v-if="currentFicha.scholarship === '1'" class="col-span-2 grid grid-cols-2 space-x-2">
+            
+            <CommonSelect
+                label="Nivel de Escolaridad"
+                name="nivel_escolaridad"
+                v-model="currentFicha.scholar_level"
+                :allowEmpty="false"
+                :options="optionsNivelEscolaridad"
+                disabled
+              />
+              
+            <CommonInput
+                label="Institución Educativa"
+                name="institucion"
+                v-model="currentFicha.institution"
+                disabled
+              />
+          </div>
+
+        <CommonSelect
+            label="Tipo afiliacion(EPS)"
+            name="afiliacion"
+            v-model="currentFicha.affiliation_type"
+            :allowEmpty="false"
+            :options="optionsAfiliacion"
+            disabled
+          />
+
+          <CommonSelect v-if="currentFicha.affiliation_type && currentFicha.affiliation_type !== 'NA'"
+            label="Entidad de Salud"
+            name="health_entity"
+            v-model="currentFicha.health_entity_id"
+            :allowEmpty="false"
+            :options="healthEntities"
+            disabled
+          />
     </div>
 </div>
 
