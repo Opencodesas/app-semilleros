@@ -130,9 +130,15 @@ const onSubmit = async () => {
     }
 }
 
-const download = () => {
-
-}
+const download = async () => {
+	return await visitServices.download(route.params.id as string).then((res) => {
+		if (res) {
+			if (res.status >= 200 && res.status <= 300) {
+				downloadFile(res);
+			}
+		}
+	});
+};
 
 const disableElements = computed(() => {
     return form.status_id == '4' ? false : true;

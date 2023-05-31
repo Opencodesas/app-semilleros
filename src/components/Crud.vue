@@ -819,38 +819,38 @@ const selectedTab = inject('selectedTab', ref(0));
 							</template>
 						</template>
 					</template>
-					<template v-else-if="isProvider('coordinator')">
-						<Button
-							variant="outline-secondary"
-							@click="editAction(item.id)">
-							<Lucide
-								v-if="item.status.slug == 'REC'"
-								icon="FileEdit"
-								class="mr-2" />
-							<Lucide
-								v-else
-								icon="Eye"
-								class="mr-2" />
-							<span
-								v-if="item.status.slug == 'REC'"
-								class="text-sm">
-								Editar
-							</span>
-							<span
-								v-else
-								class="text-sm">
-								Visualizar
-							</span>
-						</Button>
-
-						<!-- <Button
-												variant="outline-danger"
-												@click="onDeleteFnc(item.id)">
-												<Lucide
-													icon="Delete"
-													class="mr-2" />
-												<span class="text-sm"> Eliminar </span> 
-											</Button> -->
+					<template v-else-if="isRole('coordinador_regional')">
+						<template v-if="route.name == 'coordinator.index'">
+							<Button
+								variant="outline-secondary"
+								@click="editAction(item.id)">
+								<Lucide
+									v-if="item.status.slug == 'REC'"
+									icon="FileEdit"
+									class="mr-2" />
+								<Lucide
+									v-else
+									icon="Eye"
+									class="mr-2" />
+								<span
+									v-if="item.status.slug == 'REC'"
+									class="text-sm">
+									Editar
+								</span>
+								<span
+									v-else
+									class="text-sm">
+									Visualizar
+								</span>
+							</Button>
+						</template>
+						<template v-if="route.name == 'review.bene_chro'">
+							<template v-if="props.Form!">
+								<Modal
+									:Form="props.Form"
+									:item="item" />
+							</template>
+						</template>
 					</template>
 					<template v-else-if="isProvider('fichaInscrip')">
 						<Button
@@ -1067,7 +1067,7 @@ const selectedTab = inject('selectedTab', ref(0));
 					{{ _getStatus(item.status) }}
 				</span>				
 				<!--si es coordinador_regional entra ENP, convierte a APR y REC-->
-				<span v-else-if="onboardingStore().get_user_role?.slug === 'coordinador_regional'"
+				<span v-else-if="onboardingStore().get_user_role?.slug === 'coordinador_regional'"	
 					:class="
 						item.status.slug == 'REC'
 							? ' bg-danger/10 text-danger'
@@ -1113,6 +1113,15 @@ const selectedTab = inject('selectedTab', ref(0));
 							:payloadFunctions="payloadFunctions" />
 					</template>
 					<template
+						v-else-if="(onboardingStore().get_user_role?.slug === 'coordinador_maritimo' && item.status.slug === 'APR') ||
+						(onboardingStore().get_user_role?.slug === 'coordinador_maritimo' && item.status.slug === 'REC')">
+						<Modal
+							:Form="props.Form"
+							:id_review="item.id"
+							label="Actualizar"
+							:payloadFunctions="payloadFunctions" />
+					</template>
+					<template
 						v-else-if="item.status.slug === 'APR' || item.status.slug === 'REC'">
 						<Modal
 							:Form="props.Form"
@@ -1133,7 +1142,18 @@ const selectedTab = inject('selectedTab', ref(0));
 			//BUDGET ZONE
 
 			<template #item-actionsBene="item">
+						<div  class="flex gap-1 w-20">
+							<Button
+							v-if="item.status.slug === 'REC'"
+							variant="outline-secondary"
+							@click="editAction(item.id)">
+							<Lucide
+								icon="FileEdit"
+								class="" />
+							<span class="text-sm"> Editar </span>
+						</Button>
 				<Modal :Form="props.Form" label="Ver" :item="item" />
+						</div>
 			</template>
 
 		</DataTable>

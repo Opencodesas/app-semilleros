@@ -8,6 +8,8 @@ import { useVuelidate } from '@vuelidate/core'
 import Swal, { SweetAlertIcon } from "sweetalert2"
 
 //const user_store = useUser();
+const excludedRoles = [2, 3, 5, 6, 7]
+
 const form = reactive({
     address: '',
     document_number: '',
@@ -15,7 +17,7 @@ const form = reactive({
     email: '',
     gender: '',
     lastname: '',
-    municipalities: '',
+    municipalities: [],
     name: '',
     period: '',
     phone: '',
@@ -25,7 +27,6 @@ const form = reactive({
     disciplines: '',
 })
 
-const excludedRoles = [3, 6 ,7, 8]
 
 const form_rules = computed(() => ({
     name:{required},
@@ -38,9 +39,9 @@ const form_rules = computed(() => ({
     period: {},
     phone: { required },
     roles: { required },
-    municipalities: {},
+    municipalities: !excludedRoles.includes(+form.roles) ? { required } : {},
     zones: {},
-    disciplines: {},
+    disciplines: (form.roles == '12') ? { required } : {},
     password: {},
 }))
 const formdataParser = (form: any) => {
@@ -55,6 +56,12 @@ const formdataParser = (form: any) => {
   if (form.disciplines) {
     form.disciplines.forEach((file: any) => {
       formData.append('disciplines[]', file);
+    });
+  }
+
+  if (form.disciplines) {
+    form.disciplines.forEach((file: any) => {
+      formData.append('zones[]', file);
     });
   }
 
@@ -99,55 +106,13 @@ const genders = [
     },
 ]
 
-const towns = [
-    {
-        label: 'Tulua',
-        value: 'Tulua'
-    },
-    {
-        label: 'Cali',
-        value: 'Cali'
-    },
-    {
-        label: 'Palmira',
-        value: 'Palmira'
-    },
-    {
-        label: 'Dagua',
-        value: 'Dagua'
-    },
-    {
-        label: 'El Cerrito',
-        value: 'El Cerrito'
-    },
-    {
-        label: 'Florida',
-        value: 'Florida'
-    },
-    {
-        label: 'Jamundí',
-        value: 'Jamundí'
-    },
-    {
-        label: 'Vijes ',
-        value: 'Vijes '
-    },
-    {
-        label: 'Yumbo',
-        value: 'Yumbo'
-    }
-]
-
 
 
 const roles = asyncComputed(async () => {
     const roles_data = await getSelect(['roles'])
-    return roles_data.filter(({ value }) => value != '1')
+    return roles_data.filter(({ value }) => value != '1' && value != '2')
 }, null)
 
-const municipalities = asyncComputed(async () => {
-    return await getSelect(['municipalities'])
-}, null)
 
 const disciplines = asyncComputed(async () => {
     return await getSelect(['disciplines'])
@@ -156,49 +121,70 @@ const disciplines = asyncComputed(async () => {
 const v$ = useVuelidate(form_rules, form)
 
 const router = useRouter()
-const route = useRoute()
-
-const routeName = computed(() => {
-    return String(route.name).split('.')[0]
-})
-
 
 const zones = asyncComputed(async () => {
     return await getSelect(['zones'])
 }, null)
 
-const zone_id = computed(() => form.zones)
+const municipalities = asyncComputed(async () => {
+    return await getSelect(['municipalities'])
+}, null)
+
+const selectedMunicipalities: any = ref([])
+
+const municipalitiesByZone = async () => {
+
+    await getMunicipalitiesByZone(form.zones[form.zones.length - 1]).then((response) => {
+            selectedMunicipalities.value = [...selectedMunicipalities.value, ...response]
+            form.municipalities = selectedMunicipalities.value.map((municipality: any) => municipality.value);
+        })
+ 
+}
+
+watch(() => form.zones, async (newVal : any, oldVal : any) => {
+    if(form.zones.length > oldVal.length) {
+        await municipalitiesByZone();
+    };
+
+    if(form.zones.length < oldVal.length) {
+        const missingZone = oldVal.filter((element: any) => !newVal.includes(element));
+        selectedMunicipalities.value = selectedMunicipalities.value.filter((municipality: any) => municipality.zone_id != missingZone);
+        form.municipalities = selectedMunicipalities.value.map((municipality: any) => municipality.value);
+    };
+})
+
+watch(()=> form.roles, (newVal : any, oldVal : any) => {
+    if(excludedRoles.includes(newVal)) {
+        form.zones = '';
+        form.municipalities = [];
+    }
+    form.disciplines = '';
+})
 
 
 const getAllNoPaginate = async () => {
     await userServices.getAll();
 }
 
-const fetchtTypeUsers = async () => {
-    //Get all user, to add
-    //await getAllNoPaginate()
-    const users_data = await userServices.get("3");
-    console.log(users_data);
-    if(users_data?.data.success == true){
-        Swal.fire('', users_data?.data.message, 'info').finally(() => {
-        })
-        //Object.assign(form, users_data.data.items)}
-        form.name = users_data.data.items.name;
-        form.email = users_data.data.items.email;
-        form.gender = users_data.data.items.gender;
-        form.document_type = users_data.data.items.document_type;
-        form.document_number = users_data.data.items.document_number;
-        //form.roles = users_data.data.items.roles[0];
-    }   
-}
+// const fetchtTypeUsers = async () => {
+//     //Get all user, to add
+//     //await getAllNoPaginate()
+//     const users_data = await userServices.get("3");
+//     console.log(users_data);
+//     if(users_data?.data.success == true){
+//         Swal.fire('', users_data?.data.message, 'info').finally(() => {
+//         })
+//         //Object.assign(form, users_data.data.items)}
+//         form.name = users_data.data.items.name;
+//         form.email = users_data.data.items.email;
+//         form.gender = users_data.data.items.gender;
+//         form.document_type = users_data.data.items.document_type;
+//         form.document_number = users_data.data.items.document_number;
+//         //form.roles = users_data.data.items.roles[0];
+//     }   
+// }
 onUnmounted(() => {
     v$.value.$reset();
-});
-onMounted(async () => {
-    //v$.value.$reset()
-    //roles.value = options.value.roles; //data.map((item) => ({ label: item.name, value: item.slug }));
-    //await fetchtTypeUsers();
-    //console.log(form);
 });
 
 const onSubmit = async () => {
@@ -251,11 +237,11 @@ const onSubmit = async () => {
                 :options="genders" />
             <CommonInput type="email" label="Correo *" placeholder="Ingrese el correo" name="email" v-model="form.email"
                 :validator="v$" />
-            <CommonSelect multiple label="Selecciona regiones *" name="zones" v-model="form.zones" :validator="v$" :options="zones" v-if="!(excludedRoles.includes(form.roles))" />
+            <CommonSelect multiple label="Selecciona regiones *" name="zones" v-model="form.zones" :validator="v$" :options="zones" v-if="form.roles && !excludedRoles.includes(+form.roles)"  :allow-empty="true" />
             <CommonSelect label="Seleccione el municipio *" name="municipalities" v-model="form.municipalities" :validator="v$"
-                :options="municipalities" multiple v-if="!(excludedRoles.includes(form.roles))" />
+                :options="municipalities" multiple v-if="form.roles && !excludedRoles.includes(+form.roles)" :allow-empty="true"/>
             <CommonSelect class="h-30" label="Seleccione las disciplinas *" name="disciplines" v-model="form.disciplines" :validator="v$"
-                :options="disciplines" multiple v-if="!(excludedRoles.includes(form.roles))" />
+                :options="disciplines" multiple v-if="form.roles && form.roles == '12'" />
             <br>
             <CommonInput type="hidden" name="password" :value="form.document_number" v-model="form.password" :validator="v$" />
         </div>

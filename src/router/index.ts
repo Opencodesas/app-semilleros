@@ -636,7 +636,7 @@ const routes = [
 			{
 				path: "coordinator",
 				name: "coordinator",
-				meta: { provider: 'coordinator', role: 'coordinador_regional' },
+				meta: { provider: 'coordinator', role: ['coordinador_regional', 'coordinador_maritimo'] },
 				children: [
 					{
 						path: "",

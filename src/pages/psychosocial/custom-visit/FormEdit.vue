@@ -150,9 +150,15 @@ const onSubmit = async () => {
     }
 }
 //Para cuando haya api para descargar el archivo
-const download = () => {
-
-}
+const download = async () => {
+	return await customVisitServices.download(route.params.id as string).then((res) => {
+		if (res) {
+			if (res.status >= 200 && res.status <= 300) {
+				downloadFile(res);
+			}
+		}
+	});
+};
 
 const disableElements = computed(() => {
     return form.status_id == '4' ? false : true; 

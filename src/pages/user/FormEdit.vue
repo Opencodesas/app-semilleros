@@ -10,6 +10,7 @@ import { useRoute } from 'vue-router';
 
 const router = useRouter();
 const route = useRoute();
+const excludedRoles = [2, 3, 5, 6, 7];
 
 const form = reactive({
 	address: '',
@@ -18,7 +19,7 @@ const form = reactive({
 	email: '',
 	gender: '',
 	lastname: '',
-	municipalities: '',
+	municipalities: [],
 	name: '',
 	period: '',
 	phone: '',
@@ -36,13 +37,13 @@ const form_rules = computed(() => ({
 	email: { required, email },
 	gender: { required },
 	lastname: { required },
-	municipalities: {},
+	municipalities: !excludedRoles.includes(+form.roles) ? { required } : {},
 	period: {},
 	phone: { required },
 	roles: { required },
 	zones: {},
 	password: {},
-	disciplines: {},
+	disciplines: (form.roles == '12') ? { required } : {},
 }));
 
 const sendUpdate = async () => {
@@ -55,7 +56,7 @@ const sendUpdate = async () => {
 					if (response.status >= 200 && response.status <= 300) {
 						alerts.update();
 						setLoading(true);
-						router.push('beneficiaries.index').finally(() => {
+						router.push({name: 'users.index'}).finally(() => {
 							setLoading(false);
 						});
 					}
@@ -113,23 +114,56 @@ const formdataParser = (form: any) => {
 	return formData;
 };
 
-const zones = asyncComputed(async () => {
-	return await getSelect(['zones']);
-}, null);
-
-const zone_id = computed(() => form.zones);
 
 const roles = asyncComputed(async () => {
 	const roles_data = await getSelect(['roles']);
-	return roles_data.filter(({ value }) => value != '1');
+	return roles_data.filter(({ value }) => value != '1' && value != '2');
 }, null);
 
-const municipalities = asyncComputed(async () => {
-	return await getSelect(['municipalities']);
-}, null);
 const disciplines = asyncComputed(async () => {
 	return await getSelect(['disciplines']);
 }, null);
+
+const zones = asyncComputed(async () => {
+    return await getSelect(['zones'])
+}, null)
+
+const municipalities = asyncComputed(async () => {
+    return await getSelect(['municipalities'])
+}, null)
+
+const selectedMunicipalities: any = ref([])
+
+const municipalitiesByZone = async () => {
+
+    await getMunicipalitiesByZone(form.zones[form.zones.length - 1]).then((response) => {
+            selectedMunicipalities.value = [...selectedMunicipalities.value, ...response]
+            form.municipalities = selectedMunicipalities.value.map((municipality: any) => municipality.value);
+        })
+ 
+}
+
+watch(() => form.zones, async (newVal : any, oldVal : any) => {
+    if(form.zones.length > oldVal.length) {
+        await municipalitiesByZone();
+    };
+
+    if(form.zones.length < oldVal.length) {
+        const missingZone = oldVal.filter((element: any) => !newVal.includes(element));
+        selectedMunicipalities.value = selectedMunicipalities.value.filter((municipality: any) => municipality.zone_id != missingZone);
+        form.municipalities = selectedMunicipalities.value.map((municipality: any) => municipality.value);
+    };
+})
+
+watch(()=> form.roles, (newVal : any, oldVal : any) => {
+    if(excludedRoles.includes(newVal)) {
+        form.zones = '';
+        form.municipalities = [];
+    }
+	if(newVal != '12'){
+		form.disciplines = '';
+	}
+})
 
 const v$ = useVuelidate(form_rules, form);
 
@@ -162,7 +196,6 @@ const fetch = async () => {
 	});
 };
 
-const excludedRoles = [3, 6, 7, 8];
 
 onMounted(async () => {
 	console.log(route);
@@ -254,7 +287,7 @@ onMounted(async () => {
 				v-model="form.zones"
 				:validator="v$"
 				:options="zones"
-				v-if="!(excludedRoles.includes(form.roles))"
+				v-if="!(excludedRoles.includes(+form.roles))"
 			/>
 			<!-- <CommonSelect
 				label="Seleccione la ciudad *"
@@ -269,7 +302,7 @@ onMounted(async () => {
 				:validator="v$"
 				:options="municipalities"
 				multiple 
-				v-if="!(excludedRoles.includes(form.roles))"
+				v-if="!(excludedRoles.includes(+form.roles))"
 			/>
 			<CommonSelect
 				class="h-30"
@@ -279,7 +312,7 @@ onMounted(async () => {
 				:validator="v$"
 				:options="disciplines"
 				multiple
-				v-if="!(excludedRoles.includes(form.roles))"
+				v-if="form.roles && form.roles == '12'"
 			/>
 			<br />
 			<!-- <CommonInput type="hidden" name="password" :value="form.document_number" v-model="form.password" :validator="v$" />-->

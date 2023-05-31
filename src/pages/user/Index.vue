@@ -36,7 +36,7 @@ const headers: Header[] = [
     { text: 'NOMBRE', value: 'name', sortable: true },
     { text: 'APELLIDO', value: 'lastname', sortable: true },
     { text: 'DOCUMENTO', value: 'document_number', sortable: true },
-    { text: "ROLES", value: "role.name" },
+    { text: "ROLES", value: "role.name", sortable: true },
     { text: 'ACCIONES', value: 'actions' },
 ]
 
