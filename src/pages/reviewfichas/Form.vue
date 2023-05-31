@@ -62,7 +62,7 @@ currentUser.rol == 'metodologo'?
 ]
 : currentUser.rol == 'coordinador_regional'?
 [
-	{ label: 'En proceso', value: 2, slug:'ENP' },
+	{ label: 'Procesar', value: 2, slug:'ENP' },
 	{ label: 'Aprobar', value: 3, slug: 'APR' },
 	{ label: 'Rechazar', value: 1, slug: 'REC' },
 ]
