@@ -8,9 +8,11 @@ import ScheduleFieldset from '@/components/ScheduleFieldset.vue'
 import useVuelidate from '@vuelidate/core'
 import {chronogramServices} from "@/services/chronogramService";
 import { onboardingStore } from '@/stores/onboardingStore'
+import {organizeHolidays} from './utils/holidays'
 
 const storeOnboarding = onboardingStore()
 
+const dataLoaded = ref(false)
 const form = reactive({
     status_id: 0,
     month: '',
@@ -32,7 +34,8 @@ const form = reactive({
                 end_time: '',
             }]
         }
-    ]
+    ],
+    rejection_message: ''
 })
 
 const form_rules = computed(() => ({
@@ -75,69 +78,6 @@ const router = useRouter()
 const route = useRoute()
 
 
-const getHolidays = (date: string, nameHoliday: string) => {
-	const week = [
-		'Domingo',
-		'Lunes',
-		'Martes',
-		'Miércoles',
-		'Jueves',
-		'Viernes',
-		'Sábado',
-	];
-	const fecha = date.split('-');
-	const dia = new Date(
-		parseInt(fecha[0]),
-		parseInt(fecha[1]) - 1,
-		parseInt(fecha[2])
-	);
-	return `${week[dia.getDay()]} ${dia.getDate()} de ${dia.toLocaleString('CO', {
-		month: 'long',
-	})}: ${nameHoliday}`;
-};
-
-// const holidays = computedAsync(async () => {
-// 	const year = new Date().getFullYear();
-// 	const holidaysYear = await fetch(
-// 		`https://date.nager.at/Api/v3/PublicHolidays/${year}/CO`
-// 	);
-// 	const res = await holidaysYear.json();
-// 	const holidays = res.map((holiday: any) => {
-// 		if (holiday.localName.includes('Battle of Boyacá')) {
-// 			holiday.localName = 'Batalla de Boyacá';
-// 		}
-// 		if (holiday.localName == 'Carnival') {
-// 			holiday.localName = 'Caranaval de Barranquilla';
-// 		}
-// 		return {
-// 			date: holiday.date,
-// 			name: holiday.localName,
-// 		};
-// 	});
-// 	return holidays;
-// }, null);
-
-let holidaysMonth: string;
-
-// watch(
-// 	() => form.month,
-// 	(newVal: any) => {
-// 		if (newVal) {
-// 			const res = holidays.value.filter((holiday: any) => {
-// 				const month = holiday.date.split('-')[1];
-// 				return month == newVal;
-// 			});
-// 			const holidaysRes = res.map((holiday: any) => {
-// 				return getHolidays(holiday.date, holiday.name);
-// 			});
-// 			const date = new Date();
-// 			date.setMonth(newVal - 1);
-// 			const nameMonth = date.toLocaleString('CO', { month: 'long' });
-// 			holidaysMonth = `Festivos de ${nameMonth}: ${holidaysRes.join(' - ')}`;
-// 		}
-// 	}
-// );
-
 
 const months = computedAsync(async () => {
     const data = await getSelect(['months'])
@@ -148,7 +88,7 @@ const months = computedAsync(async () => {
 }, null)
 
 const municipalities = computedAsync(async () => {
-    return await getCitiesByDepartment('30')
+    return await getSelect(['municipalities'])
 }, null)
 
 const groups = ref<any>([])
@@ -220,12 +160,14 @@ const fetch = async () => {
             form.municipality = response.data.items.municipality;
             form.note = response.data.items.note;
             form.groups = response.data.items.groups;
+            form.rejection_message = response.data.items.rejection_message;
             // form.gender = response.data.items.gender;
             // form.phone = response.data.items.phone;
             // form.document_type = response.data.items.document_type;
             // form.document_number = response.data.items.document_number;
             // form.roles = response.data.items.roles[0];
             // alerts.custom('', response?.data.message, 'info');
+            dataLoaded.value = true
         } else {
             alerts.custom("", "No se pudieron obtener los datos", "error");
         }
@@ -308,6 +250,18 @@ const removeChild = (pos: number, group: any) => {
     group.schedules.splice( pos, 1 )
 }
 
+let holidaysMonth:string;
+
+watch(
+	() => form.month,
+	(newVal: any) => {
+        if (newVal) {
+            const res = organizeHolidays(newVal);
+            holidaysMonth = res;
+		}
+	}
+);
+
 </script>
 
 <template>
@@ -315,7 +269,13 @@ const removeChild = (pos: number, group: any) => {
         <h2 class="mr-auto text-lg font-medium">Creación de Cronograma</h2>
     </div>
 
-    <div class="p-5 mt-5 intro-y box">
+    <div class="p-5 mt-5 intro-y box" v-if="dataLoaded">
+        <div
+			class="mb-6"
+			v-if="form.status_id == 4">
+			<p class="text-danger font-bold">Razon de rechazo</p>
+			<p>{{ form.rejection_message }}</p>
+		</div>
         <form @submit.prevent="onSubmit" class="space-y-8 divide-y divide-slate-200">
             <div class="space-y-8 divide-y divide-slate-200">
                 <div>
@@ -329,7 +289,7 @@ const removeChild = (pos: number, group: any) => {
                             :disabled="form.status_id !== 4"
                         />
                         <CommonSelect label="Municipio *" name="municipality" v-model="form.municipality"
-                            :validator="v$" :options="municipalities" :allowEmpty="false"
+                            :validator="v$" :options="municipalities"
                             :disabled="form.status_id !== 4"
                         />
                         <div class="col-span-1 md:col-span-2">
@@ -339,7 +299,8 @@ const removeChild = (pos: number, group: any) => {
                         </div>
                         <div v-if="holidaysMonth" class="col-span-1 md:col-span-2">
 							<CommonEditor label="Observaciones Dias Festivos" name="noteHoliday" v-model="form.noteHoliday"
-								:validator="v$" />
+								:validator="v$" 
+                                :disabled="form.status_id !== 4"/>
 							<p class="mt-2">{{ form.month && holidaysMonth }}</p>
 						</div>
                     </div>
