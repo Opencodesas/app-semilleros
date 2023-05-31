@@ -57,12 +57,12 @@ const evaluationList =
 currentUser.rol == 'metodologo'?
 [
 	{ label: 'En Revisión', value: 0, slug:'ENR' },
-	{ label: 'Procesar', value: 2, slug: 'ENP' },
+	{ label: 'Revisado', value: 2, slug: 'ENP' },
 	{ label: 'Rechazar', value: 1, slug: 'REC' },
 ]
 : currentUser.rol == 'coordinador_regional'?
 [
-	{ label: 'En proceso', value: 2, slug:'ENP' },
+	{ label: 'Revisado', value: 2, slug:'ENP' },
 	{ label: 'Aprobar', value: 3, slug: 'APR' },
 	{ label: 'Rechazar', value: 1, slug: 'REC' },
 ]
