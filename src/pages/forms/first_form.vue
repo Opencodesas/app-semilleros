@@ -252,7 +252,7 @@
       </div>
     </div>
 
-    <div class="p-5 mt-5 intro-y box">
+    <div class="p-5 mt-5 intro-y box" v-show="panelTamizaje">
       <h1 class="my-4 text-xl bold text-left text-gray-800 cursor-pointer" @click=" step > 2 ? next_step(2) : null ">
         Ficha de Tamizaje
       </h1>
@@ -269,19 +269,16 @@
                         label="Estatura (Cm) *"
                         name="estatura" v-model="form.estatura"
                         step='0.01'
-                        :validator="v2$"
                     />
 
                     <CommonInput type="text" placeholder="Ingrese"
                         label="Envergadura (Cm) *"
                         name="envergadura" v-model="form.envergadura"
-                        :validator="v2$"
                     />
 
                     <CommonInput type="text" placeholder="Ingrese"
                         label="Masa Corporal (Kg)"
                         name="masa" v-model="form.masa"
-                        :validator="v2$"
                     />
                 </div>
 
@@ -298,25 +295,21 @@
                     <CommonInput type="number" placeholder="Ingrese"
                         label="Test Flexibilidad (Wells) *"
                         name="flexibilidad" v-model="form.flexibilidad"
-                        :validator="v2$"
                     />
 
                     <CommonInput type="text" placeholder="Ingrese"
                         label="Velocidad (20 Mts) *"
                         name="velocidad" v-model="form.velocidad"
-                        :validator="v2$"
                     />
 
                     <CommonInput type="text" placeholder="Ingrese"
                         label="Fuerza (Lanzamiento de Balón 2k) (Mts)"
                         name="fuerza" v-model="form.fuerza"
-                        :validator="v2$"
                     />
                     
                     <CommonInput type="text" placeholder="Ingrese"
                         label="Oculomanual (Agarre)"
                         name="oculomanual" v-model="form.oculomanual"
-                        :validator="v2$"
                     />
                 </div>
 
@@ -465,15 +458,14 @@ const form = reactive({
   nCelularAcudiente: "",
   redesAcudiente: "",
   enterado: "",
-
   estatura: '',
   envergadura: '',
   masa: '',
-
   flexibilidad: '',
   velocidad: '',
   fuerza: '',
-  oculomanual: ''
+  oculomanual: '',
+  panelTamizaje: false,
 });
 
 const form_rules = computed(() => ({
@@ -507,15 +499,15 @@ const form_rules = computed(() => ({
   health_entity:   form.afiliacion && form.afiliacion !== 'NA' ? { required } : {},
 }));
 
-const form_rules_tamizaje = computed(() => ({
-  estatura: { nestedRequired },
-  envergadura: { nestedRequired },
-  masa: { nestedRequired },
-  flexibilidad:  { nestedRequired },
-  velocidad:  { nestedRequired },
-  fuerza:  { nestedRequired },
-  oculomanual:  { nestedRequired },
-}));
+// const form_rules_tamizaje = computed(() => ({
+//   estatura: { nestedRequired },
+//   envergadura: { nestedRequired },
+//   masa: { nestedRequired },
+//   flexibilidad:  { nestedRequired },
+//   velocidad:  { nestedRequired },
+//   fuerza:  { nestedRequired },
+//   oculomanual:  { nestedRequired },
+// }));
 
 const form_rules_acudiente = computed(() => ({
   nombresAcudiente:   { required },
