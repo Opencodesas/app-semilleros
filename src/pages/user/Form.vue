@@ -130,6 +130,10 @@ const municipalities = asyncComputed(async () => {
     return await getSelect(['municipalities'])
 }, null)
 
+const asistentList = asyncComputed(async () => {
+    return await getSelect(['asistentList'])
+}, null)
+
 const selectedMunicipalities: any = ref([])
 
 const municipalitiesByZone = async () => {
@@ -242,6 +246,8 @@ const onSubmit = async () => {
                 :options="municipalities" multiple v-if="form.roles && !excludedRoles.includes(+form.roles)" :allow-empty="true"/>
             <CommonSelect class="h-30" label="Seleccione las disciplinas *" name="disciplines" v-model="form.disciplines" :validator="v$"
                 :options="disciplines" multiple v-if="form.roles && form.roles == '12'" />
+            <CommonSelect class="h-30" label="Asistente Auxiliar y Administrativo *" name="asistent" v-model="form.asistent"
+                :options="asistentList" v-if="form.roles && form.roles == '10'" />
             <br>
             <CommonInput type="hidden" name="password" :value="form.document_number" v-model="form.password" :validator="v$" />
         </div>
