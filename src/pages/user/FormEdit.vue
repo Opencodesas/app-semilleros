@@ -28,6 +28,7 @@ const form = reactive({
 	password: '',
 	disciplines: '',
 	asistent: '',
+	methodology_id: '',
 });
 
 const form_rules = computed(() => ({
@@ -139,6 +140,10 @@ const asistentList = asyncComputed(async () => {
     return await getSelect(['asistentList'])
 }, null)
 
+const metodologoList = asyncComputed(async () => {
+    return await getSelect(['metodologoList'])
+}, null)
+
 const selectedMunicipalities: any = ref([])
 
 const municipalitiesByZone = async () => {
@@ -196,6 +201,7 @@ const fetch = async () => {
 			form.municipalities = response.data.items.municipalities.map((obj: any) => obj.municipalities_id);
 			form.disciplines = response.data.items.disciplines.map((obj: any) => obj.disciplines_id);
 			form.asistent = response.data.items.asistent;
+			form.methodology_id = response.data.items.methodology_id;
 			Swal.fire('', response?.data.message, 'info').finally(() => {});
 		} else {
 			Swal.fire('', 'No se pudieron obtener los datos', 'error');
@@ -324,6 +330,8 @@ onMounted(async () => {
 			/>
             <CommonSelect class="h-30" label="Asistente Auxiliar y Administrativo *" name="asistent" v-model="form.asistent"
                 :options="asistentList" v-if="form.roles && form.roles == '10'" />
+            <CommonSelect class="h-30" label="Metodologo *" name="methodology_id" v-model="form.methodology_id"
+                :options="metodologoList" v-if="form.roles && form.roles == '12'" />
 			<br />
 			<!-- <CommonInput type="hidden" name="password" :value="form.document_number" v-model="form.password" :validator="v$" />-->
 		</div>

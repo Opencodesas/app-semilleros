@@ -1,5 +1,5 @@
 import qs from 'qs'
-type Select = 'municipalities' | 'groups' | 'validity_periods' | 'zones' | 'statuses' | 'disciplines' | 'roles' | 'departments' | 'bank_account_types' | 'identification_types' | 'banks' | 'objects' | 'months' | 'asistentList';
+type Select = 'municipalities' | 'groups' | 'validity_periods' | 'zones' | 'statuses' | 'disciplines' | 'roles' | 'departments' | 'bank_account_types' | 'identification_types' | 'banks' | 'objects' | 'months' | 'asistentList' | 'metodologoList';
 
 export const getSelect = async (selects: Select[]) => {
     const parse = qs.stringify({ selects: selects })
