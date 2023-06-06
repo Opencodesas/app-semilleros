@@ -90,7 +90,7 @@ const cruddata = computed(() => searchData(items.value, search.value) );
         <h2 class="mr-auto text-lg font-medium">Revisión de fichas</h2>
     </div>
 
-    <div v-if="currentUser.rol==='asistente_administrativo' || currentUser.rol==='coordinador_regional' || currentUser.rol==='metodologo' || currentUser.rol==='super.root' || currentUser.rol==='coordinador_maritimo'"
+    <div v-if="currentUser.rol==='asistente_administrativo' || currentUser.rol==='metodologo' || currentUser.rol==='super.root'"
     class="p-5 mt-5 intro-y box">
         <CommonInput
 			type="search"
