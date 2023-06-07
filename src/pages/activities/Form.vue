@@ -6,6 +6,7 @@ import Swal from "sweetalert2"
 import { onboardingStore } from "@/stores/onboardingStore";
 import { filePondValue } from "@/composables/useFilepondEvents";
 import { FormSwitch } from '@/base-components/Form';
+import { selectOption } from '@/components/CommonSelect.vue';
 
 const storeOnboarding = onboardingStore(); //datos del usuario  
 const { multiple } = useFilepondEvents();
@@ -20,75 +21,33 @@ const routeName = computed(() => {
 //#endregion
 
 //#region backend-data
-const TheUserData = {
-  ORDENDECONTRATOS: "6",
-  NODECONTRATO: "CPS-245",
-  RPA: "622",
-  REGION: "1",
-  ROL: "MONITORDEPORTIVO",
-  DISCIPLINAMATRIZ: "FUTBOL",
-  NOMBREMATRIZ: "ALEXANDER GOMEZ GIL",
-  GENERO: "MASCULINO",
-  NUMERODEDOCUMENTO: "94228623",
-  LUGARDEEXPEDICIONDELDOCUMENTO: "ZARZAL VALLEDELCAUCA",
-  FECHADEEXPEDICIONDELDOCUMENTO: "20/2/1991",
-  FECHADENACIMIENTO: "7/5/1972",
-  NUMERODECELULAR: "3177880336",
-  MUNICIPIODERESIDENCIA: "ZARZAL",
-  DIRECCIONDERESIDENCIA: "CARRERA15#10A04",
-  CORREOELECTRONICO: "alegogil07@hotmail.com",
-  ENTIDADBANCARIA: "BANCOLOMBIA",
-  NUMERODECUENTABANCARIA: "83661902232",
-  TIPODECUENTA: "AHORROS",
-  RUT: "94228623-0",
-  ENTIDADPROMOTORADESALUD: "SURA",
-  FONDODEPENSIONES: "COLPENSIONES",
-  ARL: "POSITIVA",
-  MODOPAGOPLANILLA: "",
-  OBJETOCONTRACTUAL: "PrestacióndeservicioscomoMonitorDeportivoenelmarcodelproyectoSemillerosDeportivos.",
-  ASIGNACIONPRESUPUESTAL: "23-010110MonitoresDeportivos",
-  CERTIFICADODEASIGNACIONPRESUPUESTAL: "615",
-  FECHADECAP: "14/2/2023",
-  FECHADEINICIO: "14defebrerode2023",
-  FECHADEFINALIZACION: "28deabrilde2023",
-  FECHADEFINALIZACIONOTROSI: "31/5/2023",
-  VALORCUOTASINMOVILIZACION: "1540000",
-  MOVILIZACIONYOTRANSPORTE: "0",
-  NUMERODECUOTAS: "3",
-  VALORCUOTAINCLUIDOMOVILIZACION: "1540000",
-  VALORTOTALCONTRATO: "4620000",
-  ROJO: {
-    ASIGNACIONPRESUPUESTALOTROSI: "23-010134",
-    CAPOTROSI: "2709",
-    FECHADECAP: "27/4/2023",
-    VALORCUOTAOTROSISINMOVILIZACION: "1540000",
-    VALORTOTALCONTRATOOTROSI: "6160000",
-    RPAADICION: "",
-  },
-  SUPERVISOR: "OSCARANDRESGARCIARIOS",
-  ADMINISTRATIVO: "KATHERINEMARTINEZSANDOVAL"
-};
 
-
-/*
 const userdata = {
     id: "11511231234",
     name: "Arturo Marulanda",
     epsName: "Sura",
     arlName: "POSITIVA",
     pensionName: "PROTECCION",
-    epsValue: "1.5",
-    arlValue: "0.522",
-    pensionValue: "0.16",
+    epsValue: '',
+    arlValue: '',
+    pensionValue: '',
 }
-const contractdata =
+const contractdata =[
 {
-    id: "CPS-057",
+    id: "1",
     cuote: "$ 6.600.000",
     periodStart: "14/2/2023",
     periodEnd: "31/5/2023",
     periods: "3", 
-};
+},
+{
+    id: "2",
+    cuote: "$ 5.500.000",
+    periodStart: "14/2/2023",
+    periodEnd: "31/5/2023",
+    periods: "3", 
+}
+];
 const budgetdata = {
         id: "100013",
         contract: 
@@ -100,85 +59,55 @@ const budgetdata = {
         state: "En Supervisión",
         validity: "abril 2023",
     };
-*/
-
 const activities = [
     {nombre: "Actividad 1",
-    desc: "Apoyar y fortalecer el proceso de vinculación de las niñas, niños, adolescentes y jóvenes al proyecto, por medio de socializaciones en colegios, parques o espacios donde se encuentre la población",
+    desc: "Planear, organizar, direccionar y realizar control de los servicios administrativos en el desarrollo del proyecto Semilleros Deportivos",
     detail: "",
-    make: false,
     },
     {nombre: "Actividad 2",
-    desc: "Diligenciar las fichas de inscripción y tamizaje de los beneficiarios de acuerdo al indicador por disciplina deportiva, y reportar el retiro de los beneficiarios y el ingreso de beneficiarios de remplazo durante la ejecución del contrato, si aplica",
+    desc: "Revisar, autorizar los pagos y control de la ejecución presupuestal del proyecto semilleros deportivos.",
     detail: "",
-    make: false,
     },
     {nombre: "Actividad 3",
-    desc: "Implementar las orientaciones técnicas recibidas por parte del metodólogo como estrategia de fortalecimiento de los procesos de enseñanza - aprendizaje, para brindar un proceso de calidad",
+    desc: "Coordinar reuniones de planeación y seguimiento del proyecto",
     detail: "",
-    make: false,
     },
     {nombre: "Actividad 4",
-    desc: "Realizar la práctica deportiva con los beneficiarios de acuerdo a los contenidos establecidos en el plan clase entregado por el equipo técnico, sobre la disciplina a su cargo",
+    desc: "Coordinar la gestión de adquisición de bienes, obras y servicios para el proyecto",
     detail: "",
-    make: false,
     },
     {nombre: "Actividad 5",
-    desc: "Mantener permanente y buena comunicación con el equipo del proyecto, los padres de familia, los líderes deportivos y sociales y los beneficiarios",
+    desc: "Realizar proyecciones de flujo de caja en la ejecución del proyecto.",
     detail: "",
-    make: false,
     },
     {nombre: "Actividad 6",
-    desc: "Implementar con sus beneficiarios las actividades del programa semilleros transversales en compañía de las psicólogas, metodólogos y coordinadores de la región",
+    desc: "Revisar y aprobar los informes del Proyecto para correspondientes desembolsos requeridos por la supervisión del proyecto.",
     detail: "",
-    make: false,
     },
     {nombre: "Actividad 7",
-    desc: "Asistir a eventos, capacitaciones, conferencias, reuniones que le sean citadas por el programa, de carácter presencial y/o virtual",
+    desc: "Atender los requerimientos administrativos y/o PQRS en el marco del proyecto.",
     detail: "",
-    make: false,
     },
     {nombre: "Actividad 8",
-    desc: "Elaborar y presentar el informe sobre los avances y el desarrollo del proceso según las orientaciones impartidas por el equipo técnico del proyecto y presentar al metodólogo para su aprobación",
+    desc: "Convocar y/o asistir a eventos, capacitaciones, conferencias, reuniones que le sean citadas del proyecto, de carácter presencial y/o virtual.",
     detail: "",
-    make: false,
     },
     {nombre: "Actividad 9",
-    desc: "Elaborar el cronograma de prácticas deportivas y realizar actualizaciones si aplica",
+    desc: "Revisar y aprobar los informes presentados por los contratistas bajo supervisión para la verificación del proceso técnico y de pago.",
     detail: "",
-    make: false,
     },
     {nombre: "Actividad 10",
-    desc: "Realizar la convocatoria a padres y/o acudientes para el desarrollo de los semilleros de familia y asesorías personalizadas que lideran las psicólogas en el marco del proyecto Semilleros Deportivos",
+    desc: "Elaborar el informe en el que dé cuenta de sus actividades realizadas.",
     detail: "",
-    make: false,
     },
     {nombre: "Actividad 11",
-    desc: "Realizar una vez al mes convocatoria para reunión de padres de familia y/o acudientes con el fin de dar orientación sobre el desarrollo técnico, deportivo y administrativo de los beneficiarios",
+    desc: "Las demás actividades afines o complementarias con las anteriores y que le sean asignadas y que correspondan a la naturaleza del contrato.",
     detail: "",
-    make: false,
-    },
-    {nombre: "Actividad 12",
-    desc: "Apoyar en el desarrollo de activación de rutas de violencia sexual de género en relación a los niños, niñas, adolescentes y jóvenes, de acuerdo a la normativa colombiana",
-    detail: "",
-    make: false,
-    },
-    {nombre: "Actividad 13",
-    desc: "Garantizar la gratuidad del programa en los Municipios y su enfoque diferencial",
-    detail: "",
-    make: false,
-    },
-    {nombre: "Actividad 14",
-    desc: "Elaborar el informe en el que dé cuenta de las actividades realizadas",
-    detail: "",
-    make: false,
-    },
-    {nombre: "Actividad 15",
-    desc: "Las demás actividades afines o complementarias con las anteriores y que le sean asignadas y que correspondan a la naturaleza del cargo",
-    detail: "",
-    make: false,
     },
 ]
+
+const misActivitis = ref(JSON.parse(JSON.stringify(activities)));
+
 //son los documentos de soporte que vienen de la base de datos
 const files = ref([
     {
@@ -206,7 +135,6 @@ const files = ref([
         file: "",
     },
 ]);
-const filesblob = ref([]);
 const filedisable = ref(true);
 
 const addFile = () => {
@@ -227,49 +155,102 @@ const removeFile = () => {
         filedisable.value = true;
     }    
 }
-const evidence = ref([]);
 //#endregion
+
+const selectContratos = [
+    { label: "CPS-057", value: "1" },
+    { label: "CPS-058", value: "2" },
+];
+const selectMounth = [
+    { label: "Enero", value: "1" },
+    { label: "Febrero", value: "2" },
+    { label: "Marzo", value: "3" },
+    { label: "Abril", value: "4" },
+    { label: "Mayo", value: "5" },
+    { label: "Junio", value: "6" },
+    { label: "Julio", value: "7" },
+    { label: "Agosto", value: "8" },
+    { label: "Septiembre", value: "9" },
+    { label: "Octubre", value: "10" },
+    { label: "Noviembre", value: "11" },
+    { label: "Diciembre", value: "12" },
+];
+const cuote = ref('');
 
 //#region formValidations 
 const form = reactive({
-    soportes: [...files.value],
-    filesblob: [...filesblob.value],
-    activity: [...activities],
-    evidencias: [...evidence.value],
-    department: "",
-
-    periodo: "mayo",
-    planilla: "",
-    eps: "",
-    arl: "",
-    pension: "",
+    contractId: '',
+    cuote: '',
+    period: '',
+    nPlanilla: '',
+    epsName: '',
+    pensionName: '',
+    arlName: '',
+    epsValue: '',
+    pensionValue: '',
+    arlValue: '',
+    soporteFile: [],
+    activity: misActivitis.value,
+    evidenciaVertical1:[],
+    evidenciaVertical2:[],
+    evidenciaHorizontal1:[],
+    evidenciaHorizontal2:[],    
 })
 
 
 const form_rules = computed(() => ({
-    soportes: {
-    },
-    activity: {
-        $each: {
-            detail: { required }
-        }
-    },
-    evidencias: {
-        //required, minLength: minLength(4),
-    },
-    filesblob: {
-        //required, minLength: minLength(4)
-    },
+    contractId: {},
+    cuote: {},
+    period: {},
+    nPlanilla: {},
+    epsName: {},
+    pensionName: {},
+    arlName: {},
+    epsValue: {},
+    pensionValue: {},
+    arlValue: {},
+    soporteFile: {required},
+    activity: {},
+    evidenciaVertical1:{required},
+    evidenciaVertical2:{required},
+    evidenciaHorizontal1:{required},
+    evidenciaHorizontal2:{required},
 }))
 
-const v$ = useVuelidate(form_rules, form)
+const v$ = useVuelidate(form_rules, form);
+
+const getCuote=()=>{
+    const contractdataselected = contractdata.find(objeto=>objeto.id==form.contractId);
+    cuote.value=contractdataselected?.cuote.toString()||'';
+    form.cuote = cuote.value;
+}
 //#endregion
 
 //#region form
+const Vinfo = ref(false);
+const Vplanilla = ref(false);
+const Vactivitis = ref(false);
 
 const onSubmit = async () => {
+    //sube data
+
+    //comprobar campos especiales
+    if(form.contractId===''||form.cuote===''||form.period==='')
+    {Vinfo.value = true;}else{ Vinfo.value = false; }
+
+    if(form.epsName===''||form.epsValue===''||form.pensionName===''||form.pensionValue===''||form.arlName===''||form.arlValue==='')
+    {Vplanilla.value = true;}else{ Vplanilla.value = false; }
+
+    for (const act of form.activity)
+    {
+        if(!act.detail)
+        {Vactivitis.value=true; break;}
+        else{ if(act == form.activity[form.activity.length - 1]){Vactivitis.value=false;}}
+    }
+
     const valid = await v$.value.$validate()
     if (valid) {
+        if(Vinfo.value===true||Vplanilla.value===true||Vactivitis.value===true){alerts.validation(); return; }
 
         /*await service.create(formdataParser(form)).then((response) => {
             if (response) {
@@ -282,28 +263,15 @@ const onSubmit = async () => {
                 }
             }
         })*/
-        let lastinfo = localStorage.getItem("cuenta de cobro");
-        if(lastinfo){lastinfo = JSON.parse(lastinfo);}
-        const today = new Date();
-        const thedata = lastinfo==null?
-        [{id:'1', ...form, user: {...TheUserData}, /*budgetdata,*/ create: today.getMonth()+"-"+today.getDay()+"-"+today.getFullYear(), budgetstatus: {state: "En Revisión", slug: "ERV", fase: "En supervisión"},}]
-        :
-        [...lastinfo, {id:'1', ...form, user: {...TheUserData}, /*budgetdata,*/ create: today.getMonth()+"-"+today.getDay()+"-"+today.getFullYear(), budgetstatus: {state: "En Revisión", slug: "ERV", fase: "En supervisión"},}]
 
-        ;
-        
-        localStorage.setItem("cuenta de cobro", JSON.stringify(thedata));
-        Swal.fire('', '¡La Cuenta de Cobro se creó exitosamente!', 'success')
-        setLoading(true)
-        router.replace('active').finally(() => {
-            setLoading(false)
-        })
+        alerts.update();
     }
     else {
         alerts.validation()
     } 
 }
 //#endregion
+
 </script>
 <style>
 .grid-cols-4 {
@@ -313,22 +281,17 @@ const onSubmit = async () => {
 
 <template>
     <div class="flex items-center mt-8 intro-y">
-        <!--<CommonBackButton class="mr-5 hover:animate-pulse" :to="'budget.index'" title="Volver" />
-        <h2 class="mr-auto text-lg font-medium">Formato Cuenta de Cobro de {{ storeOnboarding.get_user_role?.name }}</h2>
-        <CommonFormState class="text-center mr-5" :contract_status="budgetdata.state" />
-        <CommonFormState class="text-right ml-2" :consecutive="budgetdata.id" />-->
-    </div>
-
-    
-    <div class="flex items-center mt-8 intro-y">
         <h2 class="mr-auto text-lg font-medium">Información del Contrato</h2>
     </div>
 
     <div class="p-5 mt-5 intro-y box">
         <div class="grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
-            <CommonInput type="text" name="person.name" label="Contrato" placeholder="Seleccionar" v-model="TheUserData.NODECONTRATO" :disabled="true"/>
-            <CommonInput type="text" name="person.name" label="Cuota" placeholder="Seleccionar" v-model="TheUserData.VALORCUOTAINCLUIDOMOVILIZACION" :disabled="true"/>
-            <!--<CommonSelect label="Departamento *" name="department" v-model="form.department" :validator="v$" :options="departments" />-->
+            <CommonSelect label="Contrato" name="contractId" v-model="form.contractId" :options="selectContratos" :onblur="getCuote()" />
+            <CommonInput type="text" name="cuote" label="Cuota" :placeholder="cuote" v-model="cuote" :mask="'money'" :disabled="true" />
+            <div class="col-span-2">
+                <CommonSelect label="Periodo de cotización" name="period" v-model="form.period" :options="selectMounth" />
+            </div>
+            <div :class="(!Vinfo&&'hidden')+' col-span-2 text-danger'">Debe diligenciar todos los campos</div>
         </div>
     </div>
 
@@ -338,65 +301,48 @@ const onSubmit = async () => {
 
     <div class="p-5 mt-5 intro-y box">
         <div class="grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
-            <!--<h1 class="m-4 col-span-2 text-xl bold text-left text-gray-800"> Planilla Seguridad Social </h1>-->
-            <CommonInput type="text" name="person.name" label="Periodo de cotización" v-model="form.periodo" :disabled="true"/>
-            <CommonInput type="text" name="person.name" label="Número de planilla" v-model="form.planilla" :placeholder="'123456789'"/>
+            <div class="col-span-2">
+                <CommonInput type="number" name="nPlanilla" label="Número de planilla" v-model="form.nPlanilla" :placeholder="'0000000'" />
+            </div>
 
-            <CommonInput type="text" name="person.name" label="Nombre EPS" v-model="TheUserData.ENTIDADPROMOTORADESALUD"/>
-            <CommonInput type="text" name="person.name" label="Valor Pagado" v-model="form.eps" :placeholder="'$ 0.00'"/>
+            <CommonInput type="text" name="epsName" label="Nombre EPS" :placeholder="'Nombre EPS'" v-model="form.epsName"/>
+            <CommonInput type="text" name="epsValue" label="Valor Pagado" v-model="form.epsValue" :placeholder="'$ 0.00'" :mask="'money'"/>
 
-            <CommonInput type="text" name="person.name" label="Nombre ARL" v-model="TheUserData.ARL"/>
-            <CommonInput type="text" name="person.name" label="Valor Pagado" v-model="form.arl" :placeholder="'$ 0.00'"/>
+            <CommonInput type="text" name="pensionName" label="Nombre Pensión" :placeholder="'Nombre Pensión'" v-model="form.pensionName"/>
+            <CommonInput type="text" name="pensionValue" label="Valor Pagado" v-model="form.pensionValue" :placeholder="'$ 0.00'" :mask="'money'"/>
 
-            <CommonInput type="text" name="person.name" label="Nombre Pensión" v-model="TheUserData.FONDODEPENSIONES"/>
-            <CommonInput type="text" name="person.name" label="Valor Pagado" v-model="form.pension" :placeholder="'$ 0.00'"/>
+            <CommonInput type="text" name="arlName" label="Nombre ARL" :placeholder="'Nombre ARL'" v-model="form.arlName"/>
+            <CommonInput type="text" name="arlValue" label="Valor Pagado" v-model="form.arlValue" :placeholder="'$ 0.00'" :mask="'money'"/>
         </div>
+        <div :class="(!Vplanilla&&'hidden')+' col-span-2 mt-5 text-danger'">Debe diligenciar todos los campos</div>
     </div>
 
     <div class="flex items-center mt-8 intro-y">
-        <h2 class="mr-auto text-lg font-medium">Subir documentos de soporte</h2>
+        <h2 class="mr-auto text-lg font-medium">Subir soporte</h2>
     </div>
 
     <div class="p-5 mt-5 intro-y box">
-        <div class="grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
-            <template v-for="(soportefile, index) in files">
-                <CommonDropzone class="col-span-2" name="soportes" :label="soportefile.number_doc+'. '+soportefile.title_doc"
+        <div class="grid grid-cols-2 gap-6 justify-evenly">
+            <div class="col-span-2">
+                <CommonDropzone class="col-span-1" name="soporteFile"
                 :accept-multiple="false"
                 :accepted-files="'application/pdf'"
-                v-model="form.soportes[index].file"
+                v-model="form.soporteFile"
                 @addfile="(error: any, value: filePondValue) =>
                 {
-                    form.filesblob = multiple.addfile({ error, value }, form.filesblob) as never[];
-                    form.soportes[index].file = form.filesblob.length.toString();
+                    form.soporteFile = multiple.addfile({ error, value }, form.soporteFile) as never[];
+                    //form.soportes.file = form.filesblob.length.toString();
 
                 }"
                 @removefile="(error: any, value: filePondValue) =>
                 {
                     //se quita la función de quitar file para evitar truncamiento de datos index
                     //form.filesblob = multiple.removefile({ error, value }, form.filesblob) as never[];
-                    form.soportes[index].file = '';
-                }"
+                    form.soporteFile = [];
+                }"              
                 :validator="v$" />
-
-                <!--Comprobar el orden de los arvhicos-->
-                <!--{{ form.soportes[index].file }}-->
-                <!-- Se almacena en file el index del archivo en la lista filesblobs, se tendrá que unificar el objectfile antes de subir al back-->
-            </template>
-            <!--Aqui mostramos el orden de un filesblobs para ver el nombre del archvio y si el orden coinicde-->
-            <!--{{ form.filesblob[0]?.name + form.filesblob[1]?.name + form.filesblob[2]?.name + form.filesblob[3]?.name }}-->
+            </div>                
         </div>
-
-        <!-- Botones agregar quitar docuemntos - para otros roles
-            <div class="flex justify-end col-span-1 md:col-span-2 mt-5">
-            <Button variant="secondary" class="btn btn-primary hover:animate-pulse" @click="addFile">
-                <Lucide icon="FilePlus" class="mr-2"/>
-                Añadir soporte
-            </Button>
-            <Button variant="secondary" :disabled="filedisable" class="btn btn-primary ml-auto hover:animate-pulse" @click="removeFile">
-                <Lucide icon="FileMinus" class="mr-2"/>
-                Quitar soporte
-            </Button>
-        </div>-->
     </div>
 
 <div class="flex items-center mt-8 intro-y">
@@ -404,63 +350,83 @@ const onSubmit = async () => {
 </div>
 
 <div class="p-5 mt-5 intro-y box">
-    <div class="grid grid-cols-5 gap-2 justify-evenly">
-
+    <div class="grid grid-cols-4 gap-4 justify-evenly">
         <div class="font-bold text-center align-middle my-auto mb-4 col-span-2">
                 <span class="px-2 py-1 mb-3">Nombre Actividad</span><hr/>
-        </div>
-        <div class="font-bold text-center align-middle my-auto mb-4">
-                <span class="px-2 py-1 mb-3">¿Fue realizada?</span><hr/>
         </div>
         <div class="font-bold text-center align-middle my-auto mb-4 col-span-2">
             <span class="px-2 py-1 mb-3">Detalle de la actividad</span><hr/>
         </div>
-
-        <template v-for="(myactivity, index) in form.activity">
-
-            <div class="font-medium text-justify my-auto mt-2 mb-3 col-span-2">
-                <span class="px-2 py-1">{{ myactivity.nombre }}</span><br/>
-                <span class="px-2 py-1 font-normal">{{ myactivity.desc }}</span>
-            </div>
-            
-            <FormSwitch class="mx-auto">
-                <FormSwitch.Input :name="`swich_activity_${index}`" :id="`swich_activity_${index}`"
-                type="checkbox"
-                v-model="myactivity.make" />
-            </FormSwitch>
-    
-            <div class="col-span-2">
-                <CommonTextarea :name="`activity_${index}`" :validator="v$" :placeholder="'detalles'" v-model="myactivity.detail"/>
-            </div>
-        </template>
-    </div>
+        <template v-for="(activity, index) in misActivitis">
+        <div class="font-medium text-center my-auto col-span-2">
+            <span class="px-2 py-1">{{ activity.nombre }}</span><br/>
+            <span class="px-2 py-1 font-normal">{{ activity.desc }}</span>
+        </div>
+        <div class="col-span-2"><CommonTextarea :placeholder="'descripción...'" class="'border-red-400'" :id="'activity_'+index" :name="'activity'" v-model="activity.detail" :validator="v$" /></div>
+</template>
+<div :class="(!Vactivitis&&'hidden')+' col-span-4 text-danger'">Debe diligenciar todas las descripciones</div>
 </div>
-<!--{{ form.activity }}-->
+</div>
 
-    <div class="flex items-center mt-8 intro-y">
-        <h2 class="mr-auto text-lg font-medium">Evidencia Fotográfica</h2>
-    </div>
+<div class="flex items-center mt-8 intro-y">
+    <h2 class="mr-auto text-lg font-medium">Evidencia Fotográfica</h2>
+</div>
 
     <div class="p-5 mt-5 intro-y box">
-        <div class="grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
-            <CommonDropzone class="col-span-2" name="evidencias" label="Suba los archivos"
-            :accept-multiple="true"
-            v-model="form.evidencias"
-            @addfile="(error: any, value: filePondValue) =>
-            { form.evidencias = multiple.addfile({ error, value }, form.evidencias) as never[] }"
-            @removefile="(error: any, value: filePondValue) =>
-            { form.evidencias = multiple.removefile({ error, value }, form.evidencias) as never[] }"
-            :validator="v$" />
-            
-        </div><!---->
+        <div class="grid justify-stretch ustify-evenly grid-cols-2 gap-4 grid-flow-row auto-rows-max">
+            <CommonDropzone class="col-span-1" name="evidenciaHorizontal1"
+                :accept-multiple="false"
+                v-model="form.evidenciaHorizontal1"
+                @addfile="(error: any, value: filePondValue) =>
+                {
+                    form.evidenciaHorizontal1 = multiple.addfile({ error, value }, form.evidenciaHorizontal1) as never[];
+                }"
+                @removefile="(error: any, value: filePondValue) =>
+                {
+                    form.evidenciaHorizontal1 = [];
+                }"              
+                :validator="v$"/>
+            <CommonDropzone class="col-span-1" name="evidenciaHorizontal2"
+                :accept-multiple="false"
+                v-model="form.evidenciaHorizontal2"
+                @addfile="(error: any, value: filePondValue) =>
+                {
+                    form.evidenciaHorizontal2 = multiple.addfile({ error, value }, form.evidenciaHorizontal2) as never[];
+                }"
+                @removefile="(error: any, value: filePondValue) =>
+                {
+                    form.evidenciaHorizontal2 = [];
+                }"              
+                :validator="v$"/>    
+            <h2 class="mr-auto col-span-2 text-lg font-medium mt-4 mb-5">Redes sociales</h2>
+            <CommonDropzone class="col-span-1" name="evidenciaVertical1"
+                v-model="form.evidenciaVertical1"
+                @addfile="(error: any, value: filePondValue) =>
+                {
+                    form.evidenciaVertical1 = multiple.addfile({ error, value }, form.evidenciaVertical1) as never[];
+                }"
+                @removefile="(error: any, value: filePondValue) =>
+                {
+                    form.evidenciaVertical1 = [];
+                }"              
+                :validator="v$"/>
+            <CommonDropzone class="col-span-1" name="evidenciaVertical2"
+                :accept-multiple="false"
+                v-model="form.evidenciaVertical2"
+                @addfile="(error: any, value: filePondValue) =>
+                {
+                    form.evidenciaVertical2 = multiple.addfile({ error, value }, form.evidenciaVertical2) as never[];
+                }"
+                @removefile="(error: any, value: filePondValue) =>
+                {
+                    form.evidenciaVertical2 = [];
+                }"              
+                :validator="v$"/>            
+        </div>
         
-        
-    <div class="flex justify-end col-span-1 md:col-span-2 mt-5">
+    <div class="flex justify-end col-span-1 md:col-span-2 mt-10 pt-5">
         <Button variant="primary"
         class="btn btn-primary hover:animate-pulse"
-        :isabled="!(form.activity[form.activity.length-1].detail!=''
-        && form.soportes.length>=files.length
-        && form.evidencias.length>=4)"
         @click="onSubmit">
             <Lucide icon="Save" class="mr-2"/>
             Guardar y Enviar
