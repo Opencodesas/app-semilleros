@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import FormSwitch from '@/base-components/Form/FormSwitch';
+import { getMunicipalitiesUserDisciplines, getUserRegionsMunicipalities } from '@/composables/getMonitorByMunicipality';
 import { onboardingStore } from '@/stores/onboardingStore';
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
 
 const store = onboardingStore();
 const { multiple } = useFilepondEvents();
+
+const usersDisciplinesByMunicipality = ref<{discipline: string, discipline_id: number}[]>()
 
 const form = reactive({
 	observations: '',
@@ -87,15 +90,29 @@ const router = useRouter();
 
 // Consulta todos los municipios
 const municipalities = asyncComputed(async () => {
-	return await getSelect(['municipalities']);
+	const userLogged = JSON.parse(window.localStorage.getItem("onboarding") as string)
+	const data = await getUserRegionsMunicipalities(userLogged?.user?.id);
+	
+	const municipalitiesRes = data?.municipalities
+	usersDisciplinesByMunicipality.value = data?.users
+	return municipalitiesRes.map( (el: any) => ({label: el.name, value: el.id}) )// as Array<{ label: string, value: string | number }>
 }, null);
 // Consulta todos los monitores por municipio
 const monitor = asyncComputed(async () => {
-	return await getMonitorByMunicipality(form.municipalitie_id);
+	//return await getMonitorByMunicipality(form.municipalitie_id);
+	const monitoArr = usersDisciplinesByMunicipality.value
+	
+	return monitoArr?.map( ( el: any) => {
+		const {user_name, user_id, last_name} = el
+		return { label: user_name + " " + last_name, value: user_id }
+	}) as Array<{ label: string, value: string | number }>;
 }, null);
 // Consulta todas las disciplinas
 const disciplines = asyncComputed(async () => {
-	return await getDisciplinesByMonitor(form.monitor_id);
+	if(!usersDisciplinesByMunicipality.value || !form.monitor_id) return []
+	const data = usersDisciplinesByMunicipality.value?.find((el:any) => el?.user_id === form.monitor_id)
+	
+	return [{label: data?.discipline, value: data?.discipline_id}] as Array<{ label: string, value: string | number }>
 }, null);
 const selectFile = (event: any) => {
 	form.file = event.target.files[0];
@@ -152,6 +169,7 @@ const onSubmit = async () => {
 		alerts.validation();
 	}
 };
+
 </script>
 
 <template>
