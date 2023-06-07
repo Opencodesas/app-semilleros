@@ -53,7 +53,7 @@ const evaluationList = [
 const v$ = useVuelidate(form_rules, form);
 // Consulta todos los municipios
 const municipalities = asyncComputed(async () => {
-	return await getSelect(['municipalities']);
+	return await getSelect(['municipalities'], true);
 }, null);
 // Consulta todas las disciplinas
 const disciplines = asyncComputed(async () => {

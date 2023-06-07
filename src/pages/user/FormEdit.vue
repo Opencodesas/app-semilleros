@@ -27,6 +27,8 @@ const form = reactive({
 	zones: '',
 	password: '',
 	disciplines: '',
+	asistent: '',
+	methodology_id: '',
 });
 
 const form_rules = computed(() => ({
@@ -104,9 +106,11 @@ const formdataParser = (form: any) => {
 				formData.append('municipalities[]', file);
 			});
 		} else if (key == 'disciplines') {
+			if(form[key]){
 			form[key].forEach((file: any) => {
 				formData.append('disciplines[]', file);
 			});
+			}
 		} else {
 			formData.append(key, form[key]);
 		}
@@ -130,6 +134,14 @@ const zones = asyncComputed(async () => {
 
 const municipalities = asyncComputed(async () => {
     return await getSelect(['municipalities'])
+}, null)
+
+const asistentList = asyncComputed(async () => {
+    return await getSelect(['asistentList'])
+}, null)
+
+const metodologoList = asyncComputed(async () => {
+    return await getSelect(['metodologoList'])
 }, null)
 
 const selectedMunicipalities: any = ref([])
@@ -188,6 +200,8 @@ const fetch = async () => {
 			form.zones = response.data.items.zone.map((obj: any) => obj.zones_id);
 			form.municipalities = response.data.items.municipalities.map((obj: any) => obj.municipalities_id);
 			form.disciplines = response.data.items.disciplines.map((obj: any) => obj.disciplines_id);
+			form.asistent = response.data.items.asistent;
+			form.methodology_id = response.data.items.methodology_id;
 			Swal.fire('', response?.data.message, 'info').finally(() => {});
 		} else {
 			Swal.fire('', 'No se pudieron obtener los datos', 'error');
@@ -314,6 +328,10 @@ onMounted(async () => {
 				multiple
 				v-if="form.roles && form.roles == '12'"
 			/>
+            <CommonSelect class="h-30" label="Asistente Auxiliar y Administrativo *" name="asistent" v-model="form.asistent"
+                :options="asistentList" v-if="form.roles && form.roles == '10'" />
+            <CommonSelect class="h-30" label="Metodologo *" name="methodology_id" v-model="form.methodology_id"
+                :options="metodologoList" v-if="form.roles && form.roles == '12'" />
 			<br />
 			<!-- <CommonInput type="hidden" name="password" :value="form.document_number" v-model="form.password" :validator="v$" />-->
 		</div>
