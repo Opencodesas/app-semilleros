@@ -202,50 +202,80 @@ const searchItem = (grupo: number, horario: any) => {
 
 	for (let i = 0; i < form.groups.length; i++) {
 		const filterSameDay = form.groups[i].schedules.filter(
-			(item: any) => item.idx !== horario.idx && item.day === horario.day
+		(item) => item.idx !== horario.idx && item.day === horario.day
 		);
 
-		filterSameDay.forEach((item: any, idx: number) => {
-			if (idx === 4 || !horario.start_time || !horario.end_time) return;
-			else if (
-				(item.start_time <= horario.start_time &&
-					item.end_time <= horario.end_time &&
-					item.end_time > horario.start_time) ||
-				(item.start_time >= horario.start_time &&
-					item.end_time >= horario.end_time &&
-					item.start_time < horario.end_time) ||
-				(item.start_time >= horario.start_time &&
-					item.end_time <= horario.end_time) ||
-				(item.start_time <= horario.start_time &&
-					item.end_time >= horario.end_time) ||
-				(item.start_time == horario.start_time &&
-					item.end_time == horario.end_time)
-			) {
-				hayCruce = true;
-				if (i != grupo) grupoCruce = i;
-				return;
-			}
+		filterSameDay.forEach((item, idx) => {
+		if (idx === 4 || !horario.start_time || !horario.end_time) return;
+		else if (
+			(to24HourFormat(item.start_time) <= to24HourFormat(horario.start_time) &&
+			to24HourFormat(item.end_time) <= to24HourFormat(horario.end_time) &&
+			to24HourFormat(item.end_time) > to24HourFormat(horario.start_time)) ||
+			(to24HourFormat(item.start_time) >= to24HourFormat(horario.start_time) &&
+			to24HourFormat(item.end_time) >= to24HourFormat(horario.end_time) &&
+			to24HourFormat(item.start_time) < to24HourFormat(horario.end_time)) ||
+			(to24HourFormat(item.start_time) >= to24HourFormat(horario.start_time) &&
+			to24HourFormat(item.end_time) <= to24HourFormat(horario.end_time)) ||
+			(to24HourFormat(item.start_time) <= to24HourFormat(horario.start_time) &&
+			to24HourFormat(item.end_time) >= to24HourFormat(horario.end_time)) ||
+			(to24HourFormat(item.start_time) === to24HourFormat(horario.start_time) &&
+			to24HourFormat(item.end_time) === to24HourFormat(horario.end_time))
+		) {
+			hayCruce = true;
+			if (i !== grupo) grupoCruce = i;
+			return;
+		}
 		});
 
 		if (hayCruce) {
-			if (grupoCruce) {
-				alerts.custom(
-					'Validación',
-					`Por favor verifique el horario cruzado del grupo ${form.groups[grupo].group_id} ${horario.day} de ${horario.start_time} a ${horario.end_time} porque se cruza con el grupo ${form.groups[grupoCruce].group_id}.`,
-					'error'
-				);
-			} else {
-				alerts.custom(
-					'Validación',
-					`Por favor verifique el horario cruzado del grupo ${form.groups[grupo].group_id} ${horario.day} de ${horario.start_time} a ${horario.end_time} ya que se cruza con otro de los horarios de este grupo.`,
-					'error'
-				);
-			}
-			break;
+		if (grupoCruce) {
+			alerts.custom(
+			'Validación',
+			`Por favor verifique el horario cruzado del grupo ${form.groups[grupo].group_id} ${horario.day} de ${to12HourFormat(horario.start_time)} a ${to12HourFormat(horario.end_time)} porque se cruza con el grupo ${form.groups[grupoCruce].group_id}.`,
+			'error'
+			);
+		} else {
+			alerts.custom(
+			'Validación',
+			`Por favor verifique el horario cruzado del grupo ${form.groups[grupo].group_id} ${horario.day} de ${to12HourFormat(horario.start_time)} a ${to12HourFormat(horario.end_time)} ya que se cruza con otro de los horarios de este grupo.`,
+			'error'
+			);
+		}
+		break;
 		}
 	}
 
 	return hayCruce;
+};
+
+const to24HourFormat = (time: any) => {
+	const [hours, minutes] = time.split(':');
+	let formattedTime = '';
+
+	if (time.includes('PM')) {
+		formattedTime = `${parseInt(hours) + 12}:${minutes}`;
+	} else if (time.includes('AM') && hours === '12') {
+		formattedTime = `00:${minutes}`;
+	} else {
+		formattedTime = `${hours}:${minutes}`;
+	}
+
+	return formattedTime;
+};
+
+const to12HourFormat = (time: any) => {
+	const [hours, minutes] = time.split(':');
+	let formattedTime = '';
+
+	if (hours > 12) {
+		formattedTime = `${hours - 12}:${minutes} PM`;
+	} else if (hours === '12') {
+		formattedTime = `${hours}:${minutes} PM`;
+	} else {
+		formattedTime = `${hours}:${minutes} AM`;
+	}
+
+	return formattedTime;
 };
 
 const onAddGrupo = () => {
