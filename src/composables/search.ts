@@ -27,12 +27,12 @@ export const searchData = (items: Item[], search: String) => {
 				//para fichas de monitores
 				item.created_by?.full_name?.toLowerCase().includes(searchValue) ||
 			
-				//Psra lisra de usuarios
-				item.email?.toLowerCase().includes(searchValue) ||
-				item.name?.toLowerCase().includes(searchValue) ||
+				//Para lista de usuarios
+				item.email?.toLowerCase().includes(searchValue) ||				
 				item.lastname?.toLowerCase().includes(searchValue) ||
 				item.document_number?.toLowerCase().includes(searchValue) ||
-				item.role.name?.toLowerCase().includes(searchValue) 
+				item.role.name?.toLowerCase().includes(searchValue) ||
+				item.name?.toLowerCase().includes(searchValue) 
 		);
 	}
 	return items
