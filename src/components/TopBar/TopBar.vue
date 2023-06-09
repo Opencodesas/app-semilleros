@@ -227,13 +227,17 @@ const hideSearchDropdown = () => {
       <!-- END: Notifications -->
       <!-- BEGIN: Account Menu -->
       <Menu>
-        <Menu.Button
-          class="block w-8 h-8 overflow-hidden rounded-full shadow-lg image-fit zoom-in intro-x"
-        >
-          <img
-            alt="Contratación Semilleros"
-            :src="fakerData[9].photos[0]"
-          />
+        <Menu.Button class="flex">
+          <Menu.Header class="font-normal z-10 text-right mr-2">
+            <div class="font-medium text-white">{{ storeOnboarding.get_user.name }}</div>
+            <div class="text-xs text-white/70 mt-0.5 dark:text-slate-500">
+              {{ storeOnboarding.get_user_role?.name }}
+            </div>
+          </Menu.Header>
+        
+        <div class="block w-8 h-8 overflow-hidden rounded-full shadow-lg image-fit zoom-in intro-x my-auto">
+          <img alt="Semilleros" :src="fakerData[9].photos[0]" />
+        </div>
         </Menu.Button>
         <Menu.Items
           class="w-56 mt-px relative bg-primary/80 before:block before:absolute before:bg-black before:inset-0 before:rounded-md before:z-[-1] text-white"
