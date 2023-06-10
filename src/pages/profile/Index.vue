@@ -5,8 +5,10 @@ import { onboardingStore } from '@/stores/onboardingStore';
 
 const store = onboardingStore();
 
-const user: any = store.user
+const user: any = store.user;
+console.log(user);
 
+//#region Firma
 const fileInput = ref(user.firma);
 const archivo = ref();
 const URLfileInput = ref();
@@ -28,42 +30,68 @@ const eliminarImagen = () => {
     URLfileInput.value = '';
 };
 watch(URLfileInput, ()=>{ console.log('actualizar BD')});
+//#endregion
+
 </script>
 <template>
     <div class="flex flex-col items-center">
         <div class="flex h-64 lg:w-3/5 sm:w-5/6 overflow-hidden mt-5 items-center justify-center" style="background-color: #00408A;">
             <img src="../../assets/images/fondo2.jpeg" class="h-64 object-cover">
         </div>
-        <div class="text-center font-bold text-lg my-5 underline underline-offset-8 decoration-4 decoration-primary">
+        
+        <div class="text-center font-bold text-lg my-5 underline underline-offset-8 decoration-4 decoration-primary mt-10">
             Información Personal
         </div>
-        <div class="flex flex-row border-slate-200/60 p-5 bg-white rounded-lg shadow-2xl lg:w-3/5 sm:w-5/6 items-center">
-            <div class="flex flex-col px-2 flex-1 space-y-5">
-                <div class="flex items-center">
+        <div class="grid gap-4 grid-cols-2 border-slate-200/60 p-5 bg-white rounded-lg shadow-2xl lg:w-3/5 sm:w-5/6 items-center">
+            <div class="flex items-center">
                     <div
-                        class=" flex border-2 p-1 border-cyan-900 rounded-full mr-2 h-10 w-10 text-cyan-900 bg-cyan-900/30 justify-center items-center">
+                        class="flex border-2 p-1 border-cyan-900 rounded-full mr-2 h-10 w-10 text-cyan-900 bg-cyan-900/30 justify-center items-center">
                         <Lucide icon="User" />
                     </div>
                     <div>
                         <div class="text-base font-medium truncate sm:whitespace-normal text-slate-700">
-                            {{ user.full_name}}
+                            {{ user.profile.contractor_full_name }}
                         </div>
                         <div class="text-slate-500">Nombre</div>
                     </div>
-                </div>
-                <div class="flex items-center">
+            </div>
+            <div class="flex items-center">
+                    <div
+                        class="flex border-2 p-1 border-cyan-900 rounded-full mr-2 h-10 w-10 text-cyan-900 bg-cyan-900/30 justify-center items-center">
+                        <Lucide icon="Mail" />
+                    </div>
+                    <div>
+                        <div class="text-base font-medium truncate sm:whitespace-normal text-slate-700">
+                            {{ user.email }}
+                        </div>
+                        <div class="text-slate-500">Email</div>
+                    </div>
+            </div>
+            <div class="flex items-center">
                     <div
                         class="flex border-2 p-1 border-cyan-900 rounded-full mr-2 h-10 w-10 text-cyan-900 bg-cyan-900/30 justify-center items-center">
                         <Lucide icon="FileText" />
                     </div>
                     <div>
                         <div class="text-base font-medium truncate sm:whitespace-normal text-slate-700">
-                            {{ user.document_type}}
+                            {{ user.profile.document_type }}
                         </div>
-                        <div class="text-slate-500">Tipo de documento de identidad</div>
+                        <div class="text-slate-500">Tipo de documento</div>
                     </div>
-                </div>
-                <div class="flex items-center">
+            </div>
+            <div class="flex items-center">
+                    <div
+                        class="flex border-2 p-1 border-cyan-900 rounded-full mr-2 h-10 w-10 text-cyan-900 bg-cyan-900/30 justify-center items-center">
+                        <Lucide icon="CreditCard" />
+                    </div>
+                    <div>
+                        <div class="text-base font-medium truncate sm:whitespace-normal text-slate-700">
+                            {{ user.profile.document_number }}
+                        </div>
+                        <div class="text-slate-500">Número de identificación</div>
+                    </div>
+            </div>
+            <div class="flex items-center">
                     <div
                         class="flex border-2 p-1 border-cyan-900 rounded-full mr-2 h-10 w-10 text-cyan-900 bg-cyan-900/30 justify-center items-center">
                         <Lucide icon="Phone" />
@@ -74,8 +102,20 @@ watch(URLfileInput, ()=>{ console.log('actualizar BD')});
                         </div>
                         <div class="text-slate-500">Teléfono</div>
                     </div>
-                </div>
-                <div class="flex items-center">
+            </div>
+            <div class="flex items-center">
+                    <div
+                        class="flex border-2 p-1 border-cyan-900 rounded-full mr-2 h-10 w-10 text-cyan-900 bg-cyan-900/30 justify-center items-center">
+                        <Lucide icon="MapPin" />
+                    </div>
+                    <div>
+                        <div class="text-base font-medium truncate sm:whitespace-normal text-slate-700">
+                            {{ user.profile.address }}
+                        </div>
+                        <div class="text-slate-500">Dirección</div>
+                    </div>
+            </div>  
+            <div class="flex items-center">
                     <div
                         class="flex border-2 p-1 border-cyan-900 rounded-full mr-2 h-10 w-10 text-cyan-900 bg-cyan-900/30 justify-center items-center">
                         <Lucide icon="Users" />
@@ -86,57 +126,18 @@ watch(URLfileInput, ()=>{ console.log('actualizar BD')});
                         </div>
                         <div class="text-slate-500">Rol</div>
                     </div>
-                </div>
             </div>
-            <div class="flex flex-col px-2 flex-1 space-y-5">
-                <div class="flex items-center">
-                    <div
-                        class=" flex border-2 p-1 border-cyan-900 rounded-full mr-2 h-10 w-10 text-cyan-900 bg-cyan-900/30 justify-center items-center">
-                        <Lucide icon="Mail" />
-                    </div>
-                    <div>
-                        <div class="text-base font-medium truncate sm:whitespace-normal text-slate-700">
-                            {{ user.email }}
-                        </div>
-                        <div class="text-slate-500">Email</div>
-                    </div>
-                </div>
-                <div class="flex items-center">
-                    <div
-                        class="flex border-2 p-1 border-cyan-900 rounded-full mr-2 h-10 w-10 text-cyan-900 bg-cyan-900/30 justify-center items-center">
-                        <Lucide icon="CreditCard" />
-                    </div>
-                    <div>
-                        <div class="text-base font-medium truncate sm:whitespace-normal text-slate-700">
-                            {{ user.document_number }}
-                        </div>
-                        <div class="text-slate-500">Numero de documento de identidad</div>
-                    </div>
-                </div>
-                <div class="flex items-center">
-                    <div
-                        class="flex border-2 p-1 border-cyan-900 rounded-full mr-2 h-10 w-10 text-cyan-900 bg-cyan-900/30 justify-center items-center">
-                        <Lucide icon="MapPin" />
-                    </div>
-                    <div>
-                        <div class="text-base font-medium truncate sm:whitespace-normal text-slate-700">
-                            {{ user.adress }}
-                        </div>
-                        <div class="text-slate-500">Dirección</div>
-                    </div>
-                </div>
-                <div class="flex items-center">
+            <div class="flex items-center">
                     <div
                         class="flex border-2 p-1 border-cyan-900 rounded-full mr-2 h-10 w-10 text-cyan-900 bg-cyan-900/30 justify-center items-center">
                         <Lucide icon="User" />
                     </div>
                     <div>
                         <div class="text-base font-medium truncate sm:whitespace-normal text-slate-700">
-                            {{ user.gender }}
+                            {{ user.profile.gender }}
                         </div>
-                        <div class="text-slate-500">Genero</div>
+                        <div class="text-slate-500">Género</div>
                     </div>
-                </div>
             </div>
         </div>
 
@@ -147,11 +148,11 @@ watch(URLfileInput, ()=>{ console.log('actualizar BD')});
             <div class="flex items-center">
                     <div
                         class="flex border-2 p-1 border-cyan-900 rounded-full mr-2 h-10 w-10 text-cyan-900 bg-cyan-900/30 justify-center items-center">
-                        <Lucide icon="User" />
+                        <Lucide icon="Landmark" />
                     </div>
                     <div>
                         <div class="text-base font-medium truncate sm:whitespace-normal text-slate-700">
-                            {{ user.id }}
+                            {{ user.profile.bank }}
                         </div>
                         <div class="text-slate-500">Banco</div>
                     </div>
@@ -159,11 +160,11 @@ watch(URLfileInput, ()=>{ console.log('actualizar BD')});
             <div class="flex items-center">
                     <div
                         class="flex border-2 p-1 border-cyan-900 rounded-full mr-2 h-10 w-10 text-cyan-900 bg-cyan-900/30 justify-center items-center">
-                        <Lucide icon="User" />
+                        <Lucide icon="FileText" />
                     </div>
                     <div>
                         <div class="text-base font-medium truncate sm:whitespace-normal text-slate-700">
-                            {{ user.id }}
+                            {{ user.profile.acount_type }}
                         </div>
                         <div class="text-slate-500">Tipo de Cuenta</div>
                     </div>
@@ -171,11 +172,11 @@ watch(URLfileInput, ()=>{ console.log('actualizar BD')});
             <div class="flex items-center">
                     <div
                         class="flex border-2 p-1 border-cyan-900 rounded-full mr-2 h-10 w-10 text-cyan-900 bg-cyan-900/30 justify-center items-center">
-                        <Lucide icon="User" />
+                        <Lucide icon="CreditCard" />
                     </div>
                     <div>
                         <div class="text-base font-medium truncate sm:whitespace-normal text-slate-700">
-                            {{ user.id }}
+                            {{ user.profile.acount_number }}
                         </div>
                         <div class="text-slate-500">Número de Cuenta</div>
                     </div>
