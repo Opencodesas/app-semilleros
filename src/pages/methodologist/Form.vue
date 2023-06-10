@@ -87,7 +87,7 @@ const router = useRouter();
 
 // Consulta todos los municipios
 const municipalities = asyncComputed(async () => {
-	return await getSelect(['municipalities']);
+	return await getSelect(['municipalities'], true);
 }, null);
 // Consulta todos los monitores por municipio
 const monitor = asyncComputed(async () => {
