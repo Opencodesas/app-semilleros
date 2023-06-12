@@ -4,7 +4,7 @@
   </div>
   <!-- BEGIN: Page Layout -->
   <div class="p-5 mt-5 intro-y box select-none">
-    <img src="/fondo.jpeg" class="mx-auto select-none object-scale-down" style="width: 577px; height: 327px;">
+    <img src="/fondo.jpeg" class="mx-auto mt-10 mb-10 select-none object-scale-down" style="width: 577px; height: 327px;">
   </div>
   <!-- END: Page Layout -->
 </template>
