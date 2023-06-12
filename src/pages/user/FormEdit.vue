@@ -30,6 +30,7 @@ const form = reactive({
 	asistent: '',
 	methodology_id: '',
 	manager_id: '',
+	asistent_id: '',
 });
 
 const form_rules = computed(() => ({
@@ -204,7 +205,7 @@ const fetch = async () => {
 			form.zones = response.data.items.zone.map((obj: any) => obj.zones_id);
 			form.municipalities = response.data.items.municipalities.map((obj: any) => obj.municipalities_id);
 			form.disciplines = response.data.items.disciplines.map((obj: any) => obj.disciplines_id);
-			form.asistent = response.data.items.asistent;
+			form.asistent_id = (response.data.items.asistent_id) ? response.data.items.asistent_id : "";
 			form.methodology_id = (response.data.items.methodology_id) ? response.data.items.methodology_id : "";
 			form.manager_id = (response.data.items.manager_id) ? response.data.items.manager_id : "";
 			Swal.fire('', response?.data.message, 'info').finally(() => {});
@@ -333,7 +334,7 @@ onMounted(async () => {
 				multiple
 				v-if="form.roles && form.roles == '12'"
 			/>
-            <CommonSelect class="h-30" label="Asistente Auxiliar y Administrativo *" name="asistent_id" v-model="form.asistent"
+            <CommonSelect class="h-30" label="Asistente Auxiliar y Administrativo *" name="asistent_id" v-model="form.asistent_id"
                 :options="asistentList" v-if="form.roles && form.roles == '10'" />
             <CommonSelect class="h-30" label="Metodologo *" name="methodology_id" v-model="form.methodology_id"
                 :options="metodologoList" v-if="form.roles && form.roles == '12'" />
