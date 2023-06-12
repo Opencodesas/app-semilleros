@@ -91,6 +91,7 @@ const municipalities = asyncComputed(async () => {
 }, null);
 // Consulta todos los monitores por municipio
 const monitor = asyncComputed(async () => {
+	console.log("monitors from: "+form.municipalitie_id);
 	return await getMonitorByMunicipality(form.municipalitie_id);
 }, null);
 // Consulta todas las disciplinas
