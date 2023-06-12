@@ -205,8 +205,8 @@ const fetch = async () => {
 			form.municipalities = response.data.items.municipalities.map((obj: any) => obj.municipalities_id);
 			form.disciplines = response.data.items.disciplines.map((obj: any) => obj.disciplines_id);
 			form.asistent = response.data.items.asistent;
-			form.methodology_id = response.data.items.methodology_id;
-			form.manager_id = response.data.items.manager_id;
+			form.methodology_id = (response.data.items.methodology_id) ? response.data.items.methodology_id : "";
+			form.manager_id = (response.data.items.manager_id) ? response.data.items.manager_id : "";
 			Swal.fire('', response?.data.message, 'info').finally(() => {});
 		} else {
 			Swal.fire('', 'No se pudieron obtener los datos', 'error');
