@@ -138,6 +138,9 @@ const metodologoList = asyncComputed(async () => {
     return await getSelect(['metodologoList'])
 }, null)
 
+const managerList = asyncComputed(async () => {
+    return await getSelect(['managerList'])
+}, null)
 const selectedMunicipalities: any = ref([])
 
 const municipalitiesByZone = async () => {
@@ -254,6 +257,8 @@ const onSubmit = async () => {
                 :options="asistentList" v-if="form.roles && form.roles == '10'" />
             <CommonSelect class="h-30" label="Metodologo *" name="methodology_id" v-model="form.methodology_id"
                 :options="metodologoList" v-if="form.roles && form.roles == '12'" />
+            <CommonSelect class="h-30" label="Manager *" name="manager_id" v-model="form.manager_id"
+                :options="managerList"/>
             <br>
             <CommonInput type="hidden" name="password" :value="form.document_number" v-model="form.password" :validator="v$" />
         </div>
