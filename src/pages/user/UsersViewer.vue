@@ -1,4 +1,3 @@
-
 <script setup lang="ts">
 import Crud from '@/components/Crud.vue'
 import { Header, Item } from 'vue3-easy-data-table';
@@ -37,14 +36,13 @@ const headers: Header[] = [
     { text: 'APELLIDO', value: 'lastname', sortable: true },
     { text: 'DOCUMENTO', value: 'document_number', sortable: true },
     { text: "ROLES", value: "role.name", sortable: true },
-    { text: 'ACCIONES', value: 'actionsUsers' },
+    { text: 'ACCIONES', value: 'actionsUsersViewer' },
 ]
 
 const search = ref('')
 const items = ref<Item[]>([])
 
-const data = computed(() => searchData(items.value, search.value))
-
+const data = computed(() => searchData(items.value, search.value));
 </script>
 
 <template>
@@ -56,7 +54,6 @@ const data = computed(() => searchData(items.value, search.value))
             </Button>
         </div>
     </div>
-    <!-- BEGIN: Page Layout -->
     <div class="p-5 mt-5 intro-y box">
         	<CommonInput
 			type="search"
@@ -64,7 +61,5 @@ const data = computed(() => searchData(items.value, search.value))
 			v-model="search"
 			placeholder="Buscar" />
         <Crud :headers="headers" :items="data" />
-        <!-- <Button @click="ingreso()">Ingresar</Button> -->
     </div>
-    <!-- END: Page Layout -->
 </template>

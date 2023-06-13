@@ -628,6 +628,11 @@ const routes = [
 						component: () => import('@/pages/user/History.vue')
 					},
 					{
+						path: "userviewer",
+						name: "users.viewer",
+						component: () => import('@/pages/user/UsersViewer.vue')
+					},
+					{
 						path: "inactiveUser/:id",
 						name: "users.inactiveUser",
 					},
