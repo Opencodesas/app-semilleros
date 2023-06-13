@@ -542,7 +542,7 @@ onMounted(async () => {
 });
 
 const v$ = useVuelidate(form_rules, form, { $lazy: true, $autoDirty: true });
-const v2$ = useVuelidate(form_rules_tamizaje, form, { $lazy: true, $autoDirty: true });
+// const v2$ = useVuelidate(form_rules_tamizaje, form, { $lazy: true, $autoDirty: true });
 const v3$ = useVuelidate(form_rules_acudiente, form, { $lazy: true, $autoDirty: true });
 
 const onNext = async ( validation: Validation ) => {
