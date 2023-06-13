@@ -6,9 +6,9 @@
         </div>
   </div>
   <!-- BEGIN: Page Layout -->
-  <form @submit="onIngreso($event, v$, v2$, v3$, form)">
+  <form @submit="onIngreso($event, v$, v3$, form)">
     <div class="p-5 mt-5 intro-y box">
-      <h1 class="my-4 text-xl bold text-left text-gray-800 cursor-pointer" @click=" step != 1 ? next_step(1) : null ">
+      <h1 class="my-4 text-xl bold text-left text-gray-800 cursor-pointer" @click="next_step(1)">
         Datos del beneficiario
       </h1>
       <div v-show="step === 1">
@@ -252,7 +252,7 @@
       </div>
     </div>
 
-    <div class="p-5 mt-5 intro-y box" v-show="panelTamizaje">
+    <!-- <div class="p-5 mt-5 intro-y box" v-show="panelTamizaje">
       <h1 class="my-4 text-xl bold text-left text-gray-800 cursor-pointer" @click=" step > 2 ? next_step(2) : null ">
         Ficha de Tamizaje
       </h1>
@@ -320,14 +320,14 @@
         </div>
 
         <div class="m-4 text-center">
-          <Button type="button" @click="onNext( v2$ )">Continuar</Button>
+          <Button type="button" @click="onNext( v3$ )">Continuar</Button>
         </div>
 
       </div>
-    </div>
+    </div> -->
 
     <div class="p-5 mt-5 intro-y box">
-      <h1 class="my-4 text-xl bold text-left text-gray-800">
+      <h1 class="my-4 text-xl bold text-left text-gray-800 cursor-pointer" @click="next_step(3)">
         Datos del acudiente
       </h1>
       <div  v-show="step === 3">
@@ -465,7 +465,7 @@ const form = reactive({
   velocidad: '',
   fuerza: '',
   oculomanual: '',
-  panelTamizaje: false,
+  // panelTamizaje: false,
 });
 
 const form_rules = computed(() => ({
@@ -554,6 +554,7 @@ const onNext = async ( validation: Validation ) => {
 }
 
 const next_step = (step_to?: number) => {
+  console.log(step_to);
     if (step_to) {
         step.value = step_to
     }
@@ -713,16 +714,16 @@ export default defineComponent({
       console.log( evt.target.value );
       return false;
     },
-    async onIngreso( evt: any, v1: any, v2: any, v3: any, form: any ) {
+    async onIngreso( evt: any, v1: any, v3: any, form: any ) {
       evt.preventDefault();
 
       await v3.$validate()
       .then((valid: boolean) => {
-          (valid) ? this.ingreso(form, v1, v2, v3) : alerts.validation()
+          (valid) ? this.ingreso(form, v1, v3) : alerts.validation()
       })
 
     },
-    ingreso( form: any, v1: any, v2: any, v3: any ) {
+    ingreso( form: any, v1: any,  v3: any ) {
       const data = {
         registration_date: form.fechaInscripcion,
         municipalities_id: form.municipio,
@@ -789,11 +790,11 @@ export default defineComponent({
             Swal.fire('', res.data.error, 'error').finally(() => {
             })
           }
-          this.limpiar( form, v1, v2, v3 );
+          this.limpiar( form, v1, v3 );
         }
       });
     },
-    limpiar( form: any, v1: any, v2: any, v3: any ) {
+    limpiar( form: any, v1: any, v3: any ) {
       
         form.fechaInscripcion   =  "";
         form.municipio          =  "";
@@ -840,7 +841,6 @@ export default defineComponent({
         form.oculomanual        =  '';
 
         v1.$reset();
-        v2.$reset();
         v3.$reset();
     },
     regresar() {
