@@ -85,15 +85,18 @@ const v$ = useVuelidate(form_rules, form);
 
 const router = useRouter();
 
+//consulta todos los monitores por la region del usuario autenticado
+const monitor = asyncComputed(async () => {
+	return await getMonitorByAuth();
+}, null);
 // Consulta todos los municipios
 const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities'], true);
 }, null);
 // Consulta todos los monitores por municipio
-const monitor = asyncComputed(async () => {
-	console.log("monitors from: "+form.municipalitie_id);
-	return await getMonitorByMunicipality(form.municipalitie_id);
-}, null);
+// const monitor = asyncComputed(async () => {
+// 	return await getMonitorByMunicipality(form.municipalitie_id);
+// }, null);
 // Consulta todas las disciplinas
 const disciplines = asyncComputed(async () => {
 	return await getDisciplinesByMonitor(form.monitor_id);

@@ -29,6 +29,8 @@ const form = reactive({
 	disciplines: '',
 	asistent: '',
 	methodology_id: '',
+	manager_id: '',
+	asistent_id: '',
 });
 
 const form_rules = computed(() => ({
@@ -144,6 +146,9 @@ const metodologoList = asyncComputed(async () => {
     return await getSelect(['metodologoList'])
 }, null)
 
+const managerList = asyncComputed(async () => {
+    return await getSelect(['managerList'])
+}, null)
 const selectedMunicipalities: any = ref([])
 
 const municipalitiesByZone = async () => {
@@ -200,8 +205,9 @@ const fetch = async () => {
 			form.zones = response.data.items.zone.map((obj: any) => obj.zones_id);
 			form.municipalities = response.data.items.municipalities.map((obj: any) => obj.municipalities_id);
 			form.disciplines = response.data.items.disciplines.map((obj: any) => obj.disciplines_id);
-			form.asistent = response.data.items.asistent;
-			form.methodology_id = response.data.items.methodology_id;
+			form.asistent_id = (response.data.items.asistent_id) ? response.data.items.asistent_id : "";
+			form.methodology_id = (response.data.items.methodology_id) ? response.data.items.methodology_id : "";
+			form.manager_id = (response.data.items.manager_id) ? response.data.items.manager_id : "";
 			Swal.fire('', response?.data.message, 'info').finally(() => {});
 		} else {
 			Swal.fire('', 'No se pudieron obtener los datos', 'error');
@@ -328,10 +334,12 @@ onMounted(async () => {
 				multiple
 				v-if="form.roles && form.roles == '12'"
 			/>
-            <CommonSelect class="h-30" label="Asistente Auxiliar y Administrativo *" name="asistent" v-model="form.asistent"
+            <CommonSelect class="h-30" label="Asistente Auxiliar y Administrativo *" name="asistent_id" v-model="form.asistent_id"
                 :options="asistentList" v-if="form.roles && form.roles == '10'" />
             <CommonSelect class="h-30" label="Metodologo *" name="methodology_id" v-model="form.methodology_id"
                 :options="metodologoList" v-if="form.roles && form.roles == '12'" />
+			<CommonSelect class="h-30" label="Supervisor *" name="manager_id" v-model="form.manager_id"
+                :options="managerList"/>
 			<br />
 			<!-- <CommonInput type="hidden" name="password" :value="form.document_number" v-model="form.password" :validator="v$" />-->
 		</div>

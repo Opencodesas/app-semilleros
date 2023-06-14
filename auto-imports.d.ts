@@ -49,6 +49,7 @@ declare global {
   const getDisciplinesByMonitor: typeof import('./src/composables/getDisciplinesByMonitor')['getDisciplinesByMonitor']
   const getDocumentLabel: typeof import('./src/helpers/getDocumentLabel')['default']
   const getHealthentities: typeof import('./src/composables/getHealthentities')['getHealthentities']
+  const getMonitorByAuth: typeof import('./src/composables/getMonitorByAuth')['getMonitorByAuth']
   const getMonitorByMunicipality: typeof import('./src/composables/getMonitorByMunicipality')['getMonitorByMunicipality']
   const getMunicipalitiesByZone: typeof import('./src/composables/getMunicipalitiesByZone')['getMunicipalitiesByZone']
   const getOneWithPick: typeof import('./src/composables/getOneWithPick')['getOneWithPick']

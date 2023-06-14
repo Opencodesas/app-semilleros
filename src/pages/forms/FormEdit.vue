@@ -8,7 +8,7 @@
   <!-- BEGIN: Page Layout -->
   <form @submit="onIngreso($event, v3$, form)">
     <div class="p-5 mt-5 intro-y box">
-      <h1 class="my-4 text-xl bold text-left text-gray-800 cursor-pointer" @click=" step != 1 ? next_step(1) : null ">
+      <h1 class="my-4 text-xl bold text-left text-gray-800 cursor-pointer" @click="next_step(1)">
         Datos del beneficiario
       </h1>
       <div v-show="step === 1">
@@ -275,7 +275,7 @@
       </div>
     </div>
 
-    <div class="p-5 mt-5 intro-y box" v-show="panelTamizaje">
+    <!-- <div class="p-5 mt-5 intro-y box" v-show="panelTamizaje">
       <h1 class="my-4 text-xl bold text-left text-gray-800 cursor-pointer" @click=" step > 2 ? next_step(2) : null ">
         Ficha de Tamizaje
       </h1>
@@ -353,10 +353,10 @@
         </div>
 
       </div>
-    </div>
+    </div> -->
 
     <div class="p-5 mt-5 intro-y box">
-      <h1 class="my-4 text-xl bold text-left text-gray-800">
+      <h1 class="my-4 text-xl bold text-left text-gray-800 cursor-pointer" @click="next_step(3)">
         Datos del acudiente
       </h1>
       <div  v-show="step === 3">
@@ -585,7 +585,7 @@ onMounted(async () => {
 });
 
 const v$ = useVuelidate(form_rules, form, { $lazy: true, $autoDirty: true });
-const v2$ = useVuelidate(form_rules_tamizaje, form, { $lazy: true, $autoDirty: true });
+// const v2$ = useVuelidate(form_rules_tamizaje, form, { $lazy: true, $autoDirty: true });
 const v3$ = useVuelidate(form_rules_acudiente, form, { $lazy: true, $autoDirty: true });
 
 const onNext = async ( validation: Validation ) => {
@@ -655,14 +655,15 @@ const fetch = async () => {
           form.redesAcudiente = JSON.parse(response.data.items.know_guardian.social_media)
           form.enterado = JSON.parse(response.data.items.know_guardian.find_out)
           
-          form.estatura = response.data.items.tamizaje.estatura,
-          form.envergadura = response.data.items.tamizaje.envergadura,
-          form.masa = response.data.items.tamizaje.masa
+          // SE HA QUITADO LO RELACIONADO CON TAMIZAJE
+          // form.estatura = response.data.items.tamizaje.estatura,
+          // form.envergadura = response.data.items.tamizaje.envergadura,
+          // form.masa = response.data.items.tamizaje.masa
           
-          form.flexibilidad = response.data.items.tamizaje.flexibilidad,
-          form.velocidad = response.data.items.tamizaje.velocidad,
-          form.fuerza = response.data.items.tamizaje.fuerza,
-          form.oculomanual = response.data.items.tamizaje.oculomanual
+          // form.flexibilidad = response.data.items.tamizaje.flexibilidad,
+          // form.velocidad = response.data.items.tamizaje.velocidad,
+          // form.fuerza = response.data.items.tamizaje.fuerza,
+          // form.oculomanual = response.data.items.tamizaje.oculomanual
           form.status = response.data.items.status
 
           // alerts.custom('', response?.data.message, 'info');
