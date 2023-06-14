@@ -154,19 +154,19 @@ const routes = [
 					},
 				]
 			},
-			{
-				path: "review",
-				name: "review",
+			/*{
+				path: "fichas",
+				name: "fichas",
 				children: [
 					{
-						path: "fichas",
-						name: "fichas_inscripcion.index",
-						meta: {provider:"fichaInscrip"},						
+						path: "index",
+						name: "fichas.index",
+						//meta: {provider:"fichaInscrip"},						
 						//component: () => import('@/pages/methodologist/reviews/registrationForms/Index.vue')
 						component: () => import('@/pages/reviewfichas/Index.vue')
 					},
 				]
-			},
+			},*/
 			{
 				path: "chronograms",
 				name: "chronograms",
@@ -626,6 +626,11 @@ const routes = [
 						path: "history/:id",
 						name: "users.history",
 						component: () => import('@/pages/user/History.vue')
+					},
+					{
+						path: "userviewer",
+						name: "users.viewer",
+						component: () => import('@/pages/user/UsersViewer.vue')
 					},
 					{
 						path: "inactiveUser/:id",
