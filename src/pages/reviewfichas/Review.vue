@@ -2,6 +2,7 @@
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
 import Cronograma from '../methodologist/reviews/chronograms/Index.vue';
 import Fichas from './Index.vue';
+import { onboardingStore } from "@/stores/onboardingStore";
 
 </script>
 
@@ -22,7 +23,7 @@ import Fichas from './Index.vue';
 					Beneficiarios
 				</button>
 			</Tab>
-			<Tab as="template" v-slot="{ selected }">
+			<Tab v-if="onboardingStore().get_user_role?.slug !='asistente_administrativo'" as="template" v-slot="{ selected }">
 				<button
 					:class="{
 						'inline-block p-2 text-slate-800 font-medium dark:text-slate-400 border-b-2 border-b-primary rounded-t-lg active outline-none':
@@ -37,7 +38,7 @@ import Fichas from './Index.vue';
 
 		<TabPanels>
 			<TabPanel> <Fichas/> </TabPanel>
-			<TabPanel> <Cronograma/> </TabPanel>
+			<TabPanel v-if="onboardingStore().get_user_role?.slug !='asistente_administrativo'"> <Cronograma/> </TabPanel>
 		</TabPanels>
 	</TabGroup>
 </template>

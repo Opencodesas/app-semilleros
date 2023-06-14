@@ -368,7 +368,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
           {
             icon: "Activity",
             role: 'asistente_administrativo',
-            pageName: 'review.bene_chro',
+            pageName: 'review.bene_chro',  
             title: "Revisiones",
           },
           {
