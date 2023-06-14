@@ -27,6 +27,45 @@ export const coordinatorVisitServices = {
       alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
     }
   },
+  downloadFilesMeto: async () => {
+    try {
+      setLoading(true)
+
+      const response = await api.get(`/${apiPath}/methodologist/zips`).finally(() => {
+        setLoading(false)
+      })
+
+      return response 
+    } catch (error: any) {
+      alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
+    }
+  },
+  downloadFilesCoor: async () => {
+    try {
+      setLoading(true)
+
+      const response = await api.get(`/${apiPath}/cordinator/zips`).finally(() => {
+        setLoading(false)
+      })
+
+      return response 
+    } catch (error: any) {
+      alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
+    }
+  },
+  downloadFiles: async () => {
+    try {
+      setLoading(true)
+
+      const response = await api.get(`/${apiPath}/zips`).finally(() => {
+        setLoading(false)
+      })
+
+      return response 
+    } catch (error: any) {
+      alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
+    }
+  },
   create: async (payload: FormData) => {
     try {
       setLoading(true)
