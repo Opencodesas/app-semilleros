@@ -97,14 +97,18 @@ const selectFile = (event: any) => {
 	}
 	form.file = file.value;
 };
+//consulta todos los monitores por la region del usuario autenticado
+const monitor = asyncComputed(async () => {
+	return await getMonitorByAuth();
+}, null);
 // Consulta todos los municipios
 const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
 }, null);
 // Consulta todas las disciplinas
-const monitorList = asyncComputed(async () => {
-	return await getMonitorByMunicipality(form.municipalitie_id);
-}, null);
+// const monitorList = asyncComputed(async () => {
+// 	return await getMonitorByMunicipality(form.municipalitie_id);
+// }, null);
 // Consulta todas las disciplinas
 const disciplines = asyncComputed(async () => {
 	return await getDisciplinesByMonitor(form.user_id);
@@ -275,7 +279,7 @@ const downloadVisit = async () => {
 					placeholder="Ingrese el corregimiento o vereda" v-model="form.sidewalk" :validator="v$"
 					:disabled="disableElements" />
 
-				<CommonSelect label="Monitor *" name="user_id" v-model="form.user_id" :validator="v$" :options="monitorList"
+				<CommonSelect label="Monitor *" name="user_id" v-model="form.user_id" :validator="v$" :options="monitor"
 					:disabled="disableElements" />
 				<CommonSelect label="Diciplinas *" name="discipline_id" v-model="form.discipline_id" :validator="v$"
 					:options="disciplines" :disabled="disableElements" />

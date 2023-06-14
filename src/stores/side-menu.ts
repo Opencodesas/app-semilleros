@@ -220,6 +220,11 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: "psychosocial.visits",
             title: "Formatos",
           },
+          {
+            icon: "Activity",
+            pageName: "users_of_zones.index", 
+            title: "Ver usuarios",
+          },
         ]
       },
       {
@@ -285,6 +290,11 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: "psychosocial-coordinator.reviews",
             title: "Revisiones",
           },
+          {
+            icon: "Activity",
+            pageName: "users.index",
+            title: "Ver usuarios",
+          },
         ]
       },
       {
@@ -306,6 +316,11 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: "technical_director.reviews",
             title: "Revisiones",
           },
+          {
+            icon: "Activity",
+            pageName: "users_of_zones.index", 
+            title: "Ver usuarios",
+          },  
         ]
       },
       {
@@ -317,6 +332,11 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: "transversal_programs_director.reviews",
             title: "Revisiones",
           },
+          {
+            icon: "Activity",
+            pageName: "users.index",
+            title: "Ver usuarios",
+          },
         ]
       },
       {
@@ -326,7 +346,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
           {
             icon: "Activity",
             pageName: "users.index",
-            title: "Usuarios",
+            title: "Ver usuarios",
           },
           {
             icon: "Activity",
@@ -350,6 +370,11 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: 'review.bene_chro',
             title: "Revisiones",
           },
+          {
+            icon: "Activity",
+            pageName: "users.index",
+            title: "Ver usuarios",
+          },
         ]
       },
       {
@@ -371,6 +396,11 @@ export const useSideMenuStore = defineStore("sideMenu", {
             icon: "Activity",
             pageName: "review.bene_chro",
             title: "Revisiones",
+          },
+          {
+            icon: "Activity",
+            pageName: "users_of_zones.index", 
+            title: "Ver usuarios",
           },
         ]
       },
