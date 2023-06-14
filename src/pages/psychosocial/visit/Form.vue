@@ -50,25 +50,30 @@ const selectFile = (event: any) => {
 }
 
 const municipalities = asyncComputed(async () => {
-    return await getSelect(['municipalities'])
+    let response =await getSelect(['municipalities'],true)
+    //console.error('municipalities',response);
+    return  response
 }, null)
 
 
 const monitorList = asyncComputed(async () => {
-    return await getMonitorByMunicipality(form.municipalities_id);
+    
+    //let response= await getMonitorByMunicipality(form.municipalities_id);
+    let response =await getMonitorByAuth()
+    return response;
 }, null);
 
 const disciplinesList = asyncComputed(async () => {
     return await getDisciplinesByMonitor(form.monitor)
 }, null)
 
-watch(() => form.municipalities_id, (newVal, oldVal) => {
-    form.monitor = '';
-})
+//watch(() => form.municipalities_id, (newVal, oldVal) => {
+  //  form.monitor = '';
+//})
 
-watch(() => form.monitor, (newVal, oldVal) => {
-    form.diciplines_id = '';
-})
+//watch(() => form.monitor, (newVal, oldVal) => {
+  //  form.diciplines_id = '';
+//})
 
 const v$ = useVuelidate(form_rules, form)
 const router = useRouter()
