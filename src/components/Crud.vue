@@ -564,15 +564,15 @@ const selectedTab = inject('selectedTab', ref(0));
 			</template>
 			<template #item-actionsUsersViewer="item">
 				<div class="flex gap-2 justify-end">
-						<Button v-if="onboardingStore().get_user_role?.slug == 'super.root'"
+						<Button v-if="(onboardingStore().get_user_role?.slug == 'super.root') || (onboardingStore().get_user_role?.slug == 'director_administrator')"
 							variant="outline-secondary"
 							@click="informationAction(item.id)">
 							<Lucide
-								:icon="'Info'"
+								:icon="onboardingStore().get_user_role?.slug == 'director_administrator'? 'Edit':'Info'"
 								class="mr-2" />
 							<span
 								class="text-sm">
-								{{ "Informacion" }}									
+								{{ onboardingStore().get_user_role?.slug == 'director_administrator'?"Editar":"Informacion" }}									
 							</span>
 						</Button>
 						<Button
@@ -586,7 +586,7 @@ const selectedTab = inject('selectedTab', ref(0));
 								{{ "Historial" }}									
 							</span>
 						</Button>
-						<Button v-if="onboardingStore().get_user_role?.slug == 'super.root'"
+						<Button v-if="(onboardingStore().get_user_role?.slug == 'super.root') || (onboardingStore().get_user_role?.slug == 'director_administrator')"
 							variant="outline-secondary"
 							>
 							<Lucide
