@@ -554,23 +554,17 @@ const selectedTab = inject('selectedTab', ref(0));
 					{{ getStage(item.reviewed) }}
 				</span>
 			</template>
-			<template #item-actions="item">
+			<template #item-actionsUsers="item">
+				<Button variant="outline-secondary"	@click="editAction(item.id)">
+					<Lucide :icon="'FileEdit'" class="mr-2" />
+						<span class="text-sm">
+							{{ "Editar" }}									
+						</span>
+				</Button>
+			</template>
+			<template #item-actionsUsersViewer="item">
 				<div class="flex gap-2 justify-end">
-					<template v-if="route.name == 'users.index'">
-						<Button
-							variant="outline-secondary"
-							@click="editAction(item.id)">
-							<Lucide
-								:icon="'FileEdit'"
-								class="mr-2" />
-							<span
-								class="text-sm">
-								{{ "Editar" }}									
-							</span>
-						</Button>
-					</template>
-					<!-- <template v-if="route.name == 'users.index'">
-						<Button
+						<Button v-if="onboardingStore().get_user_role?.slug == 'super.root'"
 							variant="outline-secondary"
 							@click="informationAction(item.id)">
 							<Lucide
@@ -581,8 +575,6 @@ const selectedTab = inject('selectedTab', ref(0));
 								{{ "Informacion" }}									
 							</span>
 						</Button>
-					</template> -->
-					<template v-if="route.name == 'users.index'">
 						<Button
 							variant="outline-secondary"
 							@click="historyAction(item.id)">
@@ -594,9 +586,7 @@ const selectedTab = inject('selectedTab', ref(0));
 								{{ "Historial" }}									
 							</span>
 						</Button>
-					</template>
-					<template v-if="route.name == 'users.index'">
-						<Button
+						<Button v-if="onboardingStore().get_user_role?.slug == 'super.root'"
 							variant="outline-secondary"
 							>
 							<Lucide
@@ -608,8 +598,9 @@ const selectedTab = inject('selectedTab', ref(0));
 									:checked="item.inactive ? false : true" @click="toggleUserStatus (item.id, item.inactive)" />	
 							</span>
 						</Button>
-					</template>
 				</div>
+			</template>
+			<template #item-actions="item">
 				<div class="flex gap-2 justify-end">
 					<template v-if="isProvider('assistants')">
 						<template v-if="hasDocumentsHeader && contractorDocuments != null">
