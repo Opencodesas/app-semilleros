@@ -18,7 +18,7 @@ const form = reactive({
     month: '',
     municipality: '',
     note: '',
-    noteHoliday: '',
+    note_holiday: '',
     groups: [
         {
             group_id: '',
@@ -42,7 +42,7 @@ const form_rules = computed(() => ({
     month: { required },
     municipality: { required },
     note: {},
-    noteHoliday: {},
+    note_holiday: {},
     groups: {
         $each: helpers.forEach({
             group_id: { nestedRequired, unique: unique(form.groups, 'group_id') },
@@ -159,6 +159,7 @@ const fetch = async () => {
             form.month = response.data.items.month;
             form.municipality = response.data.items.municipality;
             form.note = response.data.items.note;
+            form.note_holiday = response.data.items.note_holiday
             form.groups = response.data.items.groups;
             form.rejection_message = response.data.items.rejection_message;
             // form.gender = response.data.items.gender;
@@ -298,7 +299,7 @@ watch(
                             />
                         </div>
                         <div v-if="holidaysMonth" class="col-span-1 md:col-span-2">
-							<CommonEditor label="Observaciones Dias Festivos" name="noteHoliday" v-model="form.noteHoliday"
+							<CommonEditor label="Observaciones Dias Festivos" name="note_holiday" v-model="form.note_holiday"
 								:validator="v$" 
                                 :disabled="form.status_id !== 4"/>
 							<p class="mt-2">{{ form.month && holidaysMonth }}</p>
