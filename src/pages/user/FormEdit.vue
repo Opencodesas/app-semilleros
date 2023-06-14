@@ -152,12 +152,13 @@ const managerList = asyncComputed(async () => {
 const selectedMunicipalities: any = ref([])
 
 const municipalitiesByZone = async () => {
-
-    await getMunicipalitiesByZone(form.zones[form.zones.length - 1]).then((response) => {
-            selectedMunicipalities.value = [...selectedMunicipalities.value, ...response]
-            form.municipalities = selectedMunicipalities.value.map((municipality: any) => municipality.value);
-        })
- 
+//ITERAR	
+	for(const zone of form.zones){
+		const response= await getMunicipalitiesByZone(zone)
+		selectedMunicipalities.value = [...selectedMunicipalities.value, ...response]
+		form.municipalities = selectedMunicipalities.value.map((municipality: any) => municipality.value);
+		
+	}
 }
 const goback=()=>{router.go(-1);}
 

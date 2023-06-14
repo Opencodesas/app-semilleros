@@ -264,7 +264,7 @@ const onSubmit = async () => {
         </div>
 
         <!-- <CommonInput type="date" label="Fecha nacimiento *" name="date_birth" v-model="form.date_birth" :validator="v$" /> -->
-        <div class="flex justify-end col-span-1 md:col-span-2">
+        <div class="flex justify-end col-span-1 md:col-span-2 mt-[100px]">
             <Button variant="primary" class="btn btn-primary" @click="onSubmit">
                 Ingresar
             </Button>
