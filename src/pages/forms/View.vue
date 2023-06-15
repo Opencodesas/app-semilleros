@@ -3,6 +3,7 @@ import { onboardingStore } from "@/stores/onboardingStore";
 import beneficiary from "@/services/beneficiary/beneficiary"
 import useVuelidate from "@vuelidate/core"
 import { required } from "@vuelidate/validators"
+import { downloadFile } from "@/helpers/downloadFile";
 
 const props = defineProps<{
     item?: any;
@@ -216,15 +217,24 @@ const onSubmit = async (evt: any) => {
    }
 }
 
+const onDownload = async () => {
+	return await beneficiary.getBeneficiariesFile(currentFicha.id as string).then((res:any) => {
+		if (res) {
+			if (res.status >= 200 && res.status <= 300) {
+				downloadFile(res);
+			}
+		}
+	});
+};
 
-const onDownload = async (evt: any) => {
+/*const onDownload = async (evt: any) => {
   evt.preventDefault();
   const response:any = await beneficiary.getBeneficiariesFile(currentFicha.id);
   alerts.custom('', 'Descargando archivo...', 'info')
   .finally(()=>{
     window.open(response || '', '_blank');
   });
-}
+}*/
 const ethniacityList = ref([]);
 
 onMounted(async () => {
