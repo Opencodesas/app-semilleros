@@ -160,6 +160,7 @@ const municipalitiesByZone = async () => {
 		
 	}
 }
+const goback=()=>{router.go(-1);}
 
 watch(() => form.zones, async (newVal : any, oldVal : any) => {
     if(form.zones.length > oldVal.length) {
@@ -228,9 +229,9 @@ onMounted(async () => {
 <template>
 	<div class="flex items-center mt-8 intro-y">
 		<div class="flex items-center space-x-4">
-			<CommonBackButton
-				:to="'users.index'"
-				title="Listado" />
+			<Button @click="goback" variant="outline-secondary" class="flex w-24"><Lucide :icon="'ChevronLeft'" class="mr-2" />
+				Listado
+			</Button>
 			<h2 class="mr-auto text-lg font-medium">Editar Usuario</h2>
 		</div>
 	</div>

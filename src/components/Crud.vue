@@ -565,15 +565,15 @@ const selectedTab = inject('selectedTab', ref(0));
 			</template>
 			<template #item-actionsUsersViewer="item">
 				<div class="flex gap-2 justify-end">
-						<Button v-if="onboardingStore().get_user_role?.slug == 'super.root'"
+						<Button v-if="(onboardingStore().get_user_role?.slug == 'super.root') || (onboardingStore().get_user_role?.slug == 'director_administrator')"
 							variant="outline-secondary"
 							@click="informationAction(item.id)">
 							<Lucide
-								:icon="'Info'"
+								:icon="onboardingStore().get_user_role?.slug == 'director_administrator'? 'Edit':'Info'"
 								class="mr-2" />
 							<span
 								class="text-sm">
-								{{ "Informacion" }}									
+								{{ onboardingStore().get_user_role?.slug == 'director_administrator'?"Editar":"Informacion" }}									
 							</span>
 						</Button>
 						<Button
@@ -587,7 +587,7 @@ const selectedTab = inject('selectedTab', ref(0));
 								{{ "Historial" }}									
 							</span>
 						</Button>
-						<Button v-if="onboardingStore().get_user_role?.slug == 'super.root'"
+						<Button v-if="(onboardingStore().get_user_role?.slug == 'super.root') || (onboardingStore().get_user_role?.slug == 'director_administrator')"
 							variant="outline-secondary"
 							>
 							<Lucide
@@ -1143,7 +1143,7 @@ const selectedTab = inject('selectedTab', ref(0));
 			//BUDGET ZONE
 
 			<template #item-actionsBene="item">
-						<div  class="flex gap-1 w-20">
+						<div class="flex gap-1 w-20">
 							<Button
 							v-if="item.status.slug === 'REC'"
 							variant="outline-secondary"
@@ -1155,6 +1155,19 @@ const selectedTab = inject('selectedTab', ref(0));
 						</Button>
 				<Modal :Form="props.Form" label="Ver" :item="item" />
 						</div>
+			</template>
+			<template #item-statusBene="item">
+				<span
+					:class="
+						item.status.slug == 'REC' || item.status.slug == 'NUL'
+							? ' bg-danger/10 text-danger'
+							: item.status.slug == 'COM' || item.status.slug == 'APR' || item.status.slug == 'ENP'
+							? 'bg-success/10 text-success'
+							: 'bg-primary/10 text-primary'
+					"
+					class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
+					{{ _getStatus(item.status) }}
+				</span>
 			</template>
 
 		</DataTable>

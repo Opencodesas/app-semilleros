@@ -41,6 +41,11 @@ onBeforeMount(async () => {
 })
 
 
+const descargar = ()=>{
+    //getReportBenefisiaries/{id}
+    return 'ruta'
+}
+
 </script>
 
 <template>

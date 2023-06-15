@@ -333,7 +333,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
             icon: "Activity",
             pageName: "users_of_zones.index", 
             title: "Ver usuarios",
-          },  
+          },
         ]
       },
       {
@@ -356,9 +356,14 @@ export const useSideMenuStore = defineStore("sideMenu", {
         icon: "User",
         title: "Director Administrativo",
         subMenu: [
-          {
+          /*{
             icon: "Activity",
             pageName: "users.index",
+            title: "Ver usuarios",
+          },*/
+          {
+            icon: "Activity",
+            pageName: "users.viewer",
             title: "Ver usuarios",
           },
           {

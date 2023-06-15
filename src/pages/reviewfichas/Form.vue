@@ -472,6 +472,12 @@ const onSubmit = async (evt: any) => {
             />
          </div>
       </div>
+   </div>
+
+   <div class="p-5 mt-5 col-span-2 intro-y box">
+      <div class="my-5 text-lg bold text-left text-gray-800">
+         Datos del acudienteee
+      </div>
 
       <div class="p-5 mt-5 col-span-2 intro-y box">
          <div class="my-5 text-lg bold text-left text-gray-800">
