@@ -35,6 +35,10 @@ const form_rules = computed(() => ({
 	file: { required },
 }));
 
+//consulta todos los monitores por la region del usuario autenticado
+const monitor = asyncComputed(async () => {
+	return await getMonitorByAuth();
+}, null);
 // Consulta todos los municipios	
 const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities'], true);
@@ -52,9 +56,9 @@ watch(() => form.user_id, () => {
     form.discipline_id = '';
 })
 // Consulta todos los monitores por municipio
-const monitor = asyncComputed(async () => {
-	return await getMonitorByMunicipality(form.municipalitie_id)
-}, null);
+// const monitor = asyncComputed(async () => {
+// 	return await getMonitorByMunicipality(form.municipalitie_id)
+// }, null);
 
 const v$ = useVuelidate(form_rules, form);
 
