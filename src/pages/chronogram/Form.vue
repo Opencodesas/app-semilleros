@@ -17,7 +17,7 @@ const form = reactive({
 	month: '',
 	municipality: '',
 	note: '',
-	noteHoliday: '',
+	note_holiday: '',
 	groups: [
 		{
 			group_id: '',
@@ -42,7 +42,7 @@ const form_rules = computed(() => ({
 	month: { required },
 	municipality: { required },
 	note: {},
-	noteHoliday: {},
+	note_holiday: {},
 	groups: {
 		$each: helpers.forEach({
 			group_id: { nestedRequired, unique: unique(form.groups, 'group_id') },
@@ -346,7 +346,7 @@ const onCloneChronogram = async () => {
 							<CommonEditor label="Observaciones Generales" name="note" v-model="form.note" :validator="v$" />
 						</div>
 						<div v-if="holidaysMonth" class="col-span-1 md:col-span-2">
-							<CommonEditor label="Observaciones Dias Festivos" name="noteHoliday" v-model="form.noteHoliday"
+							<CommonEditor label="Observaciones Dias Festivos" name="note_holiday" v-model="form.note_holiday"
 								:validator="v$" />
 							<p class="mt-2">{{ form.month && holidaysMonth }}</p>
 						</div>

@@ -220,6 +220,11 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: "psychosocial.visits",
             title: "Formatos",
           },
+          {
+            icon: "Activity",
+            pageName: "users.viewer",
+            title: "Usuarios",
+          },
         ]
       },
       {
@@ -244,8 +249,8 @@ export const useSideMenuStore = defineStore("sideMenu", {
           },
           {
             icon: "Activity",
-            pageName: "users_of_zones.index", 
-            title: "Ver usuarios",
+            pageName: "users.viewer",
+            title: "Usuarios",
           },
         ]
       },
@@ -271,8 +276,8 @@ export const useSideMenuStore = defineStore("sideMenu", {
           },
           {
             icon: "Activity",
-            pageName: "users_of_zones.index", 
-            title: "Ver usuarios",
+            pageName: "users.viewer",
+            title: "Usuarios",
           },
         ]
       },
@@ -284,6 +289,24 @@ export const useSideMenuStore = defineStore("sideMenu", {
             icon: "Activity",
             pageName: "psychosocial-coordinator.reviews",
             title: "Revisiones",
+          },
+          {
+            icon: "Activity",
+            role: 'coordinador_psicosocial',
+            pageName: "users.viewer",
+            title: "Usuarios",
+          },
+        ]
+      },
+      {
+        icon: "User",
+        title: "Usuarios",
+        subMenu: [
+          {
+            icon: "User",
+            role: 'subdirector_tecnico',
+            pageName: "users.viewer",
+            title: "Lista",
           },
         ]
       },
@@ -306,16 +329,26 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: "technical_director.reviews",
             title: "Revisiones",
           },
+          {
+            icon: "Activity",
+            pageName: "users_of_zones.index", 
+            title: "Ver usuarios",
+          },
         ]
       },
       {
         icon: "User",
-        title: "Director de Programas Transversales",
+        title: "Director Prog. Transversales",
         subMenu: [
           {
             icon: "Activity",
             pageName: "transversal_programs_director.reviews",
             title: "Revisiones",
+          },
+          {
+            icon: "Activity",
+            pageName: "users.viewer",
+            title: "Usuarios",
           },
         ]
       },
@@ -323,10 +356,15 @@ export const useSideMenuStore = defineStore("sideMenu", {
         icon: "User",
         title: "Director Administrativo",
         subMenu: [
-          {
+          /*{
             icon: "Activity",
             pageName: "users.index",
-            title: "Usuarios",
+            title: "Ver usuarios",
+          },*/
+          {
+            icon: "Activity",
+            pageName: "users.viewer",
+            title: "Ver usuarios",
           },
           {
             icon: "Activity",
@@ -347,8 +385,14 @@ export const useSideMenuStore = defineStore("sideMenu", {
           {
             icon: "Activity",
             role: 'asistente_administrativo',
-            pageName: 'review.bene_chro',
+            pageName: 'review.bene_chro',  
             title: "Revisiones",
+          },
+          {
+            icon: "Activity",
+            role: 'asistente_administrativo',
+            pageName: "users.viewer",
+            title: "Usuarios",
           },
         ]
       },
@@ -371,6 +415,11 @@ export const useSideMenuStore = defineStore("sideMenu", {
             icon: "Activity",
             pageName: "review.bene_chro",
             title: "Revisiones",
+          },
+          {
+            icon: "Activity",
+            pageName: "users.viewer",
+            title: "Usuarios",
           },
         ]
       },

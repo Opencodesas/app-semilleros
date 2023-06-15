@@ -25,6 +25,9 @@ const form = reactive({
     zones: '',
     password: '',
     disciplines: '',
+    methodology_id: '',
+    asistent: '',
+    manager_id: '',
 })
 
 
@@ -138,6 +141,9 @@ const metodologoList = asyncComputed(async () => {
     return await getSelect(['metodologoList'])
 }, null)
 
+const managerList = asyncComputed(async () => {
+    return await getSelect(['managerList'])
+}, null)
 const selectedMunicipalities: any = ref([])
 
 const municipalitiesByZone = async () => {
@@ -250,16 +256,18 @@ const onSubmit = async () => {
                 :options="municipalities" multiple v-if="form.roles && !excludedRoles.includes(+form.roles)" :allow-empty="true"/>
             <CommonSelect class="h-30" label="Seleccione las disciplinas *" name="disciplines" v-model="form.disciplines" :validator="v$"
                 :options="disciplines" multiple v-if="form.roles && form.roles == '12'" />
-            <CommonSelect class="h-30" label="Asistente Auxiliar y Administrativo *" name="asistent" v-model="form.asistent"
+            <CommonSelect class="h-30" label="Asistente Auxiliar y Administrativo *" name="asistent_id" v-model="form.asistent"
                 :options="asistentList" v-if="form.roles && form.roles == '10'" />
             <CommonSelect class="h-30" label="Metodologo *" name="methodology_id" v-model="form.methodology_id"
                 :options="metodologoList" v-if="form.roles && form.roles == '12'" />
+            <CommonSelect class="h-30" label="Supervisor *" name="manager_id" v-model="form.manager_id"
+                :options="managerList"/>
             <br>
             <CommonInput type="hidden" name="password" :value="form.document_number" v-model="form.password" :validator="v$" />
         </div>
 
         <!-- <CommonInput type="date" label="Fecha nacimiento *" name="date_birth" v-model="form.date_birth" :validator="v$" /> -->
-        <div class="flex justify-end col-span-1 md:col-span-2">
+        <div class="flex justify-end col-span-1 md:col-span-2 mt-[100px]">
             <Button variant="primary" class="btn btn-primary" @click="onSubmit">
                 Ingresar
             </Button>
