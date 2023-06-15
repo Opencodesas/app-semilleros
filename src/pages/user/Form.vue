@@ -25,6 +25,9 @@ const form = reactive({
     zones: '',
     password: '',
     disciplines: '',
+    methodology_id: '',
+    asistent: '',
+    manager_id: '',
 })
 
 
