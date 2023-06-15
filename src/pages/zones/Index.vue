@@ -22,10 +22,6 @@ const edit = () => {
 }
 
 
-
-
-
-
 onBeforeMount(async () => {
     await zoneServices.getZones().then((response) => {
         items.value = response?.data;
