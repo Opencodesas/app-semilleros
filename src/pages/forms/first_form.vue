@@ -246,7 +246,7 @@
         </div>
 
         <div class="m-4 text-center">
-          <Button type="button" @click="onNext( v$ )">Continuar</Button>
+          <Button variant="primary" type="button" @click="onNext( v$ )">Continuar</Button>
         </div>
         
       </div>
@@ -330,7 +330,7 @@
       <h1 class="my-4 text-xl bold text-left text-gray-800 cursor-pointer" @click="next_step(3)">
         Datos del acudiente
       </h1>
-      <div  v-show="step === 3">
+      <div v-show="step === 3">
         <div class="mt-5 grid grid-cols-1 md:grid md:grid-cols-3 gap-6 justify-evenly">
           <CommonInput
             label="Nombres"
@@ -395,7 +395,7 @@
           />
         </div>
         <div class="m-4 text-center">
-          <Button type="submit">Ingresar</Button>
+          <Button variant="primary" :class="'m-3 px-6 py-3'" type="submit">Ingresar</Button>
         </div>
       </div>
     </div>
@@ -415,6 +415,7 @@ import { onboardingStore } from "@/stores/onboardingStore";
 import { getHealthentities }  from "@/composables/getHealthentities";
 
 import Swal from "sweetalert2";
+import router from "@/router";
 const store = onboardingStore();
 
 const healthEntities = computedAsync( async () => {
@@ -549,12 +550,12 @@ const onNext = async ( validation: Validation ) => {
 
   await validation.$validate()
   .then((valid) => {
-      (valid) ? next_step() : alerts.validation()
+      (valid) ? next_step(3) : alerts.validation()
   })
 }
 
 const next_step = (step_to?: number) => {
-  console.log(step_to);
+  //console.log(step_to);
     if (step_to) {
         step.value = step_to
     }
@@ -711,7 +712,7 @@ export default defineComponent({
   methods: {
     checkMaxDecimals( evt: any ){
       evt.preventDefault();
-      console.log( evt.target.value );
+      //console.log( evt.target.value );
       return false;
     },
     async onIngreso( evt: any, v1: any, v3: any, form: any ) {
@@ -785,6 +786,7 @@ export default defineComponent({
         if(res){
 		    if (res?.status == 200) {
             Swal.fire('', res.data.message, 'success').finally(() => {
+              this.restart();
             })
           }else{
             Swal.fire('', res.data.error, 'error').finally(() => {
@@ -845,6 +847,9 @@ export default defineComponent({
     },
     regresar() {
       window.alert("Regresa");
+    },
+    restart() {
+      window.location.reload();
     },
     check() {
       this.checkEmail = !this.checkEmail;

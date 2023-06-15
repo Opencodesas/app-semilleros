@@ -24,7 +24,7 @@ const headers: Header[] = [
     { text: 'ID', value: 'id' },
     { text: 'NOMBRE COMPLETO', value: 'full_name' },
     { text: 'MUNICIPIO', value: 'municipality.name' },
-    { text: 'ESTADO', value: 'status' },
+    { text: 'ESTADO', value: 'statusBene' },
     { text: 'FECHA CREADO', value: 'created_at' },
     { text: 'ACCIONES', value: 'actionsBene' },
 ]
