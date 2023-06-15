@@ -5,6 +5,10 @@
             <h2 class="mr-auto text-lg font-medium">BENEFICIARIOS</h2>
         </div>
   </div>
+  <div class="p-5 mt-5 intro-y box" v-if="form.mensaje!=null">
+    <h2 class="mr-auto mb-2 text-sm font-medium">MOTIVO DEL RECHAZO</h2>
+    <CommonTextarea name="mensaje" :placeholder="form.mensaje" disabled="true"/>
+  </div>
   <!-- BEGIN: Page Layout -->
   <form @submit="onIngreso($event, v3$, form)">
     <div class="p-5 mt-5 intro-y box">
@@ -268,8 +272,8 @@
           
         </div>
 
-        <div class="m-4 text-center">
-          <Button type="button" @click="onNext( v$ )">Continuar</Button>
+        <div class="m-4 text-center mt-10">
+          <Button variant="outline-secundary" type="button" @click="onNext( v$ )">Continuar</Button>
         </div>
         
       </div>
@@ -432,7 +436,7 @@
           />
         </div>
         <div class="m-4 text-center" v-if="form.status.id === 4">
-          <Button type="submit"> Modificar </Button>
+          <Button variant="primary" :class="'mt-10'" type="submit"> Modificar </Button>
         </div>
       </div>
     </div>
@@ -459,6 +463,7 @@ const healthEntities = computedAsync( async () => {
 }, null)
 
 const form = reactive({
+  mensaje: '',
   idx: "",
   fechaInscripcion: "",
   municipio: "",
@@ -512,6 +517,7 @@ const form = reactive({
 });
 
 const form_rules = computed(() => ({
+  mensaje: {},
   fechaInscripcion:   { required },
   municipio:          { required },
   disciplinas:        { required },
@@ -589,10 +595,9 @@ const v$ = useVuelidate(form_rules, form, { $lazy: true, $autoDirty: true });
 const v3$ = useVuelidate(form_rules_acudiente, form, { $lazy: true, $autoDirty: true });
 
 const onNext = async ( validation: Validation ) => {
-
   await validation.$validate()
   .then((valid) => {
-      (valid) ? next_step() : alerts.validation()
+      (valid) ? next_step(3) : alerts.validation()
   })
 }
 
@@ -607,13 +612,15 @@ const next_step = (step_to?: number) => {
     }
 };
 
-const router = useRouter()
 const route  = useRoute()
 
 const fetch = async () => {
     await axios.get(route.params.id as string)
     .then((response) => {
+      console.log(response);
         if (response?.status == 200 || response?.status == 201) {
+          form.mensaje = route.query.msg as string;
+
           form.idx = response.data.items.id;
           form.fechaInscripcion = response.data.items.registration_date;
           form.afiliacion = response.data.items.affiliation_type;
@@ -681,7 +688,6 @@ onBeforeMount(async () => {
 </script>
 
 <script lang="ts">
-
 export default defineComponent({
   data() {
     return {
@@ -872,13 +878,13 @@ export default defineComponent({
         status_id: 2,
       };
       axios.setBeneficiary(form.idx, data).then((res: any) => {
-        if(res){
+        if(res)
+        {
           Swal.fire('', res.data.message, 'success').finally(() => {
+            if(form.mensaje!=null){window.history.go(-1);}
           })
           this.limpiar();
-        }
-
-        
+        }    
       });
     },
     limpiar() {

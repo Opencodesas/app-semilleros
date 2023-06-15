@@ -3,7 +3,8 @@ import Vue from "vue"
 import Crud from "@/components/Crud.vue"
 import { Header, Item } from "vue3-easy-data-table"
 import { onboardingStore } from "@/stores/onboardingStore"
-import Form from "./Form.vue"
+//import Form from "./Form.vue"
+import View from '@/pages/forms/View.vue'
 import beneficiary from "@/services/beneficiary/beneficiary"
 import { Roles } from "@/utils/roles.enums"
 
@@ -141,11 +142,10 @@ const cruddata = computed(() => searchData(items.value, search.value))
          v-model="search"
          placeholder="Buscar"
       />
-
       <Crud
          :headers="headers"
          :items="cruddata"
-         :Form="{ ...Form }"
+         :Form="{ ...View }"
          :payloadFunctions="loadmethods"
       />
    </div>
