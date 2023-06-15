@@ -1133,7 +1133,7 @@ const selectedTab = inject('selectedTab', ref(0));
 			//BUDGET ZONE
 
 			<template #item-actionsBene="item">
-						<div  class="flex gap-1 w-20">
+						<div class="flex gap-1 w-20">
 							<Button
 							v-if="item.status.slug === 'REC'"
 							variant="outline-secondary"
@@ -1145,6 +1145,19 @@ const selectedTab = inject('selectedTab', ref(0));
 						</Button>
 				<Modal :Form="props.Form" label="Ver" :item="item" />
 						</div>
+			</template>
+			<template #item-statusBene="item">
+				<span
+					:class="
+						item.status.slug == 'REC' || item.status.slug == 'NUL'
+							? ' bg-danger/10 text-danger'
+							: item.status.slug == 'COM' || item.status.slug == 'APR' || item.status.slug == 'ENP'
+							? 'bg-success/10 text-success'
+							: 'bg-primary/10 text-primary'
+					"
+					class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
+					{{ _getStatus(item.status) }}
+				</span>
 			</template>
 
 		</DataTable>

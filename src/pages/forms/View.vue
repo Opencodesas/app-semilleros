@@ -16,7 +16,7 @@ const optionsMunicipio = ref([
   { label: "alcala", value: "5" },
   { label: "florida", value: "6" },
   { label: "jamundi", value: "7" },
-])
+]) 
 
 const optionsDisciplinas= asyncComputed(async () => {
   return await getSelect(['disciplines']);
@@ -120,7 +120,7 @@ let currentFicha = {...data.value,
 const onDownload = async (evt: any) => {
   evt.preventDefault();
   alerts.custom('', 'Descargando archivo...', 'info');
-  //descargar
+  //descargar 
 }
 const ethniacityList = ref([]);
 
@@ -483,7 +483,7 @@ onMounted(async () => {
             :disabled="true"
           /></div>
         </div>
-        <div class="w-full flex justify-center">
+        <div class="w-full mt-10 flex justify-center">
             <Button variant="primary" class="btn btn-primary text-sm" @click="onDownload" :title="'Descargar formulario'">
                 <Lucide :class="'mr-2'" :icon="'Download'"/> Descargar
             </Button>
