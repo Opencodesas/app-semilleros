@@ -175,11 +175,11 @@ const routeName = computed(() => {
 // const show_date = ref(false)
 
 // Function for Edit
-const editAction = (id: string | number) => {
+const editAction = (id: string | number, mensaje?:string) => {
 	if (props.edit_gestor) {
-		router.push({ name: `${routeName.value}.edit`, params: { id: id } });
+		router.push({ name: `${routeName.value}.edit`, params: { id: id }, query: { msg: mensaje } });
 	} else {
-		router.push({ name: `${routeName.value}.edit`, params: { id: id } });
+		router.push({ name: `${routeName.value}.edit`, params: { id: id }, query: { msg: mensaje } });
 	}
 };
 const historyAction = (id: string | number) => {
@@ -1095,14 +1095,29 @@ const selectedTab = inject('selectedTab', ref(0));
 			</template>
 			<template #item-fichasViewer="item">
 				<template v-if="props.Form">
-					<template
-						v-if="(onboardingStore().get_user_role?.slug === 'metodologo' && item.status.slug === 'APR') ||
-						(onboardingStore().get_user_role?.slug === 'metodologo' && item.status.slug === 'REC')">
-						<Modal
+					<template v-if="(onboardingStore().get_user_role?.slug === 'metodologo')">
+						<Modal v-if="item.status.slug === 'ENR'"
 							:Form="props.Form"
+							:item="item" 
 							:id_review="item.id"
-							label="Actualizar"
+							label="Revisar"
 							:payloadFunctions="payloadFunctions" />
+					</template>
+					<template v-else-if="(onboardingStore().get_user_role?.slug === 'asistente_administrativo')">
+						<Modal v-if="item.status.slug === 'APR' || item.status.slug === 'REC'"
+							:Form="props.Form"
+							:item="item" 
+							:id_review="item.id"
+							:label="item.status.slug === 'APR'?'Información':'Actualizar'"
+							:icon="item.status.slug === 'APR'?'Eye':'Pencil'"
+							:payloadFunctions="payloadFunctions" />
+						<Modal v-else
+							:Form="props.Form"
+							:item="item" 
+							:id_review="item.id"
+							label="Revisar"
+							:payloadFunctions="payloadFunctions" />
+						
 					</template>
 					<template
 						v-else-if="(onboardingStore().get_user_role?.slug === 'coordinador_regional' && item.status.slug === 'APR') ||
@@ -1141,19 +1156,17 @@ const selectedTab = inject('selectedTab', ref(0));
 
 			//BUDGET ZONE
 			//BUDGET ZONE
-
 			<template #item-actionsBene="item">
-						<div class="flex gap-1 w-20">
-							<Button
-							v-if="item.status.slug === 'REC'"
-							variant="outline-secondary"
-							@click="editAction(item.id)">
-							<Lucide
-								icon="FileEdit"
-								class="" />
-							<span class="text-sm"> Editar </span>
-						</Button>
-				<Modal :Form="props.Form" label="Ver" :item="item" />
+				<div class="flex gap-1 w-20">
+					<Button v-if="item.status.slug === 'REC'"
+					@click="editAction(item.id, item.rejection_message)" class="mr-2"
+					:variant="item.rejection_message!=''?'outline-danger':''"
+					>
+						<Lucide icon="FileEdit" class="mr-2" />
+						<span class="text-sm"> {{item.rejection_message==''?'Editar':'Subsanar'}}  </span>
+					</Button>
+				<Modal v-else
+				:Form="props.Form" label="Ver" :item="item" />
 						</div>
 			</template>
 			<template #item-statusBene="item">
@@ -1165,8 +1178,8 @@ const selectedTab = inject('selectedTab', ref(0));
 							? 'bg-success/10 text-success'
 							: 'bg-primary/10 text-primary'
 					"
-					class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
-					{{ _getStatus(item.status) }}
+					class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap aling-center">
+					{{ _getStatus(item.status) }}					
 				</span>
 			</template>
 

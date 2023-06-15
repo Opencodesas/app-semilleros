@@ -39,7 +39,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
       //   title: "Listado de Ejemplo",
       // },*/
       {
-        icon: "Activity",
+        icon: "User",
         title: "Monitor",
         subMenu: [
           // {
