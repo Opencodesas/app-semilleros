@@ -1160,10 +1160,9 @@ const selectedTab = inject('selectedTab', ref(0));
 				<div class="flex gap-1 w-20">
 					<Button v-if="item.status.slug === 'REC'"
 					@click="editAction(item.id, item.rejection_message)" class="mr-2"
-					:variant="item.rejection_message!=''?'outline-danger':''"
 					>
 						<Lucide icon="FileEdit" class="mr-2" />
-						<span class="text-sm"> {{item.rejection_message==''?'Editar':'Subsanar'}}  </span>
+						<span class="text-sm"> Editar  </span>
 					</Button>
 				<Modal v-else
 				:Form="props.Form" label="Ver" :item="item" />

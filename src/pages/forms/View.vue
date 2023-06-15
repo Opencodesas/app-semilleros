@@ -650,7 +650,7 @@ onMounted(async () => {
             :disabled="true"
           /></div>
         </div>
-        <div class="w-full mt-10 flex justify-center" v-if="currentUser.rol!='monitor' && currentUser.rol!='metodologo'">
+        <div class="w-full mt-10 flex justify-center" v-if="currentUser.rol!='asistente_administrativo' && currentUser.rol!='metodologo'">
             <Button v-if="currentFicha.status.slug=='APR'" variant="primary" class="btn btn-primary text-sm" @click="onDownload" :title="'Descargar formulario'">
                 <Lucide :class="'mr-2'" :icon="'Download'"/> Descargar
             </Button>
