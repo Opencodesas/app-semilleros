@@ -88,11 +88,15 @@ const data = ref([])
 
 const items = ref<Item[]>([])
 
-//traer el listado de fichas de inscripción de monitores filtrado para este rol
-onMounted(async () => {
+const getData = async () => {
    const res = await beneficiary.getAllUR()
    data.value = res?.data
    items.value = await res?.data.items
+}
+
+//traer el listado de fichas de inscripción de monitores filtrado para este rol
+onMounted(async () => {
+   getData()
 })
 
 const getFichaData = () => data.value
@@ -108,6 +112,7 @@ const updateFichaData = (id: any, data: any) => {
 const loadmethods = {
    DATA: getFichaData,
    UPDATE: updateFichaData,
+   RELOAD: getData,
 }
 
 const search = ref("")
