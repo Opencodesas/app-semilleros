@@ -300,6 +300,18 @@ export const useSideMenuStore = defineStore("sideMenu", {
       },
       {
         icon: "User",
+        title: "Usuarios",
+        subMenu: [
+          {
+            icon: "User",
+            role: 'subdirector_tecnico',
+            pageName: "users.viewer",
+            title: "Lista",
+          },
+        ]
+      },
+      {
+        icon: "User",
         title: "Director Tecnico",
         subMenu: [
           {
