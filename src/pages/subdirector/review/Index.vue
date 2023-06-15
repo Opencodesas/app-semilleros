@@ -2,7 +2,7 @@
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/vue"
 import Coordinator from "./coordinator/Index.vue"
 import Methodologist from "./methodologist/Index.vue"
-import Cronograma from "@/pages/reviewfichas/Index.vue"
+import Cronograma from "@/pages/methodologist/reviews/chronograms/Index.vue"
 
 const route = useRoute()
 

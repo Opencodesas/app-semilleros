@@ -10,6 +10,7 @@ import ContractCancellation from './ContractCancellation.vue';
 import Modal from './Modal.vue';
 import { onboardingStore } from '@/stores/onboardingStore';
 import Swal from 'sweetalert2';
+import { Roles } from '@/utils/roles.enums';
 
 const storagePath = import.meta.env.VITE_BASE_URL;
 
@@ -636,7 +637,7 @@ const selectedTab = inject('selectedTab', ref(0));
 							</template>
 						</template>
 					</template>
-					<template v-else-if="isRole('subdirector_tecnico')">
+					<template v-else-if="isRole(Roles.SubdirectorTecnico)">
 						<template v-if="route.name !== 'review.index'">
 							<Button
 								variant="outline-secondary"
@@ -654,6 +655,15 @@ const selectedTab = inject('selectedTab', ref(0));
 						<template
 							v-else-if="
 								item.status.id == '2' && route.name === 'review.index'
+							">
+							<template v-if="props.Form!">
+								<Modal :Form="props.Form" :item="item" />
+							</template>
+						</template>
+
+                        <template
+							v-else-if="
+								item.status.id == '5' && route.name === 'review.index'
 							">
 							<template v-if="props.Form!">
 								<Modal :Form="props.Form" :item="item" />

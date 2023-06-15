@@ -131,8 +131,7 @@ const cruddata = computed(() => searchData(items.value, search.value))
       v-if="
          currentUser.rol === 'asistente_administrativo' ||
          currentUser.rol === 'metodologo' ||
-         currentUser.rol === 'super.root' ||
-         currentUser.rol === Roles.SubdirectorTecnico
+         currentUser.rol === 'super.root'
       "
       class="p-5 mt-5 intro-y box"
    >
