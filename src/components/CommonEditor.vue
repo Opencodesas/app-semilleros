@@ -9,7 +9,7 @@ interface Props {
     tooltip?: string
     disabled?: boolean
     name: string
-    validator: Validation
+    validator?: Validation
 }
 
 const props = withDefaults(defineProps<Props>(), {})
@@ -39,7 +39,9 @@ const value = computed({
             </FormLabel>
         </template>
         <div :class="[{ 'border-danger border': validator && validator[name].$error }, 'rounded-md w-full min-w-full overflow-y-auto']">
-            <TipTap v-model="value" :disabled="disabled" />
+            <TipTap v-model="value" v-if="!disabled" />
+            <div v-else :innerHTML="value">
+            </div>
         </div>
         <template v-if="tooltip">
             <span class="mt-1 text-xs sm:ml-auto sm:mt-0 text-slate-500">

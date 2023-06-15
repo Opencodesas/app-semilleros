@@ -5,7 +5,7 @@ import { useVuelidate } from "@vuelidate/core"
 import { required } from "@vuelidate/validators";
 import { loading } from '@/composables/loading'
 
-const store = onboardingStore()
+const store = onboardingStore() 
 const router = useRouter()
 
 const form = reactive({
@@ -25,14 +25,14 @@ const onSubmit = async () => {
 
   if (valid){
     const response = await store.login(form)
-    
+
     if (response?.status == 200){
       alerts.custom('Autenticación', 'Ha iniciado sesión con éxito', 'success')
-
+      //console.log('ingresó rol: '+ store.get_user_role?.slug);
       router.push('/dashboard')
     }
     else {
-      alerts.custom('Oops!', `${response?.data.message}`, 'warning')
+      alerts.custom('Oops!', `${response?.data.message===undefined?"No se recibió respuesta de ningun servidor":response?.data.message}`, 'warning')
     }
   }
   else {

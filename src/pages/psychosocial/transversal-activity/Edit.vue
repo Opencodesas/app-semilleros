@@ -5,11 +5,14 @@ import { required } from '@vuelidate/validators';
 
 const { multiple } = useFilepondEvents();
 const router = useRouter();
+const urlStorage = `${import.meta.env.VITE_BASE_URL}/storage/`;
+const dataLoaded = ref(false);
+
 
 const form = reactive({
 	id: '',
-	status: '',
-	reason: '',
+	status_id: '',
+	rejection_message: '',
 	municipality_id: '',
 	date_visit: '',
 	nro_assistants: 0,
@@ -20,12 +23,12 @@ const form = reactive({
 	team_socialization: '',
 	development_activity: '',
 	content_network: '',
-	files: [],
+	file: [],
 	create_by: '',
 });
 
 const form_rules = computed(() => ({
-	status: { required },
+	status_id: { required },
 	municipality_id: { required },
 	date_visit: { required },
 	nro_assistants: { required },
@@ -36,9 +39,11 @@ const form_rules = computed(() => ({
 	team_socialization: { required },
 	development_activity: { required },
 	content_network: { required },
-	files: { required },
+	file: {},
 	create_by: { required },
 }));
+
+const files: any = ref([]);
 
 const v$ = useVuelidate(form_rules, form);
 
@@ -46,44 +51,61 @@ const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
 }, null);
 
-// onMounted(async () => {
+onMounted(async () => {
+	await transversalActivityServices
+		.get(router.currentRoute.value.params.id as string)
+		.then((response: any) => {
+			form.id = response.data.items.id;
+			form.status_id = response.data.items.status_id;
+			form.rejection_message = response.data.items.reject_message;
+			form.municipality_id = response.data.items.municipality_id;
+			form.date_visit = response.data.items.date_visit;
+			form.nro_assistants = response.data.items.nro_assistants;
+			form.activity_name = response.data.items.activity_name;
+			form.objective_activity = response.data.items.objective_activity;
+			form.scene = response.data.items.scene;
+			form.meeting_planing = response.data.items.meeting_planing;
+			form.team_socialization = response.data.items.team_socialization;
+			form.development_activity = response.data.items.development_activity;
+			form.content_network = response.data.items.content_network;
+			files.value = response.data.items.files;
+			form.create_by = response.data.items.creator.name;
+			dataLoaded.value = true;
+		});
+});
 
-// 	await transversalActivityServices.get(router.currentRoute.value.params.id as string).then((response: any) => {
-// 		form.id = response.data.id;
-// 		form.status = response.data.status;
-// 		form.reason = response.data.reason;
-// 		form.municipality_id = response.data.municipality_id;
-// 		form.date_visit = response.data.date_visit;
-// 		form.nro_assistants = response.data.nro_assistants;
-// 		form.activity_name = response.data.activity_name;
-// 		form.objective_activity = response.data.objective_activity;
-// 		form.scene = response.data.scene;
-// 		form.meeting_planing = response.data.meeting_planing;
-// 		form.team_socialization = response.data.team_socialization;
-// 		form.development_activity = response.data.development_activity;
-// 		form.content_network = response.data.content_network;
-// 		form.files = response.data.files;
-// 		form.create_by = response.data.create_by;
-// 	});
-// })
+const formdataParser = (form: any) => {
+	const formData = new FormData();
+	Object.keys(form).forEach((key) => {
+		if (key == 'file') {
+			form[key].forEach((file: any) => {
+				formData.append('file[]', file);
+			});
+		} else {
+			formData.append(key, form[key]);
+		}
+	});
+	return formData;
+};
 
 const onSubmit = async () => {
-	console.log(form.files);
+	form.file = form.file.length == 0 ? files.value : form.file;
 	const valid = await v$.value.$validate();
+	form.file = form.file == files.value ? [] : form.file;
 	if (form.nro_assistants < 0) {
 		alerts.error('El numero de asistentes no puede ser negativo');
 		return;
 	}
 	if (valid) {
 		await transversalActivityServices
-			.create(formdataParser(form))
+			.update(form.id, formdataParser(form))
 			.then((response: any) => {
 				if (response.status == 200 || response.status == 201) {
 					alerts.create();
 					setLoading(true);
 					router
 						.push({
-							name: 'psychosocial.transversal-activity.index',
+							name: 'psychosocial.visits',
 						})
 						.finally(() => {
 							setLoading(false);
@@ -94,13 +116,26 @@ const onSubmit = async () => {
 		alerts.validation();
 	}
 };
+const disableElements = computed(() => {
+	return form.status_id == '4' ? false : true; //id: 4 => Rechazado => REC
+});
+
+const download = async () => {
+	return await transversalActivityServices.download(form.id).then((res) => {
+		if (res) {
+			if (res.status >= 200 && res.status <= 300) {
+				downloadFile(res);
+			}
+		}
+	});
+};
 </script>
 
 <template>
 	<div class="flex items-center mt-8 intro-y">
 		<div class="flex items-center space-x-4">
 			<CommonBackButton
-				:to="'psychosocial.transversal-activity.index'"
+				:to="'psychosocial.visits'"
 				title="Listado" />
 			<h2 class="mr-auto text-lg font-medium">
 				Registrar actividad transversal
@@ -108,7 +143,15 @@ const onSubmit = async () => {
 		</div>
 	</div>
 
-	<div class="p-5 mt-5 intro-y box">
+	<div
+		class="p-5 mt-5 intro-y box"
+		v-if="dataLoaded">
+		<div
+			class="mb-6"
+			v-if="form.status_id == '4'">
+			<p class="text-danger font-bold">Razon de rechazo</p>
+			<p>{{ form.rejection_message }}</p>
+		</div>
 		<div class="grid grid-cols-1 gap-3 justify-evenly">
 			<div class="grid md:grid-cols-3 gap-6">
 				<CommonSelect
@@ -118,13 +161,15 @@ const onSubmit = async () => {
 					class="cursor-pointer"
 					v-model="form.municipality_id"
 					:validator="v$"
-					:options="municipalities" />
+					:options="municipalities"
+					:disabled="disableElements" />
 				<CommonInput
 					type="date"
 					label="Fecha  *"
 					name="date_visit"
 					v-model="form.date_visit"
-					:validator="v$" />
+					:validator="v$"
+					:disabled="disableElements" />
 				<CommonInput
 					type="number"
 					placeholder="Ingrese el numero de asistentes"
@@ -132,7 +177,8 @@ const onSubmit = async () => {
 					label="Numero de asistentes  *"
 					name="nro_assistants"
 					v-model="form.nro_assistants"
-					:validator="v$" />
+					:validator="v$"
+					:disabled="disableElements" />
 			</div>
 			<div class="w-full mt-2 grid gap-6">
 				<CommonInput
@@ -142,7 +188,8 @@ const onSubmit = async () => {
 					label="Actividad transversal *"
 					name="activity_name"
 					v-model="form.activity_name"
-					:validator="v$" />
+					:validator="v$"
+					:disabled="disableElements" />
 				<CommonInput
 					class="col-span-1"
 					type="text"
@@ -150,14 +197,16 @@ const onSubmit = async () => {
 					label="Objetivo de la actividad *"
 					name="objective_activity"
 					v-model="form.objective_activity"
-					:validator="v$" />
+					:validator="v$"
+					:disabled="disableElements" />
 				<CommonInput
 					type="text"
 					placeholder="Ingrese el escenario deportivo"
 					label="Escenario deportivo *"
 					name="scene"
 					v-model="form.scene"
-					:validator="v$" />
+					:validator="v$"
+					:disabled="disableElements" />
 			</div>
 		</div>
 		<div class="mt-6 intro-y">
@@ -167,7 +216,8 @@ const onSubmit = async () => {
 				placeholder="Reuniones de Planeacion"
 				name="meeting_planing"
 				v-model="form.meeting_planing"
-				:validator="v$" />
+				:validator="v$"
+				:disabled="disableElements" />
 		</div>
 		<div class="mt-6 intro-y">
 			<CommonTextarea
@@ -176,7 +226,8 @@ const onSubmit = async () => {
 				placeholder="Socializacion con el equipo de trabajo"
 				name="team_socialization"
 				v-model="form.team_socialization"
-				:validator="v$" />
+				:validator="v$"
+				:disabled="disableElements" />
 		</div>
 		<div class="mt-6 intro-y">
 			<CommonTextarea
@@ -185,7 +236,8 @@ const onSubmit = async () => {
 				placeholder="Desarrollo de la actividad"
 				name="development_activity"
 				v-model="form.development_activity"
-				:validator="v$" />
+				:validator="v$"
+				:disabled="disableElements" />
 		</div>
 		<div class="mt-6 intro-y">
 			<CommonTextarea
@@ -194,7 +246,8 @@ const onSubmit = async () => {
 				placeholder="Contenido de redes"
 				name="content_network"
 				v-model="form.content_network"
-				:validator="v$" />
+				:validator="v$"
+				:disabled="disableElements" />
 		</div>
 		<div class="p-5 mt-6 intro-y">
 			<FormLabel
@@ -202,30 +255,42 @@ const onSubmit = async () => {
 				class="flex flex-col w-full sm:flex-row">
 				Evidencia *
 			</FormLabel>
-			<img
-				:alt="`Evidencia de la visita del subdirector`"
-				class="m-auto border rounded-lg"
-				src="/semilleros.png"
-				width="400" />
+			<div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3">
+				<img
+					v-for="file in files"
+					:alt="`Evidencia del psicosocial ${form.create_by}`"
+					class="m-auto border rounded-lg h-80 w-80 xl:h-96 xl:w-96"
+					:src="`${urlStorage}${file.path}`" />
+			</div>
 		</div>
-		<div class="p-5 intro-y">
+		<div
+			class="p-5 intro-y"
+			v-if="!disableElements">
 			<CommonDropzone
 				class="w-3/4 mx-auto"
-				name="files"
+				name="file"
 				:accept-multiple="true"
-				v-model="form.files"
-				@addfile="(error: any, value: filePondValue) => { form.files = multiple.addfile({ error, value }, form.files) as never[] }"
-				@removefile="(error: any, value: filePondValue) => { form.files = multiple.removefile({ error, value }, form.files) as never[] }"
+				v-model="form.file"
+				@addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
+				@removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }"
 				:validator="v$" />
 		</div>
 	</div>
 
-	<div class="mt-6 flex justify-end col-span-1 md:col-span-2">
+	<div class="mt-6 flex justify-center col-span-1 md:col-span-2">
 		<Button
+			v-if="!disableElements"
+			@click="onSubmit"
+			variant="primary">
+			Guardar
+		</Button>
+
+		<Button
+			v-else-if="form.status_id == '1'"
+			type="button"
 			variant="primary"
-			class="btn btn-primary"
-			@click="onSubmit">
-			Registrar
+			@click="download">
+			Descargar visita
 		</Button>
 	</div>
 </template>

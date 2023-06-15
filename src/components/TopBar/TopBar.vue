@@ -57,7 +57,7 @@ const hideSearchDropdown = () => {
             props.layout == 'simple-menu' && 'hidden',
           ]"
         >
-          Contratación Semilleros
+          Semilleros
         </span>
       </RouterLink>
       <!-- END: Logo -->
@@ -227,13 +227,17 @@ const hideSearchDropdown = () => {
       <!-- END: Notifications -->
       <!-- BEGIN: Account Menu -->
       <Menu>
-        <Menu.Button
-          class="block w-8 h-8 overflow-hidden rounded-full shadow-lg image-fit zoom-in intro-x"
-        >
-          <img
-            alt="Contratación Semilleros"
-            :src="fakerData[9].photos[0]"
-          />
+        <Menu.Button class="flex">
+          <Menu.Header class="font-normal z-10 text-right mr-2">
+            <div class="font-medium text-white">{{ storeOnboarding.get_user.name }}</div>
+            <div class="text-xs text-white/70 mt-0.5 dark:text-slate-500">
+              {{ storeOnboarding.get_user_role?.name }}
+            </div>
+          </Menu.Header>
+        
+        <div class="block w-8 h-8 overflow-hidden rounded-full shadow-lg image-fit zoom-in intro-x my-auto">
+          <img alt="Semilleros" :src="fakerData[9].photos[0]" />
+        </div>
         </Menu.Button>
         <Menu.Items
           class="w-56 mt-px relative bg-primary/80 before:block before:absolute before:bg-black before:inset-0 before:rounded-md before:z-[-1] text-white"
@@ -241,7 +245,7 @@ const hideSearchDropdown = () => {
           <Menu.Header class="font-normal">
             <div class="font-medium">{{ storeOnboarding.get_user.name }}</div>
             <div class="text-xs text-white/70 mt-0.5 dark:text-slate-500">
-              {{ storeOnboarding.get_user_role.name }}
+              {{ storeOnboarding?.get_user_role?.name }}
             </div>
           </Menu.Header>
           <Menu.Divider class="bg-white/[0.08]" />
@@ -253,11 +257,11 @@ const hideSearchDropdown = () => {
           </Menu.Item>
           <Menu.Item class="hover:bg-white/5">
             <Lucide icon="Lock" class="w-4 h-4 mr-2" /> Reset Password
+          </Menu.Item> -->
+          <Menu.Item @click="$router.push({name: 'profile'})" class="hover:bg-white/5">
+            <Lucide icon="User" class="w-4 h-4 mr-2" /> Perfil
           </Menu.Item>
-          <Menu.Item class="hover:bg-white/5">
-            <Lucide icon="HelpCircle" class="w-4 h-4 mr-2" /> Help
-          </Menu.Item>
-          <Menu.Divider class="bg-white/[0.08]" /> -->
+          <Menu.Divider class="bg-white/[0.08]" />
           <Menu.Item @click="$router.push('/'), storeOnboarding.logout()" class="hover:bg-white/5">
             <Lucide icon="ToggleRight" class="w-4 h-4 mr-2" /> Logout
           </Menu.Item>

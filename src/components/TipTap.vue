@@ -4,9 +4,11 @@ import StarterKit from '@tiptap/starter-kit'
 import { twMerge } from 'tailwind-merge';
 
 const props = withDefaults(defineProps<{
-    modelValue: string
+    modelValue: string,
+    disabled?: boolean
 }>(), {
-    modelValue: ''
+    modelValue: '',
+    disabled: false
 })
 
 const emit = defineEmits(['update:modelValue'])
@@ -49,5 +51,5 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <EditorContent :editor="editor" />
+    <EditorContent :editor="editor" :disabled="disabled" />
 </template>

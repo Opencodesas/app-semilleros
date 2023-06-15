@@ -21,10 +21,12 @@ interface Props {
     required? : boolean,
     modelValue?: string | number | Object | boolean
     label?: string
+    step?: string,
     placeholder?: string
     min?: string | number
     max?: string | number
     tooltip?: string
+    tooltip_left?: string
     disabled?: boolean
     name: string
     validator?: Validation
@@ -55,7 +57,6 @@ const value = computed({
         emit('update:modelValue', value)
     }
 })
-
 </script>
 
 <script lang="ts">
@@ -81,21 +82,28 @@ export default {
         <!-- Component -->
         <FormInput :id="name" :class="[{
             'border-danger': validator && validator[name].$error
-                || collection_validator && collection_validator.v$[collection_validator.name].$error
+                || collection_validator && (props.collection_validator?.v$[props.collection_validator?.name].$each.$response.$errors[props.collection_validator?.index][props.name].length && collection_validator.v$[collection_validator.name].$error)
         }, { 'block px-4 py-3 intro-x login__input min-w-full xl:min-w-[350px]': $route.name == 'login' }]"
             :max="max"
+            :step="step"
             :placeholder="placeholder"
             :onfocus="
                 (type == 'time' || type == 'date')
                     ? 'this.showPicker()' : '' "
             v-model="value"
             v-bind="props"
+            @change="$emit('change', $event)"
         />
         <!-- Validator -->
         <div class="flex flex-row justify-between">
             <template v-if="tooltip">
                 <span class="mt-1 text-xs sm:ml-auto sm:mt-0 text-slate-500">
                     {{ tooltip }}
+                </span>
+            </template>
+            <template v-else-if="tooltip_left">
+                <span class="mt-1 text-xs sm:mt-2 text-slate-500">
+                    {{ tooltip_left }}
                 </span>
             </template>
             <template v-else-if="validator">

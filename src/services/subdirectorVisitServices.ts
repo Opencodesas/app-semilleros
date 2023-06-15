@@ -7,7 +7,7 @@ export const subdirectorVisitServices = {
         try {
             setLoading(true)
 
-            const response = await api.get(`/${apiPath}/${module}?id=${id}`).finally(() => {
+            const response = await api.get(`/${apiPath}/${module}/${id}`).finally(() => {
                 setLoading(false)
             })
 
@@ -47,7 +47,7 @@ export const subdirectorVisitServices = {
         try {
             setLoading(true)
 
-            const response = await api.post(`/${apiPath}/${module}?_method=PUT&id=${id}`, payload).finally(() => {
+            const response = await api.post(`/${apiPath}/${module}/${id}`, payload).finally(() => {
                 setLoading(false)
             })
 
@@ -60,12 +60,25 @@ export const subdirectorVisitServices = {
         try {
             setLoading(true)
 
-            const response = await api.delete(`/${apiPath}/${module}?id=${id}`).finally(() => {
+            const response = await api.delete(`/${apiPath}/${module}/${id}`).finally(() => {
                 setLoading(false)
             })
 
             return response
         } catch (error: any) {
+            alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
+        }
+    },
+    download: async (id: string) => {
+        try{
+            setLoading(true)
+    
+            const response = await api.get(`/${apiPath}/GetReportSubdirectorCustom/${id}`).finally(() => { 
+    +                setLoading(false)
+            })
+    
+            return response
+        }catch (error: any) {
             alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
         }
     }

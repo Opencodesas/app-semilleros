@@ -1,16 +1,13 @@
 <script setup lang="ts">
 import CommonFile from '@/components/CommonFile.vue';
-import { filePondValue } from '@/composables/useFilepondEvents';
 import useVuelidate from '@vuelidate/core';
-import { required } from '@vuelidate/validators';
+import { required, requiredIf } from '@vuelidate/validators';
 import Swal from 'sweetalert2';
 
-const { multiple } = useFilepondEvents();
 const router = useRouter();
-const route = useRoute();
 
 const form = reactive({
-	status_id: '2',
+	status_id: '',
 	rejection_message: '',
 	date_visit: '',
 	hour_visit: '',
@@ -28,8 +25,8 @@ const form = reactive({
 });
 
 const form_rules = computed(() => ({
-	status_id: { required },
-	rejection_message: {},
+	status_id: {},
+	rejection_message: { require: requiredIf(() => form.status_id == '2') },
 	date_visit: { required },
 	hour_visit: { required },
 	municipality_id: { required },
@@ -45,11 +42,6 @@ const form_rules = computed(() => ({
 	file: { required },
 }));
 
-const disciplinesList = ref([]);
-const monitorList = [
-	{ label: 'Joselito', value: 1 },
-	{ label: 'Miguelito', value: 2 },
-];
 const event_supportList = [
 	{ label: 'Si', value: 1 },
 	{ label: 'No', value: 2 },
@@ -59,17 +51,42 @@ const evaluationList = [
 	{ label: 'Rechazada', value: 2 },
 ];
 const v$ = useVuelidate(form_rules, form);
-
+// Consulta todos los municipios
 const municipalities = asyncComputed(async () => {
-	return await getSelect(['municipalities']);
+	return await getSelect(['municipalities'], true);
+}, null);
+// Consulta todas las disciplinas
+const disciplines = asyncComputed(async () => {
+    return await getDisciplinesByMonitor(form.monitor_id)
+}, null)
+
+watch(() => form.municipality_id, () => {
+    form.monitor_id = '';  
+})
+
+watch(() => form.monitor_id, () => {
+    form.discipline_id = '';
+})
+// Consulta todos los monitores por municipio
+const monitor = asyncComputed(async () => {
+	return await getMonitorByMunicipality(form.municipality_id)
 }, null);
 
-const disciplines = asyncComputed(async () => {
-	return await getSelect(['disciplines']);
-}, null);
+const selectFile = (event: any) => {
+	form.file = event.target.files[0];
+};
+
+const formdataParser = (form: any) => {
+	const formData = new FormData();
+	Object.keys(form).forEach((key) => {
+		formData.append(key, form[key]);
+	});
+	return formData;
+};
 
 const onSubmit = async () => {
 	const valid = await v$.value.$validate();
+
 	if (valid) {
 		await subdirectorVisitServices
 			.create(formdataParser(form))
@@ -83,7 +100,7 @@ const onSubmit = async () => {
 						});
 					}
 				} else {
-					Swal.fire('', 'No se pudo crear', 'error');
+					Swal.fire('Error', 'Error al crear la visita', 'error');
 				}
 			});
 	} else {
@@ -139,7 +156,7 @@ const onSubmit = async () => {
 				class="cursor-pointer"
 				v-model="form.monitor_id"
 				:validator="v$"
-				:options="monitorList" />
+				:options="monitor" />
 			<CommonSelect
 				label="Disciplinas *"
 				placeholder="Seleccione"
@@ -204,12 +221,12 @@ const onSubmit = async () => {
 				v-model="form.file"
 				name="file"
 				class="w-11/12 sm:w-8/12 m-auto cursor-pointer"
-				@addfile="(error: any, value: filePondValue) => { form.file = multiple.addfile({ error, value }, form.file) as never[] }"
-				@removefile="(error: any, value: filePondValue) => { form.file = multiple.removefile({ error, value }, form.file) as never[] }" />
+				@change="selectFile"
+				@removefile="form.file = []" />
 		</div>
 	</div>
 
-	<div class="mt-6 flex justify-end col-span-1 md:col-span-2">
+	<div class="mt-6 flex justify-center	 col-span-1 md:col-span-2">
 		<Button
 			variant="primary"
 			class="btn btn-primary"

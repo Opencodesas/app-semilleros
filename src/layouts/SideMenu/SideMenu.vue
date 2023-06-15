@@ -26,6 +26,10 @@ watch(sideMenu, () => {
 onMounted(() => {
   setFormattedMenu(sideMenu.value);
 });
+const activeMobileMenu = ref(false);
+const setActiveMobileMenu = (active: boolean) => {
+  activeMobileMenu.value = active;
+};
 </script>
 
 <template>
@@ -65,6 +69,7 @@ onMounted(() => {
                 :menu="menu"
                 :formattedMenuState="[formattedMenu, setFormattedMenu]"
                 level="first"
+                :setActiveMobileMenu="setActiveMobileMenu"
               ></Menu>
               <!-- BEGIN: Second Child -->
               <Transition @enter="enter" @leave="leave">
@@ -91,12 +96,14 @@ onMounted(() => {
                       :menu="subMenu"
                       :formattedMenuState="[formattedMenu, setFormattedMenu]"
                       level="second"
+                      :setActiveMobileMenu="setActiveMobileMenu"
                     ></Menu>
                     <!-- BEGIN: Third Child -->
                     <Transition
                       @enter="enter"
                       @leave="leave"
                       v-if="subMenu.subMenu"
+                      
                     >
                       <ul
                         v-if="subMenu.subMenu && subMenu.activeDropdown"
@@ -126,6 +133,7 @@ onMounted(() => {
                               setFormattedMenu,
                             ]"
                             level="third"
+                            :setActiveMobileMenu="setActiveMobileMenu"
                           ></Menu>
                         </li>
                       </ul>

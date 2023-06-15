@@ -48,7 +48,7 @@ const on_submit = async () => {
                 class="grid gap-6 justify-evenly w-full">
                 <div class="w-full">
                     <BaseSelect label="ESTADO *" tooltip="Selecciona un Estado" placeholder="Seleccione" name="status"
-                        v-model="form.status" :options="statuses || null" :validator="v$" />
+                        v-model="form.status" :options="null" :validator="v$" />
                 </div>
                 <div class="w-full intro-x" v-if="form.status === 'REC'">
                     <CommonTextarea rows="3" label="MENSAJE DE RECHAZO " placeholder="Porque..." name="rejection_message"

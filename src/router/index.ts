@@ -1,5 +1,6 @@
 import { accessStore } from "@/stores/accessStore";
 import { onboardingStore } from "@/stores/onboardingStore";
+import roles from "@/types/roles";
 import { storeToRefs } from "pinia";
 import { createRouter, createWebHistory, NavigationGuardNext, RouteLocationNormalized, RouteMeta, RouteRecordRaw } from "vue-router";
 // import SimpleMenu from "../layouts/SimpleMenu/SimpleMenu.vue";
@@ -7,10 +8,9 @@ import { createRouter, createWebHistory, NavigationGuardNext, RouteLocationNorma
 
 const authGuard = async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
 	const { isAuth } = storeToRefs(onboardingStore())
-	const storeAccess = accessStore()
-	const canAccess = await storeAccess.canUserAccess(to.name as string)
-
-	if (!isAuth && to.name != 'login')
+	// const storeAccess = accessStore()
+	// const canAccess = await storeAccess.canUserAccess(to.name as string)
+	if (!isAuth.value && to.name != 'login')
 		next({ name: 'login' })
 	else {
 		next()
@@ -25,6 +25,15 @@ const authGuard = async (to: RouteLocationNormalized, from: RouteLocationNormali
 		// else {
 		// 	next()
 		// }
+	}
+}
+
+const roleGuard = async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
+	if (isRole(to.meta.role as roles) || isRole("super.root")) {
+		next()
+	}
+	else {
+		next({ name: '403' })
 	}
 }
 
@@ -75,14 +84,9 @@ const routes = [
 				component: () => import('@/pages/Page2.vue'),
 			},
 			{
-				path: "example-form",
-				name: "example.create",
-				component: () => import('@/pages/monitors/exampleForm.vue')
-			},
-			{
-				path: "example-list",
-				name: "example.index",
-				component: () => import('@/pages/monitors/exampleCrud.vue')
+				path: "profile",
+				name: "profile",
+				component: () => import('@/pages/profile/Index.vue'),
 			},
 			{
 				path: "assistants",
@@ -117,6 +121,23 @@ const routes = [
 				]
 			},
 			{
+				path: "reports",
+				name: "reports",
+				children: [
+					{
+						path: "",
+						name: "reports.index",
+						meta: { provider: 'reports' },
+						component: () => import('@/pages/reports/Index.vue')
+					},
+					{
+						path: "download",
+						name: "reports.download",
+						component: () => import('@/pages/reports/Download.vue')
+					}
+				]
+			},
+			{
 				path: "contractors",
 				name: "contractors",
 				children: [
@@ -133,9 +154,23 @@ const routes = [
 					},
 				]
 			},
+			/*{
+				path: "fichas",
+				name: "fichas",
+				children: [
+					{
+						path: "index",
+						name: "fichas.index",
+						//meta: {provider:"fichaInscrip"},						
+						//component: () => import('@/pages/methodologist/reviews/registrationForms/Index.vue')
+						component: () => import('@/pages/reviewfichas/Index.vue')
+					},
+				]
+			},*/
 			{
 				path: "chronograms",
 				name: "chronograms",
+				meta: { provider: 'chronograms' },
 				children: [
 					{
 						path: "",
@@ -346,7 +381,12 @@ const routes = [
 						path: ":id",
 						name: "beneficiaries.edit",
 						component: () => import('@/pages/forms/FormEdit.vue')
-					}
+					},
+					{
+						path: "information",
+						name: "beneficiaries.information",
+						component: () => import('@/pages/monitors/BeneList.vue')
+					},
 				]
 			},
 			{
@@ -371,53 +411,42 @@ const routes = [
 				]
 			},
 			{
-				path: "methodologist_visits",
-				name: "methodologist_visits",
+				path: "methodologist",
+				name: "methodologist",
+				meta: { role: 'metodologo' },
 				children: [
 					{
 						path: "",
 						name: "methodologist_visits.index",
-						component: () => import('@/pages/views/Index.vue')
+						component: () => import('@/pages/methodologist/Index.vue')
 					},
 					{
 						path: "create",
 						name: "methodologist_visits.create",
-						component: () => import('@/pages/views/Form.vue')
+						component: () => import('@/pages/methodologist/Form.vue')
 					},
 					{
-						path: "edit",
-						name: "methodologist_visits.update",
-						// component: () => import('@/pages/contractors/Form.vue')
+						path: "edit/:id",
+						name: "methodologist_visits.edit",
+						component: () => import('@/pages/methodologist/Edit.vue')
 					},
+					{
+						path: "reviews",
+						name: "methodologist_visits.reviews",
+						component: () => import('@/pages/reviewfichas/Review.vue')
+					},
+					// {
+					// 	path: "",
+					// 	name: "fichas_inscripcion.index",
+					// 	meta: {provider:"fichaInscrip"},						
+					// 	component: () => import('@/pages/methodologist/reviews/registrationForms/Index.vue')
+					// },
 				]
 			},
-
-
-			{
-				path: "subdirector_visit",
-				name: "subdirector_visit",
-				children: [
-					{
-						path: "index",
-						name: "subdirector_visit.index",
-						component: () => import('@/pages/visit/Index.vue')
-					},
-					{
-						path: "create",
-						name: "subdirector_visit.create",
-						component: () => import('@/pages/subdirector/visit/Form.vue')
-					},
-					{
-						path: "edit",
-						name: "subdirector_visit.update",
-						// component: () => import('@/pages/contractors/Form.vue')
-					},
-				]
-			},	
 			{
 				path: "psychosocial",
 				name: "psychosocial",
-				meta: { provider: 'psychosocial' },
+				meta: { provider: 'psychosocial', role: 'psicologo' },
 				children: [
 					{
 						path: "visit",
@@ -425,11 +454,11 @@ const routes = [
 						component: () => import('@/pages/psychosocial/visit/Form.vue'),
 					},
 					{
-						// {
-						// 	path: "update/:id",
-						// 	name: "psychosocial.update",
-						// 	component: () => import('@/pages/...'),
-						// },
+						path: "update/:id",
+						name: "psychosocial.update",
+						component: () => import('@/pages/psychosocial/visit/FormEdit.vue'),
+					},
+					{
 						path: "custom-visit",
 						name: "psychosocial.custom-visit",
 						component: () => import('@/pages/psychosocial/custom-visit/Form.vue'),
@@ -449,14 +478,14 @@ const routes = [
 						name: 'psychosocial.transversal-activity',
 						children: [
 							{
-								path: '',
-								name: 'psychosocial.transversal-activity.index',
-								component: () => import('@/pages/psychosocial/transversal-activity/Index.vue'),
-							},
-							{
-								path: "create",
+								path: "",
 								name: "psychosocial.transversal-activity.create",
 								component: () => import('@/pages/psychosocial/transversal-activity/Form.vue'),
+							},
+							{
+								path: "update/:id",
+								name: "psychosocial.transversal-activity.update",
+								component: () => import('@/pages/psychosocial/transversal-activity/Edit.vue'),
 							},
 						]
 					}
@@ -465,19 +494,19 @@ const routes = [
 			{
 				path: "psychosocial-coordinator",
 				name: "psychosocial-coordinator",
-				meta: { provider: 'psychosocial-coordinator' },
+				meta: { provider: 'psychosocial-coordinator', role: 'coordinador_psicosocial' },
 				children: [
 					{
 						path: "reviews",
 						name: "psychosocial-coordinator.reviews",
-						component: () => import('@/pages/psychosocial_coordinator/reviews/Index.vue'),
+						component: () => import('@/pages/psychosocial_coordinator/reviews/index.vue'),
 					},
 				],
 			},
 			{
 				path: "technical_director",
 				name: "technical_director",
-				meta: { provider: 'technical_director' },
+				meta: { provider: 'technical_director', role: 'director_tecnico' },
 				children: [
 					{
 						path: "visit",
@@ -504,7 +533,7 @@ const routes = [
 			{
 				path: "transversal_programs_director",
 				name: "transversal_programs_director",
-				meta: { provider: 'transversal_programs_director' },
+				meta: { provider: 'transversal_programs_director', role: 'director_programa' },
 				children: [
 					{
 						path: "reviews",
@@ -516,7 +545,7 @@ const routes = [
 			{
 				path: "subdirector",
 				name: "subdirector",
-				meta: { provider: 'subdirector' },
+				meta: { provider: 'subdirector', role: 'subdirector_tecnico'  },
 				children: [
 					{
 						path: "",
@@ -540,6 +569,7 @@ const routes = [
 					}
 				]
 			},
+			
 			{
 				path: "administrative_director",
 				name: "administrative_director",
@@ -552,34 +582,6 @@ const routes = [
 					},
 				],
 			},
-			{
-				path: "subdirector",
-				name: "subdirector",
-				meta: { provider: 'subdirector' },
-				children: [
-					{
-						path: "",
-						name: "subdirector_visit.index",
-						component: () => import('@/pages/subdirector/visit/Index.vue')
-					},
-					{
-						path: "visit",
-						name: "subdirector_visit.create",
-						component: () => import('@/pages/subdirector/visit/Form.vue')
-					},
-					{
-						path: "edit/:id",
-						name: "subdirector_visit.edit",
-						component: () => import('@/pages/subdirector/visit/Edit.vue')
-					},
-					{
-						path: 'review',
-						name: 'review.index',
-						component: () => import('@/pages/subdirector/review/Index.vue')
-					}
-				]
-			},
-
 			{
 				path: "users_of_zones",
 				name: "users_of_zones",
@@ -615,8 +617,91 @@ const routes = [
 						name: "users.edit",
 						component: () => import('@/pages/user/FormEdit.vue')
 					},
+					{
+						path: "information/:id",
+						name: "users.information",
+						component: () => import('@/pages/user/FormEdit.vue')
+					},
+					{
+						path: "history/:id",
+						name: "users.history",
+						component: () => import('@/pages/user/History.vue')
+					},
+					{
+						path: "userviewer",
+						name: "users.viewer",
+						component: () => import('@/pages/user/UsersViewer.vue')
+					},
+					{
+						path: "inactiveUser/:id",
+						name: "users.inactiveUser",
+					},
 				]
 			},
+			{
+				path: "coordinator",
+				name: "coordinator",
+				meta: { provider: 'coordinator', role: ['coordinador_regional', 'coordinador_maritimo'] },
+				children: [
+					{
+						path: "",
+						name: "coordinator.index",
+						component: () => import('@/pages/coordinators/Index.vue'),
+					},{
+						path: "create",
+						name: "coordinator.create",
+						component: () => import('@/pages/coordinators/Form.vue')
+					},
+					{
+						path: ":id",
+						name: "coordinator.edit",
+						component: () => import('@/pages/coordinators/FormEdit.vue')
+					},
+				],
+			},
+			{
+				path: "review",
+				name: "review",
+				children: [
+					{
+						path: "",
+						name: "review.bene_chro",
+						component: () => import('@/pages/reviewfichas/Review.vue')
+					},
+					{
+						path: "",
+						name: "review.bene",
+						component: () => import('@/pages/reviewfichas/Index.vue')
+					},
+
+				]
+			},
+			{
+				path: "budget",
+				name: "budget",
+				meta: { provider: 'budget' },
+				children: [
+					{
+						path: "budget",
+						name: "budget.index",
+						//meta: { provider: '' },
+						component: () => import('@/pages/activities/Story.vue')
+					},
+					{
+						path: "create",
+						name: "budget.store",
+						//props: (route)=>g,
+						component: () => import('@/pages/activities/Form.vue')
+					},
+					{
+						path: "active",
+						name: "budget.active",
+						//props: (route)=>g,
+						component: () => import('@/pages/activities/Index.vue')
+					},
+				]
+			},
+			
 		],
 	},
 	{
@@ -635,6 +720,14 @@ const router = createRouter({
 	scrollBehavior(to, from, savedPosition) {
 		return savedPosition || { left: 0, top: 0 };
 	},
+});
+
+router.beforeEach((to, from, next) => {
+	if (to.meta.role != undefined ) {
+		roleGuard(to, from, next);
+	} else {
+		next();
+	}
 });
 
 export default router;

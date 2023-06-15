@@ -2,7 +2,7 @@ let module = "methodologist_visits"
 
 
 export const methodologistVisitServices = {
-    get: async (id: string) => {
+    get: async (id: string | number) => {
         try {
             setLoading(true)
 
@@ -40,11 +40,11 @@ export const methodologistVisitServices = {
             alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
         }
     },
-    update: async (id: string, payload: FormData) => {
+    update: async (id: string | number, payload: FormData) => {
         try {
             setLoading(true)
 
-            const response = await api.post(`/${apiPath}/${module}/${id}?_method=PUT`, payload).finally(() => {
+            const response = await api.post(`/${apiPath}/${module}/${id}`, payload).finally(() => {
                 setLoading(false)
             })
 
@@ -63,6 +63,19 @@ export const methodologistVisitServices = {
 
             return response
         } catch (error: any) {
+            alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
+        }
+    },
+    download: async (id: string) => {
+        try{
+            setLoading(true)
+
+            const response = await api.get(`/${apiPath}/getReportMethodologisticsVisits/${id}`).finally(() => { 
++                setLoading(false)
+            })
+
+            return response
+        }catch (error: any) {
             alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
         }
     }

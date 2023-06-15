@@ -11,7 +11,7 @@ export interface selectOption {
 // [TypeScript] => Defining Props
 interface Props {
     required? : boolean,
-    modelValue?: string | number
+    modelValue?: string | number | Array<string | number>
     label?: string
     placeholder?: string
     multiple?: boolean
@@ -37,6 +37,7 @@ const props = withDefaults(defineProps<Props>(), {
     setSort: true,
     placeholder: 'Seleccione una opción...'
 })
+
 
 // const attrs = useAttrs();
 
@@ -115,7 +116,7 @@ const value = computed({
         <VueMultiSelect v-model="value" :placeholder="placeholder" :options="options_handle" :class="[
             {
                 'border-danger': validator && validator[name].$error
-                    || collection_validator && collection_validator.v$[collection_validator.name].$error
+                    || collection_validator && (props.collection_validator?.v$[props.collection_validator?.name].$each.$response.$errors[props.collection_validator?.index][name].length && collection_validator.v$[collection_validator.name].$error) 
             },
             'box-border border shadow-sm rounded-md'
         ]" :close-on-select="true" :clear-on-select="false" :custom-label="(opt: string) => label_handle(opt)"

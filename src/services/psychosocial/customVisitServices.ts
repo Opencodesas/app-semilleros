@@ -1,4 +1,4 @@
-let module = "psychosocial/custom-visits"
+let module = "custom_visits"
 
 export const customVisitServices = {
     get: async (id: string) => {
@@ -44,7 +44,7 @@ export const customVisitServices = {
         try {
             setLoading(true)
 
-            const response = await api.post(`/${apiPath}/${module}/${id}?_method=PUT`, payload).finally(() => {
+            const response = await api.post(`/${apiPath}/${module}/${id}`, payload).finally(() => {
                 setLoading(false)
             })
 
@@ -63,6 +63,19 @@ export const customVisitServices = {
 
             return response
         } catch (error: any) {
+            alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
+        }
+    },
+    download: async (id: string) => {
+        try{
+            setLoading(true)
+
+            const response = await api.get(`/${apiPath}/GetReportPsycologicCustomVisit/${id}`).finally(() => { 
++                setLoading(false)
+            })
+
+            return response
+        }catch (error: any) {
             alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
         }
     }

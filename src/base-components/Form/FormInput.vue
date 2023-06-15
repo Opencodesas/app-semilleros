@@ -70,8 +70,11 @@ watch(localValue, () => {
   <input
     :class="computedClass"
     :type="props.type"
+    :step="props.step"
     :required="props.required"
     v-bind="_.omit(attrs, 'class')"
     v-model="localValue"
+    
+    @change="$emit('change', localValue)" 
   />
 </template>

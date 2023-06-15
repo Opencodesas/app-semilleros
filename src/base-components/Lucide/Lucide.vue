@@ -5,7 +5,7 @@ import { SVGAttributes } from "vue";
 export type Icon = keyof typeof lucideIcons;
 
 interface LucideProps extends SVGAttributes {
-  icon: Icon;
+  icon?: Icon;
   title?: string;
 }
 
@@ -13,5 +13,5 @@ const props = defineProps<LucideProps>();
 </script>
 
 <template>
-  <component :is="lucideIcons[props.icon]" class="stroke-1.5" />
+  <component :is="lucideIcons[props.icon || 'Eye']" class="stroke-1.5" />
 </template>

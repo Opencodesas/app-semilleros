@@ -7,11 +7,18 @@ import Lucide from '@/base-components/Lucide'
 import ScheduleFieldset from '@/components/ScheduleFieldset.vue'
 import useVuelidate from '@vuelidate/core'
 import {chronogramServices} from "@/services/chronogramService";
+import { onboardingStore } from '@/stores/onboardingStore'
+import {organizeHolidays} from './utils/holidays'
 
+const storeOnboarding = onboardingStore()
+
+const dataLoaded = ref(false)
 const form = reactive({
+    status_id: 0,
     month: '',
     municipality: '',
     note: '',
+    note_holiday: '',
     groups: [
         {
             group_id: '',
@@ -27,13 +34,15 @@ const form = reactive({
                 end_time: '',
             }]
         }
-    ]
+    ],
+    rejection_message: ''
 })
 
 const form_rules = computed(() => ({
     month: { required },
     municipality: { required },
-    note: { required },
+    note: {},
+    note_holiday: {},
     groups: {
         $each: helpers.forEach({
             group_id: { nestedRequired, unique: unique(form.groups, 'group_id') },
@@ -46,21 +55,6 @@ const form_rules = computed(() => ({
     }
 }))
 
-const groupBone = {
-    group_id: '',
-    sports_modality: '',
-    main_sports_stage_name: '',
-    main_sports_stage_address: '',
-    alt_sports_stage_name: '',
-    alt_sports_stage_address: '',
-    schedules: [{
-        idx: new Date().getTime(),
-        day: '',
-        start_time: '',
-        end_time: '',
-    }]
-}
-
 const scheduleBone = {
     idx: 0,
     day: '',
@@ -68,10 +62,22 @@ const scheduleBone = {
     end_time: '',
 }
 
+const groupBone = {
+    group_id: '',
+    sports_modality: '',
+    main_sports_stage_name: '',
+    main_sports_stage_address: '',
+    alt_sports_stage_name: '',
+    alt_sports_stage_address: '',
+    schedules: [ {...scheduleBone} ]
+}
+
 const v$ = useVuelidate(form_rules, form)
 
 const router = useRouter()
-const route  = useRoute()
+const route = useRoute()
+
+
 
 const months = computedAsync(async () => {
     const data = await getSelect(['months'])
@@ -82,11 +88,40 @@ const months = computedAsync(async () => {
 }, null)
 
 const municipalities = computedAsync(async () => {
-    return await getCitiesByDepartment('30')
+    return await getSelect(['municipalities'])
 }, null)
 
-const groups = computedAsync(async () => {
-    return await getSelect(['groups'])
+const groups = ref<any>([])
+
+const groupsLists = ref<any>([])
+
+watch(form, (newVal, oldVal) => {
+    groupsFilter()
+    checkChronogram()
+})
+
+const groupsFilter = () => {
+    
+    let lists = []
+
+    for (let i = 0; i < form.groups.length; i++) {
+        if(form.groups.length == 1) {
+            lists.push(groups.value)
+            break
+        }
+        let list = groups.value
+        for (let j = 0; j < form.groups.length; j++) {
+            if (j == i) continue
+            let groupSelected = form.groups[j].group_id
+            list = list.filter(({ value } : { value: string }) => value != groupSelected)
+        }
+        lists.push(list)
+    }
+    groupsLists.value = lists
+}
+
+const sports = computedAsync(async () => {
+    return await getDisciplinesByMonitor(onboardingStore().get_user.id as number)
 }, null)
 
 const onSubmit = async () => {
@@ -119,16 +154,21 @@ const fetch = async () => {
     await chronogramServices.get(route.params.id as string)
     .then((response) => {
         if (response?.status == 200 || response?.status == 201) {
+            console.log(response.data.items)
+            form.status_id = response.data.items.status_id;
             form.month = response.data.items.month;
             form.municipality = response.data.items.municipality;
             form.note = response.data.items.note;
+            form.note_holiday = response.data.items.note_holiday
             form.groups = response.data.items.groups;
+            form.rejection_message = response.data.items.rejection_message;
             // form.gender = response.data.items.gender;
             // form.phone = response.data.items.phone;
             // form.document_type = response.data.items.document_type;
             // form.document_number = response.data.items.document_number;
             // form.roles = response.data.items.roles[0];
-            alerts.custom('', response?.data.message, 'info');
+            // alerts.custom('', response?.data.message, 'info');
+            dataLoaded.value = true
         } else {
             alerts.custom("", "No se pudieron obtener los datos", "error");
         }
@@ -137,6 +177,8 @@ const fetch = async () => {
 }
 
 onBeforeMount(async () => {
+    groups.value = await getSelect(['groups'])
+    groupsLists.value = [groups.value]
     await fetch();
 })
 
@@ -145,13 +187,15 @@ const checkChronogram = () => {
     let hayCruce = false; 
 
     for( let i = 0; i < form.groups.length; i++) {
+
         const schedules = form.groups[i].schedules;
 
-        for( let j = 0; j <= schedules.length; j++ ) {
+        for( let j = 0; j < schedules.length; j++ ) {
+
             const horario = schedules[j];
             if ( !horario ) continue
 
-            hayCruce = searchItem( schedules, horario );
+            hayCruce = searchItem( i+1, horario );
 
             if(hayCruce) break;
         }
@@ -162,14 +206,16 @@ const checkChronogram = () => {
     return hayCruce
 }
 
-const searchItem = ( schedules: any, horario: any ) => {
-    let hayCruce = false; 
+const searchItem = ( grupo: number, horario: any ) => {
+    let hayCruce = false;
+    let grupoCruce;
 
     for( let i = 0; i < form.groups.length; i++) {
-        const filterSameDay = schedules.filter( (item: any) => item.idx !== horario.idx && item.day === horario.day);
+        const filterSameDay = form.groups[i].schedules.filter((item: any) => item.idx !== horario.idx && item.day === horario.day && item.start_time && item.end_time);
         
-        filterSameDay.forEach( (item: any) => {
-            if( 
+        filterSameDay.forEach( (item: any, idx: number) => {
+            if( idx === 4 || !horario.start_time || !horario.end_time) return
+            else if( 
                 (item.start_time <= horario.start_time && item.end_time <= horario.end_time && item.end_time > horario.start_time) ||
                 (item.start_time >= horario.start_time && item.end_time >= horario.end_time && item.start_time < horario.end_time) ||
                 (item.start_time >= horario.start_time && item.end_time <= horario.end_time) ||
@@ -177,11 +223,17 @@ const searchItem = ( schedules: any, horario: any ) => {
                 (item.start_time == horario.start_time && item.end_time == horario.end_time)
             ) {
                 hayCruce = true;
+                if (i != grupo) grupoCruce = i;
                 return;
             }
         })
 
         if ( hayCruce ){
+            if (grupoCruce) {
+                alerts.custom('Validación', `Por favor verifique el horario cruzado del grupo ${form.groups[grupo].group_id} ${horario.day} de ${horario.start_time} a ${horario.end_time} porque se cruza con el grupo ${form.groups[grupoCruce].group_id}.`, 'error')
+            } else {
+                alerts.custom('Validación', `Por favor verifique el horario cruzado del grupo ${form.groups[grupo].group_id} ${horario.day} de ${horario.start_time} a ${horario.end_time} ya que se cruza con otro de los horarios de este grupo.`, 'error')
+            }
             break;
         }
     }
@@ -191,7 +243,7 @@ const searchItem = ( schedules: any, horario: any ) => {
 
 const onAddGrupo = () => {
     if ( form.groups.length < 4 ) {
-        form.groups.push({ ...groupBone })
+        form.groups.push({ ...groupBone, schedules: [{...scheduleBone, idx: new Date().getTime()}] })
     }
 }
 
@@ -199,12 +251,18 @@ const removeChild = (pos: number, group: any) => {
     group.schedules.splice( pos, 1 )
 }
 
-const sports = [
-    { label: "Futbol", value: "1" },
-    { label: "Futbol sala", value: "2" },
-    { label: "Baloncesto", value: "3" },
-    { label: "Taekwondo", value: "4" },
-]
+let holidaysMonth:string;
+
+watch(
+	() => form.month,
+	(newVal: any) => {
+        if (newVal) {
+            const res = organizeHolidays(newVal);
+            holidaysMonth = res;
+		}
+	}
+);
+
 </script>
 
 <template>
@@ -212,7 +270,13 @@ const sports = [
         <h2 class="mr-auto text-lg font-medium">Creación de Cronograma</h2>
     </div>
 
-    <div class="p-5 mt-5 intro-y box">
+    <div class="p-5 mt-5 intro-y box" v-if="dataLoaded">
+        <div
+			class="mb-6"
+			v-if="form.status_id == 4">
+			<p class="text-danger font-bold">Razon de rechazo</p>
+			<p>{{ form.rejection_message }}</p>
+		</div>
         <form @submit.prevent="onSubmit" class="space-y-8 divide-y divide-slate-200">
             <div class="space-y-8 divide-y divide-slate-200">
                 <div>
@@ -223,13 +287,23 @@ const sports = [
                     <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
                         <CommonSelect label="Mes del cronograma *" name="month" v-model="form.month" :validator="v$"
                             :options="months" :allowEmpty="false"
+                            :disabled="form.status_id !== 4"
                         />
                         <CommonSelect label="Municipio *" name="municipality" v-model="form.municipality"
-                            :validator="v$" :options="municipalities" :allowEmpty="false"
+                            :validator="v$" :options="municipalities"
+                            :disabled="form.status_id !== 4"
                         />
                         <div class="col-span-1 md:col-span-2">
-                            <CommonEditor label="observaciones" name="note" v-model="form.note" :validator="v$" />
+                            <CommonEditor label="observaciones" name="note" v-model="form.note" :validator="v$" 
+                                :disabled="form.status_id !== 4"
+                            />
                         </div>
+                        <div v-if="holidaysMonth" class="col-span-1 md:col-span-2">
+							<CommonEditor label="Observaciones Dias Festivos" name="note_holiday" v-model="form.note_holiday"
+								:validator="v$" 
+                                :disabled="form.status_id !== 4"/>
+							<p class="mt-2">{{ form.month && holidaysMonth }}</p>
+						</div>
                     </div>
                 </div>
 
@@ -244,32 +318,45 @@ const sports = [
                                 <li class="box border border-slate-200 px-4 py-4 sm:p-4 mb-3">
                                     <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
                                         <CommonSelect label="Grupo *" name="group_id" v-model="group.group_id" :allowEmpty="false"
-                                            :collection_validator="{ index, name: 'groups', v$ }" :options="groups" />
+                                            :collection_validator="{ index, name: 'groups', v$ }" :options="groupsLists[index]" 
+                                            :disabled="form.status_id !== 4"
+                                        />
 
                                         <CommonSelect label="Modalidad deportiva *" name="sports_modality" :allowEmpty="false"
                                             v-model="group.sports_modality"
                                             :collection_validator="{ index, name: 'groups', v$ }"
-                                            :options="sports.filter(({ value }) => value == group.group_id)" />
+                                            :options="sports"
+                                            :disabled="form.status_id !== 4"
+                                        />
 
                                         <CommonInput type="text" placeholder="Ingrese"
                                             label="Escenario deportivo principal - Nombre *"
                                             name="main_sports_stage_name" v-model="group.main_sports_stage_name"
-                                            :collection_validator="{ index, name: 'groups', v$ }" />
+                                            :collection_validator="{ index, name: 'groups', v$ }"
+                                            :disabled="form.status_id !== 4"
+                                        
+                                        />
 
                                         <CommonInput type="text" placeholder="Ingrese"
                                             label="Escenario deportivo principal - Dirección *"
                                             name="main_sports_stage_address" v-model="group.main_sports_stage_address"
-                                            :collection_validator="{ index, name: 'groups', v$ }" />
+                                            :collection_validator="{ index, name: 'groups', v$ }" 
+                                            :disabled="form.status_id !== 4"
+                                        />
 
                                         <CommonInput type="text" placeholder="Ingrese"
                                             label="Escenario deportivo alternativo - Nombre *"
                                             name="alt_sports_stage_name" v-model="group.alt_sports_stage_name"
-                                            :collection_validator="{ index, name: 'groups', v$ }" />
+                                            :collection_validator="{ index, name: 'groups', v$ }" 
+                                            :disabled="form.status_id !== 4"
+                                        />
 
                                         <CommonInput type="text" placeholder="Ingrese"
                                             label="Escenario deportivo alternativo - Dirección *"
                                             name="alt_sports_stage_address" v-model="group.alt_sports_stage_address"
-                                            :collection_validator="{ index, name: 'groups', v$ }" />
+                                            :collection_validator="{ index, name: 'groups', v$ }" 
+                                            :disabled="form.status_id !== 4"
+                                        />
 
                                         <div class="col-span-1 sm:col-span-2">
                                             <Disclosure as="div" v-slot="{ open }">
@@ -291,7 +378,8 @@ const sports = [
                                                         <ul role="list" class="divide-y divide-slate-200">
                                                             <template v-for="(schedule, schIndex) in group.schedules"
                                                                 :key="schIndex">
-                                                                <ScheduleFieldset 
+                                                                <ScheduleFieldset
+                                                                    :status_id ="form.status_id"
                                                                     v-model:idx="schedule.idx"
                                                                     v-model:day="schedule.day"
                                                                     v-model:start_time="schedule.start_time"
@@ -303,7 +391,9 @@ const sports = [
                                                             <li class="py-4 space-x-4">
                                                                 <Button
                                                                     @click="group.schedules.push({ ...scheduleBone, idx: new Date().getTime() })"
-                                                                    type="button" variant="outline-primary">
+                                                                    type="button" variant="outline-primary"
+                                                                    v-if="form.status_id === 4 && index < 4"
+                                                                >
                                                                     <Lucide icon="ListPlus" class="mr-2" />
                                                                     Agregar horario
                                                                 </Button>
@@ -316,7 +406,9 @@ const sports = [
                                         <div v-if="index >= 1" class="col-span-1 sm:col-span-2">
                                             <Button :disabled="form.groups.length <= 1"
                                                 @click="form.groups.splice(index, 1)" type="button"
-                                                variant="outline-danger" size="sm">
+                                                variant="outline-danger" size="sm"
+                                                v-if="form.status_id === 4"
+                                            >
                                                 <Lucide icon="ListMinus" class="mr-2" />
                                                 Eliminar grupo
                                             </Button>
@@ -330,6 +422,7 @@ const sports = [
                                 variant="outline-primary"
                                 size="sm"
                                 :disabled="form.groups.length === 4"
+                                v-if="form.status_id === 4"
                             >
                                 <Lucide icon="Plus" class="mr-2" />
                                 Agregar grupo
@@ -344,7 +437,9 @@ const sports = [
                         variant="outline-secondary">
                         Cancelar
                     </Button>
-                    <Button type="submit" variant="primary">
+                    <Button type="submit" variant="primary"
+                        v-if="form.status_id === 4"
+                    >
                         Guardar
                     </Button>
                 </div>

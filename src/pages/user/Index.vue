@@ -17,27 +17,33 @@ const create = () => {
     })
 }
 
-
-
-
-
-
 onBeforeMount(async () => {
     await userServices.getAll().then((response) => {
-        items.value = response?.data.items
-
+        items.value = 
+        [...response?.data.items].map(objeto => ({
+        ...objeto,
+        profile: JSON.parse(JSON.stringify({...objeto.profile})), //copia profuda de copia profunda del objeto
+        role:objeto.roles[0],
+        }));
+        //console.log(response?.data.items)
+        //console.log(items.value)
     })
 })
 
 const headers: Header[] = [
-    { text: 'ID', value: 'id' },
-    { text: 'NOMBRE USUARIO', value: 'name', sortable: true },
+    { text: 'No.', value: 'id' },
     { text: 'CORREO', value: 'email', sortable: true },
-    // { text: "ROLES", value: "roles" },
-    { text: 'ACCIONES', value: 'actions' },
+    { text: 'NOMBRE', value: 'name', sortable: true },
+    { text: 'APELLIDO', value: 'lastname', sortable: true },
+    { text: 'DOCUMENTO', value: 'document_number', sortable: true },
+    { text: "ROLES", value: "role.name", sortable: true },
+    { text: 'ACCIONES', value: 'actionsUsers' },
 ]
 
+const search = ref('')
 const items = ref<Item[]>([])
+
+const data = computed(() => searchData(items.value, search.value))
 
 </script>
 
@@ -52,7 +58,12 @@ const items = ref<Item[]>([])
     </div>
     <!-- BEGIN: Page Layout -->
     <div class="p-5 mt-5 intro-y box">
-        <Crud :headers="headers" :items="items" />
+        	<CommonInput
+			type="search"
+			name="search"
+			v-model="search"
+			placeholder="Buscar" />
+        <Crud :headers="headers" :items="data" />
         <!-- <Button @click="ingreso()">Ingresar</Button> -->
     </div>
     <!-- END: Page Layout -->

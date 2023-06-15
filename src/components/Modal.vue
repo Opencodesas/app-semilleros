@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Lucide from '@/base-components/Lucide';
 import { required } from '@/utils/validators';
 import {
 	Dialog,
@@ -8,6 +9,9 @@ import {
 } from '@headlessui/vue';
 import { useVuelidate } from '@vuelidate/core';
 import { computed, reactive, ref } from 'vue';
+import * as lucideIcons from "lucide-vue-next";
+
+export type Icon = keyof typeof lucideIcons;
 
 const isOpen = ref(false);
 
@@ -19,8 +23,12 @@ function openModal() {
 }
 
 const props = defineProps<{
-	Form: Object;
-	id_review: number;
+	Form: Object | undefined;
+	id_review?: number;
+	item?: any;
+	payloadFunctions?: Object;
+	label?: string;
+	icon?: Icon;
 }>();
 
 const form = reactive({
@@ -34,7 +42,6 @@ const formRules = computed(() => ({
 	note: form.status == '4' ? { required } : {},
 	identifier_number: form.status != '4' ? { required } : {},
 }));
-
 </script>
 
 <template>
@@ -44,9 +51,9 @@ const formRules = computed(() => ({
 			outline-secondary
 			@click="openModal()">
 			<Lucide
-				icon="Eye"
+				:icon="props.icon ? props.icon : 'Eye'"
 				class="mr-2" />
-			<span class="text-sm">Revisar</span>
+			<span class="text-sm">{{ props.label?props.label:'Revisar' }}</span>
 		</Button>
 	</div>
 	<!-- END: Modal Toggle -->
@@ -84,9 +91,10 @@ const formRules = computed(() => ({
 						leave-from="opacity-100 scale-100"
 						leave-to="opacity-0 scale-95">
 						<DialogPanel
-							class="transform overflow-hidden rounded-md bg-white p-6 text-left align-middle shadow-xl transition-all">
+							class="transform overflow-hidden rounded-md bg-white p-6 pt-2 text-left align-middle shadow-xl transition-all"
+							scrollClass="dialogPanel">
 							<!-- <Form /> -->
-							<props.Form :closeModal="closeModal" :id_review="id_review" />
+							<props.Form v-if="props.Form" :closeModal="closeModal" :id_review="props.id_review" :item="props.item" :payloadFunctions="payloadFunctions"/>
 						</DialogPanel>
 					</TransitionChild>
 				</div>

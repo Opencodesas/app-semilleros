@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import Lucide from '@/base-components/Lucide';
+import { isRole } from '@/composables/isRole';
 import ContractorDocumentsType from '@/types/contractorDocumentsTypes';
+import FormSwitch from '@/base-components/Form/FormSwitch';
 import dayjs from 'dayjs';
 import type { Header, Item } from 'vue3-easy-data-table';
 import CommonButtonLink from './CommonButtonLink.vue';
 import ContractCancellation from './ContractCancellation.vue';
 import Modal from './Modal.vue';
+import { onboardingStore } from '@/stores/onboardingStore';
+import Swal from 'sweetalert2';
 
 const storagePath = import.meta.env.VITE_BASE_URL;
 
@@ -32,17 +36,18 @@ const props = withDefaults(
 		edit_gestor?: boolean;
 		headers: Header[];
 		items: Item[];
-		item_see_fnc?: Function | boolean;
+		item_see_fnc?: any;
 		item_see_fullview?: boolean;
-		label: string;
+		label?: string;
 		Form?: Object;
 		management_permissions?: boolean;
-		onDeleteFnc: Function;
+		onDeleteFnc?: Function;
 		show_exports?: boolean;
+		payloadFunctions?: Object | undefined;
 	}>(),
 	{
 		edit_gestor: false,
-		item_see_fnc: () => false,
+		item_see_fnc: ( id: any ) => {},
 		item_see_fullview: false,
 		label: '',
 		management_permissions: false,
@@ -50,6 +55,7 @@ const props = withDefaults(
 		show_exports: false,
 	}
 );
+
 // Spliting route.name >>> example >>> pecs.index = pecs
 const routeName = computed(() => {
 	return String(route.name).split('.')[0];
@@ -175,6 +181,21 @@ const editAction = (id: string | number) => {
 		router.push({ name: `${routeName.value}.edit`, params: { id: id } });
 	}
 };
+const historyAction = (id: string | number) => {
+		router.push({ name: `${routeName.value}.history`, params: { id: id } });
+};
+const informationAction = (id: string | number) => {
+		router.push({ name: `${routeName.value}.information`, params: { id: id } });
+};
+const toggleUserStatus  = async (id: number, status: number) => {
+		await userServices
+			.toggleUserStatus(id, status)
+			.then((response) => {
+				if (response) {
+					Swal.fire('', response.data.message, 'info');
+				}
+			});
+};
 
 const provider = computed(() => route.meta.provider);
 
@@ -241,14 +262,16 @@ const contractorHandler = (name: string, id: string | number) => ({
 //     }
 // }
 
-// const seeAction = (id: string | number) => {
-//     if (props.edit_gestor) {
-//         router.push({ name: `${routeName.value}.editManagers`, params: { id: id } })
-//     }
-//     else {
-//         router.push({ name: `${routeName.value}.edit`, params: { id: id } })
-//     }
-// }
+const seeAction = (id: string | number) => {
+	if (props.edit_gestor) {
+		router.push({
+			name: `${routeName.value}.editManagers`,
+			params: { id: id },
+		});
+	} else {
+		router.push({ name: `${routeName.value}.edit`, params: { id: id } });
+	}
+};
 
 // const changePasswordAction = (id: string | number) => {
 //     router.push({ name: `${routeName.value}.changePassword`, params: { id: id } })
@@ -318,6 +341,14 @@ const documentsCount = (id: number) => {
 
 const _getStatus = (status: any) => getStatus(status);
 
+const getStage = (user: any) => {
+	if (!user || isRole('metodologo', user.user)) {
+		return 'METODOLOGO';
+	} else if (isRole('coordinador_regional', user.user)) {
+		return 'COORDINADOR';
+	}
+};
+
 /*
 |--------------------------------------------------------------------------
 | Headers example
@@ -377,84 +408,91 @@ const _getStatus = (status: any) => getStatus(status);
 */
 
 //Selected tab
-const selectedTab = inject('selectedTab', ref(0))
+const selectedTab = inject('selectedTab', ref(0));
 </script>
 
 <template>
 	<div class="intro-y flex flex-col gap-2">
+		<h2 v-if="props.label" class="mr-auto text-lg font-medium">{{ props.label }}</h2>
 		<section class="flex flex-col gap-3 lg:grid lg:grid-cols-4 lg:items-center">
 			<!-- <div class="grid grid-cols-2 gap-3">
-				                                    <div class="w-full">
-				                                        <BaseSelect label="BUSCAR EN" tooltip="Seleccione en que campo quiere buscar"
-				                                            placeholder="Seleccione" name="search_field" v-model="filters.search_field"
-				                                            :options="searchOptions" :validator="v$" />
-				                                    </div>
-				                                    <div class="w-full">
-				                                        <BaseInput type="text" label="VALOR" tooltip="Ingrese el valor a buscar" placeholder="Valor"
-				                                            name="search_value" v-model="filters.search_value" :validator="v$" />
-				                                    </div>
-				                                </div> -->
+					                                    <div class="w-full">
+					                                        <BaseSelect label="BUSCAR EN" tooltip="Seleccione en que campo quiere buscar"
+					                                            placeholder="Seleccione" name="search_field" v-model="filters.search_field"
+					                                            :options="searchOptions" :validator="v$" />
+					                                    </div>
+					                                    <div class="w-full">
+					                                        <BaseInput type="text" label="VALOR" tooltip="Ingrese el valor a buscar" placeholder="Valor"
+					                                            name="search_value" v-model="filters.search_value" :validator="v$" />
+					                                    </div>
+					                                </div> -->
 			<!-- <div v-if="show_date" class="flex flex-col justify-start h-full">
-				                                    <label for="regular-form-2" class="form-label font-bold min-w-max mr-2">FECHA RANGO</label>
-				                                    <div class="grid grid-cols-2 gap-1.5 w-full intro-x">
-				                                        <BaseInput class="" type="date" tooltip="Desde" name="date_criteria_start"
-				                                            v-model="filters.date_criteria_start" :validator="v$" />
-				                                        <BaseInput class="" type="date" tooltip="Hasta" name="date_criteria_end"
-				                                            v-model="filters.date_criteria_end" :validator="v$" />
-				                                    </div>
-				                                </div>
-				                                <div v-if="show_status" class="flex items-start gap-6 h-full">
-				                                    <div class="w-full intro-x">
-				                                        <BaseSelect label="ESTADO" tooltip="" placeholder="Seleccione" name="status_criteria"
-				                                            v-model="filters.status_criteria" :options="status_options" :validator="v$"
-				                                            :allowEmpty="true" />
-				                                    </div>
-				                                </div>
-				                                <div v-if="show_user_status" class="flex items-start gap-6 h-full">
-				                                    <div class="w-full intro-x">
-				                                        <BaseSelect label="ESTADO" tooltip="" placeholder="Seleccione" name="user_status_criteria"
-				                                            v-model="filters.user_status_criteria" :options="[
-				                                                { label: 'ACTIVO', value: '1' },
-				                                                { label: 'INACTIVO', value: '0' }
-				                                            ]" :validator="v$" :allowEmpty="false" />
-				                                    </div>
-				                                </div> -->
+					                                    <label for="regular-form-2" class="form-label font-bold min-w-max mr-2">FECHA RANGO</label>
+					                                    <div class="grid grid-cols-2 gap-1.5 w-full intro-x">
+					                                        <BaseInput class="" type="date" tooltip="Desde" name="date_criteria_start"
+					                                            v-model="filters.date_criteria_start" :validator="v$" />
+					                                        <BaseInput class="" type="date" tooltip="Hasta" name="date_criteria_end"
+					                                            v-model="filters.date_criteria_end" :validator="v$" />
+					                                    </div>
+					                                </div>
+					                                <div v-if="show_status" class="flex items-start gap-6 h-full">
+					                                    <div class="w-full intro-x">
+					                                        <BaseSelect label="ESTADO" tooltip="" placeholder="Seleccione" name="status_criteria"
+					                                            v-model="filters.status_criteria" :options="status_options" :validator="v$"
+					                                            :allowEmpty="true" />
+					                                    </div>
+					                                </div>
+					                                <div v-if="show_user_status" class="flex items-start gap-6 h-full">
+					                                    <div class="w-full intro-x">
+					                                        <BaseSelect label="ESTADO" tooltip="" placeholder="Seleccione" name="user_status_criteria"
+					                                            v-model="filters.user_status_criteria" :options="[
+					                                                { label: 'ACTIVO', value: '1' },
+					                                                { label: 'INACTIVO', value: '0' }
+					                                            ]" :validator="v$" :allowEmpty="false" />
+					                                    </div>
+					                                </div> -->
 		</section>
 		<!-- :sort-by="sorts.by"
-				                :filter-options="filter_options"
-				                :search-field="filters.search_field"
-				                :search-value="filters.search_value"
-				                :sort-type="sorts.type" -->
-		<DataTable :headers="headers" :items="items" buttons-pagination :sort-by="sort.by" :sort-type="sort.type"
+					                :filter-options="filter_options"
+					                :search-field="filters.search_field"
+					                :search-value="filters.search_value"
+					                :sort-type="sorts.type" -->
+		<DataTable
+			:headers="headers"
+			:items="items"
+			buttons-pagination
+			:sort-by="sort.by"
+			:sort-type="sort.type"
+			:rows-per-page="20"
 			table-class-name="customize-table">
 			<!-- <template #header-status="{ text }">
-				                        <div class="flex gap-1 relative">
-				                            <p>{{ text }}</p>
-				                            <button @click="show_status = !show_status" :class="(show_status) ? 'opacity-100' : 'opacity-50'"
-				                                class="hover:opacity-100 text-primary transition">
-				                                <FilterIcon size="20" />
-				                            </button>
-				                        </div>
-				                    </template>
-				                    <template #header-user_status="{ text }">
-				                        <div class="flex gap-1 relative">
-				                            <p>{{ text }}</p>
-				                            <button @click="show_user_status = !show_user_status"
-				                                :class="(show_user_status) ? 'opacity-100' : 'opacity-50'"
-				                                class="hover:opacity-100 text-primary transition">
-				                                <FilterIcon size="20" />
-				                            </button>
-				                        </div>
-				                    </template>
-				                    <template #header-created_at="{ text }">
-				                        <div class="flex gap-1 relative">
-				                            <p>{{ text }}</p>
-				                            <button @click="show_date = !show_date" :class="(show_date) ? 'opacity-100' : 'opacity-50'"
-				                                class="hover:opacity-100 text-primary transition">
-				                                <FilterIcon size="20" />
-				                            </button>
-				                        </div>
-				                    </template> -->
+					                        <div class="flex gap-1 relative">
+					                            <p>{{ text }}</p>
+					                            <button @click="show_status = !show_status" :class="(show_status) ? 'opacity-100' : 'opacity-50'"
+					                                class="hover:opacity-100 text-primary transition">
+					                                <FilterIcon size="20" />
+					                            </button>
+					                        </div>
+					                    </template>
+					                    <template #header-user_status="{ text }">
+					                        <div class="flex gap-1 relative">
+					                            <p>{{ text }}</p>
+					                            <button @click="show_user_status = !show_user_status"
+					                                :class="(show_user_status) ? 'opacity-100' : 'opacity-50'"
+					                                class="hover:opacity-100 text-primary transition">
+					                                <FilterIcon size="20" />
+					                            </button>
+					                        </div>
+					                    </template>
+					                    <template #header-created_at="{ text }">
+					                        <div class="flex gap-1 relative">
+					                            <p>{{ text }}</p>
+					                            <button @click="show_date = !show_date" :class="(show_date) ? 'opacity-100' : 'opacity-50'"
+					                                class="hover:opacity-100 text-primary transition">
+					                                <FilterIcon size="20" />
+					                            </button>
+					                        </div>
+					                    </template> -->
 			<template #header-actions="{ text }">
 				<div class="flex justify-end">
 					{{ text }}
@@ -476,7 +514,8 @@ const selectedTab = inject('selectedTab', ref(0))
 			<template #item-contractor_fullname="item">
 				<p>
 					{{
-						`${item.contractor.name} ${item.contractor.lastname ? item.contractor.lastname : ''
+						`${item.contractor.name} ${
+							item.contractor.lastname ? item.contractor.lastname : ''
 						}`
 					}}
 				</p>
@@ -485,8 +524,8 @@ const selectedTab = inject('selectedTab', ref(0))
 				<p>
 					{{
 						created_at != null && created_at != ''
-						? dayjs(created_at).format('MM/DD/YYYY')
-						: ''
+							? dayjs(created_at).format('MM/DD/YYYY')
+							: ''
 					}}
 				</p>
 			</template>
@@ -497,93 +536,176 @@ const selectedTab = inject('selectedTab', ref(0))
 				{{ documentsCount(item.contractor.id) }}
 			</template>
 			<template #item-status="item">
-				<span :class="
-					item.status.slug == 'REC' || item.status.slug == 'NUL'
-						? ' bg-danger/10 text-danger'
-						: item.status.slug == 'COM' || item.status.slug == 'APR'
+				<span
+					:class="
+						item.status.slug == 'REC' || item.status.slug == 'NUL'
+							? ' bg-danger/10 text-danger'
+							: item.status.slug == 'COM' || item.status.slug == 'APR'
 							? 'bg-success/10 text-success'
 							: 'bg-primary/10 text-primary'
-				" class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
+					"
+					class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
 					{{ _getStatus(item.status) }}
 				</span>
+			</template>
+			<template #item-reviewed="item">
+				<span
+					class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
+					{{ getStage(item.reviewed) }}
+				</span>
+			</template>
+			<template #item-actionsUsers="item">
+				<Button variant="outline-secondary"	@click="editAction(item.id)">
+					<Lucide :icon="'FileEdit'" class="mr-2" />
+						<span class="text-sm">
+							{{ "Editar" }}									
+						</span>
+				</Button>
+			</template>
+			<template #item-actionsUsersViewer="item">
+				<div class="flex gap-2 justify-end">
+						<Button v-if="(onboardingStore().get_user_role?.slug == 'super.root') || (onboardingStore().get_user_role?.slug == 'director_administrator')"
+							variant="outline-secondary"
+							@click="informationAction(item.id)">
+							<Lucide
+								:icon="onboardingStore().get_user_role?.slug == 'director_administrator'? 'Edit':'Info'"
+								class="mr-2" />
+							<span
+								class="text-sm">
+								{{ onboardingStore().get_user_role?.slug == 'director_administrator'?"Editar":"Informacion" }}									
+							</span>
+						</Button>
+						<Button
+							variant="outline-secondary"
+							@click="historyAction(item.id)">
+							<Lucide
+								:icon="'Calendar'"
+								class="mr-2" />
+							<span
+								class="text-sm">
+								{{ "Historial" }}									
+							</span>
+						</Button>
+						<Button v-if="(onboardingStore().get_user_role?.slug == 'super.root') || (onboardingStore().get_user_role?.slug == 'director_administrator')"
+							variant="outline-secondary"
+							>
+							<Lucide
+								class="mr-2" />
+							<span
+								class="text-sm">
+								Estado
+								<FormSwitch.Input name="swich_plans" id="swich_plans" type="checkbox"
+									:checked="item.inactive ? false : true" @click="toggleUserStatus (item.id, item.inactive)" />	
+							</span>
+						</Button>
+				</div>
 			</template>
 			<template #item-actions="item">
 				<div class="flex gap-2 justify-end">
 					<template v-if="isProvider('assistants')">
 						<template v-if="hasDocumentsHeader && contractorDocuments != null">
 							<template v-if="contractorDocumentsCount(item.id) < 21">
-								<CommonButtonLink :to="{
-									name: 'assistants.contractorsUpload',
-									query: { contractor: item.id },
-								}" variant="outline-secondary">
-									<Lucide icon="FileUp" class="mr-2" />
+								<CommonButtonLink
+									:to="{
+										name: 'assistants.contractorsUpload',
+										query: { contractor: item.id },
+									}"
+									variant="outline-secondary">
+									<Lucide
+										icon="FileUp"
+										class="mr-2" />
 									<span class="text-sm"> Cargar </span>
 								</CommonButtonLink>
 							</template>
-							<template v-else-if="
-								contractorDocumentsCount(item.id) >= 18 &&
-								item.status.slug == 'REC'
-							">
-								<CommonButtonLink :to="{
-									name: 'assistants.contractorsControl',
-									query: { contractor: item.id },
-								}" variant="outline-secondary">
-									<Lucide icon="FileEdit" class="mr-2" />
+							<template
+								v-else-if="
+									contractorDocumentsCount(item.id) >= 18 &&
+									item.status.slug == 'REC'
+								">
+								<CommonButtonLink
+									:to="{
+										name: 'assistants.contractorsControl',
+										query: { contractor: item.id },
+									}"
+									variant="outline-secondary">
+									<Lucide
+										icon="FileEdit"
+										class="mr-2" />
 									<span class="text-sm"> Revisar </span>
 								</CommonButtonLink>
 							</template>
 						</template>
 					</template>
-					<template v-else-if="isProvider('subdirector')">
-						<template v-if="
-							item.status.slug === 'REC' ||
-							(item.status.slug === 'APR' && route.name !== 'review.index')
-						">
-							<Button v-if="item.status.slug === 'REC'" variant="outline-secondary"
+					<template v-else-if="isRole('subdirector_tecnico')">
+						<template v-if="route.name !== 'review.index'">
+							<Button
+								variant="outline-secondary"
 								@click="editAction(item.id)">
-								<Lucide icon="FileEdit" class="mr-2" />
-								<span class="text-sm"> Editar </span>
+								<Lucide
+									:icon="item.status.slug == 'REC' ? 'FileEdit' : 'Eye'"
+									class="mr-2" />
+								<span
+									class="text-sm">
+									{{ item.status.slug == 'REC' ? 'Editar' : 'Visualizar' }}									
+								</span>
 							</Button>
-							<!-- <Button
-												variant="outline-danger"
-												@click="onDeleteFnc(item.id)">
-												<Lucide
-													icon="Delete"
-													class="mr-2" />
-												<span class="text-sm"> Eliminar </span> 
-											</Button> -->
 						</template>
-						<template v-else-if="
-							item.status.slug === 'ENR' && route.name === 'review.index'
-						">
+
+						<template
+							v-else-if="
+								item.status.id == '2' && route.name === 'review.index'
+							">
 							<template v-if="props.Form!">
-								<Modal :Form="props.Form" :id_review="item.id" />
+								<Modal :Form="props.Form" :item="item" />
 							</template>
 						</template>
 					</template>
 					<template v-else-if="isProvider('psychosocial')">
 						<template v-if="true">
-							<Button variant="outline-secondary" @click="() => {
-								switch (selectedTab) {
-									case 1:
-										router.push({ name: 'psychosocial.update', params: { id: item.id } })
-										break;
-									case 2:
-										router.push({ name: 'psychosocial.custom-update', params: { id: item.id } })
-										break;
-									case 3:
-										router.push({ name: 'psychosocial.transversal-update', query: { id: item.id } })
-									//  default:
-									//     pruebas
-									//      break;
-								}
-							}">
-								<Lucide v-if="item.status.slug == 'REC'" icon="FileEdit" class="mr-2" />
-								<Lucide v-else icon="Eye" class="mr-2" />
-								<span v-if="item.status.slug == 'REC'" class="text-sm">
+							<Button
+								variant="outline-secondary"
+								@click="
+									() => {
+										switch (selectedTab) {
+											case 1:
+												router.push({
+													name: 'psychosocial.update',
+													params: { id: item.id },
+												});
+												break;
+											case 2:
+												router.push({
+													name: 'psychosocial.custom-update',
+													params: { id: item.id },
+												});
+												break;
+											case 3:
+												router.push({
+													name: 'psychosocial.transversal-activity.update',
+													params: { id: item.id },
+												});
+											//  default:
+											//     pruebas
+											//      break;
+										}
+									}
+								">
+								<Lucide
+									v-if="item.status.id == '4'"
+									icon="FileEdit"
+									class="mr-2" />
+								<Lucide
+									v-else
+									icon="Eye"
+									class="mr-2" />
+								<span
+									v-if="item.status.id == '4'"
+									class="text-sm">
 									Editar
 								</span>
-								<span v-else class="text-sm">
+								<span
+									v-else
+									class="text-sm">
 									Visualizar
 								</span>
 							</Button>
@@ -592,75 +714,224 @@ const selectedTab = inject('selectedTab', ref(0))
 					<template v-else-if="isProvider('psychosocial-coordinator')">
 						<template v-if="route.name == 'psychosocial-coordinator.reviews'">
 							<template v-if="props.Form!">
-								<Modal :Form="props.Form" :id_review="item.id" />
+								<Modal :Form="props.Form" :item="item" />
 							</template>
 						</template>
 					</template>
 					<template v-else-if="isProvider('technical_director')">
 						<template v-if="route.name == 'technical_director.visits'">
-							<Button variant="outline-secondary" @click="() => {
-								router.push({ name: 'technical_director.update', params: { id: item.id } })
-							}">
-
-								<Lucide v-if="item.status.slug == 'REC'" icon="FileEdit" class="mr-2" />
-								<Lucide v-else icon="Eye" class="mr-2" />
-								<span v-if="item.status.slug == 'REC'" class="text-sm">
+							<Button
+								variant="outline-secondary"
+								@click="
+									() => {
+										router.push({
+											name: 'technical_director.update',
+											params: { id: item.id },
+										});
+									}
+								">
+								<Lucide
+									v-if="item.status.slug == 'REC'"
+									icon="FileEdit"
+									class="mr-2" />
+								<Lucide
+									v-else
+									icon="Eye"
+									class="mr-2" />
+								<span
+									v-if="item.status.slug == 'REC'"
+									class="text-sm">
 									Editar
 								</span>
-								<span v-else class="text-sm">
+								<span
+									v-else
+									class="text-sm">
 									Visualizar
 								</span>
 							</Button>
 						</template>
 						<template v-if="route.name == 'technical_director.reviews'">
 							<template v-if="props.Form!">
-								<Modal :Form="props.Form" :id_review="item.id" />
+								<Modal
+									:Form="props.Form"
+									:item="item" />
 							</template>
 						</template>
 					</template>
 					<template v-else-if="isProvider('transversal_programs_director')">
-						<template v-if="route.name == 'transversal_programs_director.reviews'">
+						<template
+							v-if="route.name == 'transversal_programs_director.reviews'">
 							<template v-if="props.Form!">
-								<Modal :Form="props.Form" :id_review="item.id" />
+								<Modal
+									:Form="props.Form"
+									:item="item" />
 							</template>
 						</template>
 					</template>
 					<template v-else-if="isProvider('administrative_director')">
 						<template v-if="route.name == 'administrative_director.reviews'">
 							<template v-if="props.Form!">
-								<Modal :Form="props.Form" :id_review="item.id" />
+								<Modal
+									:Form="props.Form"
+									:item="item" />
 							</template>
 						</template>
 					</template>
+					<template v-else-if="isRole('metodologo')">
+						<template v-if="route.name == 'methodologist_visits.index'">
+							<Button
+								variant="outline-secondary"
+								@click="editAction(item.id)">
+								<Lucide
+									v-if="item.status.slug == 'REC'"
+									icon="FileEdit"
+									class="mr-2" />
+								<Lucide
+									v-else
+									icon="Eye"
+									class="mr-2" />
+								<span
+									v-if="item.status.slug == 'REC'"
+									class="text-sm">
+									Editar
+								</span>
+								<span
+									v-else
+									class="text-sm">
+									Visualizar
+								</span>
+							</Button>
+						</template>
+						<template v-if="route.name == 'review.bene_chro'">
+							<template v-if="props.Form!">
+								<Modal
+									:Form="props.Form"
+									:item="item" />
+							</template>
+						</template>
+					</template>
+					<template v-else-if="isRole('coordinador_regional')">
+						<template v-if="route.name == 'coordinator.index'">
+							<Button
+								variant="outline-secondary"
+								@click="editAction(item.id)">
+								<Lucide
+									v-if="item.status.slug == 'REC'"
+									icon="FileEdit"
+									class="mr-2" />
+								<Lucide
+									v-else
+									icon="Eye"
+									class="mr-2" />
+								<span
+									v-if="item.status.slug == 'REC'"
+									class="text-sm">
+									Editar
+								</span>
+								<span
+									v-else
+									class="text-sm">
+									Visualizar
+								</span>
+							</Button>
+						</template>
+						<template v-if="route.name == 'review.bene_chro'">
+							<template v-if="props.Form!">
+								<Modal
+									:Form="props.Form"
+									:item="item" />
+							</template>
+						</template>
+					</template>
+					<template v-else-if="isProvider('fichaInscrip')">
+						<Button
+							variant="outline-secondary"
+							@click="seeAction(item.id)">
+							<Lucide
+								icon="Search"
+								class="mr-2" />
+							<span class="text-sm"> Ver </span>
+						</Button>
+						<Button
+							v-if="item.status.slug === 'REC'"
+							variant="outline-secondary"
+							@click="editAction(item.id)">
+							<Lucide
+								icon="FileEdit"
+								class="mr-2" />
+							<span class="text-sm"> Editar </span>
+						</Button>
+					</template>
+					<template v-else-if="isProvider('chronograms')">
+						<Button
+							v-if="item.status.slug === 'REC'"
+							variant="outline-secondary"
+							@click="editAction(item.id)">
+							<Lucide
+							icon="FileEdit"
+							class="mr-2" />
+							<span class="text-sm"> Editar </span>
+						</Button>
+						<Button
+							v-else
+							variant="outline-secondary"
+							@click="seeAction(item.id)">
+							<Lucide
+								icon="Search"
+								class="mr-2" />
+							<span class="text-sm"> Ver </span>
+						</Button>
+					</template>
+					<template v-else-if="isRole('super.root')">
+						<!-- <Button
+							variant="outline-secondary"
+							@click="editAction(item.id)">
+							<Lucide
+								icon="FileEdit"
+								class="mr-2" />
+							<span class="text-sm"> Editar </span>
+						</Button> -->
+					</template>
 				</div>
 			</template>
+
 			<template #item-actionsDocuments="item">
 				<div class="flex gap-2 justify-end">
 					<template v-if="isProvider('legal')">
 						<template v-if="item.status.slug == 'ENR'">
 							<template v-if="item.contract.cap_date == null">
-								<CommonButtonLink :to="contractorHandler('legal.documentsManagement', item.id)"
+								<CommonButtonLink
+									:to="contractorHandler('legal.documentsManagement', item.id)"
 									variant="outline-secondary">
-									<Lucide icon="FileDiff" class="mr-2" />
+									<Lucide
+										icon="FileDiff"
+										class="mr-2" />
 									<span class="text-sm"> Revision </span>
 								</CommonButtonLink>
 							</template>
 							<template v-else> </template>
 						</template>
 						<template v-if="item.status.slug == 'COM'">
-							<CommonButtonLink :to="contractorHandler('legal.contractsClauses', item.id)"
+							<CommonButtonLink
+								:to="contractorHandler('legal.contractsClauses', item.id)"
 								variant="outline-secondary">
-								<Lucide icon="FileSpreadsheet" class="mr-2" />
+								<Lucide
+									icon="FileSpreadsheet"
+									class="mr-2" />
 								<span class="text-sm"> Clausulas - CAP </span>
 							</CommonButtonLink>
 						</template>
 					</template>
 					<template v-else-if="isProvider('legalMaster')">
 						<template v-if="item.status.slug == 'ENR'">
-							<CommonButtonLink :to="
-								contractorHandler('legalMaster.contractsManagement', item.id)
-							" variant="outline-secondary">
-								<Lucide icon="FileDiff" class="mr-2" />
+							<CommonButtonLink
+								:to="
+									contractorHandler('legalMaster.contractsManagement', item.id)
+								"
+								variant="outline-secondary">
+								<Lucide
+									icon="FileDiff"
+									class="mr-2" />
 								<span class="text-sm"> Revision </span>
 							</CommonButtonLink>
 						</template>
@@ -668,83 +939,227 @@ const selectedTab = inject('selectedTab', ref(0))
 					<template v-else> </template>
 				</div>
 			</template>
+
 			<template #item-actionsContracts="item">
 				<div class="flex gap-2 justify-end">
 					<template v-if="isProvider('legal')">
 						<template v-if="item.status.slug == 'APR'">
-							<Button variant="outline-pending" @click="signatureAction(item.id)">
-								<Lucide icon="FileSignature" class="mr-2" />
+							<Button
+								variant="outline-pending"
+								@click="signatureAction(item.id)">
+								<Lucide
+									icon="FileSignature"
+									class="mr-2" />
 								<span class="text-sm"> Firmar </span>
 							</Button>
 						</template>
 						<template v-if="item.status.slug == 'REC'">
-							<CommonButtonLink :to="{
-								name: 'legal.contractsClausesControl',
-								query: { contractor: item.contractor_id },
-							}" variant="outline-secondary">
-								<Lucide icon="FileEdit" class="mr-2" />
+							<CommonButtonLink
+								:to="{
+									name: 'legal.contractsClausesControl',
+									query: { contractor: item.contractor_id },
+								}"
+								variant="outline-secondary">
+								<Lucide
+									icon="FileEdit"
+									class="mr-2" />
 								<span class="text-sm"> Revisar </span>
 							</CommonButtonLink>
 						</template>
 					</template>
 					<template v-else-if="isProvider('legalMaster')">
 						<template v-if="item.status.slug == 'ENR'">
-							<CommonButtonLink :to="{
-								name: 'legalMaster.contractsManagement',
-								query: { contractor: item.id },
-							}" variant="outline-secondary">
-								<Lucide icon="FileDiff" class="mr-2" />
+							<CommonButtonLink
+								:to="{
+									name: 'legalMaster.contractsManagement',
+									query: { contractor: item.id },
+								}"
+								variant="outline-secondary">
+								<Lucide
+									icon="FileDiff"
+									class="mr-2" />
 								<span class="text-sm"> Revision </span>
 							</CommonButtonLink>
 						</template>
 						<template v-if="item.status.slug == 'APR'">
 							<ContractCancellation :contract="item" />
-							<CommonButtonLink :to="{
-								name: 'legalMaster.contractsViewer',
-								query: { id: item.id },
-							}" variant="outline-secondary">
-								<Lucide icon="Eye" class="mr-2" />
+							<CommonButtonLink
+								:to="{
+									name: 'legalMaster.contractsViewer',
+									query: { id: item.id },
+								}"
+								variant="outline-secondary">
+								<Lucide
+									icon="Eye"
+									class="mr-2" />
 								<span class="text-sm"> Ver </span>
 							</CommonButtonLink>
 						</template>
 					</template>
 					<template v-else-if="isProvider('manager')">
-						<CommonButtonLink :to="{ name: 'manager.contractsViewer', query: { id: item.id } }"
+						<CommonButtonLink
+							:to="{ name: 'manager.contractsViewer', query: { id: item.id } }"
 							variant="outline-secondary">
-							<Lucide icon="Eye" class="mr-2" />
+							<Lucide
+								icon="Eye"
+								class="mr-2" />
 							<span class="text-sm"> Ver </span>
 						</CommonButtonLink>
 					</template>
 					<template v-else-if="isProvider('director')">
-						<CommonButtonLink :to="{ name: 'director.contractsViewer', query: { id: item.id } }"
+						<CommonButtonLink
+							:to="{ name: 'director.contractsViewer', query: { id: item.id } }"
 							variant="outline-secondary">
-							<Lucide icon="Eye" class="mr-2" />
+							<Lucide
+								icon="Eye"
+								class="mr-2" />
 							<span class="text-sm"> Ver </span>
 						</CommonButtonLink>
 						<template v-if="item.status.slug == 'APR'">
-							<CommonButtonLink :to="{
-								name: 'director.contractsManagement',
-								query: { id: item.id },
-							}" variant="outline-secondary">
-								<Lucide icon="FileDiff" class="mr-2" />
+							<CommonButtonLink
+								:to="{
+									name: 'director.contractsManagement',
+									query: { id: item.id },
+								}"
+								variant="outline-secondary">
+								<Lucide
+									icon="FileDiff"
+									class="mr-2" />
 								<span class="text-sm"> Revision </span>
 							</CommonButtonLink>
 						</template>
 					</template>
 					<!-- <template v-if="isProvider('legal')">
-				                                <template v-if="item.status.slug == 'ENR'">
-				                                    <template v-if="item.contract.cap_date == null">
-				                                        <CommonButtonLink :to="contractorHandler('legal.documentsManagement', item.id)"
-				                                            variant="outline-secondary">
-				                                            <Lucide icon="FileDiff" class="mr-2" />
-				                                            <span class="text-sm">
-				                                                Revision
-				                                            </span>
-				                                        </button>
-				                                    </div>
-				                                </template> -->
+					                                <template v-if="item.status.slug == 'ENR'">
+					                                    <template v-if="item.contract.cap_date == null">
+					                                        <CommonButtonLink :to="contractorHandler('legal.documentsManagement', item.id)"
+					                                            variant="outline-secondary">
+					                                            <Lucide icon="FileDiff" class="mr-2" />
+					                                            <span class="text-sm">
+					                                                Revision
+					                                            </span>
+					                                        </button>
+					                                    </div>
+					                                </template> -->
 				</div>
 			</template>
+
+			<template #item-fichaStatus="item">
+				<!--si es metodologo entra ENR, convierte a ENP y REC-->
+				<span v-if="onboardingStore().get_user_role?.slug === 'metodologo'"
+					:class="
+						item.status.slug == 'REC'
+							? ' bg-danger/10 text-danger'
+							: item.status.slug == 'ENP'
+							? 'bg-success/10 text-success'
+							: 'bg-primary/10 text-primary'
+					"
+					class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
+					{{ _getStatus(item.status) }}
+				</span>				
+				<!--si es coordinador_regional entra ENP, convierte a APR y REC-->
+				<span v-else-if="onboardingStore().get_user_role?.slug === 'coordinador_regional'"	
+					:class="
+						item.status.slug == 'REC'
+							? ' bg-danger/10 text-danger'
+							: item.status.slug == 'APR'
+							? 'bg-success/10 text-success'
+							: 'bg-primary/10 text-primary'
+					"
+					class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
+					{{ _getStatus(item.status) }}
+				</span>
+				<!--si es asistente_administrativo entra APR, convierte REC-->
+				<span v-else	
+					:class="
+						item.status.slug == 'REC'
+							? ' bg-danger/10 text-danger'
+							: item.status.slug == 'APR'
+							? 'bg-success/10 text-success'
+							: 'bg-warning/10 text-warning'
+					"
+					class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
+					{{ _getStatus(item.status) }}
+				</span>
+
+			</template>
+			<template #item-fichasViewer="item">
+				<template v-if="props.Form">
+					<template
+						v-if="(onboardingStore().get_user_role?.slug === 'metodologo' && item.status.slug === 'APR') ||
+						(onboardingStore().get_user_role?.slug === 'metodologo' && item.status.slug === 'REC')">
+						<Modal
+							:Form="props.Form"
+							:id_review="item.id"
+							label="Actualizar"
+							:payloadFunctions="payloadFunctions" />
+					</template>
+					<template
+						v-else-if="(onboardingStore().get_user_role?.slug === 'coordinador_regional' && item.status.slug === 'APR') ||
+						(onboardingStore().get_user_role?.slug === 'coordinador_regional' && item.status.slug === 'REC')">
+						<Modal
+							:Form="props.Form"
+							:id_review="item.id"
+							label="Actualizar"
+							:payloadFunctions="payloadFunctions" />
+					</template>
+					<template
+						v-else-if="(onboardingStore().get_user_role?.slug === 'coordinador_maritimo' && item.status.slug === 'APR') ||
+						(onboardingStore().get_user_role?.slug === 'coordinador_maritimo' && item.status.slug === 'REC')">
+						<Modal
+							:Form="props.Form"
+							:id_review="item.id"
+							label="Actualizar"
+							:payloadFunctions="payloadFunctions" />
+					</template>
+					<template
+						v-else-if="item.status.slug === 'APR' || item.status.slug === 'REC'">
+						<Modal
+							:Form="props.Form"
+							:id_review="item.id"
+							label="Actualizar"
+							:payloadFunctions="payloadFunctions" />
+					</template>
+					<template v-else>
+						<Modal
+							:Form="props.Form"
+							:id_review="item.id"
+							:payloadFunctions="payloadFunctions" />
+					</template>
+				</template>
+			</template>
+
+			//BUDGET ZONE
+			//BUDGET ZONE
+
+			<template #item-actionsBene="item">
+						<div class="flex gap-1 w-20">
+							<Button
+							v-if="item.status.slug === 'REC'"
+							variant="outline-secondary"
+							@click="editAction(item.id)">
+							<Lucide
+								icon="FileEdit"
+								class="" />
+							<span class="text-sm"> Editar </span>
+						</Button>
+				<Modal :Form="props.Form" label="Ver" :item="item" />
+						</div>
+			</template>
+			<template #item-statusBene="item">
+				<span
+					:class="
+						item.status.slug == 'REC' || item.status.slug == 'NUL'
+							? ' bg-danger/10 text-danger'
+							: item.status.slug == 'COM' || item.status.slug == 'APR' || item.status.slug == 'ENP'
+							? 'bg-success/10 text-success'
+							: 'bg-primary/10 text-primary'
+					"
+					class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
+					{{ _getStatus(item.status) }}
+				</span>
+			</template>
+
 		</DataTable>
 	</div>
 </template>
@@ -752,6 +1167,8 @@ const selectedTab = inject('selectedTab', ref(0))
 .customize-table {
 	--easy-table-body-row-height: 60px;
 	--easy-table-header-height: 60px;
-	--easy-table-header-background-color: rgb(var(--color-slate-100) / var(--tw-bg-opacity));
+	--easy-table-header-background-color: rgb(
+		var(--color-slate-100) / var(--tw-bg-opacity)
+	);
 }
 </style>

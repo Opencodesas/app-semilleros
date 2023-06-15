@@ -1,26 +1,17 @@
 <script setup lang="ts">
 import { selectOption } from '@/components/CommonSelect.vue';
-import { onboardingStore } from '@/stores/onboardingStore';
 import useVuelidate from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
-// import { addFile } from "@/types/filepond";
-// import Swal, { SweetAlertIcon } from "sweetalert2";
-// import { formToJSON } from "axios";
-// import { json } from "stream/consumers";
-// import { forEach } from "lodash";
 
-const { multiple } = useFilepondEvents();
-
-const router = useRouter();
-const route = useRoute();
-const store = onboardingStore();
+const urlStorage = `${import.meta.env.VITE_BASE_URL}/storage/`;
 
 const props = defineProps<{
 	closeModal: Function;
-	id_review: String | number;
+	item: any;
 }>();
 
 const form = reactive({
+	id: '',
 	date_visit: '',
 	hour_visit: '',
 	municipality_id: '',
@@ -29,58 +20,41 @@ const form = reactive({
 	discipline_id: '',
 	sports_scene: '',
 	beneficiary_coverage: '',
-	meets_monthly_technical_development: '',
+	technical: '',
 	event_support: '',
 	description: '',
 	observations: '',
 	file: [],
-	createdBy: { ide: '1', name: 'Joselito' },
+	createdBy: {},
 	status_id: '', //id:2 => En revisión => ENR
-	rejection_message: 'Rechazado ya que...',
+	reject_message: '',
 });
 
 const form_rules = computed(() => ({
-	rejection_message: { required },
+	reject_message: { required: parseInt(form.status_id) == 2 },
 	status_id: { required },
 }));
 
 const v$ = useVuelidate(form_rules, form);
-
+// Consulta todos lo municipios
 const municipalities = asyncComputed(async () => {
 	return await getSelect(['municipalities']);
 }, null);
 
-const municipality_id = computed(() => form.municipality_id);
+// Consulta todas las disciplinas
+const disciplines = asyncComputed(async () => {
+	return await getDisciplinesByMonitor(form.monitor_id);
+}, null);
+// Consulta los monitores en revision
+const monitor = asyncComputed(async () => {
+	return await getMonitorByMunicipality(form.municipality_id);
+}, null);
 
-//Usar para traer monitores por municipio cuando haya funcion
-const monitorList = [
-	//No olvidar llamar las funciones cuando se selecciones con @select en el componente
-	{ label: 'Joselito', value: 1 },
-	{ label: 'Miguelito', value: 2 },
-	//async () => {
-	//     return municipality_id.value ? await getMonitorsByMunicipaly(municipality_id.value) : []
-	//  }
+const evaluationList = [
+	{ label: 'Aceptada', value: 1 },
+	{ label: 'Rechazada', value: 2 },
 ];
-
-//Sacar disciplinas por monitor
-const disciplinesList = ref([]);
-//[ //No olvidar llamar las funciones cuando se selecciones con @select en el componente
-//async () => {
-//     return municipality_id.value ? await getDisciplinesByMonitor(form.moniror) : []
-//  }
-//]
-
-//Esta es la que está usando para traer disciplinas pero las trae todas
-// const fetch = async () => {
-//     await store.getListSelect().then((response) => {
-//         console.log(`data fetch: ${response?.data}`);
-//         if (response?.status == 200 || response?.status == 201) {
-//             disciplinesList.value = JSON.parse(JSON.stringify(response.data["diciplines"]));
-//         } else {
-//             Swal.fire("", "No se pudieron obtener los datos", "error");
-//         }
-//     });
-// };
+//Usar para traer monitores por municipio cuando haya funcion
 
 const yes_no_List = [
 	{ label: 'Si', value: 1 },
@@ -92,56 +66,50 @@ const statusesList = ref<selectOption[]>([
 	{ label: 'Rechazado', value: '4' },
 ]);
 
-// const routeName = computed(() => {
-//     return String(route.name).split(".")[0];
-// });
-
 const dataLoaded = ref(false);
 //Verificar si se puede hacer con asycComputed
-const getData = async () => {
-	await subdirectorVisitServices
-		.get(props.id_review as string)
-		.then((response: any) => {
-			console.log(response?.data.items);
-			if (response?.status == 200 || response?.status == 201) {
-				form.date_visit = response.data.items.date_visit;
-				form.hour_visit = response.data.items.hour_visit;
-				form.municipality_id = response.data.items.municipality_id;
-				form.sidewalk = response.data.items.sidewalk;
-				form.monitor_id = response.data.items.monitor_id;
-				form.discipline_id = response.data.items.discipline_id;
-				form.sports_scene = response.data.items.sports_scene;
-				form.beneficiary_coverage = response.data.items.beneficiary_coverage;
-				form.meets_monthly_technical_development =
-					response.data.items.meets_monthly_technical_development;
-				form.event_support = response.data.items.event_support;
-				form.description = response.data.items.description;
-				form.observations = response.data.items.observations;
-				form.status_id = response.data.items.status_id;
-				form.rejection_message = response.data.items.rejection_message;
-			} else {
-				alerts.custom('', 'No se pudieron obtener los datos', 'error');
-			}
-		});
+const getData = () => {
+	form.id = props.item.id;
+	form.date_visit = props.item.date_visit;
+	form.hour_visit = props.item.hour_visit;
+	form.municipality_id = props.item.municipality_id;
+	form.sidewalk = props.item.sidewalk;
+	form.monitor_id = props.item.monitor_id;
+	form.discipline_id = props.item.discipline_id;
+	form.sports_scene = props.item.sports_scene;
+	form.beneficiary_coverage = props.item.beneficiary_coverage;
+	form.technical = props.item.technical;
+	form.event_support = props.item.event_support;
+	form.description = props.item.description;
+	form.observations = props.item.observations;
+	form.file = props.item.file;
+	form.createdBy = props.item.created_by.name;
 };
 
-onMounted(async () => {
-	await getData();
+onMounted(() => {
+	getData();
 	dataLoaded.value = true;
-	console.log(form.status_id);
 });
 
+const formdataParser = (form: any) => {
+	const formData = new FormData();
+	Object.keys(form).forEach((key) => {
+		formData.append(key, form[key]);
+	});
+	return formData;
+};
 const onSubmit = async () => {
 	const valid = await v$.value.$validate();
 	if (valid) {
 		await subdirectorVisitServices
-			.update(route.params.id as string, formdataParser(form))
+			.update(form.id, formdataParser(form))
 			.then((response) => {
 				if (response) {
 					if (response.status >= 200 && response.status <= 300) {
-						props.closeModal;
+						props.closeModal();
 						alerts.update();
-						setLoading(true);
+						setLoading(false);
+						window.location.reload();
 					}
 				}
 			});
@@ -151,7 +119,7 @@ const onSubmit = async () => {
 };
 
 const defineReason = () => {
-	if (form.status_id == '1') form.rejection_message = '';
+	if (form.status_id == '1') form.reject_message = '';
 };
 </script>
 
@@ -175,12 +143,12 @@ const defineReason = () => {
 			v-if="form.status_id == '4'"
 			class="pt-4">
 			<CommonTextarea
-				name="rejection_message"
+				name="reject_message"
 				class=""
 				label="Comentario *"
 				placeholder="Escriba..."
 				rows="5"
-				v-model="form.rejection_message"
+				v-model="form.reject_message"
 				:validator="v$" />
 		</div>
 		<div
@@ -204,9 +172,7 @@ const defineReason = () => {
 		v-if="dataLoaded"
 		class="p-5 pt-1 mt-5 intro-y box">
 		<div class="my-4">
-			<h3>
-				<span class="font-bold">Subdirector:</span> {{ form.createdBy.name }}
-			</h3>
+			<h3><span class="font-bold">Subdirector:</span> {{ form.createdBy }}</h3>
 		</div>
 		<div
 			class="grid grid-cols-2 md:grid md:grid-cols-2 gap-6 justify-evenly mt-4">
@@ -241,13 +207,13 @@ const defineReason = () => {
 				label="Monitor *"
 				name="monitor_id"
 				v-model="form.monitor_id"
-				:options="monitorList" />
+				:options="monitor" />
 			<CommonSelect
 				disabled
 				label="Diciplinas *"
 				name="discipline_id"
 				v-model="form.discipline_id"
-				:options="disciplinesList" />
+				:options="disciplines" />
 			<CommonInput
 				disabled
 				type="text"
@@ -265,9 +231,9 @@ const defineReason = () => {
 			<CommonSelect
 				disabled
 				label="Cumple con el desarrollo del componente técnico del mes *"
-				name="meets_monthly_technical_development"
-				v-model="form.meets_monthly_technical_development"
-				:options="yes_no_List" />
+				name="technical"
+				v-model="form.technical"
+				:options="evaluationList" />
 			<CommonSelect
 				disabled
 				label="Apoyo a eventos *"
@@ -295,13 +261,14 @@ const defineReason = () => {
 				placeholder="Escriba..."
 				v-model="form.observations" />
 		</div>
-		<div class="grid justify-center col-span-3 gap-10 p-5">
-			<h1 class="text-center font-bold">Evidencia</h1>
+		<div class="grid col-span-3 gap-10 p-5">
+			<h1 class="text-left font-bold">Evidencia</h1>
 			<!-- <img v-if="form.file" :src="form.file[0]" alt=""> -->
 			<img
-				src="/semilleros.png"
-				width="200"
-				alt="" />
+				:alt="`Evidencia de la visita del subdirector ${form.createdBy}`"
+				class="m-auto border rounded-lg"
+				:src="`${urlStorage}${form.file}`"
+				width="400" />
 		</div>
 	</div>
 </template>

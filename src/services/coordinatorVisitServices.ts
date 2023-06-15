@@ -1,4 +1,4 @@
-const module = 'coordinator_visit'
+const module = 'coordinator_visits'
 
 export const coordinatorVisitServices = {
   get: async (id: string) => {
@@ -27,6 +27,45 @@ export const coordinatorVisitServices = {
       alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
     }
   },
+  downloadFilesMeto: async () => {
+    try {
+      setLoading(true)
+
+      const response = await api.get(`/${apiPath}/methodologist/zips`).finally(() => {
+        setLoading(false)
+      })
+
+      return response 
+    } catch (error: any) {
+      alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
+    }
+  },
+  downloadFilesCoor: async () => {
+    try {
+      setLoading(true)
+
+      const response = await api.get(`/${apiPath}/cordinator/zips`).finally(() => {
+        setLoading(false)
+      })
+
+      return response 
+    } catch (error: any) {
+      alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
+    }
+  },
+  downloadFiles: async () => {
+    try {
+      setLoading(true)
+
+      const response = await api.get(`/${apiPath}/zips`).finally(() => {
+        setLoading(false)
+      })
+
+      return response 
+    } catch (error: any) {
+      alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
+    }
+  },
   create: async (payload: FormData) => {
     try {
       setLoading(true)
@@ -44,7 +83,7 @@ export const coordinatorVisitServices = {
     try {
       setLoading(true)
 
-      const response = await api.post(`/${apiPath}/${module}/${id}?_method=PUT`, payload).finally(() => {
+      const response = await api.post(`/${apiPath}/${module}/${id}`, payload).finally(() => {
         setLoading(false)
       })
 

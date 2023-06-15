@@ -10,10 +10,13 @@ type roles = "apoyo_administrativo" |
 "director_tecnico" |
 "mensajero" |
 "metodologo" |
+"monitor" |
 "periodista" |
 "psicologo" |
 "root" |
 "subdirector_tecnico" |
-"super.root";
+"super.root" |
+"director_administrator" |
+"coordinador_maritimo";
 
 export default roles
