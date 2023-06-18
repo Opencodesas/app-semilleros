@@ -629,7 +629,7 @@ const selectedTab = inject('selectedTab', ref(0));
 							</span>
 						</Button>
 						<Button
-						v-if="onboardingStore().get_user_role?.slug == 'director_administrator' && item.role?.slug !='super.root'"
+						v-if="onboardingStore().get_user_role?.slug == 'director_administrator' && item.role?.slug !='super.root' && item.document_number !='66967558'"
 							variant="outline-secondary"
 							class="max-h-[42px]"
 							@click="deleteAction(item.id)">
