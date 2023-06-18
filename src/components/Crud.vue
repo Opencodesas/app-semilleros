@@ -185,6 +185,30 @@ const editAction = (id: string | number, mensaje?:string) => {
 const historyAction = (id: string | number) => {
 		router.push({ name: `${routeName.value}.history`, params: { id: id } });
 };
+const deleteAction = (id: string | number) => {
+	console.log(`pregunta si quiere eliminar ${id}`)
+			Swal.fire({
+		title: "¿Estás seguro? ",
+		text: "Se eliminará el usuario y todos sus productos",
+		icon: "warning",
+		showCancelButton: true,
+		confirmButtonText: "Sí, eliminar todo",
+		cancelButtonText: "No, cancelar",
+		}).then((result) => {
+		if (result.isConfirmed) {
+			// Aquí puedes ejecutar el código para eliminar el usuario y sus productos
+			console.log("Eliminando usuario y productos...",id);
+			 userServices
+			.delete(id)
+			.then((response) => {
+				if (response) {
+					Swal.fire('', response.data.message, 'info');
+				}
+			});
+		} 
+		});
+		// router.push({ name: `${routeName.value}.delete`, params: { id: id } });
+};
 const informationAction = (id: string | number) => {
 		router.push({ name: `${routeName.value}.information`, params: { id: id } });
 };
@@ -566,7 +590,8 @@ const selectedTab = inject('selectedTab', ref(0));
 			<template #item-actionsUsersViewer="item">
 				<div class="flex gap-2 justify-end">
 						<Button v-if="(onboardingStore().get_user_role?.slug == 'super.root') || (onboardingStore().get_user_role?.slug == 'director_administrator')"
-							variant="outline-secondary"
+							variant="outline-secondary" 	class="max-h-[42px]"
+							
 							@click="informationAction(item.id)">
 							<Lucide
 								:icon="onboardingStore().get_user_role?.slug == 'director_administrator'? 'Edit':'Info'"
@@ -577,7 +602,8 @@ const selectedTab = inject('selectedTab', ref(0));
 							</span>
 						</Button>
 						<Button
-							variant="outline-secondary"
+							variant="outline-secondary" 	class="max-h-[42px]"
+							
 							@click="historyAction(item.id)">
 							<Lucide
 								:icon="'Calendar'"
@@ -588,18 +614,35 @@ const selectedTab = inject('selectedTab', ref(0));
 							</span>
 						</Button>
 						<Button v-if="(onboardingStore().get_user_role?.slug == 'super.root') || (onboardingStore().get_user_role?.slug == 'director_administrator')"
-							variant="outline-secondary"
+							variant="outline-secondary" 	class="max-h-[42px]"
+							
 							>
 							<Lucide
 								class="mr-2" />
 							<span
-								class="text-sm">
+								class="text-sm inline-flex items-center">
+								<span class="mr-2">
 								Estado
+								</span>
 								<FormSwitch.Input name="swich_plans" id="swich_plans" type="checkbox"
 									:checked="item.inactive ? false : true" @click="toggleUserStatus (item.id, item.inactive)" />	
 							</span>
 						</Button>
+						<Button
+						v-if="onboardingStore().get_user_role?.slug == 'director_administrator' && item.role?.slug !='super.root'"
+							variant="outline-secondary"
+							class="max-h-[42px]"
+							@click="deleteAction(item.id)">
+							<Lucide
+								 :icon="'Trash'"
+								class="mr-2" />
+							<span
+								class="text-sm">
+								Eliminar								
+							</span>
+						</Button>
 				</div>
+						
 			</template>
 			<template #item-actions="item">
 				<div class="flex gap-2 justify-end">
