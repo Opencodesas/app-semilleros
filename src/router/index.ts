@@ -639,6 +639,22 @@ const routes = [
 				]
 			},
 			{
+				path: "event_supports",
+				name: "event_supports",
+				children: [
+					{
+						path: "",
+						name: "event_supports.index",
+						component: () => import('@/pages/event_supports/Index.vue')
+					},
+					{
+						path: "create",
+						name: "event_supports.create",
+						component: () => import('@/pages/event_supports/Form.vue')
+					},
+				]
+			},
+			{
 				path: "coordinator",
 				name: "coordinator",
 				meta: { provider: 'coordinator', role: ['coordinador_regional', 'coordinador_maritimo'] },

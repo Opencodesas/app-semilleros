@@ -38,6 +38,7 @@ declare global {
   const downloadFile: typeof import('./src/helpers/downloadFile')['downloadFile']
   const eagerComputed: typeof import('@vueuse/core')['eagerComputed']
   const effectScope: typeof import('vue')['effectScope']
+  const eventSupportsService: typeof import('./src/services/eventSupportsService')['eventSupportsService']
   const extendRef: typeof import('@vueuse/core')['extendRef']
   const formdataParser: typeof import('./src/composables/formdataParser')['formdataParser']
   const getBeneficiariesByDepartment: typeof import('./src/composables/getBeneficiariesByMunicipaly')['getBeneficiariesByDepartment']
