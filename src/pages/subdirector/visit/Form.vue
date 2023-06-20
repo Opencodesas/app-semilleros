@@ -50,6 +50,10 @@ const evaluationList = [
 	{ label: 'Aceptada', value: 1 },
 	{ label: 'Rechazada', value: 2 },
 ];
+//consulta todos los monitores por la region del usuario autenticado
+const monitor = asyncComputed(async () => {
+	return await getMonitorByAuth();
+}, null);
 const v$ = useVuelidate(form_rules, form);
 // Consulta todos los municipios
 const municipalities = asyncComputed(async () => {
@@ -68,9 +72,9 @@ watch(() => form.monitor_id, () => {
     form.discipline_id = '';
 })
 // Consulta todos los monitores por municipio
-const monitor = asyncComputed(async () => {
-	return await getMonitorByMunicipality(form.municipality_id)
-}, null);
+// const monitor = asyncComputed(async () => {
+// 	return await getMonitorByMunicipality(form.municipality_id)
+// }, null);
 
 const selectFile = (event: any) => {
 	form.file = event.target.files[0];
