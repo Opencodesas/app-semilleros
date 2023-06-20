@@ -313,10 +313,13 @@ const onCloneChronogram = async () => {
 							<Button @click="onCloneChronogram" type="button" variant="primary">Clonar</Button>
 						</div>
 						<div class="col-span-1 md:col-span-2">
-							<CommonEditor label="Observaciones Generales" name="note" v-model="form.note" :validator="v$" />
+							<!--<CommonEditor label="Observaciones Generales" name="note" v-model="form.note" :validator="v$" />-->
+							<CommonTextarea label="Observaciones Generales" name="note" v-model="form.note" :validator="v$" />
 						</div>
 						<div v-if="holidaysMonth" class="col-span-1 md:col-span-2">
-							<CommonEditor label="Observaciones Dias Festivos" name="note_holiday" v-model="form.note_holiday"
+							<!--<CommonEditor label="Observaciones Dias Festivos" name="note_holiday" v-model="form.note_holiday"
+								:validator="v$" />-->
+							<CommonTextarea label="Observaciones Dias Festivos" name="note_holiday" v-model="form.note_holiday"
 								:validator="v$" />
 							<p class="mt-2">{{ form.month && holidaysMonth }}</p>
 						</div>
