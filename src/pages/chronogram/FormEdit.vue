@@ -263,11 +263,23 @@ watch(
 	}
 );
 
+const onDownload = async () => {
+    router.push({ name: 'chronograms.index' })
+	return;
+    /*await cronogram.getCronogramFile(id as string).then((res:any) => {
+		if (res) {
+			if (res.status >= 200 && res.status <= 300) {
+				downloadFile(res);
+			}
+		}
+	});*/
+};
+
 </script>
 
 <template>
     <div class="flex items-center mt-8 intro-y">
-        <h2 class="mr-auto text-lg font-medium">Creación de Cronograma</h2>
+        <h2 class="mr-auto text-lg font-medium">{{form.status_id === 4 ? 'Creación de Cronograma':'Ver Cronograma'}}</h2>
     </div>
 
     <div class="p-5 mt-5 intro-y box" v-if="dataLoaded">
@@ -431,19 +443,31 @@ watch(
                     </div>
                 </div>
             </div>
-            <div class="pt-5">
+            <div class="pt-5" v-if="form.status_id === 4">
                 <div class="flex justify-end gap-x-4">
                     <Button @click="$router.push({ name: 'chronograms.index' })" type="button"
                         variant="outline-secondary">
                         Cancelar
                     </Button>
-                    <Button type="submit" variant="primary"
-                        v-if="form.status_id === 4"
-                    >
+                    <Button type="submit" variant="primary">
                         Guardar
                     </Button>
+                    
                 </div>
             </div>
         </form>
+        <div class="pt-5">
+                <div class="flex justify-end gap-x-4">
+                    <Button v-if="form.status_id != 4" variant="primary" class="btn btn-primary text-sm" 
+                    @click="onDownload" :title="'Descargar formulario'">
+                        <Lucide :class="'mr-2'" :icon="'Download'"/> Descargar
+                    </Button>
+
+                    <Button @click="$router.push({ name: 'chronograms.index' })" type="button"
+                        variant="outline-secondary">
+                        Cancelar
+                    </Button>                    
+                </div>
+            </div>
     </div>
 </template>
