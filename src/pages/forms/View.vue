@@ -1,12 +1,24 @@
 <script setup lang="ts">
 import { onboardingStore } from "@/stores/onboardingStore";
+import beneficiary from "@/services/beneficiary/beneficiary"
+import useVuelidate from "@vuelidate/core"
+import { required } from "@vuelidate/validators"
+import { downloadFile } from "@/helpers/downloadFile";
 
 const props = defineProps<{
     item?: any;
-	closeModal: Function;
+    id_review: number
+	  closeModal: Function
+    payloadFunctions?: any
 }>();
 
 const store = onboardingStore();
+
+const currentUser = {
+   id: store.get_user.id,
+   name: store.get_user.name,
+   rol: store.get_user_role?.slug,
+}
 
 const optionsMunicipio = ref([
   { label: "cali", value: "1" },
@@ -98,6 +110,24 @@ const optionsEnterado= ref([
   { label: "Monitor deportivo", value: "Monitor deportivo" },
 ])
 
+const evaluationList =
+   currentUser.rol == "metodologo"
+      ? [
+           { label: "En Revisión", value: 0, slug: "ENR" },
+           { label: "Aprobar", value: 2, slug: "ENP" },
+           { label: "Rechazar", value: 1, slug: "REC" },
+        ]
+      : currentUser.rol == "coordinador_regional"
+      ? [
+           { label: "Procesar", value: 2, slug: "ENP" },
+           { label: "Aprobar", value: 3, slug: "APR" },
+           { label: "Rechazar", value: 1, slug: "REC" },
+        ]
+      : [
+           { label: "Aprobada", value: 3, slug: "APR" },
+           { label: "Rechazar", value: 1, slug: "REC" },
+        ];
+
 const healthEntities = computedAsync( async () => {
   return await getHealthentities();
 }, null)
@@ -114,18 +144,100 @@ let currentFicha = {...data.value,
     }
 };
 
+const currentmotive = ref(currentFicha.rejection_message || "")
+const form = reactive({
+   ...currentFicha,
+   currentmotive: currentmotive.value,
+   tempDesc: currentFicha.rejection_message,
+   selectid:
+      currentUser.rol == "metodologo"
+         ? currentFicha.status.slug === "ENR"
+            ? 0
+            : currentFicha.status.slug === "ENP"
+            ? 2
+            : 3
+         : currentUser.rol == "coordinador_regional"
+         ? currentFicha.status.slug === "ENP"
+            ? 2
+            : currentFicha.status.slug === "APR"
+            ? 3
+            : 1
+         : currentFicha.status.slug === "APR"
+         ? 3
+         : 1,
+   rejection_message: currentFicha.rejection_message || "",
+})
+const form_rules = computed(() => ({
+   rejection_message: {},
+   selectid: { required },
+   currentmotive: {},
+}))
+const v$ = useVuelidate(form_rules, form)
 
 
+const error = ref(false)
+const onSubmit = async (evt: any) => {
+   evt.preventDefault()
+   //crear nuevo status
+   const nStatus = {
+      status:
+         form.selectid == 1
+            ? "REC"
+            : form.selectid == 2
+            ? "ENP"
+            : form.selectid == 3
+            ? "APR"
+            : "ENR",
+      rejection_message: form.currentmotive,
+   }
 
-const onDownload = async (evt: any) => {
-  evt.preventDefault();
-  alerts.custom('', 'Descargando archivo...', 'info');
-  //descargar 
+   //enviar nuevo status
+   if (form.selectid === 1 && form.currentmotive === "") {
+      alerts.custom("", "Escriba un motivo de su rechazo", "error")
+   } else {
+      const res = beneficiary
+         .changeStatusUR(nStatus, props.id_review.toString())
+         .then((response) => {
+            console.log(response.data.items.rejection_message)
+            currentFicha.status = { ...response.data.items.status }
+            if (form.selectid == 1) {
+               currentFicha.rejection_message = {
+                  ...response.data.items.rejection_message,
+               }
+            } else {
+               currentFicha.rejection_message = ""
+            }
+            alerts.custom("", "Revisión exitosa!", "success").then(() => {
+               props.payloadFunctions.RELOAD()
+            })
+         })
+         .catch((error) => {
+            alerts.custom("", "Error al revisar!" + error, "error")
+         })
+   }
 }
+
+const onDownload = async () => {
+	return await beneficiary.getBeneficiariesFile(currentFicha.id as string).then((res:any) => {
+		if (res) {
+			if (res.status >= 200 && res.status <= 300) {
+				downloadFile(res);
+			}
+		}
+	});
+};
+
+/*const onDownload = async (evt: any) => {
+  evt.preventDefault();
+  const response:any = await beneficiary.getBeneficiariesFile(currentFicha.id);
+  alerts.custom('', 'Descargando archivo...', 'info')
+  .finally(()=>{
+    window.open(response || '', '_blank');
+  });
+}*/
 const ethniacityList = ref([]);
 
 onMounted(async () => {
-  console.log(currentFicha);
   //peticion a la api para las listas desplegables, by rick.
   store.getListSelect().then((response) => {
     if (response?.status == 200) {
@@ -143,10 +255,10 @@ onMounted(async () => {
 	<div class="flex items-center justify-between mt-5 mb-2 intro-y">
     <a href="#"></a>
     
-			<h1 class="mr-auto text-lg font-medium">Viendo Beneficiario</h1>
+			<h1 class="mr-auto text-lg font-medium">{{currentUser.rol==='monitor'?'Viendo Beneficiario':'Revisar ficha de Inscripción'}}</h1>
 			<span class="ml-auto text-base font-medium">
 				Estado:
-				<span :class="
+				<span v-if="currentUser.rol!='asistente_administrativo'" :class="
 							currentFicha.status.slug == 'REC'
 							? ' bg-danger/10 text-danger'
 							: currentFicha.status.slug == 'ENP'
@@ -155,12 +267,67 @@ onMounted(async () => {
 						" class="ml-2 inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
 						{{ currentFicha.status.name }}
 				</span>
+        <span v-else :class="
+							currentFicha.status.slug == 'REC'
+							? ' bg-danger/10 text-danger'
+							: currentFicha.status.slug == 'APR'
+							? 'bg-success/10 text-success'
+							: 'bg-primary/10 text-primary'
+						" class="ml-2 inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
+						{{ currentFicha.status.name }}
+				</span>
         
 			</span>
-    </div>    
+    </div>
 
-  <div class="grid grid-cols-2 gap-6 justify-evenly">
-    
+    <!--REVISION -->
+   <div v-if="(currentUser.rol!='monitor'&&currentFicha.status.slug!='APR')||(currentFicha.status.slug=='APR'&&currentUser.rol=='asistente_administrativo')" class="space-y-2 box px-5 py-4">
+      <h2 class="font-bold">Revisión</h2>
+      <CommonSelect
+         :allow-empty="false"
+         label="Estado de la ficha*"
+         name="selectid"
+         v-model="form.selectid"
+         :validator="v$"
+         :options="evaluationList"
+      />
+      <div v-if="form.selectid == 1" class="pt-4">
+         <CommonTextarea
+            name="rejection_message"
+            class=""
+            label="Comentario *"
+            :placeholder="
+               form.currentmotive === '' ? 'Comentario...' : form.currentmotive
+            "
+            rows="5"
+            v-model="form.currentmotive"
+            :validator="v$"
+         />
+         <span v-if="error" :class="'text-red-600 text-sm'"
+            >Este campo es obligatorio *</span
+         >
+      </div>
+
+      <div class="mt-6 flex justify-end col-span-1 md:col-span-2 gap-1">
+         <Button variant="danger" @click="props.closeModal"> Cerrar </Button>
+
+         <Button
+            variant="primary"
+            class="btn btn-primary"
+            @click="onSubmit"
+            :disabled="form.selectid === 1 && form.currentmotive === ''"
+            :title="
+               form.selectid === 1 && form.currentmotive === ''
+                  ? 'Debes escribir un comentario o motivo de rechazo antes de enviar'
+                  : 'Presiona para revisar la ficha'
+            "
+         >
+            Enviar
+         </Button>
+      </div>
+   </div>
+
+  <div class="grid grid-cols-2 gap-6 justify-evenly">    
     <div class="p-5 mt-5 col-span-2 intro-y box">
 
     <div class="my-4 text-lg bold text-left text-gray-800">
@@ -483,8 +650,8 @@ onMounted(async () => {
             :disabled="true"
           /></div>
         </div>
-        <div class="w-full mt-10 flex justify-center">
-            <Button variant="primary" class="btn btn-primary text-sm" @click="onDownload" :title="'Descargar formulario'">
+        <div class="w-full mt-10 flex justify-center" v-if="currentUser.rol!='asistente_administrativo' && currentUser.rol!='metodologo'">
+            <Button v-if="currentFicha.status.slug=='APR'" variant="primary" class="btn btn-primary text-sm" @click="onDownload" :title="'Descargar formulario'">
                 <Lucide :class="'mr-2'" :icon="'Download'"/> Descargar
             </Button>
         </div>

@@ -10,6 +10,7 @@ import ContractCancellation from './ContractCancellation.vue';
 import Modal from './Modal.vue';
 import { onboardingStore } from '@/stores/onboardingStore';
 import Swal from 'sweetalert2';
+import { Roles } from '@/utils/roles.enums';
 
 const storagePath = import.meta.env.VITE_BASE_URL;
 
@@ -174,15 +175,39 @@ const routeName = computed(() => {
 // const show_date = ref(false)
 
 // Function for Edit
-const editAction = (id: string | number) => {
+const editAction = (id: string | number, mensaje?:string) => {
 	if (props.edit_gestor) {
-		router.push({ name: `${routeName.value}.edit`, params: { id: id } });
+		router.push({ name: `${routeName.value}.edit`, params: { id: id }, query: { msg: mensaje } });
 	} else {
-		router.push({ name: `${routeName.value}.edit`, params: { id: id } });
+		router.push({ name: `${routeName.value}.edit`, params: { id: id }, query: { msg: mensaje } });
 	}
 };
 const historyAction = (id: string | number) => {
 		router.push({ name: `${routeName.value}.history`, params: { id: id } });
+};
+const deleteAction = (id: string | number) => {
+	console.log(`pregunta si quiere eliminar ${id}`)
+			Swal.fire({
+		title: "¿Estás seguro? ",
+		text: "Se eliminará el usuario y todos sus productos",
+		icon: "warning",
+		showCancelButton: true,
+		confirmButtonText: "Sí, eliminar todo",
+		cancelButtonText: "No, cancelar",
+		}).then((result) => {
+		if (result.isConfirmed) {
+			// Aquí puedes ejecutar el código para eliminar el usuario y sus productos
+			console.log("Eliminando usuario y productos...",id);
+			 userServices
+			.delete(id)
+			.then((response) => {
+				if (response) {
+					Swal.fire('', response.data.message, 'info');
+				}
+			});
+		} 
+		});
+		// router.push({ name: `${routeName.value}.delete`, params: { id: id } });
 };
 const informationAction = (id: string | number) => {
 		router.push({ name: `${routeName.value}.information`, params: { id: id } });
@@ -565,7 +590,8 @@ const selectedTab = inject('selectedTab', ref(0));
 			<template #item-actionsUsersViewer="item">
 				<div class="flex gap-2 justify-end">
 						<Button v-if="(onboardingStore().get_user_role?.slug == 'super.root') || (onboardingStore().get_user_role?.slug == 'director_administrator')"
-							variant="outline-secondary"
+							variant="outline-secondary" 	class="max-h-[42px]"
+							
 							@click="informationAction(item.id)">
 							<Lucide
 								:icon="onboardingStore().get_user_role?.slug == 'director_administrator'? 'Edit':'Info'"
@@ -576,7 +602,8 @@ const selectedTab = inject('selectedTab', ref(0));
 							</span>
 						</Button>
 						<Button
-							variant="outline-secondary"
+							variant="outline-secondary" 	class="max-h-[42px]"
+							
 							@click="historyAction(item.id)">
 							<Lucide
 								:icon="'Calendar'"
@@ -587,18 +614,35 @@ const selectedTab = inject('selectedTab', ref(0));
 							</span>
 						</Button>
 						<Button v-if="(onboardingStore().get_user_role?.slug == 'super.root') || (onboardingStore().get_user_role?.slug == 'director_administrator')"
-							variant="outline-secondary"
+							variant="outline-secondary" 	class="max-h-[42px]"
+							
 							>
 							<Lucide
 								class="mr-2" />
 							<span
-								class="text-sm">
+								class="text-sm inline-flex items-center">
+								<span class="mr-2">
 								Estado
+								</span>
 								<FormSwitch.Input name="swich_plans" id="swich_plans" type="checkbox"
 									:checked="item.inactive ? false : true" @click="toggleUserStatus (item.id, item.inactive)" />	
 							</span>
 						</Button>
+						<Button
+						v-if="onboardingStore().get_user_role?.slug == 'director_administrator' && item.role?.slug !='super.root' && item.document_number !='66967558'"
+							variant="outline-secondary"
+							class="max-h-[42px]"
+							@click="deleteAction(item.id)">
+							<Lucide
+								 :icon="'Trash'"
+								class="mr-2" />
+							<span
+								class="text-sm">
+								Eliminar								
+							</span>
+						</Button>
 				</div>
+						
 			</template>
 			<template #item-actions="item">
 				<div class="flex gap-2 justify-end">
@@ -636,7 +680,7 @@ const selectedTab = inject('selectedTab', ref(0));
 							</template>
 						</template>
 					</template>
-					<template v-else-if="isRole('subdirector_tecnico')">
+					<template v-else-if="isRole(Roles.SubdirectorTecnico)">
 						<template v-if="route.name !== 'review.index'">
 							<Button
 								variant="outline-secondary"
@@ -654,6 +698,15 @@ const selectedTab = inject('selectedTab', ref(0));
 						<template
 							v-else-if="
 								item.status.id == '2' && route.name === 'review.index'
+							">
+							<template v-if="props.Form!">
+								<Modal :Form="props.Form" :item="item" />
+							</template>
+						</template>
+
+                        <template
+							v-else-if="
+								item.status.id == '5' && route.name === 'review.index'
 							">
 							<template v-if="props.Form!">
 								<Modal :Form="props.Form" :item="item" />
@@ -1085,14 +1138,29 @@ const selectedTab = inject('selectedTab', ref(0));
 			</template>
 			<template #item-fichasViewer="item">
 				<template v-if="props.Form">
-					<template
-						v-if="(onboardingStore().get_user_role?.slug === 'metodologo' && item.status.slug === 'APR') ||
-						(onboardingStore().get_user_role?.slug === 'metodologo' && item.status.slug === 'REC')">
-						<Modal
+					<template v-if="(onboardingStore().get_user_role?.slug === 'metodologo')">
+						<Modal v-if="item.status.slug === 'ENR'"
 							:Form="props.Form"
+							:item="item" 
 							:id_review="item.id"
-							label="Actualizar"
+							label="Revisar"
 							:payloadFunctions="payloadFunctions" />
+					</template>
+					<template v-else-if="(onboardingStore().get_user_role?.slug === 'asistente_administrativo')">
+						<Modal v-if="item.status.slug === 'APR' || item.status.slug === 'REC'"
+							:Form="props.Form"
+							:item="item" 
+							:id_review="item.id"
+							:label="item.status.slug === 'APR'?'Información':'Actualizar'"
+							:icon="item.status.slug === 'APR'?'Eye':'Pencil'"
+							:payloadFunctions="payloadFunctions" />
+						<Modal v-else
+							:Form="props.Form"
+							:item="item" 
+							:id_review="item.id"
+							label="Revisar"
+							:payloadFunctions="payloadFunctions" />
+						
 					</template>
 					<template
 						v-else-if="(onboardingStore().get_user_role?.slug === 'coordinador_regional' && item.status.slug === 'APR') ||
@@ -1131,19 +1199,16 @@ const selectedTab = inject('selectedTab', ref(0));
 
 			//BUDGET ZONE
 			//BUDGET ZONE
-
 			<template #item-actionsBene="item">
-						<div class="flex gap-1 w-20">
-							<Button
-							v-if="item.status.slug === 'REC'"
-							variant="outline-secondary"
-							@click="editAction(item.id)">
-							<Lucide
-								icon="FileEdit"
-								class="" />
-							<span class="text-sm"> Editar </span>
-						</Button>
-				<Modal :Form="props.Form" label="Ver" :item="item" />
+				<div class="flex gap-1 w-20">
+					<Button v-if="item.status.slug === 'REC'"
+					@click="editAction(item.id, item.rejection_message)" class="mr-2"
+					>
+						<Lucide icon="FileEdit" class="mr-2" />
+						<span class="text-sm"> Editar  </span>
+					</Button>
+				<Modal v-else
+				:Form="props.Form" label="Ver" :item="item" />
 						</div>
 			</template>
 			<template #item-statusBene="item">
@@ -1155,8 +1220,8 @@ const selectedTab = inject('selectedTab', ref(0));
 							? 'bg-success/10 text-success'
 							: 'bg-primary/10 text-primary'
 					"
-					class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap">
-					{{ _getStatus(item.status) }}
+					class="inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap aling-center">
+					{{ _getStatus(item.status) }}					
 				</span>
 			</template>
 
