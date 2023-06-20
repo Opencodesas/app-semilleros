@@ -37,7 +37,7 @@ const router = useRouter();
 
 // Consulta todos los municipios
 const municipalities = asyncComputed(async () => {
-  return await getSelect(["municipalities"], true);
+  return await getSelect(["municipalities"], false);
 }, null);
 
 /**
@@ -77,7 +77,7 @@ const onSubmit = async () => {
          if (response.status >= 200 && response.status <= 300) {
            alerts.create();
            setLoading(true);
-           router.push({ name: "methodologist_visits.index" }).finally(() => {
+           router.push({ name: "event_supports.index" }).finally(() => {
              setLoading(false);
            });
          }
@@ -123,9 +123,9 @@ const onSubmit = async () => {
 
       <CommonInput
         label="Corregimiento / Vereda *"
-        name="sidewalk"
+        name="correct"
         placeholder="Ingrese el corregimiento o vereda"
-        v-model="form.sidewalk"
+        v-model="form.correct"
         :validator="v$"
       />
     </div>
