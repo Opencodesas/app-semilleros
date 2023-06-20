@@ -2,8 +2,10 @@
 import FormSwitch from "@/base-components/Form/FormSwitch";
 import { onboardingStore } from "@/stores/onboardingStore";
 import useVuelidate from "@vuelidate/core";
+import Swal from 'sweetalert2';
 import { required } from "@vuelidate/validators";
 
+const route = useRoute()
 const store = onboardingStore();
 const { multiple } = useFilepondEvents();
 
@@ -87,13 +89,33 @@ const onSubmit = async () => {
     alerts.validation();
   }
 };
+
+
+const fetch = async () => {
+	//console.log(3);
+	await eventSupportsService.get(route.params.id as string).then((response) => {
+		console.log(response?.data.items);
+		if (response?.status == 200 || response?.status == 201) {
+			Swal.fire('', response?.data.message, 'info').finally(() => {});
+		} else {
+			Swal.fire('', 'No se pudieron obtener los datos', 'error');
+		}
+		console.log(form);
+	});
+};
+
+
+onMounted(async () => {
+	await fetch();
+	// dataLoaded.value = true;
+});
 </script>
 
 <template>
   <div class="flex items-center mt-8 intro-y">
     <div class="flex items-center space-x-4">
     <CommonBackButton to="event_supports.index" title="Listado" />
-      <h2 class="mr-auto text-lg font-medium">Registrar soporte de evento</h2>
+      <h2 class="mr-auto text-lg font-medium">Editar soporte de evento</h2>
     </div>
   </div>
 

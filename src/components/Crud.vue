@@ -686,11 +686,11 @@ const selectedTab = inject('selectedTab', ref(0));
 								variant="outline-secondary"
 								@click="editAction(item.id)">
 								<Lucide
-									:icon="item.status.slug == 'REC' ? 'FileEdit' : 'Eye'"
+									:icon="item.status?.slug == 'REC' ? 'FileEdit' : 'Eye'"
 									class="mr-2" />
 								<span
 									class="text-sm">
-									{{ item.status.slug == 'REC' ? 'Editar' : 'Visualizar' }}									
+									{{ item.status?.slug == 'REC' ? 'Editar' : 'Visualizar' }}									
 								</span>
 							</Button>
 						</template>
