@@ -41,7 +41,7 @@ const currentPath = "/dashboard/subdirector/review";
 const route = useRoute();
 const router = useRouter();
 
-function changeTab(index) {
+function changeTab(index: any) {
   selectedTab.value = index;
   const hashOptions = Object.keys(tabOptions);
   const selectedHash = hashOptions[index];
@@ -53,7 +53,7 @@ if (route.hash) {
   const hashOptions = Object.keys(tabOptions);
   const selectedHash = hashOptions.find((hash) => route.hash === `#${hash}`);
   if (selectedHash) {
-    selectedTab.value = tabOptions[selectedHash];
+    selectedTab.value = tabOptions[selectedHash as keyof typeof tabOptions];
   } else {
     selectedTab.value = 0;
     router.push(`${currentPath}/#methodologists`);

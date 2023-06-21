@@ -16,7 +16,7 @@ const currentPath = "/dashboard/review";
 const route = useRoute();
 const router = useRouter();
 
-function changeTab(index) {
+function changeTab(index: any) {
   selectedTab.value = index;
   const hashOptions = Object.keys(tabOptions);
   const selectedHash = hashOptions[index];
@@ -29,7 +29,7 @@ onMounted(() => {
     const hashOptions = Object.keys(tabOptions);
     const selectedHash = hashOptions.find((hash) => route.hash === `#${hash}`);
     if (selectedHash) {
-      selectedTab.value = tabOptions[selectedHash];
+      selectedTab.value = tabOptions[selectedHash as keyof typeof tabOptions];
     } else {
       selectedTab.value = 0;
       router.push(`${currentPath}/#beneficiary`);
