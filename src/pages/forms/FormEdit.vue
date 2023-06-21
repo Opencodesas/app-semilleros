@@ -7,7 +7,7 @@
   </div>
   <div class="p-5 mt-5 intro-y box" v-if="form.mensaje!=null">
     <h2 class="mr-auto mb-2 text-sm font-medium">MOTIVO DEL RECHAZO</h2>
-    <CommonTextarea name="mensaje" :placeholder="form.mensaje" disabled="true"/>
+    <CommonTextarea name="mensaje" :placeholder="form.mensaje" :disabled="true"/>
   </div>
   <!-- BEGIN: Page Layout -->
   <form @submit="onIngreso($event, v3$, form)">
@@ -273,7 +273,7 @@
         </div>
 
         <div class="m-4 text-center mt-10">
-          <Button variant="outline-secundary" type="button" @click="onNext( v$ )">Continuar</Button>
+          <Button variant="outline-secondary" type="button" @click="onNext( v$ )">Continuar</Button>
         </div>
         
       </div>
