@@ -264,15 +264,14 @@ watch(
 );
 
 const onDownload = async () => {
-    router.push({ name: 'chronograms.index' })
-	return;
-    /*await cronogram.getCronogramFile(id as string).then((res:any) => {
+    //
+	return await chronogramServices.getFileChronogram(route.params.id as string).then((res:any) => {
 		if (res) {
 			if (res.status >= 200 && res.status <= 300) {
 				downloadFile(res);
 			}
 		}
-	});*/
+	}).finally(()=>{/*router.push({ name: 'chronograms.index' })*/});
 };
 
 </script>

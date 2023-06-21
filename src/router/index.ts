@@ -652,6 +652,11 @@ const routes = [
 						name: "event_supports.create",
 						component: () => import('@/pages/event_supports/Form.vue')
 					},
+					{
+						path: ":id",
+						name: "event_supports.edit",
+						component: () => import('@/pages/event_supports/FormEdit.vue')
+					},
 				]
 			},
 			{

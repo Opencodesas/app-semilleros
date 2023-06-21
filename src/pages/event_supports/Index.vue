@@ -24,8 +24,11 @@ onMounted(async () => {
 const headers: Header[] = [
   //{ text: 'Nro.', value: 'id' },
   { text: "ID", value: "id", sortable: true },
-  // { text: "Fecha", value: "date_visit", sortable: true },
-  // { text: "Nombre", value: "name", sortable: true },
+  { text: "Fecha", value: "date_visit", sortable: true },
+  { text: "Hora", value: "hour_visit", sortable: true },
+  { text: "Evento", value: "event", sortable: true },
+  { text: "Corrregimiento", value: "correct", sortable: true },
+
   // { text: "Hora", value: "hour_visit", sortable: true },
   // { text: "Municipio", value: "municipalitie_id", sortable: true },
   { text: "Acciones", value: "actions" },

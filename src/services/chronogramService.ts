@@ -14,6 +14,19 @@ export const chronogramServices = {
             alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
         }
     },
+    getFileChronogram: async (id: string) => {
+        try {
+            setLoading(true)
+
+            const response = await api.get(`/${apiPath}/GetChronogram/${id}`).finally(() => {
+                setLoading(false)
+            })
+
+            return response 
+        } catch (error: any) {
+            alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
+        }
+    },
     getAll: async () => {
         try {
             setLoading(true)
