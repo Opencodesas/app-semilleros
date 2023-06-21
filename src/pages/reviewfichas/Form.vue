@@ -1,4 +1,5 @@
 <script setup lang="ts">
+/*
 import router from "@/router"
 import beneficiary from "@/services/beneficiary/beneficiary"
 import { onboardingStore } from "@/stores/onboardingStore"
@@ -7,7 +8,7 @@ import { required } from "@vuelidate/validators"
 import { isDataView } from "util/types"
 
 const props = defineProps<{
-   //items?: [];
+   items?: [];
    id_review: number
    closeModal: Function
    payloadFunctions?: any
@@ -20,10 +21,28 @@ let currentUser = {
    name: onboardingStore().get_user.name,
    rol: onboardingStore().get_user_role?.slug,
 }
-
-const data = ref(props?.payloadFunctions?.DATA())
+const data = ref(props?.payloadFunctions?.DATA().items.find((o: any) => o.id === props.id_review))
 //buscar y traer solo la ficha correspondiente al props.id_review
-let currentFicha = data.value.items.find((o: any) => o.id === props.id_review)
+let currentFicha = {...data.value,
+    created_at:data.value.created_at.split("T")[0],
+    name: data.value.full_name.split(" "),
+    disability: data.value.disability==='0'?'No presenta': 'Sí',
+    pathology: data.value.pathology==='0'?'No presenta':'Sí',
+    know_guardian: {...data.value.know_guardian,
+        social_media: JSON.parse(data.value.know_guardian.social_media).join(', '),
+        find_out: JSON.parse(data.value.know_guardian.find_out).join(', ')
+    }}
+
+const optionsDisciplinas= async () => {
+  return await getSelect(['disciplines']).then((response)=>{response.find((obj) => obj.value === currentFicha.disciplines_id)?.label});
+}
+console.log(optionsDisciplinas())
+
+const optionsIdentificacion= asyncComputed(async () => {
+  return await getSelect(['identification_types']);
+});
+
+console.log(currentFicha);
 
 const currentmotive = ref(currentFicha.rejection_message || "")
 const form = reactive({
@@ -47,13 +66,11 @@ const form = reactive({
          ? 3
          : 1,
    rejection_message: currentFicha.rejection_message || "",
-   temp: "",
 })
 const form_rules = computed(() => ({
    rejection_message: {},
    selectid: { required },
    currentmotive: {},
-   temp: {},
 }))
 const v$ = useVuelidate(form_rules, form)
 
@@ -119,10 +136,15 @@ const onSubmit = async (evt: any) => {
          })
    }
 }
+const downloadFicha=()=>{
+  console.log('descargando');
+  props.closeModal();
+}*/
 </script>
 
 <template>
-   <!--HEADER-->
+  despreciado
+   <!--HEADER
    <div class="flex items-center justify-between mt-5 mb-2 intro-y">
       <a href="#"></a>
 
@@ -162,16 +184,16 @@ const onSubmit = async (evt: any) => {
                   ? ' bg-danger/10 text-danger'
                   : currentFicha.status.slug == 'APR'
                   ? 'bg-success/10 text-success'
-                  : 'bg-warning/10 text-warning'
+                  : 'bg-primary/10 text-primary'
             "
             class="ml-2 inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium whitespace-nowrap"
          >
             {{ currentFicha.status.name }}
          </span>
       </span>
-   </div>
-   <!--REVISION -->
-   <div class="space-y-2 box px-5 py-4">
+   </div>-->
+   <!--REVISION
+   <div v-if="currentFicha.status.slug!='APR'" class="space-y-2 box px-5 py-4">
       <h2 class="font-bold">Revisión</h2>
       <CommonSelect
          :allow-empty="false"
@@ -215,12 +237,12 @@ const onSubmit = async (evt: any) => {
             Enviar
          </Button>
       </div>
-   </div>
+   </div>-->
 
-   <!--FICHA-->
+   <!--FICHA
    <div class="grid grid-cols-2 gap-6 justify-evenly">
-      <div class="p-5 mt-5 col-span-2 intro-y box">
-         <!--DATOS RESPONSABLES-->
+      <div class="p-5 mt-5 col-span-2 intro-y box">-->
+         <!--DATOS RESPONSABLES
          <div class="mt-2 mb-5 col-span-2">
             <h3 v-if="currentFicha.revised_by">
                <span class="font-bold">Revisado por:</span>
@@ -474,17 +496,10 @@ const onSubmit = async (evt: any) => {
       </div>
    </div>
 
-   <div class="p-5 mt-5 col-span-2 intro-y box">
-      <div class="my-5 text-lg bold text-left text-gray-800">
-         Datos del acudienteee
-      </div>
-
       <div class="p-5 mt-5 col-span-2 intro-y box">
          <div class="my-5 text-lg bold text-left text-gray-800">
             Datos del acudiente
          </div>
-
-         <!--<div v-show="accordion[1].shown">-->
 
          <div
             class="mt-5 grid grid-cols-1 md:grid md:grid-cols-3 gap-6 justify-evenly"
@@ -561,7 +576,17 @@ const onSubmit = async (evt: any) => {
                :disabled="true"
             />
          </div>
+         
       </div>
-   </div>
+   {{ currentUser.rol=='asistente_administrativo' }}
+   {{ currentFicha.status.slug=="APR" }}
+   <div v-if="(currentUser.rol=='asistente_administrativo' && currentFicha.status.slug=='APR')"
+    class="my-10 flex justify-center w-full">
+      <Button :class="'py-2 px-3 m-5 click:animate-ping'"
+      variant="primary" @click="downloadFicha">
+        <Lucide :icon="'Download'" :class="'mr-2 hover:motion-reduce:animate-bounce'" />
+        Descargar Ficha
+      </Button>
+   </div>-->
    <!--FIN FICHA-->
 </template>

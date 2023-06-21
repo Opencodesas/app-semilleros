@@ -31,7 +31,7 @@ export const searchData = (items: Item[], search: String) => {
 				item.email?.toLowerCase().includes(searchValue) ||				
 				item.lastname?.toLowerCase().includes(searchValue) ||
 				item.document_number?.toLowerCase().includes(searchValue) ||
-				item.role.name?.toLowerCase().includes(searchValue) ||
+				item.role?.name?.toLowerCase().includes(searchValue) ||
 				item.name?.toLowerCase().includes(searchValue) 
 		);
 	}

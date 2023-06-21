@@ -20,7 +20,6 @@ export default {
         }
         return api.get(`${apiPath}/getAllByUserRegion`)
     },
-
     async changeStatusUR(data:any, id:string) {
         try {
             setLoading(true)
@@ -49,5 +48,16 @@ export default {
     },
     municipio() {
         return api.get(`${apiPath}/municipalities`)
-    }
+    },
+    getBeneficiariesFile: async(id:string) => {
+        try {
+            setLoading(true)
+            const response = await api.get(`${apiPath}/getReportBenefisiaries/${id}`).finally(() => {
+                setLoading(false)
+            })
+            return response
+        } catch (error: any) {
+            alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
+        }
+    },
 }
