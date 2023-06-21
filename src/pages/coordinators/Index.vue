@@ -75,7 +75,7 @@ const downloadAll = async()=>{
 		<h2 class="mr-auto text-lg font-medium">
 			Listado Visitas de coordinadores
 		</h2>
-		<Button
+		<!-- <Button
 			variant="primary"
 			class="btn btn-primary"
 			@click="downloadAllMeto">
@@ -92,7 +92,7 @@ const downloadAll = async()=>{
 			class="btn btn-primary"
 			@click="downloadAll">
 			Descargar Zips
-		</Button>
+		</Button> -->
 	</div>
 	<!-- BEGIN: Page Layout -->
 	<div class="p-5 mt-5 intro-y box">
