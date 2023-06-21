@@ -64,7 +64,7 @@ const formdataParser = (form: any) => {
 //   form.file = Array.from(event.target.files);
 // };
 
-const selectFile = (event: any, field: string) => {
+const selectFile = (event: any, field: keyof typeof form) => {
   form[field] = event.target.files[0];
 };
 
@@ -151,7 +151,7 @@ const onSubmit = async () => {
         :value="form.file1"
         name="file1"
         class="w-full cursor-pointer h-full"
-        @change="(event) => selectFile(event, 'file1')"
+        @change="(event:any) => selectFile(event, 'file1')"
         @removefile="form.file1 = []"
       />
       <CommonFile
@@ -159,7 +159,7 @@ const onSubmit = async () => {
         :value="form.file2"
         name="file2"
         class="w-full cursor-pointer h-full"
-        @change="(event) => selectFile(event, 'file2')"
+        @change="(event:any) => selectFile(event, 'file2')"
         @removefile="form.file2 = []"
       />
       <CommonFile
@@ -167,7 +167,7 @@ const onSubmit = async () => {
         :value="form.file3"
         name="file3"
         class="w-full cursor-pointer h-full"
-        @change="(event) => selectFile(event, 'file3')"
+        @change="(event: any) => selectFile(event, 'file3')"
         @removefile="form.file3 = []"
       />
     </div>

@@ -199,7 +199,7 @@ const deleteAction = (id: string | number) => {
 			// Aquí puedes ejecutar el código para eliminar el usuario y sus productos
 			console.log("Eliminando usuario y productos...",id);
 			 userServices
-			.delete(id)
+			.delete(id as string)
 			.then((response) => {
 				if (response) {
 					Swal.fire('', response.data.message, 'info');
