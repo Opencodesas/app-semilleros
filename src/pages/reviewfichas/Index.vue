@@ -97,7 +97,7 @@ const getData = async () => {
 
 //traer el listado de fichas de inscripción de monitores filtrado para este rol
 onMounted(async () => {
-   getData()
+   // await getData()
 })
 
 const getFichaData = () => data.value
