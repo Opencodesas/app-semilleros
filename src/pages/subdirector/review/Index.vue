@@ -1,41 +1,48 @@
 <script setup lang="ts">
+<<<<<<< HEAD
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
 import Coordinator from './coordinator/Index.vue';
 import Methodologist from './methodologist/Index.vue';
 import Chronograms from './chronograms/Index.vue';
+=======
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/vue"
+import Coordinator from "./coordinator/Index.vue"
+import Methodologist from "./methodologist/Index.vue"
+import Cronograma from "@/pages/methodologist/reviews/chronograms/Index.vue"
+>>>>>>> develop
 
-const route = useRoute();
+const route = useRoute()
 
 const form = reactive({
-	month: '',
-	municipality: '',
-	beneficiary: '',
-	objetive: '',
-	theme: '',
-	agreements: '',
-	concept: '0',
-	swich_guardian_knows: false,
-	file: [],
-});
+   month: "",
+   municipality: "",
+   beneficiary: "",
+   objetive: "",
+   theme: "",
+   agreements: "",
+   concept: "0",
+   swich_guardian_knows: false,
+   file: [],
+})
 
 const months = asyncComputed(async () => {
-	return await getSelect(['months']);
-}, null);
+   return await getSelect(["months"])
+}, null)
 
 const cities = asyncComputed(async () => {
-	return await getSelect(['municipalities']);
-}, null);
+   return await getSelect(["municipalities"])
+}, null)
 
-const municipality_id = computed(() => form.municipality);
+const municipality_id = computed(() => form.municipality)
 
-const { isProvider } = useProvider();
-const router = useRouter();
+const { isProvider } = useProvider()
+const router = useRouter()
 </script>
 
 <template>
-	<div class="flex items-center justify-between mt-8 intro-y">
-		<h2 class="mr-auto text-lg font-medium">Listado de visitas</h2>
-	</div>
+   <div class="flex items-center justify-between mt-8 intro-y">
+      <h2 class="mr-auto text-lg font-medium">Listado de visitas</h2>
+   </div>
 
 	<TabGroup>
 		<TabList>
