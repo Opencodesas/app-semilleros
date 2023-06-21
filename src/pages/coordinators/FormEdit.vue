@@ -49,7 +49,7 @@ const municipalities = asyncComputed(async () => {
 
 // Consulta todos los monitores por municipio
 const monitor = asyncComputed(async () => {
-	return await getMonitorByMunicipality(form.municipalitie_id);
+	return await getMonitorByAuth();
 }, null);
 // Consulta todas las disciplinas
 const disciplines = asyncComputed(async () => {
