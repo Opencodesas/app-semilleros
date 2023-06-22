@@ -2,10 +2,10 @@
 import FormSwitch from "@/base-components/Form/FormSwitch";
 import { onboardingStore } from "@/stores/onboardingStore";
 import useVuelidate from "@vuelidate/core";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import { required } from "@vuelidate/validators";
 
-const route = useRoute()
+const route = useRoute();
 const store = onboardingStore();
 const { multiple } = useFilepondEvents();
 
@@ -16,9 +16,6 @@ const form = reactive({
   correct: "", //
   event: "",
   observation: "",
-  file1: [],
-  file2: [],
-  file3: [],
 });
 
 const form_rules = computed(() => ({
@@ -28,9 +25,6 @@ const form_rules = computed(() => ({
   correct: { required },
   event: { required },
   observation: { required },
-  file1: [],
-  file2: [],
-  file3: [],
 }));
 
 const v$ = useVuelidate(form_rules, form);
@@ -74,47 +68,56 @@ const onSubmit = async () => {
   const valid = await v$.value.$validate();
   if (valid) {
     console.log(form);
-     await eventSupportsService.create(formdataParser(form)).then((response) => {
-       if (response) {
-         if (response.status >= 200 && response.status <= 300) {
-           alerts.create();
-           setLoading(true);
-           router.push({ name: "event_supports.index" }).finally(() => {
-             setLoading(false);
-           });
-         }
-       }
-     });
+    await eventSupportsService
+      .update(route.params.id as string, formdataParser(form))
+      .then((response) => {
+        if (response) {
+          if (response.status >= 200 && response.status <= 300) {
+            alerts.create();
+            setLoading(true);
+            router.push({ name: "event_supports.index" }).finally(() => {
+              setLoading(false);
+            });
+          }
+        }
+      });
   } else {
     alerts.validation();
   }
 };
 
-
 const fetch = async () => {
-	//console.log(3);
-	await eventSupportsService.get(route.params.id as string).then((response) => {
-		console.log(response?.data.items);
-		if (response?.status == 200 || response?.status == 201) {
-			Swal.fire('', response?.data.message, 'info').finally(() => {});
-		} else {
-			Swal.fire('', 'No se pudieron obtener los datos', 'error');
-		}
-		console.log(form);
-	});
+  //console.log(3);
+  await eventSupportsService.get(route.params.id as string).then((response) => {
+    console.log(response?.data.items);
+    if (response?.status == 200 || response?.status == 201) {
+      Swal.fire("", response?.data.message, "info").finally(() => {});
+
+      form.date_visit = response?.data?.items?.date_visit;
+      form.hour_visit = response?.data?.items?.hour_visit;
+      form.correct = response?.data?.items?.correct;
+      form.event = response?.data?.items?.event;
+
+      form.municipalitie_id = response?.data?.items?.municipalitie_id;
+      form.observation = response?.data?.items?.observation;
+      console.log(response?.data?.items?.observation);
+    } else {
+      Swal.fire("", "No se pudieron obtener los datos", "error");
+    }
+    console.log(form);
+  });
 };
 
-
 onMounted(async () => {
-	await fetch();
-	// dataLoaded.value = true;
+  await fetch();
+  // dataLoaded.value = true;
 });
 </script>
 
 <template>
   <div class="flex items-center mt-8 intro-y">
     <div class="flex items-center space-x-4">
-    <CommonBackButton to="event_supports.index" title="Listado" />
+      <CommonBackButton to="event_supports.index" title="Listado" />
       <h2 class="mr-auto text-lg font-medium">Editar soporte de evento</h2>
     </div>
   </div>
@@ -167,36 +170,10 @@ onMounted(async () => {
       v-model="form.event"
       :validator="v$"
     />
-    <div class="grid md:grid-cols-2 md:gap-x-6 md:gap-y-3">
-      <CommonFile
-        :validator="v$"
-        :value="form.file1"
-        name="file1"
-        class="w-full cursor-pointer h-full"
-        @change="(event:any) => selectFile(event, 'file1')"
-        @removefile="form.file1 = []"
-      />
-      <CommonFile
-        :validator="v$"
-        :value="form.file2"
-        name="file2"
-        class="w-full cursor-pointer h-full"
-        @change="(event:any) => selectFile(event, 'file2')"
-        @removefile="form.file2 = []"
-      />
-      <CommonFile
-        :validator="v$"
-        :value="form.file3"
-        name="file3"
-        class="w-full cursor-pointer h-full"
-        @change="(event: any) => selectFile(event, 'file3')"
-        @removefile="form.file3 = []"
-      />
-    </div>
   </div>
   <div class="mt-6 flex justify-center col-span-1 md:col-span-2">
     <Button variant="primary" class="btn btn-primary" @click="onSubmit">
-      Registrar
+      Actualizar
     </Button>
   </div>
 </template>

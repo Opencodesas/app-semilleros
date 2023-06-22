@@ -194,11 +194,11 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: "review.index",
             title: "Revisiones",
           },
-          {
-            icon: "Activity",
-            pageName: "event_supports.create",
-            title: "Crear apoyo de eventos",
-          },
+          // {
+          //   icon: "Activity",
+          //   pageName: "event_supports.create",
+          //   title: "Crear apoyo de eventos",
+          // },
           {
             icon: "Activity",
             pageName: "event_supports.index",
@@ -262,11 +262,11 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: "users.viewer",
             title: "Usuarios",
           },
-          {
-            icon: "Activity",
-            pageName: "event_supports.create",
-            title: "Crear apoyo de eventos",
-          },
+          // {
+          //   icon: "Activity",
+          //   pageName: "event_supports.create",
+          //   title: "Crear apoyo de eventos",
+          // },
           {
             icon: "Activity",
             pageName: "event_supports.index",
@@ -441,11 +441,11 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: "users.viewer",
             title: "Usuarios",
           },
-          {
-            icon: "Activity",
-            pageName: "event_supports.create",
-            title: "Crear apoyo de eventos",
-          },
+          // {
+          //   icon: "Activity",
+          //   pageName: "event_supports.create",
+          //   title: "Crear apoyo de eventos",
+          // },
           {
             icon: "Activity",
             pageName: "event_supports.index",

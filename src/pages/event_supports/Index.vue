@@ -31,7 +31,7 @@ const headers: Header[] = [
 
   // { text: "Hora", value: "hour_visit", sortable: true },
   // { text: "Municipio", value: "municipalitie_id", sortable: true },
-  { text: "Acciones", value: "actions" },
+  { text: "Acciones", value: "actions_event_supports" },
 ];
 const dataSearch = computed(() => searchData(items.value, search.value));
 </script>
