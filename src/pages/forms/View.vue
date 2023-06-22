@@ -180,11 +180,19 @@ const onSubmit = async (evt: any) => {
    evt.preventDefault()
    //crear nuevo status
    const nStatus = {
+      // status:
+      //    form.selectid == 1
+      //       ? "REC"
+      //       : form.selectid == 2
+      //       ? "ENP"
+      //       : form.selectid == 3
+      //       ? "APR"
+      //       : "ENR",
       status:
          form.selectid == 1
             ? "REC"
             : form.selectid == 2
-            ? "ENP"
+            ? "APR"
             : form.selectid == 3
             ? "APR"
             : "ENR",
