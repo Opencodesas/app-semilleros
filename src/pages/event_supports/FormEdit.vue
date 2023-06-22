@@ -16,9 +16,6 @@ const form = reactive({
   correct: "", //
   event: "",
   observation: "",
-  file1: [],
-  file2: [],
-  file3: [],
 });
 
 const form_rules = computed(() => ({
@@ -28,9 +25,6 @@ const form_rules = computed(() => ({
   correct: { required },
   event: { required },
   observation: { required },
-  file1: [],
-  file2: [],
-  file3: [],
 }));
 
 const v$ = useVuelidate(form_rules, form);
@@ -74,17 +68,19 @@ const onSubmit = async () => {
   const valid = await v$.value.$validate();
   if (valid) {
     console.log(form);
-    await eventSupportsService.create(formdataParser(form)).then((response) => {
-      if (response) {
-        if (response.status >= 200 && response.status <= 300) {
-          alerts.create();
-          setLoading(true);
-          router.push({ name: "event_supports.index" }).finally(() => {
-            setLoading(false);
-          });
+    await eventSupportsService
+      .update(route.params.id as string, formdataParser(form))
+      .then((response) => {
+        if (response) {
+          if (response.status >= 200 && response.status <= 300) {
+            alerts.create();
+            setLoading(true);
+            router.push({ name: "event_supports.index" }).finally(() => {
+              setLoading(false);
+            });
+          }
         }
-      }
-    });
+      });
   } else {
     alerts.validation();
   }
@@ -104,7 +100,7 @@ const fetch = async () => {
 
       form.municipalitie_id = response?.data?.items?.municipalitie_id;
       form.observation = response?.data?.items?.observation;
-      console.log(response?.data?.items?.observation)
+      console.log(response?.data?.items?.observation);
     } else {
       Swal.fire("", "No se pudieron obtener los datos", "error");
     }
@@ -174,36 +170,10 @@ onMounted(async () => {
       v-model="form.event"
       :validator="v$"
     />
-    <div class="grid md:grid-cols-2 md:gap-x-6 md:gap-y-3">
-      <CommonFile
-        :validator="v$"
-        :value="form.file1"
-        name="file1"
-        class="w-full cursor-pointer h-full"
-        @change="(event:any) => selectFile(event, 'file1')"
-        @removefile="form.file1 = []"
-      />
-      <CommonFile
-        :validator="v$"
-        :value="form.file2"
-        name="file2"
-        class="w-full cursor-pointer h-full"
-        @change="(event:any) => selectFile(event, 'file2')"
-        @removefile="form.file2 = []"
-      />
-      <CommonFile
-        :validator="v$"
-        :value="form.file3"
-        name="file3"
-        class="w-full cursor-pointer h-full"
-        @change="(event: any) => selectFile(event, 'file3')"
-        @removefile="form.file3 = []"
-      />
-    </div>
   </div>
   <div class="mt-6 flex justify-center col-span-1 md:col-span-2">
     <Button variant="primary" class="btn btn-primary" @click="onSubmit">
-      Registrar
+      Actualizar
     </Button>
   </div>
 </template>
