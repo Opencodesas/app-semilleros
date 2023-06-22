@@ -15,7 +15,7 @@ const form = reactive({
   municipalitie_id: "",
   correct: "", //
   event: "",
-  observation: "default",
+  observation: "",
   file1: [],
   file2: [],
   file3: [],
@@ -91,7 +91,6 @@ const onSubmit = async () => {
 };
 
 const fetch = async () => {
-  form.observation='aksjdnasjkndasjkndjkasndaskjndasjkdnsa';
   //console.log(3);
   await eventSupportsService.get(route.params.id as string).then((response) => {
     console.log(response?.data.items);
