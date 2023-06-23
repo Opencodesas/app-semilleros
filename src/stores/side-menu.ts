@@ -242,14 +242,15 @@ export const useSideMenuStore = defineStore("sideMenu", {
         icon: "User",
         title: "Coordinador Regional",
         subMenu: [
+          // {
+          //   icon: "Activity",
+          //   role: 'coordinador_regional',
+          //   pageName: "coordinator.create",
+          //   title: "Crear visita",
+          // },
           {
             icon: "Activity",
             role: 'coordinador_regional',
-            pageName: "coordinator.create",
-            title: "Crear visita",
-          },
-          {
-            icon: "Activity",
             pageName: "coordinator.index",
             title: "Visitas",
           },
@@ -260,18 +261,13 @@ export const useSideMenuStore = defineStore("sideMenu", {
           // },
           {
             icon: "Activity",
-            pageName: "users.viewer",
-            title: "Usuarios",
-          },
-          // {
-          //   icon: "Activity",
-          //   pageName: "event_supports.create",
-          //   title: "Crear apoyo de eventos",
-          // },
-          {
-            icon: "Activity",
             pageName: "event_supports.index",
             title: "Apoyo de eventos",
+          },
+          {
+            icon: "Activity",
+            pageName: "users.viewer",
+            title: "Usuarios",
           },
         ]
       },
@@ -421,12 +417,12 @@ export const useSideMenuStore = defineStore("sideMenu", {
         icon: "User",
         title: "Metodólogo",
         subMenu: [
-          {
-            icon: "Activity",
-            role: 'metodologo',
-            pageName: "methodologist_visits.create",
-            title: "Crear visita",
-          },
+          // {
+          //   icon: "Activity",
+          //   role: 'metodologo',
+          //   pageName: "methodologist_visits.create",
+          //   title: "Crear visita",
+          // },
           {
             icon: "Activity",
             pageName: "methodologist_visits.index",
@@ -434,24 +430,26 @@ export const useSideMenuStore = defineStore("sideMenu", {
           },
           {
             icon: "Activity",
-            pageName: "review.bene_chro",
-            title: "Revisiones",
+            pageName: "event_supports.index",
+            title: "Apoyo de eventos",
           },
           {
             icon: "Activity",
             pageName: "users.viewer",
             title: "Usuarios",
           },
+          {
+            icon: "Activity",
+            pageName: "review.bene_chro",
+            title: "Revisiones",
+          },
+          
           // {
           //   icon: "Activity",
           //   pageName: "event_supports.create",
           //   title: "Crear apoyo de eventos",
           // },
-          {
-            icon: "Activity",
-            pageName: "event_supports.index",
-            title: "Apoyo de eventos",
-          },
+          
         ]
       },
       {
