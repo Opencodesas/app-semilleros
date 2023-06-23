@@ -79,7 +79,8 @@ const months = computedAsync(async () => {
 }, null)
 
 const municipalities = computedAsync(async () => {
-    return await getCitiesByDepartment('30')
+      return await getSelect(['municipalities'])
+    // return await getCitiesByDepartment('30') 
 }, null)
 
 const groups = computedAsync(async () => {

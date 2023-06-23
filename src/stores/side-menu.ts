@@ -179,15 +179,20 @@ export const useSideMenuStore = defineStore("sideMenu", {
         icon: "User",
         title: "Subdirector",
         subMenu: [
-          {
-            icon: "Activity",
-            pageName: "subdirector_visit.create",
-            title: "Crear visita",
-          },
+          // {
+          //   icon: "Activity",
+          //   pageName: "subdirector_visit.create",
+          //   title: "Crear visita",
+          // },
           {
             icon: "Activity",
             pageName: "subdirector_visit.index",
             title: "Visitas",
+          },
+          {
+            icon: "Activity",
+            pageName: "event_supports.index",
+            title: "Apoyo de eventos",
           },
           {
             icon: "Activity",
@@ -199,11 +204,7 @@ export const useSideMenuStore = defineStore("sideMenu", {
           //   pageName: "event_supports.create",
           //   title: "Crear apoyo de eventos",
           // },
-          {
-            icon: "Activity",
-            pageName: "event_supports.index",
-            title: "Apoyo de eventos",
-          },
+          
         ]
       },
       {
