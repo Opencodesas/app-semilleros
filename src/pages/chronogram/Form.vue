@@ -163,10 +163,18 @@ const onSubmit = async () => {
 		if (!hayCruce) {
 			await chronogramServices.create(formdataParser(form)).then((res: any) => {
 				if (res) {
-					alerts.create();
-					router.push('/dashboard/chronograms').finally(() => {
-						setLoading(false);
-					});
+					if(res.data.status == 'errorMes'){
+						alerts.custom(
+							'Validación',
+							'El mes seleccionado ya tiene registrado un cronograma',
+							'error'
+						);
+					}else{
+						alerts.create();
+						router.push('/dashboard/chronograms').finally(() => {
+							setLoading(false);
+						});
+					}
 				}
 			});
 		}
