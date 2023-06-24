@@ -581,10 +581,16 @@ const selectedTab = inject('selectedTab', ref(0));
 			</template>
 			<template #item-actions_event_supports="item">
 					
-				<Button variant="outline-secondary"	@click="editAction(item.id)">
+				<!-- <Button variant="outline-secondary"	@click="editAction(item.id)">
 					<Lucide :icon="'FileEdit'" class="mr-2" />
 						<span class="text-sm">
 							{{ "Editar" }}									
+						</span>
+				</Button> -->
+				<Button variant="outline-secondary"	@click="informationAction(item.id)">
+					<Lucide :icon="'Eye'" class="mr-2" />
+						<span class="text-sm">
+							{{ "Previsualizar" }}									
 						</span>
 				</Button>
 			</template>
@@ -610,7 +616,7 @@ const selectedTab = inject('selectedTab', ref(0));
 								{{ onboardingStore().get_user_role?.slug == 'director_administrator'?"Editar":"Informacion" }}									
 							</span>
 						</Button>
-						<Button
+						<!-- <Button
 							variant="outline-secondary" 	class="max-h-[42px]"
 							
 							@click="historyAction(item.id)">
@@ -621,7 +627,7 @@ const selectedTab = inject('selectedTab', ref(0));
 								class="text-sm">
 								{{ "Historial" }}									
 							</span>
-						</Button>
+						</Button> -->
 						<Button v-if="(onboardingStore().get_user_role?.slug == 'super.root') || (onboardingStore().get_user_role?.slug == 'director_administrator')"
 							variant="outline-secondary" 	class="max-h-[42px]"
 							
@@ -729,19 +735,19 @@ const selectedTab = inject('selectedTab', ref(0));
 								@click="
 									() => {
 										switch (selectedTab) {
-											case 1:
+											case 0:
 												router.push({
 													name: 'psychosocial.update',
 													params: { id: item.id },
 												});
 												break;
-											case 2:
+											case 1:
 												router.push({
 													name: 'psychosocial.custom-update',
 													params: { id: item.id },
 												});
 												break;
-											case 3:
+											case 2:
 												router.push({
 													name: 'psychosocial.transversal-activity.update',
 													params: { id: item.id },

@@ -106,15 +106,17 @@ const municipalities = asyncComputed(async () => {
 // }, null);
 // Consulta todas las disciplinas
 const disciplines = asyncComputed(async () => {
-   if (!usersDisciplinesByMunicipality.value || !form.monitor_id) return []
-   const data = usersDisciplinesByMunicipality.value?.find(
-      (el: any) => el?.user_id === form.monitor_id
-   )
+   // if (!usersDisciplinesByMunicipality.value || !form.monitor_id) return []
+   // const data = usersDisciplinesByMunicipality.value?.find(
+   //    (el: any) => el?.user_id === form.monitor_id
+   // )
+   // console.log(data)
 
-   return [{ label: data?.discipline, value: data?.discipline_id }] as Array<{
-      label: string
-      value: string | number
-   }>
+   // return [{ label: data?.discipline, value: data?.discipline_id }] as Array<{
+   //    label: string
+   //    value: string | number
+   // }>
+   return await getDisciplinesByMonitor(form.monitor_id);
 }, null)
 const selectFile = (event: any) => {
    form.file = event.target.files[0]

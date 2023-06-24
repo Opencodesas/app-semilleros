@@ -256,10 +256,11 @@ const download = async () => {
 				Evidencia *
 			</FormLabel>
 			<div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3">
+			<!-- {{urlStorage}} -->
 				<img
 					v-for="file in files"
 					:alt="`Evidencia del psicosocial ${form.create_by}`"
-					class="m-auto border rounded-lg h-80 w-80 xl:h-96 xl:w-96"
+					class="m-auto border rounded-lg h-80 w-80 xl:h-96 xl:w-96 object-contain"
 					:src="`${urlStorage}${file.path}`" />
 			</div>
 		</div>
