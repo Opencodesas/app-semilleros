@@ -114,7 +114,7 @@ const months = computedAsync(async () => {
 }, null);
 
 const municipalities = asyncComputed(async () => {
-    return await getSelect(['municipalities'])
+    return await getSelect(['municipalities'], true)
 }, null)
 
 const groups = ref<any>([]);
