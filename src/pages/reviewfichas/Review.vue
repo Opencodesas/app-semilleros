@@ -21,7 +21,7 @@ function changeTab(index: any) {
   const hashOptions = Object.keys(tabOptions);
   const selectedHash = hashOptions[index];
   const routePath = `${currentPath}/#` + selectedHash;
-  router.replace(routePath);
+  router.push(routePath);
 }
 
 onMounted(() => {

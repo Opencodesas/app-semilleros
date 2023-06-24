@@ -27,6 +27,7 @@ const headers: Header[] = [
   { text: "Fecha", value: "date_visit", sortable: true },
   { text: "Hora", value: "hour_visit", sortable: true },
   { text: "Evento", value: "event", sortable: true },
+  { text: "Departamento", value: "municipalitie_id", sortable: true },
   { text: "Corrregimiento", value: "correct", sortable: true },
 
   // { text: "Hora", value: "hour_visit", sortable: true },
@@ -47,7 +48,7 @@ const dataSearch = computed(() => searchData(items.value, search.value));
   </div>
   <!-- BEGIN: Page Layout -->
   <div class="p-5 mt-5 intro-y box">
-  <!-- {{items}}
+    <!-- {{items}}
   {{dataSearch}} -->
     <CommonInput
       type="search"

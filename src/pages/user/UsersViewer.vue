@@ -31,12 +31,12 @@ onBeforeMount(async () => {
 
 const headers: Header[] = [
     { text: 'No.', value: 'id' },
-    { text: 'CORREO', value: 'email', sortable: true },
-    { text: 'NOMBRE', value: 'name', sortable: true },
-    { text: 'APELLIDO', value: 'lastname', sortable: true },
-    { text: 'DOCUMENTO', value: 'document_number', sortable: true },
-    { text: "ROLES", value: "role.name", sortable: true },
-    { text: 'ACCIONES', value: 'actionsUsersViewer' },
+    { text: 'Correo', value: 'email', sortable: true },
+    { text: 'Nombre', value: 'name', sortable: true },
+    { text: 'Apellido', value: 'lastname', sortable: true },
+    { text: 'Documento', value: 'document_number', sortable: true },
+    { text: "Roles", value: "role.name", sortable: true },
+    { text: 'Acciones', value: 'actionsUsersViewer' },
 ]
 
 const search = ref('')
@@ -48,11 +48,11 @@ const data = computed(() => searchData(items.value, search.value));
 <template>
     <div class="flex items-center mt-8 intro-y">
         <h2 class="mr-auto text-lg font-medium">Listado Usuarios</h2>
-        <div class="w-full sm:w-auto flex mt-4 sm:mt-0">
+        <!-- <div class="w-full sm:w-auto flex mt-4 sm:mt-0">
             <Button variant="primary" class="btn btn-primary" @click="create">
                 Crear Usuario
             </Button>
-        </div>
+        </div> -->
     </div>
     <div class="p-5 mt-5 intro-y box">
         	<CommonInput

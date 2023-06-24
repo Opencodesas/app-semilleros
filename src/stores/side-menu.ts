@@ -199,11 +199,11 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: "review.index",
             title: "Revisiones",
           },
-          // {
-          //   icon: "Activity",
-          //   pageName: "event_supports.create",
-          //   title: "Crear apoyo de eventos",
-          // },
+          {
+            icon: "Activity",
+            pageName: "users.viewer",
+            title: "Usuarios",
+          },
           
         ]
       },
@@ -231,11 +231,11 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: "psychosocial.visits",
             title: "Formatos",
           },
-          {
-            icon: "Activity",
-            pageName: "users.viewer",
-            title: "Usuarios",
-          },
+          // {
+          //   icon: "Activity",
+          //   pageName: "users.viewer",
+          //   title: "Usuarios",
+          // },
         ]
       },
       {
@@ -315,18 +315,18 @@ export const useSideMenuStore = defineStore("sideMenu", {
           },
         ]
       },
-      {
-        icon: "User",
-        title: "Usuarios",
-        subMenu: [
-          {
-            icon: "User",
-            role: 'subdirector_tecnico',
-            pageName: "users.viewer",
-            title: "Lista",
-          },
-        ]
-      },
+      // {
+      //   icon: "User",
+      //   title: "Usuarios",
+      //   subMenu: [
+      //     {
+      //       icon: "User",
+      //       role: 'subdirector_tecnico',
+      //       pageName: "users.viewer",
+      //       title: "Lista",
+      //     },
+      //   ]
+      // },
       {
         icon: "User",
         title: "Director Tecnico",
@@ -435,13 +435,13 @@ export const useSideMenuStore = defineStore("sideMenu", {
           },
           {
             icon: "Activity",
-            pageName: "users.viewer",
-            title: "Usuarios",
+            pageName: "review.bene_chro",
+            title: "Revisiones",
           },
           {
             icon: "Activity",
-            pageName: "review.bene_chro",
-            title: "Revisiones",
+            pageName: "users.viewer",
+            title: "Usuarios",
           },
           
           // {

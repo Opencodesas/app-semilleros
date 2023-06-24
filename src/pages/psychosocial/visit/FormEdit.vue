@@ -57,7 +57,9 @@ const municipalities = asyncComputed(async () => {
 }, null)
 
 const monitorList = asyncComputed(async () => {
-    return await getMonitorByMunicipality(form.municipalities_id);
+    let response =await getMonitorByAuth()
+    return response
+    // return await getMonitorByMunicipality(form.municipalities_id); 
 }, null);
 
 const disciplinesList = asyncComputed(async () => {
