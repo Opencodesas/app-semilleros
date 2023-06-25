@@ -225,7 +225,7 @@ const onSubmit = async () => {
             :options="monitor"
          />
          <CommonSelect
-            label="Diciplinas *"
+            label="Disciplinas *"
             name="discipline_id"
             v-model="form.discipline_id"
             :validator="v$"
