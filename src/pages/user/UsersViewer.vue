@@ -36,7 +36,7 @@ const headers: Header[] = [
     { text: 'Apellido', value: 'lastname', sortable: true },
     { text: 'Documento', value: 'document_number', sortable: true },
     { text: "Roles", value: "role.name", sortable: true },
-    { text: 'Acciones', value: 'actionsUsersViewer' },
+    // { text: 'Acciones', value: 'actionsUsersViewer' },
 ]
 
 const search = ref('')
