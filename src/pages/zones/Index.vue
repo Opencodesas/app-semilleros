@@ -35,9 +35,9 @@ const headers: Header[] = [
     { text: 'CORREO', value: 'users.email', },
     // { text: "ROLES", value: "roles" },
     { text: 'REGION', value: 'zone.name', },
-    {
-        text: "Acciones", value: 'users.status'
-    }
+    // {
+    //     text: "Acciones", value: 'users.status'
+    // }
 ]
 
 const items = ref<Item[]>([])
@@ -47,11 +47,6 @@ const items = ref<Item[]>([])
 <template>
     <div class="flex items-center mt-8 intro-y">
         <h2 class="mr-auto text-lg font-medium">Listado de usuarios por zonas</h2>
-        <div class="w-full sm:w-auto flex mt-4 sm:mt-0">
-            <Button variant="primary" class="btn btn-primary" @click="edit">
-                Edicion
-            </Button>
-        </div>
     </div>
     <!-- BEGIN: Page Layout -->
     <div class="p-5 mt-5 intro-y box">

@@ -177,7 +177,7 @@ const onSubmit = async () => {
 
             <CommonSelect label="Monitor *" name="user_id" v-model="form.user_id" :validator="v$"
                 :options="monitorList" />
-            <CommonSelect label="Diciplinas *" name="discipline_id" v-model="form.discipline_id" :validator="v$"
+            <CommonSelect label="Disciplinas *" name="discipline_id" v-model="form.discipline_id" :validator="v$"
                 :options="disciplinesList" />
             <CommonInput type="text" placeholder="Ingrese" label="Escenario deportivo *" name="sports_scene"
                 v-model="form.sports_scene" :validator="v$" />

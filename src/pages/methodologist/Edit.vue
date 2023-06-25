@@ -281,7 +281,7 @@ const downloadVisit = async () => {
 
 				<CommonSelect label="Monitor *" name="user_id" v-model="form.user_id" :validator="v$" :options="monitor"
 					:disabled="disableElements" />
-				<CommonSelect label="Diciplinas *" name="discipline_id" v-model="form.discipline_id" :validator="v$"
+				<CommonSelect label="Disciplinas *" name="discipline_id" v-model="form.discipline_id" :validator="v$"
 					:options="disciplines" :disabled="disableElements" />
 				<CommonInput type="text" placeholder="Ingrese el escenario deportivo" label="Escenario deportivo *"
 					name="sports_scene" v-model="form.sports_scene" :validator="v$" :disabled="disableElements" />
