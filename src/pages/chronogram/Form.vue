@@ -312,7 +312,7 @@ const onCloneChronogram = async () => {
 
 					<div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
 						<CommonSelect label="Mes del cronograma *" name="month" v-model="form.month" :validator="v$" :options="months"
-							:allowEmpty="false" disabled/>
+							:allowEmpty="false"/>
 						<CommonSelect label="Municipio *" name="municipality" v-model="form.municipality" :validator="v$"
 							:options="municipalities" :allowEmpty="false" />
 						<CommonSelect class="" label="Clonar Cronograma" name="cloneChronogram" v-model="cloneChronogram"
