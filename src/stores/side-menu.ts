@@ -179,11 +179,11 @@ export const useSideMenuStore = defineStore("sideMenu", {
         icon: "User",
         title: "Subdirector",
         subMenu: [
-          {
-            icon: "Activity",
-            pageName: "subdirector_visit.create",
-            title: "Crear visita",
-          },
+          // {
+          //   icon: "Activity",
+          //   pageName: "subdirector_visit.create",
+          //   title: "Crear visita",
+          // },
           {
             icon: "Activity",
             pageName: "subdirector_visit.index",
@@ -191,9 +191,20 @@ export const useSideMenuStore = defineStore("sideMenu", {
           },
           {
             icon: "Activity",
+            pageName: "event_supports.index",
+            title: "Apoyo de eventos",
+          },
+          {
+            icon: "Activity",
             pageName: "review.index",
             title: "Revisiones",
           },
+          {
+            icon: "Activity",
+            pageName: "users.viewer",
+            title: "Usuarios",
+          },
+          
         ]
       },
       {
@@ -220,25 +231,26 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: "psychosocial.visits",
             title: "Formatos",
           },
-          {
-            icon: "Activity",
-            pageName: "users.viewer",
-            title: "Usuarios",
-          },
+          // {
+          //   icon: "Activity",
+          //   pageName: "users.viewer",
+          //   title: "Usuarios",
+          // },
         ]
       },
       {
         icon: "User",
         title: "Coordinador Regional",
         subMenu: [
+          // {
+          //   icon: "Activity",
+          //   role: 'coordinador_regional',
+          //   pageName: "coordinator.create",
+          //   title: "Crear visita",
+          // },
           {
             icon: "Activity",
             role: 'coordinador_regional',
-            pageName: "coordinator.create",
-            title: "Crear visita",
-          },
-          {
-            icon: "Activity",
             pageName: "coordinator.index",
             title: "Visitas",
           },
@@ -247,6 +259,11 @@ export const useSideMenuStore = defineStore("sideMenu", {
           //   pageName: "review.bene_chro",
           //   title: "Revisiones",
           // },
+          {
+            icon: "Activity",
+            pageName: "event_supports.index",
+            title: "Apoyo de eventos",
+          },
           {
             icon: "Activity",
             pageName: "users.viewer",
@@ -298,18 +315,18 @@ export const useSideMenuStore = defineStore("sideMenu", {
           },
         ]
       },
-      {
-        icon: "User",
-        title: "Usuarios",
-        subMenu: [
-          {
-            icon: "User",
-            role: 'subdirector_tecnico',
-            pageName: "users.viewer",
-            title: "Lista",
-          },
-        ]
-      },
+      // {
+      //   icon: "User",
+      //   title: "Usuarios",
+      //   subMenu: [
+      //     {
+      //       icon: "User",
+      //       role: 'subdirector_tecnico',
+      //       pageName: "users.viewer",
+      //       title: "Lista",
+      //     },
+      //   ]
+      // },
       {
         icon: "User",
         title: "Director Tecnico",
@@ -400,16 +417,21 @@ export const useSideMenuStore = defineStore("sideMenu", {
         icon: "User",
         title: "Metodólogo",
         subMenu: [
-          {
-            icon: "Activity",
-            role: 'metodologo',
-            pageName: "methodologist_visits.create",
-            title: "Crear visita",
-          },
+          // {
+          //   icon: "Activity",
+          //   role: 'metodologo',
+          //   pageName: "methodologist_visits.create",
+          //   title: "Crear visita",
+          // },
           {
             icon: "Activity",
             pageName: "methodologist_visits.index",
             title: "Visitas"
+          },
+          {
+            icon: "Activity",
+            pageName: "event_supports.index",
+            title: "Apoyo de eventos",
           },
           {
             icon: "Activity",
@@ -421,6 +443,13 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: "users.viewer",
             title: "Usuarios",
           },
+          
+          // {
+          //   icon: "Activity",
+          //   pageName: "event_supports.create",
+          //   title: "Crear apoyo de eventos",
+          // },
+          
         ]
       },
       {

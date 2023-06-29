@@ -210,7 +210,7 @@ const defineReason = () => {
 				:options="monitor" />
 			<CommonSelect
 				disabled
-				label="Diciplinas *"
+				label="Disciplinas *"
 				name="discipline_id"
 				v-model="form.discipline_id"
 				:options="disciplines" />

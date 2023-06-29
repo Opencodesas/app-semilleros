@@ -53,7 +53,7 @@ const evaluationList = [
 const v$ = useVuelidate(form_rules, form);
 
 const monitor = asyncComputed(async () => {
-	return await getMonitorByMunicipality(form.municipality_id);
+	return await getSelect(['monitors']);
 }, null);
 
 const municipalities = asyncComputed(async () => {

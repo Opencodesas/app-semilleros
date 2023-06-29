@@ -1,3 +1,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@media (min-width: 1280px) {
+  * {
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  /* Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #9ca3af;
+  }
+
+  /* Chrome, Edge, and Safari */
+  *::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 5px;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    border-radius: 50px;
+    background: #d4d4d8 !important;
+  }
+}

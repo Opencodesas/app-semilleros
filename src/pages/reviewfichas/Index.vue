@@ -69,11 +69,11 @@ const headers: Header[] =
         ]
       : [
            { text: "No.", value: "id", sortable: true },
-           {
-              text: "Revisado por",
-              value: "reviewed_by.full_name",
-              sortable: true,
-           },
+         //   {
+         //      text: "Revisado por",
+         //      value: "reviewed_by.full_name",
+         //      sortable: true,
+         //   },
            { text: "Monitor", value: "created_by.full_name", sortable: true },
            {
               text: "CC del Monitor",
@@ -90,14 +90,14 @@ const data = ref([])
 const items = ref<Item[]>([])
 
 const getData = async () => {
-   const res = await beneficiary.getAllUR()
+   const res = await beneficiaryServices.getAll()
    data.value = res?.data
    items.value = await res?.data.items
 }
 
 //traer el listado de fichas de inscripción de monitores filtrado para este rol
 onMounted(async () => {
-   getData()
+   await getData()
 })
 
 const getFichaData = () => data.value

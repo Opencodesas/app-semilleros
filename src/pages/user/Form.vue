@@ -8,7 +8,7 @@ import { useVuelidate } from '@vuelidate/core'
 import Swal, { SweetAlertIcon } from "sweetalert2"
 
 //const user_store = useUser();
-const excludedRoles = [2, 3, 5, 6, 7]
+const excludedRoles = [2, 3, 5, 6, 7, 8, 14]
 
 const form = reactive({
     address: '',
@@ -254,14 +254,15 @@ const onSubmit = async () => {
             <CommonSelect multiple label="Selecciona regiones *" name="zones" v-model="form.zones" :validator="v$" :options="zones" v-if="form.roles && !excludedRoles.includes(+form.roles)"  :allow-empty="true" />
             <CommonSelect label="Seleccione el municipio *" name="municipalities" v-model="form.municipalities" :validator="v$"
                 :options="municipalities" multiple v-if="form.roles && !excludedRoles.includes(+form.roles)" :allow-empty="true"/>
+                
             <CommonSelect class="h-30" label="Seleccione las disciplinas *" name="disciplines" v-model="form.disciplines" :validator="v$"
                 :options="disciplines" multiple v-if="form.roles && form.roles == '12'" />
-            <CommonSelect class="h-30" label="Asistente Auxiliar y Administrativo *" name="asistent_id" v-model="form.asistent"
-                :options="asistentList" v-if="form.roles && form.roles == '10'" />
             <CommonSelect class="h-30" label="Metodologo *" name="methodology_id" v-model="form.methodology_id"
                 :options="metodologoList" v-if="form.roles && form.roles == '12'" />
             <CommonSelect class="h-30" label="Supervisor *" name="manager_id" v-model="form.manager_id"
                 :options="managerList"/>
+            <CommonSelect class="h-30" label="Asistente Auxiliar y Administrativo *" name="asistent_id" v-model="form.asistent"
+                :options="asistentList" v-if="form.roles && (form.roles == '10'||form.roles == '11' ||form.roles == '14')" />
             <br>
             <CommonInput type="hidden" name="password" :value="form.document_number" v-model="form.password" :validator="v$" />
         </div>

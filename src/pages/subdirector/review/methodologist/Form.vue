@@ -244,7 +244,7 @@ const disableElements = true;
 					:options="monitorList"
 					:disabled="disableElements" />
 				<CommonSelect
-					label="Diciplinas *"
+					label="Disciplinas *"
 					name="discipline_id"
 					v-model="form.discipline_id"
 					:options="disciplines"

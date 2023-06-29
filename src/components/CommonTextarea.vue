@@ -16,7 +16,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {})
-
+const thisestate = props.disabled;
 // [TypeScript] => Defining Emits
 interface Emits {
     (e: 'update:modelValue', value: string): void
@@ -50,7 +50,7 @@ export default {
         </template>
         <!-- Component -->
         <!--añadido el :disabled="disabled"-->
-        <FormTextarea :id="name" :rows="rows" :cols="rows" v-model="value" v-bind="props">
+        <FormTextarea :id="name" :rows="rows" :cols="rows" v-model="value" v-bind="props" :disabled="thisestate">
         </FormTextarea>
         <!-- Validator -->
         <template v-if="tooltip">

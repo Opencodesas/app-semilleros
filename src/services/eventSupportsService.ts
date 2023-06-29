@@ -1,24 +1,11 @@
-let module = "chronogram"
+let module = "eventSupports"
 
-export const chronogramServices = {
+export const eventSupportsService = {
     get: async (id: string) => {
         try {
             setLoading(true)
 
             const response = await api.get(`/${apiPath}/${module}/${id}`).finally(() => {
-                setLoading(false)
-            })
-
-            return response 
-        } catch (error: any) {
-            alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
-        }
-    },
-    getFileChronogram: async (id: string) => {
-        try {
-            setLoading(true)
-
-            const response = await api.get(`/${apiPath}/GetChronogram/${id}`).finally(() => {
                 setLoading(false)
             })
 
@@ -34,7 +21,7 @@ export const chronogramServices = {
             const response = await api.get(`/${apiPath}/${module}`).finally(() => {
                 setLoading(false)
             })
-
+            console.log(response);
             return response
         } catch (error: any) {
             alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
@@ -53,11 +40,11 @@ export const chronogramServices = {
             alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
         }
     },
-    update: async (id: string | number, payload: FormData) => {
+    update: async (id: string, payload: FormData) => {
         try {
             setLoading(true)
 
-            const response = await api.post(`/${apiPath}/${module}/${id}?_method=PUT`, payload).finally(() => {
+            const response = await api.post(`/${apiPath}/${module}/${id}`, payload).finally(() => {
                 setLoading(false)
             })
 
@@ -79,17 +66,4 @@ export const chronogramServices = {
             alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
         }
     },
-    findByContractor: async (id: string) => {
-        try {
-            setLoading(true)
-
-            const response = await api.get(`/${apiPath}/${module}/findByContractor/${id}`).finally(() => {
-                setLoading(false)
-            })
-
-            return response 
-        } catch (error: any) {
-            alerts.custom('ERROR', error.response.data.error ?? error.response.data.message, 'error')
-        }
-    }
 }

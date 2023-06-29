@@ -10,7 +10,7 @@ import { useRoute } from 'vue-router';
 
 const router = useRouter();
 const route = useRoute();
-const excludedRoles = [2, 3, 5, 6, 7];
+const excludedRoles = [2, 3, 5, 6, 7, 8, 14];
 
 const form = reactive({
 	address: '',
@@ -232,7 +232,7 @@ onMounted(async () => {
 			<Button @click="goback" variant="outline-secondary" class="flex w-24"><Lucide :icon="'ChevronLeft'" class="mr-2" />
 				Listado
 			</Button>
-			<h2 class="mr-auto text-lg font-medium">Editar Usuario</h2>
+			<h2 class="mr-auto text-lg font-medium">Editar Usuario</h2> 
 		</div>
 	</div>
 
@@ -337,7 +337,7 @@ onMounted(async () => {
 				v-if="form.roles && form.roles == '12'"
 			/>
             <CommonSelect class="h-30" label="Asistente Auxiliar y Administrativo *" name="asistent_id" v-model="form.asistent_id"
-                :options="asistentList" v-if="form.roles && form.roles == '10'" />
+                :options="asistentList" v-if="form.roles && (form.roles == '10'|| form.roles == '11' ||form.roles == '14')" />
             <CommonSelect class="h-30" label="Metodologo *" name="methodology_id" v-model="form.methodology_id"
                 :options="metodologoList" v-if="form.roles && form.roles == '12'" />
 			<CommonSelect class="h-30" label="Supervisor *" name="manager_id" v-model="form.manager_id"

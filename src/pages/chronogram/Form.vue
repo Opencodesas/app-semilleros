@@ -14,7 +14,7 @@ import { organizeHolidays } from './utils/holidays';
 const storeOnboarding = onboardingStore();
 
 const form = reactive({
-	month: '',
+	month: 13,
 	municipality: '',
 	note: '',
 	note_holiday: '',
@@ -114,7 +114,7 @@ const months = computedAsync(async () => {
 }, null);
 
 const municipalities = asyncComputed(async () => {
-    return await getSelect(['municipalities'])
+    return await getSelect(['municipalities'], true)
 }, null)
 
 const groups = ref<any>([]);
@@ -163,10 +163,18 @@ const onSubmit = async () => {
 		if (!hayCruce) {
 			await chronogramServices.create(formdataParser(form)).then((res: any) => {
 				if (res) {
-					alerts.create();
-					router.push('/dashboard/chronograms').finally(() => {
-						setLoading(false);
-					});
+					if(res.data.status == 'errorMes'){
+						alerts.custom(
+							'Validación',
+							'El mes seleccionado ya tiene registrado un cronograma',
+							'error'
+						);
+					}else{
+						alerts.create();
+						router.push('/dashboard/chronograms').finally(() => {
+							setLoading(false);
+						});
+					}
 				}
 			});
 		}
@@ -304,13 +312,14 @@ const onCloneChronogram = async () => {
 
 					<div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
 						<CommonSelect label="Mes del cronograma *" name="month" v-model="form.month" :validator="v$" :options="months"
-							:allowEmpty="false" />
+							:allowEmpty="false"/>
 						<CommonSelect label="Municipio *" name="municipality" v-model="form.municipality" :validator="v$"
 							:options="municipalities" :allowEmpty="false" />
 						<CommonSelect class="" label="Clonar Cronograma" name="cloneChronogram" v-model="cloneChronogram"
 							:options="chronogram" :allowEmpty="false" />
 						<div class="col-span-1 flex items-end">
 							<Button @click="onCloneChronogram" type="button" variant="primary">Clonar</Button>
+							<Button @click="cloneChronogram=false" type="button" variant="outline-primary" class="ml-2" :disabled="cloneChronogram=='' || cloneChronogram ==null">Limpiar</Button>
 						</div>
 						<div class="col-span-1 md:col-span-2">
 							<!--<CommonEditor label="Observaciones Generales" name="note" v-model="form.note" :validator="v$" />-->
@@ -321,6 +330,7 @@ const onCloneChronogram = async () => {
 								:validator="v$" />-->
 							<CommonTextarea label="Observaciones Dias Festivos" name="note_holiday" v-model="form.note_holiday"
 								:validator="v$" />
+								<!-- text-red-600 -->
 							<p class="mt-2">{{ form.month && holidaysMonth }}</p>
 						</div>
 					</div>
