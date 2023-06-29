@@ -39,26 +39,19 @@ onBeforeMount(async () => {
 //   { text: "Acciones", value: "actionsUsersViewer" },
 // ];
 
-const isDirectorAdministrator = computed(() => {
-  return onboardingStore().get_user_role?.slug === "director_administrator";
-});
-
-const headers: Header[] = computed(() => {
-  const baseHeaders = [
+const headers: Header[] = 
+onboardingStore().get_user_role?.slug != "director_administrator" ?
+[
     { text: "No.", value: "id" },
     { text: "Correo", value: "email", sortable: true },
     { text: "Nombre", value: "name", sortable: true },
     { text: "Apellido", value: "lastname", sortable: true },
     { text: "Documento", value: "document_number", sortable: true },
     { text: "Roles", value: "role.name", sortable: true },
-  ];
+]
+:
+[ { text: "Acciones", value: "actionsUsersViewer" } ] ;
 
-  if (isDirectorAdministrator.value) {
-    return [...baseHeaders, { text: "Acciones", value: "actionsUsersViewer" }];
-  }
-
-  return baseHeaders;
-});
 const search = ref("");
 const items = ref<Item[]>([]);
 
@@ -68,7 +61,7 @@ const data = computed(() => searchData(items.value, search.value));
 <template>
   <div class="flex items-center mt-8 intro-y">
     <h2 class="mr-auto text-lg font-medium">Listado Usuarios</h2>
-    <div class="w-full sm:w-auto flex mt-4 sm:mt-0" v-if="isDirectorAdministrator">
+    <div class="w-full sm:w-auto flex mt-4 sm:mt-0" v-if="onboardingStore().get_user_role?.slug != 'director_administrator'">
             <Button variant="primary" class="btn btn-primary" @click="create">
                 Crear Usuario
             </Button>

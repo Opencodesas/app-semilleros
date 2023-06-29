@@ -43,7 +43,7 @@ URLfileInput.value = 'null'  ;
 <template>
     <div class="flex flex-col items-center">
         <div class="flex h-64 lg:w-3/5 sm:w-5/6 overflow-hidden mt-5 items-center justify-center" style="background-color: #00408A;">
-            <img src="../../../public/fondo.jpeg" class="h-64 w-full object-cover object-up">
+            <img src="" alt="sin imagen" class="h-64 w-full object-cover object-up">
         </div>
         
         <div class="text-center font-bold text-lg my-5 underline underline-offset-8 decoration-4 decoration-primary mt-10">
