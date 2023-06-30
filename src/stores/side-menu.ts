@@ -191,11 +191,6 @@ export const useSideMenuStore = defineStore("sideMenu", {
           },
           {
             icon: "Activity",
-            pageName: "event_supports.index",
-            title: "Apoyo de eventos",
-          },
-          {
-            icon: "Activity",
             pageName: "review.index",
             title: "Revisiones",
           },
@@ -430,11 +425,6 @@ export const useSideMenuStore = defineStore("sideMenu", {
           },
           {
             icon: "Activity",
-            pageName: "event_supports.index",
-            title: "Apoyo de eventos",
-          },
-          {
-            icon: "Activity",
             pageName: "review.bene_chro",
             title: "Revisiones",
           },
@@ -452,28 +442,28 @@ export const useSideMenuStore = defineStore("sideMenu", {
           
         ]
       },
-      {
-        icon: 'Activity',
-        title: 'Actividades',
-        subMenu: [
-          {
-            icon: 'Activity',
-            pageName: 'budget.store',
-            title: 'Crear Informe',
-          },
-          {
-            icon: 'Activity',
-            role: 'monitor auxiliar_administrativo_tecnico apoyo_juridico asistente_administrativo metodologo subdirector_tecnico coordinador_regional coordinador_psicosocial psicologo director_tecnico director_administrator director_programa',
-            pageName: 'budget.active',
-            title: 'Informes Activos',
-          },          
-          {
-            icon: 'Activity',
-            pageName: 'budget.index',
-            title: 'Informes Ingresados',
-          }
-        ]
-      }
+      // {
+      //   icon: 'Activity',
+      //   title: 'Actividades',
+      //   subMenu: [
+      //     {
+      //       icon: 'Activity',
+      //       pageName: 'budget.store',
+      //       title: 'Crear Informe',
+      //     },
+      //     {
+      //       icon: 'Activity',
+      //       role: 'monitor auxiliar_administrativo_tecnico apoyo_juridico asistente_administrativo metodologo subdirector_tecnico coordinador_regional coordinador_psicosocial psicologo director_tecnico director_administrator director_programa',
+      //       pageName: 'budget.active',
+      //       title: 'Informes Activos',
+      //     },          
+      //     {
+      //       icon: 'Activity',
+      //       pageName: 'budget.index',
+      //       title: 'Informes Ingresados',
+      //     }
+      //   ]
+      // }
     ],
   }),
   getters: {

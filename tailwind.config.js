@@ -20,6 +20,7 @@ module.exports = {
     extend: {
       colors: {
         primary: "rgb(var(--color-primary) / <alpha-value>)",
+        bar: "rgb(var(--color-bar) / <alpha-value>)",
         secondary: "rgb(var(--color-secondary) / <alpha-value>)",
         success: "rgb(var(--color-success) / <alpha-value>)",
         info: "rgb(var(--color-info) / <alpha-value>)",
@@ -112,6 +113,7 @@ module.exports = {
         // Default colors
         ":root": {
           "--color-primary": toRGB(colors.cyan["900"]),
+          "--color-bar": toRGB('#E71D29'),
           "--color-secondary": toRGB(colors.slate["200"]),
           "--color-success": toRGB(colors.teal["600"]),
           "--color-info": toRGB(colors.cyan["500"]),
@@ -124,6 +126,7 @@ module.exports = {
         // Default dark-mode colors
         ".dark": {
           "--color-primary": toRGB(colors.cyan["800"]),
+          "--color-bar": toRGB('#E71D29'),
           "--color-darkmode-50": "87 103 132",
           "--color-darkmode-100": "74 90 121",
           "--color-darkmode-200": "65 81 114",
