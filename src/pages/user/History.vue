@@ -37,7 +37,7 @@ const items = ref<Item[]>([])
     <div class="flex items-center mt-8 intro-y">
         <h2 class="mr-auto text-lg font-medium">Historial del Usuario</h2>
         <div class="w-full sm:w-auto flex mt-4 sm:mt-0">
-            <Button variant="primary" class="btn btn-primary" @click="create">
+            <Button variant="hotbed" class="btn btn-primary" @click="create">
                 Crear Usuario
             </Button>
         </div>

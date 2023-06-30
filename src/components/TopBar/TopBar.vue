@@ -30,8 +30,8 @@ const hideSearchDropdown = () => {
     :class="[
       'h-[70px] md:h-[65px] z-[51] border-b border-white/[0.08] mt-12 md:mt-0 -mx-3 sm:-mx-8 md:-mx-0 px-3 md:border-b-0 relative md:fixed md:inset-x-0 md:top-0 sm:px-8 md:px-10 md:pt-10 md:bg-gradient-to-b md:from-slate-100 md:to-transparent dark:md:from-darkmode-700',
       props.layout == 'top-menu' && 'dark:md:from-darkmode-800',
-      'before:content-[\'\'] before:absolute before:h-[65px] before:inset-0 before:top-0 before:mx-7 before:bg-bar/30 before:mt-3 before:rounded-xl before:hidden before:md:block before:dark:bg-darkmode-600/30',
-      'after:content-[\'\'] after:absolute after:inset-0 after:h-[65px] after:mx-3 after:bg-bar after:mt-5 after:rounded-xl after:shadow-md after:hidden after:md:block after:dark:bg-darkmode-600',
+      'before:content-[\'\'] before:absolute before:h-[65px] before:inset-0 before:top-0 before:mx-7 before:bg-hotbed/30 before:mt-3 before:rounded-xl before:hidden before:md:block before:dark:bg-darkmode-600/30',
+      'after:content-[\'\'] after:absolute after:inset-0 after:h-[65px] after:mx-3 after:bg-hotbed after:mt-5 after:rounded-xl after:shadow-md after:hidden after:md:block after:dark:bg-darkmode-600',
     ]"
   >
     <div class="flex items-center h-full">
@@ -125,7 +125,7 @@ const hideSearchDropdown = () => {
                 </a>
                 <a href="" class="flex items-center mt-2">
                   <div
-                    class="flex items-center justify-center w-8 h-8 rounded-full bg-bar/10 dark:bg-bar/20 text-bar/80"
+                    class="flex items-center justify-center w-8 h-8 rounded-full bg-hotbed/10 dark:bg-hotbed/20 text-bar/80"
                   >
                     <Lucide icon="CreditCard" class="w-4 h-4" />
                   </div>
@@ -240,7 +240,7 @@ const hideSearchDropdown = () => {
         </div>
         </Menu.Button>
         <Menu.Items
-          class="w-56 mt-px relative bg-bar/80 before:block before:absolute before:bg-black before:inset-0 before:rounded-md before:z-[-1] text-white"
+          class="w-56 mt-px relative bg-hotbed/80 before:block before:absolute before:bg-black before:inset-0 before:rounded-md before:z-[-1] text-white"
         >
           <Menu.Header class="font-normal">
             <div class="font-medium">{{ storeOnboarding.get_user.name }}</div>

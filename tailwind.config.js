@@ -20,7 +20,7 @@ module.exports = {
     extend: {
       colors: {
         primary: "rgb(var(--color-primary) / <alpha-value>)",
-        bar: "rgb(var(--color-bar) / <alpha-value>)",
+        hotbed: "rgb(var(--color-hotbed) / <alpha-value>)",
         secondary: "rgb(var(--color-secondary) / <alpha-value>)",
         success: "rgb(var(--color-success) / <alpha-value>)",
         info: "rgb(var(--color-info) / <alpha-value>)",
@@ -113,7 +113,7 @@ module.exports = {
         // Default colors
         ":root": {
           "--color-primary": toRGB(colors.cyan["900"]),
-          "--color-bar": toRGB('#E71D29'),
+          "--color-hotbed": toRGB('#00933d'),
           "--color-secondary": toRGB(colors.slate["200"]),
           "--color-success": toRGB(colors.teal["600"]),
           "--color-info": toRGB(colors.cyan["500"]),

@@ -29,7 +29,7 @@ const headers: Header[] = [
     <div class="flex items-center mt-8 intro-y">
         <h2 class="mr-auto text-lg font-medium">Listado Contratistas</h2>
         <div class="w-full sm:w-auto flex mt-4 sm:mt-0">
-            <CommonButtonLink variant="primary" :to="{ name: isProvider('assistants') ? 'assistants.contractorsCreate' : 'contractors.store' }" >
+            <CommonButtonLink variant="hotbed" :to="{ name: isProvider('assistants') ? 'assistants.contractorsCreate' : 'contractors.store' }" >
                 Crear Contratista
             </CommonButtonLink>
         </div>

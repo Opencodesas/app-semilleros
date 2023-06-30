@@ -99,7 +99,7 @@ const create = () => {
       Listado Visitas de coordinadores
     </h2>
       <div class="w-full sm:w-auto flex mt-4 sm:mt-0">
-        <Button variant="primary" class="btn btn-primary" @click="create">
+        <Button variant="hotbed" class="btn btn-primary" @click="create">
           Crear visita
         </Button>
       </div>
