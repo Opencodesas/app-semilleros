@@ -17,6 +17,7 @@ type Variant =
   | "pending"
   | "danger"
   | "dark"
+  | "hotbed"
   | "outline-primary"
   | "outline-secondary"
   | "outline-success"
@@ -75,6 +76,9 @@ const large = ["text-lg py-1.5 px-4"];
 // Main Colors
 const primary = [
   "bg-primary border-primary text-white dark:border-primary", // Default
+];
+const hotbed = [
+  "bg-hotbed border-hotbed text-white dark:border-hotbed", // Default
 ];
 const secondary = [
   "bg-secondary/70 border-secondary/70 text-slate-500", // Default
@@ -203,6 +207,7 @@ const computedClass = computed(() =>
     size == "sm" && small,
     size == "lg" && large,
     variant == "primary" && primary,
+    variant == "hotbed" && hotbed,
     variant == "secondary" && secondary,
     variant == "success" && success,
     variant == "warning" && warning,

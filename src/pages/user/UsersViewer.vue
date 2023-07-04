@@ -39,18 +39,25 @@ onBeforeMount(async () => {
 //   { text: "Acciones", value: "actionsUsersViewer" },
 // ];
 
-const headers: Header[] = 
-onboardingStore().get_user_role?.slug != "director_administrator" ?
-[
-    { text: "No.", value: "id" },
-    { text: "Correo", value: "email", sortable: true },
-    { text: "Nombre", value: "name", sortable: true },
-    { text: "Apellido", value: "lastname", sortable: true },
-    { text: "Documento", value: "document_number", sortable: true },
-    { text: "Roles", value: "role.name", sortable: true },
-]
-:
-[ { text: "Acciones", value: "actionsUsersViewer" } ] ;
+const headers: Header[] =
+  onboardingStore().get_user_role?.slug != "director_administrator"
+    ? [
+        { text: "No.", value: "id" },
+        { text: "Correo", value: "email", sortable: true },
+        { text: "Nombre", value: "name", sortable: true },
+        { text: "Apellido", value: "lastname", sortable: true },
+        { text: "Documento", value: "document_number", sortable: true },
+        { text: "Roles", value: "role.name", sortable: true },
+      ]
+    : [
+        { text: "No.", value: "id" },
+        { text: "Correo", value: "email", sortable: true },
+        { text: "Nombre", value: "name", sortable: true },
+        { text: "Apellido", value: "lastname", sortable: true },
+        { text: "Documento", value: "document_number", sortable: true },
+        { text: "Roles", value: "role.name", sortable: true },
+        { text: "Acciones", value: "actionsUsersViewer" },
+      ];
 
 const search = ref("");
 const items = ref<Item[]>([]);
@@ -61,11 +68,14 @@ const data = computed(() => searchData(items.value, search.value));
 <template>
   <div class="flex items-center mt-8 intro-y">
     <h2 class="mr-auto text-lg font-medium">Listado Usuarios</h2>
-    <div class="w-full sm:w-auto flex mt-4 sm:mt-0" v-if="onboardingStore().get_user_role?.slug != 'director_administrator'">
-            <Button variant="primary" class="btn btn-primary" @click="create">
-                Crear Usuario
-            </Button>
-        </div>
+    <div
+      class="w-full sm:w-auto flex mt-4 sm:mt-0"
+      v-if="onboardingStore().get_user_role?.slug != 'director_administrator'"
+    >
+      <Button variant="hotbed" class="btn btn-primary" @click="create">
+        Crear Usuario
+      </Button>
+    </div>
   </div>
   <div class="p-5 mt-5 intro-y box">
     <CommonInput

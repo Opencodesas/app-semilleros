@@ -35,7 +35,7 @@ const data = computed(() => searchData(items.value, search.value));
 		<h2 class="mr-auto text-lg font-medium">Listado Visitas Subdirector</h2>
 		<div class="w-full sm:w-auto flex mt-4 sm:mt-0">
 			<Button
-				variant="primary"
+				variant="hotbed"
 				class="btn btn-primary"
 				@click="create">
 				Crear Visita

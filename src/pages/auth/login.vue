@@ -47,9 +47,9 @@ onBeforeMount(() => {
 
 <template>
   <div :class="[
-    '-m-3 sm:-mx-8 p-3 sm:px-8 relative h-screen lg:overflow-hidden bg-primary xl:bg-white dark:bg-darkmode-800 xl:dark:bg-darkmode-600',
-    'before:hidden before:xl:block before:content-[\'\'] before:w-[57%] before:-mt-[28%] before:-mb-[16%] before:-ml-[13%] before:absolute before:inset-y-0 before:left-0 before:transform before:rotate-[-4.5deg] before:bg-primary/20 before:rounded-[100%] before:dark:bg-darkmode-400',
-    'after:hidden after:xl:block after:content-[\'\'] after:w-[57%] after:-mt-[20%] after:-mb-[13%] after:-ml-[13%] after:absolute after:inset-y-0 after:left-0 after:transform after:rotate-[-4.5deg] after:bg-primary after:rounded-[100%] after:dark:bg-darkmode-700',
+    '-m-3 sm:-mx-8 p-3 sm:px-8 relative h-screen lg:overflow-hidden bg-hotbed xl:bg-white dark:bg-darkmode-800 xl:dark:bg-darkmode-600',
+    'before:hidden before:xl:block before:content-[\'\'] before:w-[57%] before:-mt-[28%] before:-mb-[16%] before:-ml-[13%] before:absolute before:inset-y-0 before:left-0 before:transform before:rotate-[-4.5deg] before:bg-hotbed/20 before:rounded-[100%] before:dark:bg-darkmode-400',
+    'after:hidden after:xl:block after:content-[\'\'] after:w-[57%] after:-mt-[20%] after:-mb-[13%] after:-ml-[13%] after:absolute after:inset-y-0 after:left-0 after:transform after:rotate-[-4.5deg] after:bg-hotbed after:rounded-[100%] after:dark:bg-darkmode-700',
   ]">
     <div class="container relative z-10 sm:px-10">
       <div class="block grid-cols-2 gap-4 xl:grid">
@@ -89,7 +89,7 @@ onBeforeMount(() => {
                   <CommonInput type="password" name="password" placeholder="*******" v-model="form.password"  :validator="v$" />
                 </div>
                 <div class="mt-5 text-center intro-x xl:mt-8 xl:text-left">
-                  <Button type="submit" variant="primary" class="w-full px-4 py-3 align-top xl:w-32 xl:mr-3">
+                  <Button type="submit" variant="hotbed" class="w-full px-4 py-3 align-top xl:w-32 xl:mr-3">
                     Ingresar
                   </Button>
                 </div>
