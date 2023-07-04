@@ -73,8 +73,8 @@ const sendUpdate = async () => {
 
 const types = [
 	{
-		label: 'Cédula de ciudadanía',
-		value: 'Cédula de ciudadanía',
+		label: 'CC',
+		value: 'CC',
 	},
 	{
 		label: 'Cédula de extranjeria',
@@ -91,12 +91,12 @@ const types = [
 ];
 const genders = [
 	{
-		label: 'Masculino',
-		value: 'Masculino',
+		label: 'MASCULINO',
+		value: 'MASCULINO',
 	},
 	{
-		label: 'Femenino',
-		value: 'Femenino',
+		label: 'FEMENINO',
+		value: 'FEMENINO',
 	},
 ];
 
