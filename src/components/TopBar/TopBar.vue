@@ -236,7 +236,8 @@ const hideSearchDropdown = () => {
           </Menu.Header>
         
         <div class="block w-8 h-8 overflow-hidden rounded-full shadow-lg image-fit zoom-in intro-x my-auto">
-          <img alt="Semilleros" :src="fakerData[9].photos[0]" />
+          <!--<img alt="Semilleros" :src="fakerData[9].photos[0]" />-->
+          <img alt="Usuario Contratación" src="./../../../public/user_default.png" />
         </div>
         </Menu.Button>
         <Menu.Items
