@@ -3,7 +3,7 @@ import { Item } from 'vue3-easy-data-table';
 
 export const searchData = (items: Item[], search: String) => {
 	if (items) {
-		const searchValue = search.toLowerCase();
+		const searchValue = search.toLowerCase().trim();
 		return items.filter(
 			(item) =>
 				item.date_visit?.includes(searchValue) ||
