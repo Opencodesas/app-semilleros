@@ -70,7 +70,7 @@ const data = computed(() => searchData(items.value, search.value));
     <h2 class="mr-auto text-lg font-medium">Listado Usuarios</h2>
     <div
       class="w-full sm:w-auto flex mt-4 sm:mt-0"
-      v-if="onboardingStore().get_user_role?.slug != 'director_administrator'"
+      v-if="onboardingStore().get_user_role?.slug == 'director_administrator'"
     >
       <Button variant="hotbed" class="btn btn-primary" @click="create">
         Crear Usuario
