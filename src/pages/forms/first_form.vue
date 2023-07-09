@@ -515,7 +515,7 @@ const form_rules_acudiente = computed(() => ({
   apellidosAcudiente: { required },
   nDocuAcudiente:     { required },
   parentesco:         { required },
-  // email:              { required },
+  email:              {},
   // checkEmail:      { required },
   nCelularAcudiente:  { required },
   // checkNCel:       { required },
