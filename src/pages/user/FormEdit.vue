@@ -337,7 +337,7 @@ onMounted(async () => {
 				v-if="form.roles && form.roles == '12'"
 			/>
             <CommonSelect class="h-30" label="Asistente Auxiliar y Administrativo *" name="asistent_id" v-model="form.asistent_id"
-                :options="asistentList" v-if="form.roles && (form.roles == '10'|| form.roles == '11' ||form.roles == '14')" />
+                :options="asistentList" v-if="form.roles && (form.roles == '10'|| form.roles == '11' ||form.roles == '14') ||form.roles == '12'" />
             <CommonSelect class="h-30" label="Metodologo *" name="methodology_id" v-model="form.methodology_id"
                 :options="metodologoList" v-if="form.roles && form.roles == '12'" />
 			<CommonSelect class="h-30" label="Supervisor *" name="manager_id" v-model="form.manager_id"

@@ -262,7 +262,7 @@ const onSubmit = async () => {
             <CommonSelect class="h-30" label="Supervisor *" name="manager_id" v-model="form.manager_id"
                 :options="managerList"/>
             <CommonSelect class="h-30" label="Asistente Auxiliar y Administrativo *" name="asistent_id" v-model="form.asistent"
-                :options="asistentList" v-if="form.roles && (form.roles == '10'||form.roles == '11' ||form.roles == '14')" />
+                :options="asistentList" v-if="form.roles && (form.roles == '10'||form.roles == '11' ||form.roles == '14' ||form.roles == '12')" />
             <br>
             <CommonInput type="hidden" name="password" :value="form.document_number" v-model="form.password" :validator="v$" />
         </div>
