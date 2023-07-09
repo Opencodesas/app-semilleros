@@ -614,11 +614,15 @@ export default defineComponent({
         { label: "boxeo", value: "6" },
         { label: "hapkido", value: "7" },
       ],
+      // optionsIdentificacion: [
+      //   { label: "cedula", value: "CC" },
+      //   { label: "nit", value: "NIT" },
+      //   { label: "tarjeta de identidad", value: "TI" },
+      //   { label: "pasaporte", value: "PP" },
       optionsIdentificacion: [
-        { label: "cedula", value: "CC" },
-        { label: "nit", value: "NIT" },
-        { label: "tarjeta de identidad", value: "TI" },
-        { label: "pasaporte", value: "PP" },
+        { label: "Registro Civil", value: "RC" },
+        { label: "NIT", value: "NIT" },
+        { label: "Permiso especial de permanencia", value: "PEP" },
       ],
       optionsEstrato: [
         { label: "1", value: "1" },
