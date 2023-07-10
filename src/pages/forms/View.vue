@@ -35,6 +35,11 @@ const optionsDisciplinas= asyncComputed(async () => {
 });
 
 const optionsIdentificacion= asyncComputed(async () => {
+  return [
+        { label: "Registro Civil", value: "RC" },
+        { label: "tarjeta de identidad", value: "TI" },
+        { label: "Permiso especial de permanencia", value: "PEP" },
+      ];
   return await getSelect(['identification_types']);
 });
 
