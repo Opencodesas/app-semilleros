@@ -621,7 +621,7 @@ export default defineComponent({
       //   { label: "pasaporte", value: "PP" },
       optionsIdentificacion: [
         { label: "Registro Civil", value: "RC" },
-        { label: "NIT", value: "NIT" },
+        { label: "tarjeta de identidad", value: "TI" },
         { label: "Permiso especial de permanencia", value: "PEP" },
       ],
       optionsEstrato: [
