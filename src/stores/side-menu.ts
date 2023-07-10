@@ -378,11 +378,11 @@ export const useSideMenuStore = defineStore("sideMenu", {
             pageName: "users.viewer",
             title: "Ver usuarios",
           },
-          {
-            icon: "Activity",
-            pageName: "reports.index",
-            title: "Reportes",
-          },
+          // {
+          //   icon: "Activity",
+          //   pageName: "reports.index",
+          //   title: "Reportes",
+          // },
           {
             icon: "Activity",
             pageName: "administrative_director.reviews",
