@@ -388,7 +388,7 @@
             label="¿Como se entero del proyecto?"
             name="enterado"
             v-model="form.enterado"
-            :multiple="true"
+            multiple
             :validator="v3$"
             :allowEmpty="false"
             :options="optionsEnterado"
@@ -697,7 +697,7 @@ export default defineComponent({
       ],
       optionsEnterado: [
         { label: "Ente municipal", value: "Ente municipal" },
-        { label: "Contributivo", value: "Ente deportivo" },
+        // { label: "Contributivo", value: "Ente deportivo" },
         { label: "Redes sociales", value: "Redes sociales" },
         { label: "Radio", value: "Radio" },
         { label: "Television", value: "Television" },

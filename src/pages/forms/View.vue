@@ -108,7 +108,7 @@ const optionsRedes= ref([
 ])
 const optionsEnterado= ref([
   { label: "Ente municipal", value: "Ente municipal" },
-  { label: "Contributivo", value: "Ente deportivo" },
+  // { label: "Contributivo", value: "Ente deportivo" },
   { label: "Redes sociales", value: "Redes sociales" },
   { label: "Radio", value: "Radio" },
   { label: "Television", value: "Television" },
@@ -660,6 +660,7 @@ onMounted(async () => {
             name="temp"
             v-model="currentFicha.know_guardian.find_out"
             type="text"
+            multiple
             :disabled="true"
           /></div>
         </div>
