@@ -888,6 +888,9 @@ export default defineComponent({
         {
           Swal.fire('', res.data.message, 'success').finally(() => {
             if(form.mensaje!=null){window.history.go(-1);}
+            this.$router.replace({ name: 'beneficiaries.index' }).finally(() => {
+            setLoading(false);
+          });
           })
           this.limpiar();
         }    
