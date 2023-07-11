@@ -181,6 +181,7 @@
             :options="optionsSangre"
           />
           <CommonSelect
+            multiple
             label="Vivo con"
             name="vivoCon"
             v-model="form.vivoCon"

@@ -538,6 +538,7 @@ onMounted(async () => {
 
           <CommonInput
           label="Vivo con"
+          multiple
           name="temp"
           v-model="currentFicha.live_with"
           type="text"
