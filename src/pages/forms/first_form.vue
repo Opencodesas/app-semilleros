@@ -1,14 +1,17 @@
 <template>
   <div class="flex items-center mt-8 intro-y">
     <div class="flex items-center space-x-4">
-            <CommonBackButton :to="'beneficiaries.index'" title="Listado" />
-            <h2 class="mr-auto text-lg font-medium">BENEFICIARIOS</h2>
-        </div>
+      <CommonBackButton :to="'beneficiaries.index'" title="Listado" />
+      <h2 class="mr-auto text-lg font-medium">BENEFICIARIOS</h2>
+    </div>
   </div>
   <!-- BEGIN: Page Layout -->
   <form @submit="onIngreso($event, v$, v3$, form)">
     <div class="p-5 mt-5 intro-y box">
-      <h1 class="my-4 text-xl bold text-left text-gray-800 cursor-pointer" @click="next_step(1)">
+      <h1
+        class="my-4 text-xl bold text-left text-gray-800 cursor-pointer"
+        @click="next_step(1)"
+      >
         Datos del beneficiario
       </h1>
       <div v-show="step === 1">
@@ -17,10 +20,11 @@
           name="fechaInscripcion"
           v-model="form.fechaInscripcion"
           :validator="v$"
-          
           type="date"
         />
-        <div class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-3 justify-evenly">
+        <div
+          class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-3 justify-evenly"
+        >
           <CommonSelect
             label="Municipio"
             name="municipio"
@@ -50,7 +54,7 @@
             :validator="v$"
           />
           <CommonInput
-            label="Fecha de nacimiento"
+            :label="`Fecha de nacimiento (Edad: ${validEdad.edad})`"
             name="fechaNacimiento"
             :max="maxDate"
             type="date"
@@ -80,7 +84,9 @@
             :validator="v$"
           />
         </div>
-        <div class="mt-5 grid grid-cols-1 md:grid md:grid-cols-3 gap-6 justify-evenly">
+        <div
+          class="mt-5 grid grid-cols-1 md:grid md:grid-cols-3 gap-6 justify-evenly"
+        >
           <CommonInput
             label="Direccion de residencia"
             name="direccionResidencia"
@@ -125,7 +131,9 @@
             :options="optionsVictima"
           />
         </div>
-        <div class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
+        <div
+          class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly"
+        >
           <CommonSelect
             label="Genero"
             name="genero"
@@ -151,7 +159,8 @@
             :options="optionsDiscapacidad"
             :onSelect="($event: any) => setOtro($event, 'discapacidad')"
           />
-          <CommonInput v-if="form.discapacidad === '1'"
+          <CommonInput
+            v-if="form.discapacidad === '1'"
             label="¿Cual?"
             name="otroDisc"
             v-model="form.otroDisc"
@@ -166,7 +175,8 @@
             :options="optionsPatologia"
             :onSelect="($event: any) => setOtro($event, 'patologia')"
           />
-          <CommonInput v-if="form.patologia === '1'"
+          <CommonInput
+            v-if="form.patologia === '1'"
             label="¿Cual?"
             name="otroPato"
             v-model="form.otroPato"
@@ -188,9 +198,8 @@
             :allowEmpty="false"
             :options="optionsVivo"
           />
-          
         </div>
-        
+
         <CommonSelect
           class="mt-5"
           label="Escolaridad"
@@ -202,27 +211,30 @@
           :onSelect="($event: any) => setOtro($event, 'escolaridad')"
         />
 
-        <div v-if="form.escolaridad === '1'" class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
-            
+        <div
+          v-if="form.escolaridad === '1'"
+          class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly"
+        >
           <CommonSelect
-              label="Nivel de Escolaridad"
-              name="nivel_escolaridad"
-              v-model="form.nivel_escolaridad"
-              :validator="v$"
-              :allowEmpty="false"
-              :options="optionsNivelEscolaridad"
-            />
-            
+            label="Nivel de Escolaridad"
+            name="nivel_escolaridad"
+            v-model="form.nivel_escolaridad"
+            :validator="v$"
+            :allowEmpty="false"
+            :options="optionsNivelEscolaridad"
+          />
+
           <CommonInput
-              label="Institución Educativa"
-              name="institucion"
-              v-model="form.institucion"
-              :validator="v$"
-            />
+            label="Institución Educativa"
+            name="institucion"
+            v-model="form.institucion"
+            :validator="v$"
+          />
         </div>
 
-        <div class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
-
+        <div
+          class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly"
+        >
           <CommonSelect
             label="Tipo afiliacion(EPS)"
             name="afiliacion"
@@ -233,7 +245,8 @@
             :onSelect="($event: any) => setOtro($event, 'afiliacion')"
           />
 
-          <CommonSelect v-if="form.afiliacion && form.afiliacion !== 'NA'"
+          <CommonSelect
+            v-if="form.afiliacion && form.afiliacion !== 'NA'"
             label="Entidad de Salud"
             name="health_entity"
             v-model="form.health_entity"
@@ -241,14 +254,13 @@
             :allowEmpty="false"
             :options="healthEntities"
           />
-
-          
         </div>
 
         <div class="m-4 text-center">
-          <Button variant="primary" type="button" @click="onNext( v$ )">Continuar</Button>
+          <Button variant="primary" type="button" @click="onNext(v$)"
+            >Continuar</Button
+          >
         </div>
-        
       </div>
     </div>
 
@@ -327,11 +339,16 @@
     </div> -->
 
     <div class="p-5 mt-5 intro-y box">
-      <h1 class="my-4 text-xl bold text-left text-gray-800 cursor-pointer" @click="next_step(3)">
+      <h1
+        class="my-4 text-xl bold text-left text-gray-800 cursor-pointer"
+        @click="next_step(3)"
+      >
         Datos del acudiente
       </h1>
       <div v-show="step === 3">
-        <div class="mt-5 grid grid-cols-1 md:grid md:grid-cols-3 gap-6 justify-evenly">
+        <div
+          class="mt-5 grid grid-cols-1 md:grid md:grid-cols-3 gap-6 justify-evenly"
+        >
           <CommonInput
             label="Nombres"
             name="nombresAcudiente"
@@ -358,7 +375,7 @@
             v-model="form.parentesco"
             :validator="v3$"
           />
-          <CommonInput 
+          <CommonInput
             label="Email"
             name="email"
             v-model="form.email"
@@ -374,7 +391,9 @@
           />
           <!-- <FormCheck label="No tiene" name="checkNCel" v-model="form.checkNCel" />  -->
         </div>
-        <div class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly">
+        <div
+          class="mt-5 grid grid-cols-1 md:grid md:grid-cols-2 gap-6 justify-evenly"
+        >
           <CommonSelect
             label="Redes sociales"
             name="redesAcudiente"
@@ -395,32 +414,37 @@
           />
         </div>
         <div class="m-4 text-center">
-          <Button variant="primary" :class="'m-3 px-6 py-3'" type="submit">Ingresar</Button>
+          <Button variant="primary" :class="'m-3 px-6 py-3'" type="submit"
+            >Ingresar</Button
+          >
         </div>
       </div>
     </div>
-
   </form>
 </template>
 
 <script setup lang="ts">
 // import interfaces from '../interfaces/beneficiary';
 import axios from "@/services/beneficiary/beneficiary";
-import { helpers } from '@vuelidate/validators'
+import { helpers } from "@vuelidate/validators";
 import useVuelidate, { Validation } from "@vuelidate/core";
 import { defineComponent } from "vue";
-import { required, nestedRequired, maxDecimalsLength } from '@/utils/validators'
+import {
+  required,
+  nestedRequired,
+  maxDecimalsLength,
+} from "@/utils/validators";
 import FormCheckInput from "@/base-components/Form/FormCheck/FormCheckInput.vue";
 import { onboardingStore } from "@/stores/onboardingStore";
-import { getHealthentities }  from "@/composables/getHealthentities";
+import { getHealthentities } from "@/composables/getHealthentities";
 
 import Swal from "sweetalert2";
 import router from "@/router";
 const store = onboardingStore();
 
-const healthEntities = computedAsync( async () => {
+const healthEntities = computedAsync(async () => {
   return await getHealthentities();
-}, null)
+}, null);
 
 const form = reactive({
   fechaInscripcion: "",
@@ -459,45 +483,46 @@ const form = reactive({
   nCelularAcudiente: "",
   redesAcudiente: "",
   enterado: "",
-  estatura: '',
-  envergadura: '',
-  masa: '',
-  flexibilidad: '',
-  velocidad: '',
-  fuerza: '',
-  oculomanual: '',
+  estatura: "",
+  envergadura: "",
+  masa: "",
+  flexibilidad: "",
+  velocidad: "",
+  fuerza: "",
+  oculomanual: "",
   // panelTamizaje: false,
 });
 
 const form_rules = computed(() => ({
-  fechaInscripcion:   { required },
-  municipio:          { required },
-  disciplinas:        { required },
-  nombres:            { required },
-  apellidos:          { required },
-  fechaNacimiento:    { required },
-  lugarNacimiento:    { required },
+  fechaInscripcion: { required },
+  municipio: { required },
+  disciplinas: { required, },
+  nombres: { required },
+  apellidos: { required },
+  fechaNacimiento: { required },//AGREGAR VALIDADCION CON validEdad.isValid 
+  lugarNacimiento: { required },
   tipoIdentificacion: { required },
-  numeroDocumento:    { required },
-  direccionResidencia:{ required },
-  numeroCel:          { required },
-  estrato:            { required },
-  zona:               { required },
-  victimaConflicto:   { required },
-  pueblo:             form.zona === 'U' ? {} : { required },
-  genero:             { required },
-  etnia:              { required },
-  discapacidad:       { required },
-  otroDisc:           form.discapacidad === '0' ? {} : { required },
-  patologia:          { required },
-  otroPato:           form.patologia === '0' ? {} : { required },
-  sangre:             { required },
-  escolaridad:        { required },
-  nivel_escolaridad:  form.escolaridad === '0' ? {} : { required },
-  institucion:        form.escolaridad === '0' ? {} : { required },
-  vivoCon:            { required },
-  afiliacion:         { required },
-  health_entity:   form.afiliacion && form.afiliacion !== 'NA' ? { required } : {},
+  numeroDocumento: { required },
+  direccionResidencia: { required },
+  numeroCel: { required },
+  estrato: { required },
+  zona: { required },
+  victimaConflicto: { required },
+  pueblo: form.zona === "U" ? {} : { required },
+  genero: { required },
+  etnia: { required },
+  discapacidad: { required },
+  otroDisc: form.discapacidad === "0" ? {} : { required },
+  patologia: { required },
+  otroPato: form.patologia === "0" ? {} : { required },
+  sangre: { required },
+  escolaridad: { required },
+  nivel_escolaridad: form.escolaridad === "0" ? {} : { required },
+  institucion: form.escolaridad === "0" ? {} : { required },
+  vivoCon: { required },
+  afiliacion: { required },
+  health_entity:
+    form.afiliacion && form.afiliacion !== "NA" ? { required } : {},
 }));
 
 // const form_rules_tamizaje = computed(() => ({
@@ -511,88 +536,106 @@ const form_rules = computed(() => ({
 // }));
 
 const form_rules_acudiente = computed(() => ({
-  nombresAcudiente:   { required },
+  nombresAcudiente: { required },
   apellidosAcudiente: { required },
-  nDocuAcudiente:     { required },
-  parentesco:         { required },
-  email:              {},
+  nDocuAcudiente: { required },
+  parentesco: { required },
+  email: {},
   // checkEmail:      { required },
-  nCelularAcudiente:  { required },
+  nCelularAcudiente: { required },
   // checkNCel:       { required },
-  redesAcudiente:     { required },
-  enterado:           { required },
+  redesAcudiente: { required },
+  enterado: { required },
 }));
 
 const municipalitiesList = ref([]);
 const diciplinesList = ref([]);
 const ethniacityList = ref([]);
-const step = ref(1)
+const step = ref(1);
 
 //---------------------------//
 onMounted(async () => {
   //peticion a la api para las listas desplegables, by rick.
   store.getListSelect().then((response) => {
     if (response?.status == 200) {
-      municipalitiesList.value = JSON.parse(JSON.stringify(response.data['my_municipalities']));
-      diciplinesList.value = JSON.parse(JSON.stringify(response.data['diciplines']));
-      ethniacityList.value = JSON.parse(JSON.stringify(response.data['ethniacity']));
+      municipalitiesList.value = JSON.parse(
+        JSON.stringify(response.data["my_municipalities"])
+      );
+      diciplinesList.value = JSON.parse(
+        JSON.stringify(response.data["diciplines"])
+      );
+      ethniacityList.value = JSON.parse(
+        JSON.stringify(response.data["ethniacity"])
+      );
     } else {
       Swal.fire("", "No se pudieron obtener los datos", "error");
     }
   });
 });
 
+// MAX 17 - MIN 2
+const validEdad = computed(() => {
+  if (form.fechaNacimiento == "") return { edad: '', isValid: false };
+  var hoy = new Date();
+  var cumpleanos = new Date(form.fechaNacimiento);
+  var edad = hoy.getFullYear() - cumpleanos.getFullYear();
+  var m = hoy.getMonth() - cumpleanos.getMonth();
+
+  if (m < 0 || (m === 0 && hoy.getDate() < cumpleanos.getDate())) {
+    edad--;
+  }
+  return { edad: edad, isValid: edad <= 17 && edad >= 6 };
+});
+
 const v$ = useVuelidate(form_rules, form, { $lazy: true, $autoDirty: true });
 // const v2$ = useVuelidate(form_rules_tamizaje, form, { $lazy: true, $autoDirty: true });
-const v3$ = useVuelidate(form_rules_acudiente, form, { $lazy: true, $autoDirty: true });
+const v3$ = useVuelidate(form_rules_acudiente, form, {
+  $lazy: true,
+  $autoDirty: true,
+});
 
-const onNext = async ( validation: Validation ) => {
-
-  await validation.$validate()
-  .then((valid) => {
-      (valid) ? next_step(3) : alerts.validation()
-  })
-}
+const onNext = async (validation: Validation) => {
+  await validation.$validate().then((valid) => {
+    valid ? next_step(3) : alerts.validation();
+  });
+};
 
 const next_step = (step_to?: number) => {
   //console.log(step_to);
-    if (step_to) {
-        step.value = step_to
+  if (step_to) {
+    step.value = step_to;
+  } else {
+    if (step.value < 6) {
+      step.value++;
     }
-    else {
-        if (step.value < 6) {
-            step.value++
-        }
-    }
+  }
 };
 
-const setOtro = ( val: number | string, key: string ) => {
-  if ( val == 0 ) {
-    switch( key ) {
-      case 'discapacidad' : 
-        form.otroDisc = ''
+const setOtro = (val: number | string, key: string) => {
+  if (val == 0) {
+    switch (key) {
+      case "discapacidad":
+        form.otroDisc = "";
         break;
-      case 'patologia' : 
-        form.otroPato = ''
+      case "patologia":
+        form.otroPato = "";
         break;
-      case 'escolaridad' : 
-        form.nivel_escolaridad = ''
-        form.institucion = ''
+      case "escolaridad":
+        form.nivel_escolaridad = "";
+        form.institucion = "";
         break;
     }
-  } else if ( val == 'NA') {
-    switch( key ) {
-      case 'afiliacion' : 
-        form.health_entity = ''
+  } else if (val == "NA") {
+    switch (key) {
+      case "afiliacion":
+        form.health_entity = "";
         break;
     }
   }
-}
-
+};
 </script>
 
 <script lang="ts">
-
 export default defineComponent({
   data() {
     return {
@@ -710,25 +753,23 @@ export default defineComponent({
   computed: {
     maxDate: () => {
       const yearsAgo = new Date().getFullYear() - 7;
-      return `${yearsAgo}-12-31`
-    }
+      return `${yearsAgo}-12-31`;
+    },
   },
   methods: {
-    checkMaxDecimals( evt: any ){
+    checkMaxDecimals(evt: any) {
       evt.preventDefault();
       //console.log( evt.target.value );
       return false;
     },
-    async onIngreso( evt: any, v1: any, v3: any, form: any ) {
+    async onIngreso(evt: any, v1: any, v3: any, form: any) {
       evt.preventDefault();
 
-      await v3.$validate()
-      .then((valid: boolean) => {
-          (valid) ? this.ingreso(form, v1, v3) : alerts.validation()
-      })
-
+      await v3.$validate().then((valid: boolean) => {
+        valid ? this.ingreso(form, v1, v3) : alerts.validation();
+      });
     },
-    ingreso( form: any, v1: any,  v3: any ) {
+    ingreso(form: any, v1: any, v3: any) {
       const data = {
         registration_date: form.fechaInscripcion,
         municipalities_id: form.municipio,
@@ -736,8 +777,8 @@ export default defineComponent({
 
         beneficiary_name: form.nombres,
         beneficiary_last_name: form.apellidos,
-        full_name: `${form.nombres}  ${form.apellidos}`,        
-        
+        full_name: `${form.nombres}  ${form.apellidos}`,
+
         birth_date: form.fechaNacimiento,
         origin_place: form.lugarNacimiento,
         type_document: form.tipoIdentificacion,
@@ -747,7 +788,7 @@ export default defineComponent({
         stratum: form.estrato,
         zone: form.zona,
         conflict_victim: form.victimaConflicto,
-        distric: form.pueblo || '',
+        distric: form.pueblo || "",
         gender: form.genero,
         ethnicities_id: form.etnia,
         disability: form.discapacidad,
@@ -765,12 +806,12 @@ export default defineComponent({
         // Tamizaje
         envergadura: form.envergadura,
         estatura: form.estatura,
-        masa: form.masa,  
+        masa: form.masa,
         velocidad: form.velocidad,
         flexibilidad: form.flexibilidad,
         oculomanual: form.oculomanual,
         fuerza: form.fuerza,
-        
+
         // Datos del Acudiente
         attendant_name: form.nombresAcudiente,
         attendant_last_name: form.apellidosAcudiente,
@@ -787,67 +828,65 @@ export default defineComponent({
         status_id: 2,
       };
       axios.addBeneficiary(data).then((res: any) => {
-        if(res){
-		    if (res?.status == 200) {
-            Swal.fire('', res.data.message, 'success').finally(() => {
+        if (res) {
+          if (res?.status == 200) {
+            Swal.fire("", res.data.message, "success").finally(() => {
               this.restart();
-            })
-          }else{
-            Swal.fire('', res.data.error, 'error').finally(() => {
-            })
+            });
+          } else {
+            Swal.fire("", res.data.error, "error").finally(() => {});
           }
-          this.limpiar( form, v1, v3 );
+          this.limpiar(form, v1, v3);
         }
       });
     },
-    limpiar( form: any, v1: any, v3: any ) {
-      
-        form.fechaInscripcion   =  "";
-        form.municipio          =  "";
-        form.disciplinas        =  "";
-        form.nombres            =  "";
-        form.apellidos          =  "";
-        form.fechaNacimiento    =  "";
-        form.lugarNacimiento    =  "";
-        form.tipoIdentificacion =  "";
-        form.numeroDocumento    =  "";
-        form.direccionResidencia=  "";
-        form.numeroCel          =  "";
-        form.estrato            =  "";
-        form.zona               =  "";
-        form.victimaConflicto   =  "";
-        form.pueblo             =  "";
-        form.genero             =  "";
-        form.etnia              =  "";
-        form.discapacidad       =  "";
-        form.otroDisc           =  "";
-        form.patologia          =  "";
-        form.otroPato           =  "";
-        form.sangre             =  "";
-        form.escolaridad        =  "";
-        form.nivel_escolaridad  =  "";
-        form.institucion        =  "";
-        form.vivoCon            =  "";
-        form.afiliacion         =  "";
-        form.health_entity      =  "";
-        form.nombresAcudiente   =  "";
-        form.apellidosAcudiente =  "";
-        form.nDocuAcudiente     =  "";
-        form.parentesco         =  "";
-        form.email              =  "";
-        form.nCelularAcudiente  =  "";
-        form.redesAcudiente     =  "";
-        form.enterado           =  "";
-        form.estatura           =  '';
-        form.envergadura        =  '';
-        form.masa               =  '';
-        form.flexibilidad       =  '';
-        form.velocidad          =  '';
-        form.fuerza             =  '';
-        form.oculomanual        =  '';
+    limpiar(form: any, v1: any, v3: any) {
+      form.fechaInscripcion = "";
+      form.municipio = "";
+      form.disciplinas = "";
+      form.nombres = "";
+      form.apellidos = "";
+      form.fechaNacimiento = "";
+      form.lugarNacimiento = "";
+      form.tipoIdentificacion = "";
+      form.numeroDocumento = "";
+      form.direccionResidencia = "";
+      form.numeroCel = "";
+      form.estrato = "";
+      form.zona = "";
+      form.victimaConflicto = "";
+      form.pueblo = "";
+      form.genero = "";
+      form.etnia = "";
+      form.discapacidad = "";
+      form.otroDisc = "";
+      form.patologia = "";
+      form.otroPato = "";
+      form.sangre = "";
+      form.escolaridad = "";
+      form.nivel_escolaridad = "";
+      form.institucion = "";
+      form.vivoCon = "";
+      form.afiliacion = "";
+      form.health_entity = "";
+      form.nombresAcudiente = "";
+      form.apellidosAcudiente = "";
+      form.nDocuAcudiente = "";
+      form.parentesco = "";
+      form.email = "";
+      form.nCelularAcudiente = "";
+      form.redesAcudiente = "";
+      form.enterado = "";
+      form.estatura = "";
+      form.envergadura = "";
+      form.masa = "";
+      form.flexibilidad = "";
+      form.velocidad = "";
+      form.fuerza = "";
+      form.oculomanual = "";
 
-        v1.$reset();
-        v3.$reset();
+      v1.$reset();
+      v3.$reset();
     },
     regresar() {
       window.alert("Regresa");
